@@ -1,0 +1,16 @@
+- **Short Description:** This thesis presents a framework for enhancing information retrieval by using Large Language Models to decompose complex user queries into structured query graphs. It employs knowledge distillation to train a smaller, cost-effective model (Flan-T5) to perform this augmentation within a Retrieval Augmented Generation (RAG) pipeline.
+
+- **Research Question:** How can information retrieval systems bridge the semantic gap between complex user queries and knowledge bases using LLM-based query augmentation while maintaining computational efficiency suitable for real-world deployment?
+
+- **Main Methodology:** The study utilizes a two-step framework combining **Knowledge Distillation** and a **Graph-Based RAG Engine**.
+    1.  **Distillation:** A large "teacher" model (GPT-3.5-turbo) uses Chain-of-Thought (CoT) prompting to decompose complex queries into a structured "query graph" (nodes representing sub-queries and edges representing dependencies). This data is used to fine-tune a smaller "student" model (Flan-T5-base).
+    2.  **RAG Execution:** The fine-tuned student model generates a query graph for a user input. This graph acts as a configuration file for the RAG engine, which executes retrieval for sub-queries sequentially or in parallel based on dependencies, integrating intermediate contexts to generate a final response.
+
+- **Dataset & Benchmark:**
+    -   **Datasets:** **HotpotQA** (multi-hop, open-domain) used for training (distillation) and evaluation; **COVID-QA** (biomedical, single-domain) used for comparative evaluation.
+    -   **Metrics:** Exact Match (EM), Precision, Recall, F1-Score, Sentence Similarity (cosine similarity of embeddings), and BERTScore.
+
+- **Research Contributions:**
+    This work addresses the latency and cost barriers of deploying Large Language Models in information retrieval by introducing a novel framework that combines structured query decomposition with knowledge distillation. Unlike traditional query rewriting techniques that may lead to query drift, the author proposes a "query graph" data structure that maps complex, multi-hop questions into logical sub-queries with explicit dependencies. By distilling the reasoning capabilities of a large teacher model into a lightweight student model, the research fills a technical gap regarding the efficient deployment of complex reasoning agents in production search environments without relying on expensive, high-latency proprietary models.
+
+    The study demonstrates that a significantly smaller, open-source model (Flan-T5-base) can be successfully trained to mimic the query planning capabilities of GPT-3.5, achieving over 51% Exact Match and high semantic similarity on the HotpotQA dataset. The results validate that a distilled graph-based approach can handle both open-domain and single-domain (COVID-QA) tasks competitively. This offers a proof-of-concept that resource-efficient models can drive complex RAG pipelines, effectively balancing retrieval accuracy with operational costs.
