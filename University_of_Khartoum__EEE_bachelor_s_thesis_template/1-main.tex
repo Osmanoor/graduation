@@ -1,0 +1,142 @@
+% Document type and paper size
+\documentclass[12pt,a4paper]{report}
+
+% Fonts and Typography
+\usepackage{newtxtext}
+\usepackage[none]{hyphenat}
+\usepackage{ragged2e}
+\justifying
+
+% Formatting and Layout 
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{setspace}
+\setstretch{1.5}
+\setlength{\parindent}{1.5em} 
+\setlength{\parskip}{0em} 
+\setcounter{secnumdepth}{3} 
+
+% Encoding and Hyperlinks
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+% Headers and Footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} 
+\fancyhead[L]{\leftmark} 
+\fancyhead[R]{\thepage}            
+\fancyfoot{}
+\renewcommand{\chaptermark}[1]{\markboth{Chapter \thechapter\ - #1}{}}
+
+% Table of Contents, Bibliography, and Lists
+\usepackage{tocbibind}
+\usepackage{tocloft} 
+
+% Formatting and Layout 
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{setspace}
+\setstretch{1.5}
+\setlength{\parindent}{1.5em} 
+\setlength{\parskip}{0em} 
+\setcounter{secnumdepth}{3}
+\setlength{\parskip}{1em} 
+\setlength{\textfloatsep}{0.5em}
+
+% Titles Formatting
+\usepackage{titlesec}  
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries\centering}
+  {Chapter \thechapter}
+  {0pt}
+  {\vspace{1em} \\}
+\titlespacing*{\chapter}{0pt}{-30pt}{20pt}
+% Add a 1-line space before and after the section title
+\titlespacing*{\section}{0pt}{\baselineskip}{\baselineskip}
+
+% Figures and Graphics
+\usepackage{graphicx}
+\usepackage{subfig} 
+\usepackage{caption}
+\usepackage{float}
+
+% Lists and Enumerations
+\usepackage{enumerate}
+\usepackage{enumitem}
+\setlist[enumerate,1]{label=\alph*., leftmargin=2em} 
+
+% Mathematical Tools, algorithms
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+
+% Tables
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{booktabs} 
+\usepackage{multirow} 
+\usepackage{array}    
+\usepackage{siunitx}  
+\usepackage{makecell}
+\usepackage{tabularx} 
+
+
+% Glossaries and Acronyms
+\usepackage{acronym}
+\usepackage[acronym]{glossaries}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+% Title Page
+\begin{titlepage}
+    \begin{center}
+        \vspace*{-0.05cm} % Lift the content up
+        \includegraphics[width=0.2\textwidth]{Figures/Fig:logo.jpg}\\[1cm]  % Adjusted spacing
+        {\Large\textbf{This is the Thesis Title}}\\[0.5cm]
+        {\large \textit{A thesis submitted in partial fulfillment of the requirements of the B.Sc. degree in Electrical and Electronic Engineering}}\\[1.5cm]
+        \begin{spacing}{1.5}  % Set line spacing to 1.5
+        \textbf{Submitted by:}\\[0.5cm]
+        {\textbf{Student Name (Index)}}\\
+        {\textbf{Student Name (Index)}}\\[1cm]
+        \textbf{Supervised by:}\\[0.5cm]
+        {\textbf{Supervisor name}}\\[1cm]
+        \textbf{To}\\[0.5cm]
+        {\textbf{Department of Electrical and Electronic Engineering}}\\
+        {\textbf{Faculty of Engineering}}\\
+        {\textbf{University of Khartoum}}\\[1.5cm]
+        \textbf{September 2024}
+        \end{spacing}
+    \end{center}
+\end{titlepage}
+
+% Start of the Content
+\pagenumbering{roman}
+\include{2-DeclarationofAuthorship}
+\include{3-Dedication}
+\include{4-Acknowledgements}
+\include{5-Abstract}
+\include{6-ARAbstract}
+\listoftables
+\newpage
+\listoffigures
+\newpage
+\tableofcontents
+\include{7-ListofAbbreviations}
+\pagenumbering{arabic}
+\include{Chapters/chapter1}
+\include{Chapters/chapter2}
+\include{Chapters/chapter3}
+\include{Chapters/chapter4}
+\include{Chapters/chapter5}
+\bibliographystyle{IEEEtran} 
+% Choose a citation style (e.g., IEEE, APA, plain, etc.)
+\bibliography{References}
+% This should match your .bib file name
+
+\end{document}
+
+
+
+

@@ -1,0 +1,24 @@
+\chapter{Results and Discussion}
+
+\section{Adding a teble}
+
+In the same way as in figures, you can mention any table through it's label using the "hash ref" as showing below:
+
+The results are summarized in Table~\ref{tab:comparison}. Each method has its strengths and weaknesses, which are analyzed below.
+
+% For adding a table, use the following code: 
+
+\begin{table}[htbp] 
+    \centering
+    \caption{Comparison of Different Methods} %This is the title of the table
+    \label{tab:comparison}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        \textbf{Method} & \textbf{Accuracy (\%)} & \textbf{Processing Time (ms)} & \textbf{Memory Usage (MB)} \\
+        \midrule
+        Method A & 95.2 & 120 & 256 \\
+        Method B & 93.8 & 85 & 312 \\
+        Method C & 97.1 & 150 & 428 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
