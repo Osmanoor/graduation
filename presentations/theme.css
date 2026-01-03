@@ -1,0 +1,446 @@
+/* ============================================
+   PRESENTATION THEME - Elegant Light
+   University of Khartoum - EEE Department
+   ============================================ */
+
+/* Page Setup for PDF Print (Letter Landscape) */
+@page {
+  size: letter landscape;
+  margin: 0;
+}
+
+@media print {
+  .slide {
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+  .slide:last-child {
+    page-break-after: auto;
+  }
+}
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #2c3e50;
+  background: #f8f9fa;
+}
+
+/* Slide Container */
+.slide {
+  width: 11in;
+  height: 8.5in;
+  padding: 0.6in 0.8in;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative Elements */
+.slide::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #1a5f7a 0%, #2e8b57 50%, #1a5f7a 100%);
+}
+
+.slide::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle at bottom right, rgba(26, 95, 122, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Title Slide Specific */
+.slide.title-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 0%, #e8f4f8 100%);
+}
+
+.slide.title-slide .logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.slide.title-slide h1 {
+  font-size: 2.4rem;
+  color: #1a5f7a;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.slide.title-slide .subtitle {
+  font-size: 1.4rem;
+  color: #2e8b57;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.slide.title-slide .authors {
+  font-size: 1.1rem;
+  color: #34495e;
+  margin-bottom: 0.5rem;
+}
+
+.slide.title-slide .institute {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+.slide.title-slide .date {
+  font-size: 1rem;
+  color: #1a5f7a;
+  margin-top: 1.5rem;
+  font-weight: 500;
+}
+
+/* Section Header */
+.section-header {
+  background: #1a5f7a;
+  color: white;
+  padding: 0.3rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 0.8rem;
+}
+
+/* Slide Title */
+.slide-title {
+  font-size: 1.8rem;
+  color: #1a5f7a;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  border-bottom: 3px solid #2e8b57;
+  padding-bottom: 0.5rem;
+}
+
+/* Content Area */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Two Column Layout */
+.columns {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.column {
+  flex: 1;
+}
+
+/* Lists */
+ul, ol {
+  margin-left: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+li {
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+}
+
+li li {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Highlight Box */
+.highlight-box {
+  background: linear-gradient(135deg, #e8f4f8 0%, #d4edda 100%);
+  border-left: 4px solid #2e8b57;
+  padding: 0.8rem 1rem;
+  margin: 0.8rem 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.highlight-box.warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+  border-left-color: #ffc107;
+}
+
+.highlight-box.info {
+  background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+  border-left-color: #17a2b8;
+}
+
+.highlight-box.question {
+  background: linear-gradient(135deg, #e7d4f8 0%, #d4c4e8 100%);
+  border-left-color: #6f42c1;
+}
+
+/* Labels */
+.label {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
+
+.label.green { background: #d4edda; color: #155724; }
+.label.red { background: #f8d7da; color: #721c24; }
+.label.blue { background: #d1ecf1; color: #0c5460; }
+.label.yellow { background: #fff3cd; color: #856404; }
+
+/* Strong Text */
+strong {
+  color: #1a5f7a;
+  font-weight: 600;
+}
+
+/* Emphasis */
+em {
+  color: #2e8b57;
+  font-style: italic;
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.8rem 0;
+  font-size: 0.85rem;
+}
+
+th {
+  background: #1a5f7a;
+  color: white;
+  padding: 0.5rem 0.8rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 0.4rem 0.8rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+tr.highlight {
+  background: #d4edda;
+  font-weight: 600;
+}
+
+/* Diagrams */
+.diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.diagram-box {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  min-width: 140px;
+}
+
+.diagram-box.primary {
+  background: #1a5f7a;
+  color: white;
+}
+
+.diagram-box.secondary {
+  background: #2e8b57;
+  color: white;
+}
+
+.diagram-box.highlight {
+  background: #ffc107;
+  color: #212529;
+  border: 2px solid #e0a800;
+}
+
+.diagram-box.muted {
+  background: #e9ecef;
+  color: #495057;
+  border: 2px dashed #adb5bd;
+}
+
+.diagram-arrow {
+  font-size: 1.5rem;
+  color: #1a5f7a;
+}
+
+/* Checkpoint Timeline */
+.checkpoint-timeline {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 1.5rem 0;
+}
+
+.checkpoint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.checkpoint-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkpoint-circle.active {
+  background: #2e8b57;
+  color: white;
+}
+
+.checkpoint-circle.pending {
+  background: #ffc107;
+  color: #212529;
+}
+
+.checkpoint-circle.future {
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+.checkpoint-label {
+  font-size: 0.8rem;
+  color: #495057;
+  max-width: 100px;
+}
+
+.checkpoint-connector {
+  width: 60px;
+  height: 3px;
+  background: #dee2e6;
+  margin-bottom: 2rem;
+}
+
+/* Footer */
+.slide-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid #dee2e6;
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  margin-top: auto;
+}
+
+/* Agenda Slide */
+.agenda-list {
+  list-style: none;
+  margin-left: 0;
+}
+
+.agenda-list li {
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #e8f4f8 0%, transparent 100%);
+  border-left: 4px solid #1a5f7a;
+  border-radius: 0 8px 8px 0;
+  font-size: 1.1rem;
+}
+
+.agenda-list li:hover {
+  background: linear-gradient(90deg, #d4edda 0%, transparent 100%);
+}
+
+/* Thank You Slide */
+.slide.thank-you {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.slide.thank-you h2 {
+  font-size: 3rem;
+  color: #1a5f7a;
+  margin-bottom: 1rem;
+}
+
+.slide.thank-you p {
+  font-size: 1.3rem;
+  color: #2e8b57;
+}
+
+/* Numbered List with Custom Styling */
+ol.styled {
+  counter-reset: item;
+  list-style: none;
+  margin-left: 0;
+}
+
+ol.styled > li {
+  counter-increment: item;
+  margin-bottom: 0.8rem;
+  padding-left: 2rem;
+  position: relative;
+}
+
+ol.styled > li::before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: #1a5f7a;
+  color: white;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.text-small { font-size: 0.85rem; }
+.text-muted { color: #7f8c8d; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.flex-center { display: flex; justify-content: center; align-items: center; }

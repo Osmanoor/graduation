@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic RAG Query Enhancement - Progress Report</title>
+    <link rel="stylesheet" href="theme.css">
+</head>
+
+<body>
+
+    <!-- ============================================
+     SLIDE 1: TITLE
+     ============================================ -->
+    <div class="slide title-slide">
+        <img src="Fig_logo.jpg" alt="University of Khartoum Logo" class="logo">
+        <h1>Arabic RAG Query Enhancement</h1>
+        <p class="subtitle">Progress Report & Methodology Finalization</p>
+        <p class="authors">Mohammed Elhaj &amp; Osman Bashir</p>
+        <p class="institute">
+            Department of Electrical and Electronic Engineering<br>
+            Faculty of Engineering<br>
+            University of Khartoum
+        </p>
+        <p class="date">January 2, 2026</p>
+    </div>
+
+    <!-- ============================================
+     SLIDE 2: AGENDA
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Overview</span>
+        <h2 class="slide-title">Agenda</h2>
+        <div class="content">
+            <ol class="agenda-list">
+                <li>Progress Update</li>
+                <li>Project Overview</li>
+                <li>Finalized Methodology</li>
+                <li>Project Roadmap</li>
+                <li>Challenges & Open Questions</li>
+                <li>Timeline & Next Steps</li>
+            </ol>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>2 / 18</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 3: WHAT WE'VE ACCOMPLISHED
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Progress Update</span>
+        <h2 class="slide-title">What We've Accomplished</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Literature Review:</strong>
+                    <ul>
+                        <li>Analyzed 15+ papers on RAG, query enhancement, and Arabic NLP</li>
+                        <li>Identified key techniques: HyDE, RQ-RAG, QE-RAG, LevelRAG</li>
+                        <li>Mapped English techniques to Arabic challenges</li>
+                    </ul>
+
+                    <strong>Dataset Analysis:</strong>
+                    <ul>
+                        <li>Evaluated 10+ Arabic datasets (MIRACL, TyDi QA, ARCD, Arabic QA, etc.)</li>
+                        <li>Generated comprehensive comparison report</li>
+                        <li>Identified dataset options for different approaches</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Expert Consultation:</strong>
+                    <ul>
+                        <li>Consulted with Mohamed Rashad (AI Researcher, Saudi Arabia)</li>
+                        <li>Received feedback on approach: simple baseline + query enhancement</li>
+                        <li>Validated checkpoint strategy and scalability plan</li>
+                    </ul>
+
+                    <strong>Methodology Planning:</strong>
+                    <ul>
+                        <li>4-part planning meeting (full transcription available)</li>
+                        <li>Designed system architecture</li>
+                        <li>Documented all decisions and open questions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>3 / 18</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 4: CURRENT STATUS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Progress Update</span>
+        <h2 class="slide-title">Current Status</h2>
+        <div class="content">
+            <div class="highlight-box question">
+                <strong>Current Phase:</strong> Finalizing Our Approach
+            </div>
+
+            <div class="columns mt-2">
+                <div class="column">
+                    <strong>Key Decision Needed:</strong>
+                    <ul>
+                        <li>Technology-oriented vs Problem-oriented approach?</li>
+                        <li>Dataset selection depends on this decision</li>
+                        <li>This meeting aims to get supervisor guidance</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Next Steps (After Decision):</strong>
+                    <ol class="styled">
+                        <li>Finalize approach based on supervisor feedback</li>
+                        <li>Select appropriate dataset</li>
+                        <li>Implement baseline RAG system</li>
+                        <li>Establish evaluation pipeline</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>4 / 18</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 5: PROJECT TITLE & OBJECTIVE
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Project Overview</span>
+        <h2 class="slide-title">Project Title & Objective</h2>
+        <div class="content">
+            <div class="highlight-box">
+                <strong>Title:</strong> Improving Retrieval Recall in Arabic RAG Systems via Query Enhancement
+            </div>
+
+            <strong>Core Hypothesis:</strong>
+            <ul>
+                <li>Standard retrieval fails in Arabic due to <strong>morphological & dialectal gaps</strong></li>
+                <li>Query enhancement can bridge this gap before retrieval</li>
+                <li>Improved queries → Better retrieval → Better RAG performance</li>
+            </ul>
+
+            <div class="highlight-box question mt-2">
+                <strong>Research Question:</strong><br>
+                <em>Can query enhancement techniques improve retrieval recall for Arabic RAG systems, and which
+                    techniques are most effective?</em>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>5 / 18</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 6: PROJECT EVOLUTION
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Project Overview</span>
+        <h2 class="slide-title">Project Evolution: The Pivot</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Original Scope (Oct-Nov 2025):</strong>
+                    <ul>
+                        <li>Broad RAG enhancement</li>
+                        <li>GraphRAG exploration</li>
+                        <li>Agentic workflows</li>
+                        <li>Multiple components</li>
+                    </ul>
+                    <div class="highlight-box warning mt-1">
+                        <span class="label red">Challenge</span> Too complex, multiple variables, unclear contribution
+                    </div>
+                </div>
+                <div class="column">
+                    <strong>Current Scope (Jan 2026):</strong>
+                    <ul>
+                        <li><strong>Focused:</strong> Query Enhancement only</li>
+                        <li>Simple baseline RAG</li>
+                        <li>Modular approach</li>
+                        <li>Clear evaluation</li>
+                    </ul>
+                    <div class="highlight-box mt-1">
+                        <span class="label green">Advantage</span> Manageable, measurable, scalable through experiments
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box info mt-2">
+                <strong>Pivot Rationale:</strong> Based on expert consultation (Mohamed Rashad) and literature analysis
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>6 / 18</span>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+<!-- ============================================
+     SLIDE 7: SYSTEM ARCHITECTURE
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Proposed Methodology</span>
+    <h2 class="slide-title">System Architecture</h2>
+    <div class="content">
+        <div class="diagram" style="flex-direction: column; gap: 0.3rem;">
+            <div class="diagram-box muted">User Query (Arabic/Dialect)</div>
+            <div class="diagram-arrow">↓</div>
+            <div class="diagram-box highlight"><strong>Query Enhancement Layer</strong></div>
+            <div class="diagram-arrow" style="color: #dc3545;">↓ <span
+                    style="font-size: 0.8rem; color: #dc3545; font-weight: 600;">Our Focus</span></div>
+            <div class="diagram-box secondary">Hybrid Retriever (Dense + BM25)</div>
+            <div class="diagram-arrow">↓</div>
+            <div class="diagram-box primary">Retrieved Chunks (Top-10)</div>
+            <div class="diagram-arrow" style="color: #adb5bd;">↓</div>
+            <div class="diagram-box muted">Generator (LLM) [Deferred]</div>
+        </div>
+
+        <div class="columns mt-2">
+            <div class="column"></div>
+            <div class="column">
+                <div class="highlight-box">
+                    <strong>Evaluation Metrics:</strong>
+                    <ul style="margin-bottom: 0;">
+                        <li>Recall@10</li>
+                        <li>NDCG@10</li>
+                        <li>MRR</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="column"></div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>7 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 8: APPROACH OPTIONS
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Methodology Options</span>
+    <h2 class="slide-title">Approach: Two Options</h2>
+    <div class="content">
+        <div class="highlight-box question">
+            <strong>Key Decision:</strong> Which approach should we take?
+        </div>
+
+        <div class="columns mt-1">
+            <div class="column">
+                <strong>Option A: Technology-Oriented</strong>
+                <ul>
+                    <li>Apply techniques first, discover problems they solve</li>
+                    <li><span class="label green">+</span> Safer with existing datasets</li>
+                    <li><span class="label green">+</span> Can discover multiple problems</li>
+                    <li><span class="label green">+</span> Easier to scale experiments</li>
+                    <li><span class="label green">+</span> Aligns with expert advice</li>
+                    <li><span class="label blue">Dataset:</span> MIRACL (Arabic)</li>
+                </ul>
+            </div>
+            <div class="column">
+                <strong>Option B: Problem-Oriented</strong>
+                <ul>
+                    <li>Define specific problem first, then select techniques</li>
+                    <li><span class="label green">+</span> Clearer research narrative</li>
+                    <li><span class="label green">+</span> Targeted contribution</li>
+                    <li><span class="label red">-</span> Requires specific dataset</li>
+                    <li><span class="label red">-</span> Riskier if problem ill-defined</li>
+                    <li><span class="label blue">Dataset:</span> NativeQA or problem-specific</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box warning mt-2">
+            <strong>We need your guidance:</strong> Which approach is more suitable for a graduation project? Should we
+            start with a technique (HyDE, Query Rewriting) or a problem (dialectal mismatch, morphological complexity)?
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>8 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 9: DATASET OPTIONS
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Methodology Options</span>
+    <h2 class="slide-title">Dataset Selection: Depends on Approach</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <div class="highlight-box info">
+                    <strong>If Technology-Oriented → MIRACL</strong>
+                </div>
+                <strong>Why MIRACL?</strong>
+                <ul>
+                    <li>Retrieval-focused task</li>
+                    <li>High-quality annotations</li>
+                    <li>Native speaker queries</li>
+                    <li>Gold passages + hard negatives</li>
+                    <li>Industry standard benchmark</li>
+                </ul>
+                <strong>Statistics:</strong>
+                <ul>
+                    <li>2.1M Arabic Wikipedia passages</li>
+                    <li>~2,896 queries (train/dev/test)</li>
+                </ul>
+                <div class="highlight-box warning" style="margin-top: 0.5rem;">
+                    <strong>Limitation:</strong> MSA-only (no dialects)
+                </div>
+            </div>
+            <div class="column">
+                <div class="highlight-box"
+                    style="background: linear-gradient(135deg, #e7d4f8 0%, #d4c4e8 100%); border-left-color: #6f42c1;">
+                    <strong>If Problem-Oriented → NativeQA or Specific</strong>
+                </div>
+                <strong>Why NativeQA?</strong>
+                <ul>
+                    <li>Dialectal Arabic coverage</li>
+                    <li>Real-world query patterns</li>
+                    <li>Targets specific Arabic challenges</li>
+                </ul>
+                <strong>Or Problem-Specific Dataset:</strong>
+                <ul>
+                    <li>If targeting morphological issues → dataset with morphological annotations</li>
+                    <li>If targeting dialects → multi-dialect corpus</li>
+                    <li>Custom dataset based on defined problem</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>9 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 10: QUERY ENHANCEMENT TECHNIQUES
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Methodology Options</span>
+    <h2 class="slide-title">Query Enhancement Techniques (Candidates)</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <ol class="styled">
+                    <li>
+                        <strong>HyDE (Hypothetical Document Embeddings)</strong>
+                        <ul>
+                            <li>Generate hypothetical MSA document from query</li>
+                            <li>Use generated document for retrieval</li>
+                            <li>Works for both dense and sparse retrieval</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Query Rewriting</strong>
+                        <ul>
+                            <li>Transform dialect queries → MSA</li>
+                            <li>Normalize morphological variations</li>
+                            <li>LLM-based or rule-based</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="column">
+                <ol class="styled" style="counter-reset: item 2;">
+                    <li>
+                        <strong>Query Expansion</strong>
+                        <ul>
+                            <li>Add synonyms, related terms</li>
+                            <li>Handle Arabic morphology (roots, patterns)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Query Decomposition</strong>
+                        <ul>
+                            <li>Break complex queries into sub-queries</li>
+                            <li>Handle multi-hop reasoning</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <div class="highlight-box mt-2">
+                    <strong>First Implementation:</strong> HyDE or Query Rewriting (to be decided after baseline)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>10 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 11: CHECKPOINT STRATEGY
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Project Roadmap</span>
+    <h2 class="slide-title">Checkpoint Strategy</h2>
+    <div class="content">
+        <div class="checkpoint-timeline">
+            <div class="checkpoint">
+                <div class="checkpoint-circle active">CP1</div>
+                <div class="checkpoint-label">Proof of Concept</div>
+            </div>
+            <div class="checkpoint-connector"></div>
+            <div class="checkpoint">
+                <div class="checkpoint-circle pending">CP2</div>
+                <div class="checkpoint-label">Technique Iteration</div>
+            </div>
+            <div class="checkpoint-connector"></div>
+            <div class="checkpoint">
+                <div class="checkpoint-circle pending">CP3</div>
+                <div class="checkpoint-label">Model Generalization</div>
+            </div>
+            <div class="checkpoint-connector"></div>
+            <div class="checkpoint">
+                <div class="checkpoint-circle future">CP4</div>
+                <div class="checkpoint-label">Benchmarking (Optional)</div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <strong>Scalability Strategy:</strong>
+            <ul style="margin-bottom: 0;">
+                <li>Each checkpoint adds a dimension of experiments</li>
+                <li>Versioning: Arabic HyDE v0.1, v0.2, v0.3...</li>
+                <li>Contribution grows with each checkpoint completed</li>
+            </ul>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>11 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 12: CHECKPOINT 1 DETAILS
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Project Roadmap</span>
+    <h2 class="slide-title">Checkpoint 1: Proof of Concept (After Approach Decision)</h2>
+    <div class="content">
+        <div class="highlight-box info">
+            <strong>Goal:</strong> Prove query enhancement improves Arabic RAG retrieval
+        </div>
+
+        <div class="columns mt-1">
+            <div class="column">
+                <strong>Fixed Variables:</strong>
+                <ul>
+                    <li>Single embedding model (BGE-m3, Jina AI, or Qwen - selection in progress)</li>
+                    <li>Single dataset (based on approach decision)</li>
+                    <li>Single query enhancement technique (HyDE or Query Rewriting)</li>
+                </ul>
+
+                <strong>Success Criteria:</strong>
+                <ul>
+                    <li>Measurable improvement in Recall@10, NDCG@10</li>
+                    <li>Clear documentation of what improved and why</li>
+                    <li>Reproducible baseline and enhanced system</li>
+                </ul>
+            </div>
+            <div class="column">
+                <div class="highlight-box">
+                    <strong>Timeline:</strong> 2-3 weeks (after approach finalized)
+                </div>
+
+                <strong>Deliverables:</strong>
+                <ul>
+                    <li>Baseline performance report</li>
+                    <li>Enhanced system performance report</li>
+                    <li>Comparative analysis</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>12 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 13: CHECKPOINTS 2-4
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Project Roadmap</span>
+    <h2 class="slide-title">Checkpoints 2-4: Scaling Strategy</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <strong>Checkpoint 2: Technique Iteration</strong>
+                <ul>
+                    <li>Test multiple query enhancement approaches</li>
+                    <li>Version and compare (HyDE v0.1, v0.2, Query Rewriting, Expansion...)</li>
+                    <li>Identify best-performing configurations</li>
+                </ul>
+
+                <strong>Checkpoint 3: Model Generalization</strong>
+                <ul>
+                    <li>Test across different embedding models</li>
+                    <li>Validate technique-model compatibility</li>
+                    <li>Test on secondary dataset (Arabic QA)</li>
+                </ul>
+            </div>
+            <div class="column">
+                <strong>Checkpoint 4: Benchmarking (Optional)</strong>
+                <ul>
+                    <li>Compare with other RAG systems</li>
+                    <li>Evaluate generation impact (F1, Exact Match)</li>
+                    <li>Test on English datasets (prove language-agnostic)</li>
+                </ul>
+
+                <div class="highlight-box warning mt-2">
+                    <em>Note: Checkpoints 2-4 depend on time available and Checkpoint 1 results</em>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>13 / 18</span>
+    </div>
+</div>
+
+
+<!-- ============================================
+     SLIDE 14: KEY CHALLENGES
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Challenges & Open Questions</span>
+    <h2 class="slide-title">Key Challenges</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <ol class="styled">
+                    <li>
+                        <strong>Dialectical Gap</strong>
+                        <ul>
+                            <li>MIRACL is MSA-only</li>
+                            <li>Real-world queries often dialectal</li>
+                            <li><em>Mitigation:</em> Defer to Checkpoint 2 or use secondary dataset</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Evaluation Granularity</strong>
+                        <ul>
+                            <li>Need to understand <em>what</em> improved, not just <em>that</em> it improved</li>
+                            <li><em>Mitigation:</em> Error analysis, query categorization, case studies</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="column">
+                <ol class="styled" style="counter-reset: item 2;">
+                    <li>
+                        <strong>Resource Constraints</strong>
+                        <ul>
+                            <li>Limited GPU access, API costs, time pressure</li>
+                            <li><em>Mitigation:</em> Use free tiers, prioritize experiments, cache embeddings</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Contribution Clarity</strong>
+                        <ul>
+                            <li>Unclear if adapting techniques or solving problems</li>
+                            <li><em>Mitigation:</em> Clarify after Checkpoint 1 results</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>14 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 15: QUESTIONS FOR SUPERVISOR
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Challenges & Open Questions</span>
+    <h2 class="slide-title">Questions for Supervisor</h2>
+    <div class="content">
+        <ol class="styled">
+            <li>
+                <strong>Approach Decision (Critical):</strong><br>
+                Should we go with technology-oriented (MIRACL) or problem-oriented (NativeQA/specific dataset)?
+            </li>
+            <li>
+                <strong>Scope Confirmation:</strong><br>
+                Is focusing on retrieval metrics (not generation) acceptable for the graduation project?
+            </li>
+            <li>
+                <strong>Problem Definition (if problem-oriented):</strong><br>
+                Which Arabic-specific problem should we target? (dialectal mismatch, morphological complexity, etc.)
+            </li>
+            <li>
+                <strong>Contribution Expectations:</strong><br>
+                What level of contribution is expected? Technique adaptation vs. novel method?
+            </li>
+            <li>
+                <strong>Timeline & Milestones:</strong><br>
+                What are the key deadlines and expected deliverables for the graduation project?
+            </li>
+            <li>
+                <strong>Resources & Support:</strong><br>
+                Any recommendations for computational resources or potential collaborations?
+            </li>
+        </ol>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>15 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 16: PROJECT TIMELINE
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Timeline & Next Steps</span>
+    <h2 class="slide-title">Project Timeline</h2>
+    <div class="content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Key Deliverables</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Literature Review</td>
+                    <td>Oct-Dec 2025</td>
+                    <td>Paper summaries, gap analysis</td>
+                </tr>
+                <tr>
+                    <td>Dataset Analysis</td>
+                    <td>Dec 2025 - Jan 2026</td>
+                    <td>Dataset options report</td>
+                </tr>
+                <tr class="highlight">
+                    <td><strong>Dataset & Baseline Setup</strong></td>
+                    <td><strong>Jan 2026 (Weeks 2-3)</strong></td>
+                    <td><strong>Baseline system, metrics</strong></td>
+                </tr>
+                <tr>
+                    <td>Query Enhancement</td>
+                    <td>Jan-Feb 2026 (Weeks 4-5)</td>
+                    <td>Enhanced system, experiments</td>
+                </tr>
+                <tr>
+                    <td>Analysis & Iteration</td>
+                    <td>Feb 2026 (Weeks 6-7)</td>
+                    <td>Results analysis, refinement</td>
+                </tr>
+                <tr>
+                    <td>Generalization</td>
+                    <td>Feb-Mar 2026 (Optional)</td>
+                    <td>Multi-model, multi-dataset tests</td>
+                </tr>
+                <tr>
+                    <td>Thesis Writing</td>
+                    <td>Mar-Apr 2026</td>
+                    <td>Complete thesis draft</td>
+                </tr>
+                <tr>
+                    <td>Final Review</td>
+                    <td>Apr-May 2026</td>
+                    <td>Thesis submission</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>16 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 17: IMMEDIATE NEXT STEPS
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Timeline & Next Steps</span>
+    <h2 class="slide-title">Immediate Next Steps</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <div class="highlight-box question">
+                    <strong>This Meeting:</strong> Get supervisor guidance on approach
+                </div>
+
+                <strong>After Approach Decision:</strong>
+                <ol class="styled">
+                    <li>
+                        <strong>Finalize Dataset Selection</strong>
+                        <ul>
+                            <li>If tech-oriented → Download MIRACL</li>
+                            <li>If problem-oriented → Select appropriate dataset</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Embedding Model Selection</strong>
+                        <ul>
+                            <li>Review leaderboard for chosen dataset</li>
+                            <li>Test BGE-m3, Jina AI, Qwen on sample queries</li>
+                            <li>Measure Recall@10, inference time</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            <div class="column">
+                <ol class="styled" style="counter-reset: item 2;">
+                    <li>
+                        <strong>Baseline Implementation</strong>
+                        <ul>
+                            <li>Implement dense retrieval (selected embedding model)</li>
+                            <li>Implement sparse retrieval (BM25)</li>
+                            <li>Implement hybrid retrieval</li>
+                            <li>Establish evaluation pipeline</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Query Enhancement</strong>
+                        <ul>
+                            <li>Select first technique (HyDE or Query Rewriting)</li>
+                            <li>Implement enhancement layer</li>
+                            <li>Run Checkpoint 1 experiments</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>17 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 18: SUMMARY & THANK YOU
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Summary</span>
+    <h2 class="slide-title">Summary</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <div class="highlight-box question">
+                    <strong>Project Status:</strong> Finalizing approach, awaiting supervisor guidance
+                </div>
+
+                <strong>Key Decision Needed:</strong>
+                <ul>
+                    <li><strong>Option A:</strong> Technology-oriented → MIRACL dataset</li>
+                    <li><strong>Option B:</strong> Problem-oriented → NativeQA or specific dataset</li>
+                </ul>
+
+                <strong>What's Ready:</strong>
+                <ul>
+                    <li>Literature review completed</li>
+                    <li>Dataset options analyzed</li>
+                    <li>Architecture designed</li>
+                    <li>Checkpoint strategy defined</li>
+                </ul>
+            </div>
+            <div class="column">
+                <strong>Strengths:</strong>
+                <ul>
+                    <li>Clear, focused scope (Query Enhancement)</li>
+                    <li>Scalable through experiments</li>
+                    <li>Strong theoretical foundation</li>
+                    <li>Expert-validated direction</li>
+                </ul>
+
+                <div class="highlight-box mt-2">
+                    <strong>Next Milestone:</strong> Finalize approach → Start Checkpoint 1
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-2">
+            <h2 style="font-size: 2rem; color: #1a5f7a;">Thank you!</h2>
+            <p style="font-size: 1.2rem; color: #2e8b57;">Questions & Discussion</p>
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>18 / 18</span>
+    </div>
+</div>
+
+</body>
+
+</html>
