@@ -599,38 +599,54 @@
 </div>
 
 <!-- ============================================
-     SLIDE 15: QUESTIONS FOR SUPERVISOR
+     SLIDE 15: CURRENT RESEARCH QUESTIONS
      ============================================ -->
 <div class="slide">
     <span class="section-header">Challenges & Open Questions</span>
-    <h2 class="slide-title">Questions for Supervisor</h2>
+    <h2 class="slide-title">Current Research Questions Under Investigation</h2>
     <div class="content">
-        <ol class="styled">
-            <li>
-                <strong>Approach Decision (Critical):</strong><br>
-                Should we go with technology-oriented (MIRACL) or problem-oriented (NativeQA/specific dataset)?
-            </li>
-            <li>
-                <strong>Scope Confirmation:</strong><br>
-                Is focusing on retrieval metrics (not generation) acceptable for the graduation project?
-            </li>
-            <li>
-                <strong>Problem Definition (if problem-oriented):</strong><br>
-                Which Arabic-specific problem should we target? (dialectal mismatch, morphological complexity, etc.)
-            </li>
-            <li>
-                <strong>Contribution Expectations:</strong><br>
-                What level of contribution is expected? Technique adaptation vs. novel method?
-            </li>
-            <li>
-                <strong>Timeline & Milestones:</strong><br>
-                What are the key deadlines and expected deliverables for the graduation project?
-            </li>
-            <li>
-                <strong>Resources & Support:</strong><br>
-                Any recommendations for computational resources or potential collaborations?
-            </li>
-        </ol>
+        <div class="highlight-box info">
+            <strong>Status:</strong> Actively researching these questions and seeking expert guidance from SMEs in the field
+        </div>
+
+        <div class="columns mt-1">
+            <div class="column">
+                <strong>1. Embedding Model Selection</strong>
+                <ul>
+                    <li><em>Question:</em> Which embedding model performs best for Arabic RAG?</li>
+                    <li><em>Candidates:</em> BGE-m3, Jina AI, Qwen, E5</li>
+                    <li><em>Approach:</em> Benchmarking on MIRACL sample queries</li>
+                    <li><em>Criteria:</em> Recall@10, inference time, resource requirements</li>
+                </ul>
+
+                <strong>2. First Query Enhancement Technique</strong>
+                <ul>
+                    <li><em>Question:</em> Which technique to implement first?</li>
+                    <li><em>Top Candidates:</em> HyDE vs. Query Rewriting</li>
+                    <li><em>Consideration:</em> Complexity, Arabic-specific benefits, baseline compatibility</li>
+                </ul>
+            </div>
+            <div class="column">
+                <strong>3. Dialectical Support Strategy</strong>
+                <ul>
+                    <li><em>Challenge:</em> MIRACL is MSA-only, but dialects are crucial for real-world Arabic</li>
+                    <li><em>Options:</em> 
+                        <ul>
+                            <li>Start with MSA, add dialect support in Checkpoint 2</li>
+                            <li>Use Query Rewriting to normalize dialects → MSA</li>
+                            <li>Test on Multi-Native QA as secondary dataset</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <strong>4. Arabic Morphology Handling</strong>
+                <ul>
+                    <li><em>Challenge:</em> Rich morphology (roots, patterns, affixes)</li>
+                    <li><em>Options:</em> Preprocessing, LLM-based normalization, or trust embeddings</li>
+                    <li><em>Approach:</em> Test baseline first, add preprocessing if needed</li>
+                </ul>
+            </div>
+        </div>
     </div>
     <div class="slide-footer">
         <span>Arabic RAG Query Enhancement</span>
@@ -639,7 +655,69 @@
 </div>
 
 <!-- ============================================
-     SLIDE 16: PROJECT TIMELINE
+     SLIDE 16: METHODOLOGICAL DECISIONS
+     ============================================ -->
+<div class="slide">
+    <span class="section-header">Challenges & Open Questions</span>
+    <h2 class="slide-title">Methodological Decisions in Progress</h2>
+    <div class="content">
+        <div class="columns">
+            <div class="column">
+                <strong>5. Evaluation Granularity</strong>
+                <ul>
+                    <li><em>Goal:</em> Understand <em>what</em> improved, not just <em>that</em> it improved</li>
+                    <li><em>Planned Approaches:</em>
+                        <ul>
+                            <li>Error analysis on improved/degraded queries</li>
+                            <li>Query categorization (length, complexity, domain)</li>
+                            <li>Qualitative case studies</li>
+                            <li>Ablation studies on components</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <strong>6. Baseline Definition</strong>
+                <ul>
+                    <li><em>Current Plan:</em> Hybrid (Dense + BM25)</li>
+                    <li><em>Rationale:</em> Represents realistic RAG system</li>
+                    <li><em>Alternative:</em> Compare against MIRACL leaderboard SOTA</li>
+                </ul>
+            </div>
+            <div class="column">
+                <strong>7. Generalization Testing Strategy</strong>
+                <ul>
+                    <li><em>Phased Approach:</em>
+                        <ul>
+                            <li>CP1: Single model, single technique on MIRACL</li>
+                            <li>CP2: Multiple techniques on MIRACL</li>
+                            <li>CP3: Multiple models on MIRACL</li>
+                            <li>CP4: Secondary dataset (Arabic QA)</li>
+                        </ul>
+                    </li>
+                    <li><em>Goal:</em> Prove approach generalizes beyond initial setup</li>
+                </ul>
+
+                <strong>8. Contribution Framing</strong>
+                <ul>
+                    <li><em>Will be clarified after Checkpoint 1 results</em></li>
+                    <li>Technique adaptation vs. problem-solving</li>
+                    <li>Empirical study vs. novel method</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="highlight-box warning mt-2">
+            <strong>Seeking SME Input:</strong> We are actively consulting with AI researchers and Arabic NLP experts to refine these decisions and validate our approach
+        </div>
+    </div>
+    <div class="slide-footer">
+        <span>Arabic RAG Query Enhancement</span>
+        <span>16 / 18</span>
+    </div>
+</div>
+
+<!-- ============================================
+     SLIDE 17: PROJECT TIMELINE
      ============================================ -->
 <div class="slide">
     <span class="section-header">Timeline & Next Steps</span>
@@ -699,12 +777,12 @@
     </div>
     <div class="slide-footer">
         <span>Arabic RAG Query Enhancement</span>
-        <span>16 / 18</span>
+        <span>17 / 19</span>
     </div>
 </div>
 
 <!-- ============================================
-     SLIDE 17: IMMEDIATE NEXT STEPS
+     SLIDE 18: IMMEDIATE NEXT STEPS
      ============================================ -->
 <div class="slide">
     <span class="section-header">Timeline & Next Steps</span>
@@ -712,25 +790,24 @@
     <div class="content">
         <div class="columns">
             <div class="column">
-                <div class="highlight-box question">
-                    <strong>This Meeting:</strong> Get supervisor guidance on approach
+                <div class="highlight-box info">
+                    <strong>Current Focus:</strong> Finalizing technical decisions and starting implementation
                 </div>
 
-                <strong>After Approach Decision:</strong>
+                <strong>This Week:</strong>
                 <ol class="styled">
                     <li>
-                        <strong>Finalize Dataset Selection</strong>
+                        <strong>Finalize Embedding Model</strong>
                         <ul>
-                            <li>If tech-oriented → Download MIRACL</li>
-                            <li>If problem-oriented → Select appropriate dataset</li>
+                            <li>Complete benchmarking on MIRACL sample</li>
+                            <li>Select primary model for Checkpoint 1</li>
                         </ul>
                     </li>
                     <li>
-                        <strong>Embedding Model Selection</strong>
+                        <strong>Dataset Setup</strong>
                         <ul>
-                            <li>Review leaderboard for chosen dataset</li>
-                            <li>Test BGE-m3, Jina AI, Qwen on sample queries</li>
-                            <li>Measure Recall@10, inference time</li>
+                            <li>Download and preprocess MIRACL dataset</li>
+                            <li>Prepare evaluation pipeline</li>
                         </ul>
                     </li>
                 </ol>
@@ -743,15 +820,15 @@
                             <li>Implement dense retrieval (selected embedding model)</li>
                             <li>Implement sparse retrieval (BM25)</li>
                             <li>Implement hybrid retrieval</li>
-                            <li>Establish evaluation pipeline</li>
+                            <li>Document baseline performance</li>
                         </ul>
                     </li>
                     <li>
-                        <strong>Query Enhancement</strong>
+                        <strong>Query Enhancement Planning</strong>
                         <ul>
-                            <li>Select first technique (HyDE or Query Rewriting)</li>
-                            <li>Implement enhancement layer</li>
-                            <li>Run Checkpoint 1 experiments</li>
+                            <li>Finalize first technique selection</li>
+                            <li>Design enhancement layer architecture</li>
+                            <li>Prepare for Checkpoint 1 experiments</li>
                         </ul>
                     </li>
                 </ol>
@@ -760,12 +837,12 @@
     </div>
     <div class="slide-footer">
         <span>Arabic RAG Query Enhancement</span>
-        <span>17 / 18</span>
+        <span>18 / 19</span>
     </div>
 </div>
 
 <!-- ============================================
-     SLIDE 18: SUMMARY & THANK YOU
+     SLIDE 19: SUMMARY & THANK YOU
      ============================================ -->
 <div class="slide">
     <span class="section-header">Summary</span>
@@ -773,14 +850,15 @@
     <div class="content">
         <div class="columns">
             <div class="column">
-                <div class="highlight-box question">
-                    <strong>Project Status:</strong> Finalizing approach, awaiting supervisor guidance
+                <div class="highlight-box info">
+                    <strong>Project Status:</strong> Moving from planning to implementation phase
                 </div>
 
-                <strong>Key Decision Needed:</strong>
+                <strong>Approach Finalized:</strong>
                 <ul>
-                    <li><strong>Option A:</strong> Technology-oriented → MIRACL dataset</li>
-                    <li><strong>Option B:</strong> Problem-oriented → NativeQA or specific dataset</li>
+                    <li>Technology-oriented with MIRACL dataset</li>
+                    <li>Simple baseline + query enhancement layer</li>
+                    <li>Scalable checkpoint strategy</li>
                 </ul>
 
                 <strong>What's Ready:</strong>
@@ -800,8 +878,15 @@
                     <li>Expert-validated direction</li>
                 </ul>
 
-                <div class="highlight-box mt-2">
-                    <strong>Next Milestone:</strong> Finalize approach → Start Checkpoint 1
+                <strong>Active Research:</strong>
+                <ul>
+                    <li>Consulting with SMEs in the field</li>
+                    <li>Investigating open technical questions</li>
+                    <li>Refining methodological decisions</li>
+                </ul>
+
+                <div class="highlight-box mt-1">
+                    <strong>Next Milestone:</strong> Complete Checkpoint 1 (Proof of Concept)
                 </div>
             </div>
         </div>
@@ -813,7 +898,7 @@
     </div>
     <div class="slide-footer">
         <span>Arabic RAG Query Enhancement</span>
-        <span>18 / 18</span>
+        <span>19 / 19</span>
     </div>
 </div>
 
