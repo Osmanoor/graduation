@@ -7,7 +7,7 @@ This chapter provides a comprehensive review of the theoretical foundations and 
 
 \subsection{The Hallucination Problem in Large Language Models}
 
-Large Language Models (LLMs) have demonstrated remarkable capabilities in natural language understanding and generation. However, they suffer from a fundamental limitation: their knowledge is parametric, encoded in model weights during training, making it static and prone to hallucinations \cite{yao2024survey}. When queried about information beyond their training data or requiring up-to-date knowledge, LLMs may generate plausible but factually incorrect responses.
+Large Language Models (LLMs) have demonstrated remarkable capabilities in natural language understanding and generation. However, they suffer from a fundamental limitation: their knowledge is parametric, encoded in model weights during training, making it static and prone to hallucinations \cite{song_2024_a}. When queried about information beyond their training data or requiring up-to-date knowledge, LLMs may generate plausible but factually incorrect responses.
 
 This limitation becomes particularly problematic in domain-specific applications where accuracy is critical. The parametric nature of LLM knowledge means that:
 \begin{enumerate}
@@ -19,12 +19,12 @@ This limitation becomes particularly problematic in domain-specific applications
 
 \subsection{The Standard RAG Architecture}
 
-Retrieval-Augmented Generation (RAG) addresses the hallucination problem by augmenting LLMs with external knowledge retrieval \cite{lewis2020retrieval}. The standard RAG architecture consists of two primary components:
+Retrieval-Augmented Generation (RAG) addresses the hallucination problem by augmenting LLMs with external knowledge retrieval \cite{lewis_2021_retrievalaugmented}. The standard RAG architecture consists of two primary components:
 
 \textbf{The Retriever:} Responsible for finding relevant documents or passages from a knowledge base given a user query. Retrieval methods can be categorized as:
 \begin{itemize}
     \item \textbf{Sparse Retrieval:} Traditional methods like BM25 that rely on exact term matching and statistical term weighting
-    \item \textbf{Dense Retrieval:} Neural methods that encode queries and documents into dense vector representations, enabling semantic similarity matching \cite{karpukhin2020dense}
+    \item \textbf{Dense Retrieval:} Neural methods that encode queries and documents into dense vector representations, enabling semantic similarity matching \cite{karpukhin_2020_dense}
     \item \textbf{Hybrid Retrieval:} Combinations of sparse and dense methods to leverage complementary strengths
 \end{itemize}
 
@@ -55,7 +55,7 @@ This semantic gap directly impacts retrieval recall—the proportion of relevant
 
 \subsection{Query Sensitivity and Noise}
 
-Recent research has highlighted the sensitivity of RAG systems to query formulation. Studies on RAG robustness demonstrate that minor variations in query phrasing can significantly impact retrieval quality \cite{robustness_rag}. Query noise can originate from multiple sources:
+Recent research has highlighted the sensitivity of RAG systems to query formulation. Studies on RAG robustness demonstrate that minor variations in query phrasing can significantly impact retrieval quality \cite{perin_2025_investigating}. Query noise can originate from multiple sources:
 
 \begin{itemize}
     \item \textbf{Typographical errors:} Spelling mistakes and typos that prevent exact matching
@@ -64,7 +64,7 @@ Recent research has highlighted the sensitivity of RAG systems to query formulat
     \item \textbf{Incomplete queries:} Users providing insufficient context or using ambiguous terms
 \end{itemize}
 
-The QE-RAG framework specifically addresses query noise, demonstrating that query enhancement techniques can significantly improve retrieval robustness \cite{qe_rag}. Crucially, the concept of "noise" in English queries (primarily typos and paraphrasing) is analogous to dialectal variations in Arabic—both represent deviations from the standard form present in the knowledge base.
+The QE-RAG framework specifically addresses query noise, demonstrating that query enhancement techniques can significantly improve retrieval robustness \cite{zhang_2025_qerag}. Crucially, the concept of "noise" in English queries (primarily typos and paraphrasing) is analogous to dialectal variations in Arabic—both represent deviations from the standard form present in the knowledge base.
 
 \section{Taxonomy of Advanced RAG Paradigms}
 
@@ -74,11 +74,11 @@ Beyond the standard RAG architecture, researchers have proposed various enhancem
 
 Index-centric methods modify how knowledge is stored and organized to improve retrieval effectiveness:
 
-\textbf{Hierarchical Structures:} RAPTOR \cite{raptor} introduces recursive abstractive processing, organizing documents into tree structures where higher levels contain summaries of lower levels. This enables retrieval at multiple levels of abstraction.
+\textbf{Hierarchical Structures:} RAPTOR \cite{sarthi_2024_raptor} introduces recursive abstractive processing, organizing documents into tree structures where higher levels contain summaries of lower levels. This enables retrieval at multiple levels of abstraction.
 
-\textbf{Graph-Based Indexing:} LightRAG \cite{lightrag} and similar approaches represent knowledge as graphs, capturing relationships between entities and concepts. Graph structures enable multi-hop reasoning and relationship-aware retrieval.
+\textbf{Graph-Based Indexing:} LightRAG \cite{guo_2024_lightrag} and similar approaches represent knowledge as graphs, capturing relationships between entities and concepts. Graph structures enable multi-hop reasoning and relationship-aware retrieval \cite{han_2024_retrievalaugmented}.
 
-\textbf{Proposition-Based Chunking:} Dense X Retrieval \cite{densex} decomposes documents into atomic propositions, creating fine-grained retrieval units that reduce context dilution.
+\textbf{Proposition-Based Chunking:} Dense X Retrieval \cite{chen_2024_dense} decomposes documents into atomic propositions, creating fine-grained retrieval units that reduce context dilution.
 
 While these approaches show promise, they primarily address the storage and indexing side of RAG, requiring significant preprocessing and potentially complex query routing mechanisms.
 
@@ -88,7 +88,7 @@ Process-centric methods introduce reasoning loops and decision-making into the R
 
 \textbf{Iterative Retrieval:} Systems that perform multiple retrieval rounds, refining queries based on initial results or intermediate generation steps.
 
-\textbf{Self-Reflective RAG:} Approaches like Self-RAG \cite{selfrag} that incorporate critique tokens, enabling the model to assess retrieval quality and decide when additional retrieval is needed.
+\textbf{Self-Reflective RAG:} Approaches like Self-RAG \cite{asai_2024_selfrag} that incorporate critique tokens, enabling the model to assess retrieval quality and decide when additional retrieval is needed.
 
 \textbf{Agentic Workflows:} Complex systems that decompose queries, plan retrieval strategies, and orchestrate multiple tools and knowledge sources.
 
@@ -102,9 +102,9 @@ Query enhancement represents a third paradigm: modifying the input query before 
 
 Generative query expansion leverages LLMs to create enhanced or alternative queries:
 
-\textbf{HyDE (Hypothetical Document Embeddings):} Proposed by Gao et al. \cite{hyde}, HyDE instructs an LLM to generate a hypothetical document that would answer the query, then uses this generated document for retrieval instead of the original query. The intuition is that document-to-document similarity is more reliable than query-to-document similarity. HyDE operates in a zero-shot manner, requiring no training data, and has shown effectiveness for both sparse (BM25) and dense retrieval methods.
+\textbf{HyDE (Hypothetical Document Embeddings):} Proposed by Gao et al. \cite{gao_2022_precise}, HyDE instructs an LLM to generate a hypothetical document that would answer the query, then uses this generated document for retrieval instead of the original query. The intuition is that document-to-document similarity is more reliable than query-to-document similarity. HyDE operates in a zero-shot manner, requiring no training data, and has shown effectiveness for both sparse (BM25) and dense retrieval methods.
 
-\textbf{Query2Doc:} Extends the HyDE concept by generating multiple pseudo-documents and combining them with the original query, creating a richer representation for retrieval \cite{query2doc}.
+\textbf{Query2Doc:} Extends the HyDE concept by generating multiple pseudo-documents and combining them with the original query, creating a richer representation for retrieval \cite{wang_2023_query2doc}.
 
 The key trade-off in generative expansion is improved recall versus increased latency and computational cost, as LLM inference is required for each query.
 
@@ -112,9 +112,9 @@ The key trade-off in generative expansion is improved recall versus increased la
 
 Query rewriting transforms the original query into a more effective form:
 
-\textbf{Rewrite-Retrieve-Read:} A framework that explicitly separates query rewriting from retrieval, using an LLM to reformulate queries before searching \cite{rewrite_retrieve_read}.
+\textbf{Rewrite-Retrieve-Read:} A framework that explicitly separates query rewriting from retrieval, using an LLM to reformulate queries before searching \cite{ma_2023_query}.
 
-\textbf{Query Optimization:} Systematic approaches to query transformation, including expansion with synonyms, simplification of complex queries, and normalization of linguistic variations \cite{query_optimization_survey}.
+\textbf{Query Optimization:} Systematic approaches to query transformation, including expansion with synonyms, simplification of complex queries, and normalization of linguistic variations \cite{song_2024_a, louis_2024_query}.
 
 \textbf{Dialect Normalization:} In multilingual contexts, query rewriting can translate dialectal or colloquial queries into the standard form present in the knowledge base.
 
@@ -122,11 +122,11 @@ Query rewriting transforms the original query into a more effective form:
 
 Advanced query enhancement incorporates feedback loops:
 
-\textbf{RQ-RAG (Refining Queries for RAG):} Introduces an "active generator" architecture where the LLM iteratively refines queries based on retrieval results, learning when to stop searching \cite{rqrag}. This approach treats query refinement as a reinforcement learning problem.
+\textbf{RQ-RAG (Refining Queries for RAG):} Introduces an "active generator" architecture where the LLM iteratively refines queries based on retrieval results, learning when to stop searching \cite{chan_2024_rqrag}. This approach treats query refinement as a reinforcement learning problem.
 
-\textbf{Self-RAG:} Incorporates special tokens that enable the model to critique retrieval quality and decide whether to retrieve additional information \cite{selfrag}.
+\textbf{Self-RAG:} Incorporates special tokens that enable the model to critique retrieval quality and decide whether to retrieve additional information \cite{asai_2024_selfrag}.
 
-\textbf{LevelRAG:} Implements a two-tiered architecture with high-level planning (query decomposition, tool selection) and low-level execution (sparse, dense, and web search), demonstrating the value of orchestrating multiple retrieval strategies \cite{levelrag}.
+\textbf{LevelRAG:} Implements a two-tiered architecture with high-level planning (query decomposition, tool selection) and low-level execution (sparse, dense, and web search), demonstrating the value of orchestrating multiple retrieval strategies \cite{wang_2025_levelrag}.
 
 \section{RAG in Morphologically Rich and Low-Resource Languages}
 
@@ -148,9 +148,9 @@ These characteristics create a significant "morphological and dialectal gap" bet
 
 Recent work has begun establishing baselines for Arabic RAG systems:
 
-\textbf{Embedding Models:} Multilingual embedding models like BGE-m3 have shown reasonable performance on Arabic retrieval tasks. The MIRACL benchmark \cite{miracl} provides standardized evaluation for Arabic information retrieval.
+\textbf{Embedding Models:} Multilingual embedding models like BGE-m3 have shown reasonable performance on Arabic retrieval tasks. The MIRACL benchmark \cite{zhang_2023_miracl} provides standardized evaluation for Arabic information retrieval.
 
-\textbf{Chunking Strategies:} Research by Alsubhi et al. \cite{alsubhi2025} demonstrates that sentence-aware chunking outperforms fixed-size chunking for Arabic, suggesting that linguistic structure matters for retrieval quality.
+\textbf{Chunking Strategies:} Research by Alsubhi et al. \cite{alsubhi_2025_optimizing} demonstrates that sentence-aware chunking outperforms fixed-size chunking for Arabic, suggesting that linguistic structure matters for retrieval quality. Additional work by El-Beltagy and Abdallah \cite{elbeltagysamhaar_2024_exploring} has explored RAG applications in Arabic contexts.
 
 \textbf{Hybrid Approaches:} Combining BM25 with dense retrieval has proven effective for Arabic, leveraging the complementary strengths of keyword matching and semantic similarity.
 
