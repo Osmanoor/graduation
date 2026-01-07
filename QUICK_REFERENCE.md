@@ -1,10 +1,19 @@
 # Quick Reference Card
 **Project:** Arabic RAG Query Enhancement  
-**Last Updated:** January 6, 2026
+**Last Updated:** January 7, 2026
 
 ---
 
-## 🎯 Core Decision Summary
+## 📚 Start Here (Read Order)
+
+1. `RESEARCH_CONTEXT_KERNEL.md.md` - Project overview & decisions
+2. `meetings/6.1.2026_meeting_outcomes.md` - Latest decision status
+3. `TASKS.md` - **Current task list with assignments**
+4. `WORKFLOW.md` - **How we work with Kiro**
+
+---
+
+## 🎯 Core Decisions (Confirmed)
 
 | Decision | Choice | Status |
 |----------|--------|--------|

@@ -1,0 +1,64 @@
+{
+  "hooks": [
+    {
+      "id": "daily-standup",
+      "name": "Daily Research Standup",
+      "description": "Check tasks and plan the day",
+      "trigger": {
+        "type": "manual"
+      },
+      "action": {
+        "type": "send-message",
+        "message": "Read TASKS.md and tell me: 1) Which tasks are marked 'In Progress'? 2) Which tasks can I start today based on dependencies? 3) Are there any blocked tasks? Do NOT invent task status - only report what's in the file."
+      }
+    },
+    {
+      "id": "update-experiment-log",
+      "name": "Update Experiment Log",
+      "description": "Document a completed experiment",
+      "trigger": {
+        "type": "manual"
+      },
+      "action": {
+        "type": "send-message",
+        "message": "I need to document an experiment. Ask me these questions one by one: 1) What did you test? (BM25 baseline / Dense baseline / Query enhancement) 2) What were the exact metric values? (Recall@10, NDCG@10, MRR) 3) What dataset subset did you use? 4) What did you learn? Then create a file in experiments/ following the template in experiment-documentation.md steering. Do NOT invent any metric values."
+      }
+    },
+    {
+      "id": "summarize-paper",
+      "name": "Summarize Paper",
+      "description": "Add a paper to literature review",
+      "trigger": {
+        "type": "manual"
+      },
+      "action": {
+        "type": "send-message",
+        "message": "I want to add a paper to our literature review. I'll give you the paper details. Create a summary in papers/[YEAR]_[Title].md following the exact template in paper-analysis.md steering. Only include information I provide or that you can verify from the paper - do NOT invent details about the paper's methodology or results."
+      }
+    },
+    {
+      "id": "sync-decisions",
+      "name": "Sync Decision Status",
+      "description": "Update docs after a meeting or discussion",
+      "trigger": {
+        "type": "manual"
+      },
+      "action": {
+        "type": "send-message",
+        "message": "I had a meeting or discussion and need to update our docs. I'll tell you what was decided. Based ONLY on what I tell you, suggest updates to: 1) TASKS.md if task status changed, 2) RESEARCH_CONTEXT_KERNEL.md.md if decisions changed, 3) research_decisions/open_questions.md if questions were resolved. Do NOT assume any decisions I don't explicitly state."
+      }
+    },
+    {
+      "id": "prepare-supervisor-meeting",
+      "name": "Prepare Supervisor Meeting",
+      "description": "Generate meeting prep materials",
+      "trigger": {
+        "type": "manual"
+      },
+      "action": {
+        "type": "send-message",
+        "message": "Help me prepare for a supervisor meeting. Read TASKS.md and RESEARCH_CONTEXT_KERNEL.md.md, then generate: 1) Tasks completed since last update (only those marked Done), 2) Current blockers (from open_questions.md), 3) Questions we need supervisor input on. Base everything on the actual file contents - do NOT invent progress."
+      }
+    }
+  ]
+}

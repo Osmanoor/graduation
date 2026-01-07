@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "arxiv": {
+      "command": "uv",
+      "args": ["tool", "run", "arxiv-mcp-server", "--storage-path", "./papers/arxiv_downloads"],
+      "env": {},
+      "disabled": false,
+      "autoApprove": ["search_papers", "list_papers", "read_paper", "download_paper"]
+    }
+  }
+}
