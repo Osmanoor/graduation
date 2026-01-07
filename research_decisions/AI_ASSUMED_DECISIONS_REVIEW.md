@@ -1,16 +1,20 @@
-# AI-Assumed Decisions - Requires Human Review
+# AI-Assumed Decisions - Review Complete
 **Created:** January 2, 2026  
-**Purpose:** Document decisions the AI made that should be reviewed/revised  
-**Status:** ⚠️ PENDING HUMAN APPROVAL
+**Reviewed:** January 6, 2026 (3-part meeting)  
+**Purpose:** Document decisions the AI made that were reviewed/revised  
+**Status:** ✅ REVIEW COMPLETE - See `meetings/6.1.2026_meeting_outcomes.md`
 
 ---
 
-## ⚠️ Critical Note
+## ✅ Review Summary
 
-This document lists decisions that were presented as "finalized" in the generated documentation but are actually still **under investigation**. Each item needs human review to either:
-- ✅ **Approve** - Move to finalized decisions
-- ⏳ **Keep Pending** - Mark as under investigation
-- ❌ **Reject** - Remove or revise
+This document was reviewed in a 3-part meeting on January 6, 2026. The full meeting transcription is in `meetings/6.1.2026.md` and structured outcomes are in `meetings/6.1.2026_meeting_outcomes.md`.
+
+**Key Outcomes:**
+- Most architectural decisions were confirmed with nuances
+- Baseline strategy changed: Test Dense and BM25 separately (not just Hybrid)
+- Several items remain "Under Investigation"
+- Documentation updated to reflect "active investigation" state
 
 ---
 
@@ -18,6 +22,7 @@ This document lists decisions that were presented as "finalized" in the generate
 
 ### 1.1 Hybrid Retrieval (Dense + BM25)
 **What I Documented:** "Decision: Implement hybrid retrieval as baseline" (marked as ✅ Finalized)
+**Review Result:** 🔄 **REVISED** - Test all three separately
 
 **Reality from Meeting:** You discussed hybrid as an option, but didn't explicitly finalize it
 

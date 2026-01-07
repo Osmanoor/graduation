@@ -1,6 +1,6 @@
 # Quick Reference Card
 **Project:** Arabic RAG Query Enhancement  
-**Last Updated:** January 2, 2026
+**Last Updated:** January 6, 2026
 
 ---
 
@@ -8,20 +8,21 @@
 
 | Decision | Choice | Status |
 |----------|--------|--------|
-| **Approach** | Technology-oriented | ⏳ Pending supervisor confirmation |
-| **Dataset** | MIRACL (Arabic) | ✅ Finalized |
-| **Architecture** | Simple baseline + query enhancement | ✅ Finalized |
-| **Retriever** | Hybrid (Dense + BM25) | ✅ Finalized |
-| **Embedding Model** | BGE-m3 / Jina AI / Qwen | ⏳ Selection in progress |
-| **First Technique** | HyDE or Query Rewriting | ⏳ After baseline |
-| **Evaluation** | Recall@10, NDCG@10 | ✅ Finalized |
+| **Approach** | Technology-oriented | ✅ Confirmed |
+| **Dataset** | MIRACL (Arabic) | ✅ Confirmed (~95% confidence) |
+| **Secondary Dataset** | ARABICA | ⏳ Potential/Long-term only |
+| **Baseline** | Test Dense, BM25, (Hybrid) separately | ✅ Confirmed |
+| **Embedding Model** | BGE-m3/E5 vs Jina | ⏳ Under Investigation |
+| **First Technique** | TBD after baseline | ⏳ Under Investigation |
+| **Evaluation** | Recall@10, NDCG@10, MRR | ✅ Confirmed |
+| **Timeline** | ~6 weeks (until Feb 15) | ✅ Confirmed (optimistic) |
 
 ---
 
-## 📁 Essential Documents (Read These First)
+## 📁 Essential Documents (Read Order)
 
-1. **`RESEARCH_CONTEXT_KERNEL.md.md`** - Project overview & current status
-2. **`meetings/2.1.2026_meeting_outcomes.md`** - All decisions from planning meeting
+1. **`meetings/6.1.2026_meeting_outcomes.md`** - Latest decision clarifications (READ FIRST)
+2. **`RESEARCH_CONTEXT_KERNEL.md.md`** - Project overview & current status
 3. **`research_decisions/technical_specifications.md`** - Implementation details
 4. **`research_decisions/open_questions.md`** - What needs to be decided
 
@@ -30,126 +31,103 @@
 ## 🏗️ System Architecture (One-Liner)
 
 ```
-Query → [Enhancement Layer] → [Dense + BM25] → Top-10 Chunks → Evaluate
+Query → [Enhancement Layer] → [Dense OR BM25] → Top-10 Chunks → Evaluate
 ```
 
-**Our Focus:** The Enhancement Layer
+**Our Focus:** The Enhancement Layer  
+**Baseline:** Test Dense and BM25 separately (not just Hybrid)
 
 ---
 
-## 📊 Project Checkpoints
+## 📊 Project Timeline
 
-| Checkpoint | Goal | Timeline | Status |
-|------------|------|----------|--------|
-| **CP1** | Proof of Concept | 2-3 weeks | 🔄 Current |
-| **CP2** | Technique Iteration | 2-3 weeks | ⏳ Next |
-| **CP3** | Model Generalization | 2-3 weeks | ⏳ Future |
-| **CP4** | Benchmarking | Optional | ⏳ Future |
+| Phase | Goal | Timeline | Status |
+|-------|------|----------|--------|
+| **Baseline** | Dense + BM25 setup | Weeks 1-3 | 🔄 Current |
+| **Enhancement** | First technique | Weeks 4-5 | ⏳ Next |
+| **Analysis** | Documentation | Week 6 | ⏳ Future |
+
+**Deadline:** February 15, 2026 (before Ramadan)
 
 ---
 
-## 🎓 Query Enhancement Techniques
+## ⏳ What's Still Under Investigation
+
+1. **Embedding Model** - Open Source (BGE-m3, E5) vs Closed Source (Jina)
+   - Tradeoff: Free but slow vs Fast but costs
+2. **First Technique** - Decide after baseline analysis
+3. **Hierarchical Structures** - Needs feasibility study
+4. **Arabic LLMs** - Current suggestions weak, need research
+
+---
+
+## 🎓 Query Enhancement Techniques (Candidates)
 
 1. **HyDE** - Generate hypothetical document, use for retrieval
-2. **Query Rewriting** - Transform dialect → MSA
+2. **Query Rewriting** - Normalize/improve query
 3. **Query Expansion** - Add synonyms, handle morphology
 4. **Query Decomposition** - Break complex queries into sub-queries
 
-**First to implement:** HyDE or Query Rewriting (TBD)
+**Selection:** After baseline is established and errors analyzed
 
 ---
 
 ## 📅 This Week's Tasks
 
-- [ ] Finalize embedding model (BGE-m3 / Jina AI / Qwen)
-- [ ] Download & preprocess MIRACL dataset
-- [ ] Implement baseline RAG (Dense + BM25)
-- [ ] Set up evaluation pipeline
-- [ ] Document baseline performance
+- [x] Update documentation to reflect actual decisions
+- [ ] Research embedding model costs/performance
+- [ ] Prepare task list for parallel work
+- [ ] Download MIRACL dataset
+- [ ] Set up development environment
 
 ---
 
-## ❓ Questions for Supervisor (Today)
+## ⚠️ Key Challenges
 
-1. Technology-oriented vs. Problem-oriented approach?
-2. Retrieval-only scope acceptable?
-3. Dialectical support: now or later?
-4. Expected contribution level?
-5. Key deadlines and milestones?
-6. Resource recommendations?
+1. **Scale:** MIRACL = 2.1M passages (~50GB storage)
+2. **Dialectical:** Both datasets are MSA-only (can't test dialects directly)
+3. **Iteration Speed:** Open Source embedding = slow; Closed Source = costs
+4. **Timeline:** 6 weeks is optimistic
 
----
-
-## 📝 Today's Deliverables
-
-- [x] Meeting outcomes documented
-- [x] Technical specifications written
-- [x] Open questions cataloged
-- [x] Chapter 2 generated (LaTeX)
-- [x] Presentation slides created (LaTeX)
-- [ ] Supervisor meeting completed
-- [ ] Feedback integrated
+**Mitigations:**
+- Google Drive Pro (2TB) for storage
+- Google Colab Pro for GPU
+- Smaller subsets for prototyping
 
 ---
 
-## 🔗 Quick Links
+## 📝 Key Insights from 6/1/2026 Meeting
 
-- **Full Meeting Transcription:** `meetings/2.1.2026.md`
-- **Expert Consultation:** `meetings/Consultation with Mohammed Rashad.md`
-- **Chapter 2:** `University_of_Khartoum__EEE_bachelor_s_thesis_template/Chapters/chapter2_generated.tex`
-- **Presentation:** `presentations/supervisor_meeting_2jan2026.tex`
-- **Generation Summary:** `meetings/GENERATION_SUMMARY.md`
-
----
-
-## 🚀 Compilation Quick Commands
-
-### Presentation
-```bash
-cd presentations
-pdflatex supervisor_meeting_2jan2026.tex
-```
-
-### Chapter 2 (Full Thesis)
-```bash
-cd University_of_Khartoum__EEE_bachelor_s_thesis_template
-pdflatex 1-main.tex
-bibtex 1-main
-pdflatex 1-main.tex
-pdflatex 1-main.tex
-```
-
----
-
-## 💡 Key Insights
-
-1. **Simplicity wins:** Simple baseline + one layer beats complex architectures
-2. **Scale through experiments:** More experiments = more contribution
-3. **MIRACL is gold standard:** Best retrieval-focused Arabic dataset
-4. **Checkpoints provide flexibility:** Can stop at any checkpoint with valid contribution
-5. **Documentation is critical:** Everything is documented for reproducibility
-
----
-
-## ⚠️ Known Challenges
-
-1. **Dialectical gap:** MIRACL is MSA-only
-2. **Evaluation granularity:** Need to understand *what* improved
-3. **Resource constraints:** Limited GPU, API costs, time
-4. **Contribution clarity:** Will clarify after CP1 results
+1. Test Dense and BM25 **separately** (not just Hybrid)
+2. Dialectical is NOT primary focus (datasets are MSA)
+3. Documentation is **critical** - every experiment fully documented
+4. Timeline is "optimistic" - be realistic
+5. Embedding model decision is a side task, don't block main work
 
 ---
 
 ## 📞 For AI Agents
 
 **Before making suggestions:**
-1. Check `RESEARCH_CONTEXT_KERNEL.md.md` for current status
-2. Check `meetings/2.1.2026_meeting_outcomes.md` for decisions
-3. Check `research_decisions/open_questions.md` for pending items
-4. Don't assume - we've documented everything!
+1. Read `meetings/6.1.2026_meeting_outcomes.md` FIRST
+2. Check what's "Under Investigation" vs "Confirmed"
+3. Don't assume - we've documented our uncertainty!
+4. Mark AI suggestions clearly as suggestions, not decisions
+
+**Key Principle:** We are in "active investigation" mode, not "blind implementation" mode.
 
 ---
 
-**Status:** ✅ Ready for supervisor meeting  
-**Next Milestone:** Checkpoint 1 completion (2-3 weeks)  
-**Last Updated:** January 2, 2026
+## 🔗 Quick Links
+
+- **Latest Decisions:** `meetings/6.1.2026_meeting_outcomes.md`
+- **Full Meeting (6/1):** `meetings/6.1.2026.md`
+- **Technical Specs:** `research_decisions/technical_specifications.md`
+- **Open Questions:** `research_decisions/open_questions.md`
+- **AI Assumptions Review:** `research_decisions/AI_ASSUMED_DECISIONS_REVIEW.md`
+
+---
+
+**Status:** ✅ Updated after 6/1/2026 review meeting  
+**Next Milestone:** Baseline implementation (Weeks 1-3)  
+**Last Updated:** January 6, 2026

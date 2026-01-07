@@ -1,316 +1,289 @@
 # Open Questions & Research Challenges
-**Last Updated:** 2/1/2026  
-**Status:** Living document - updated as questions are resolved
+**Last Updated:** 6/1/2026  
+**Status:** Updated after decision review meeting
 
 ---
 
-## Critical Decisions (Pending Supervisor Input)
+## ✅ Resolved Questions (from 6/1/2026 Meeting)
 
 ### 1. Problem-Oriented vs. Technology-Oriented Approach
-**Question:** Should we pre-define a specific problem (e.g., dialectical mismatch) or apply techniques and discover what they solve?
+**Status:** ✅ RESOLVED - Technology-Oriented
 
-**Current Stance:** Technology-oriented (apply techniques, analyze improvements)
+**Decision:** Apply techniques, discover what problems they solve.
 
-**Arguments For Technology-Oriented:**
-- Safer approach with existing datasets
+**Rationale:**
+- More flexibility for engineers
 - Can discover multiple problems solved by one technique
-- Easier to scale experiments
-- Aligns with Mohamed Rashad's advice (simple baseline + layer)
-
-**Arguments For Problem-Oriented:**
-- Clearer research narrative
-- More targeted contribution
-- Better alignment with specific Arabic challenges
-- Easier to justify technique selection
-
-**Decision Needed By:** Today's supervisor meeting
-
-**Impact:** Affects dataset selection, technique prioritization, paper framing
+- Aligns with Mohamed Rashad's advice
 
 ---
 
-### 2. Embedding Model Selection
-**Question:** Which embedding model should we use for baseline?
+### 2. Baseline Retrieval Strategy
+**Status:** ✅ RESOLVED - Test All Three Separately
 
-**Candidates:**
-1. **BGE-m3** - Safe, widely used, open-source
-2. **Jina AI** - Good Arabic performance, API-based
-3. **Qwen** - Recent, multilingual
-4. **E5** - Alternative baseline
+**Decision:** Test Dense, BM25, and optionally Hybrid as separate baselines.
 
-**Evaluation Criteria:**
-- Arabic performance on MIRACL benchmark
-- Resource requirements (cost, compute)
-- Open-source vs. closed-source trade-offs
-
-**Next Steps:**
-- Review MIRACL leaderboard
-- Test top 2-3 models on sample queries
-- Measure Recall@10, inference time, cost
-
-**Decision Needed By:** End of this week
-
-**Impact:** Affects baseline performance, experiment reproducibility, resource budget
+**Rationale:**
+- Testing separately gives more insight into where improvements come from
+- Papers often test both effects independently
+- Hybrid is optional third comparison
 
 ---
 
-### 3. First Query Enhancement Technique
+### 3. Evaluation Metrics
+**Status:** ✅ RESOLVED - Recall@10, NDCG@10, MRR
+
+**Decision:** Use all three metrics, can expand later.
+
+**Rationale:**
+- MRR (AI suggestion) was explicitly approved
+- Metrics are computationally cheap
+- Start with three, expand if needed
+
+---
+
+### 4. ARABICA as Secondary Dataset
+**Status:** ✅ RESOLVED - Potential/Long-term Only
+
+**Decision:** Not committed for short-term, only for future generalization.
+
+**Rationale:**
+- Focus on near-term decisions
+- Defer far-term decisions until clearer picture emerges
+
+---
+
+### 5. Deferring Generation Evaluation
+**Status:** ✅ RESOLVED - Confirmed
+
+**Decision:** Focus on retrieval metrics only initially.
+
+**Rationale:**
+- MIRACL is retrieval-focused
+- Can add generation in optional later checkpoints
+
+---
+
+### 6. Timeline
+**Status:** ✅ RESOLVED - ~6 Weeks (Until Feb 15, 2026)
+
+**Decision:** 
+- Average case: Complete Checkpoint 1 + some iteration
+- Best case: Complete Checkpoint 1 and 2
+- Acknowledged as "optimistic"
+
+---
+
+## ⏳ Still Under Investigation
+
+### 1. Embedding Model Selection
+**Status:** ⏳ Under Investigation - Research Needed
+
+**Question:** Which embedding model should we use?
+
+**Options:**
+| Model | Type | Pros | Cons |
+|-------|------|------|------|
+| BGE-m3 | Open Source | Free, widely used | Slow iteration |
+| E5 | Open Source | Good benchmarks | Slow iteration |
+| Jina AI | Closed Source | Fast iteration, good Arabic | API costs |
+
+**Key Tradeoff:** Iteration speed vs cost
+- Open Source: Hours for embedding large corpus
+- Closed Source: API calls, fast but costs money
+
+**Approach:** Keep as side task, don't block main work. Research actual benchmarks.
+
+**Action Items:**
+- [ ] Research Open Source vs Closed Source performance gap for Arabic
+- [ ] Calculate embedding costs for MIRACL corpus (~2.1M passages)
+- [ ] Consider: Open Source for experiments, Jina for final results
+
+---
+
+### 2. First Query Enhancement Technique
+**Status:** ⏳ Under Investigation - Decide After Baseline
+
 **Question:** Which technique should we implement first?
 
 **Candidates:**
-1. **HyDE (Hypothetical Document Embeddings)**
-   - Pros: Well-established, works for both dense and sparse
-   - Cons: Requires Arabic LLM, hallucination concerns
-   - Complexity: Medium
+1. **HyDE** - Generate hypothetical document
+2. **Query Rewriting** - Normalize/improve query
+3. **Query Expansion** - Add synonyms, morphology
+4. **Query Decomposition** - Break complex queries
 
-2. **Query Rewriting (Dialect → MSA)**
-   - Pros: Directly addresses Arabic challenge
-   - Cons: Requires dialectical dataset for testing
-   - Complexity: Medium
+**Approach:**
+1. Build baseline first
+2. Analyze errors from baseline
+3. Research papers that used MIRACL with query enhancement
+4. Select based on: baseline errors, paper precedents, feasibility
 
-3. **Query Expansion**
-   - Pros: Simple, rule-based possible
-   - Cons: May add noise, requires Arabic morphology handling
-   - Complexity: Low
-
-4. **Query Decomposition**
-   - Pros: Handles complex queries
-   - Cons: Requires orchestration, more complex
-   - Complexity: High
-
-**Current Preference:** HyDE or Query Rewriting
-
-**Decision Needed By:** After baseline is established
-
-**Impact:** Affects implementation timeline, paper narrative, contribution clarity
+**Lead:** Found paper about "efficient generation augmented query rewriter" citing MIRACL - needs reading.
 
 ---
 
-## Technical Challenges
+### 3. Hierarchical Structures
+**Status:** ⏳ Interesting but Needs Feasibility Study
 
-### 4. Dialectical Support
-**Challenge:** MIRACL is MSA-only, but Arabic dialects are a major real-world challenge
+**Question:** Can we implement Mohamed Rashad's suggestion about context injection?
 
-**Questions:**
-- Should we defer dialectical support to Checkpoint 2?
-- Should we use Multi-Native QA dataset instead?
-- Can we test dialect handling without a dialectical dataset?
-- Should we create synthetic dialectical queries?
+**Idea:** Provide LLM with knowledge base structure awareness to improve query formulation.
 
-**Potential Solutions:**
-1. Start with MSA (MIRACL), add dialect support later
-2. Use Query Rewriting to normalize dialects → MSA
-3. Test on Multi-Native QA as secondary dataset
-4. Generate synthetic dialectical queries from MIRACL
+**Challenges:**
+- Does this require re-embedding the corpus?
+- Is it feasible given our constraints?
+- Is it too complex for our scope?
 
-**Trade-offs:**
-- MSA-only: Easier to start, but misses key Arabic challenge
-- Dialectical: More impactful, but harder to evaluate, smaller datasets
-
-**Status:** Deferred pending supervisor input
+**Current Stance:** Defer, focus on simpler query enhancement first.
 
 ---
 
-### 5. Synthetic Data Generation
-**Challenge:** Synthetic queries may be too semantically similar to documents
+### 4. Arabic LLM Selection
+**Status:** ⏳ Under Investigation - Current Suggestions Weak
 
-**Questions:**
-- Is synthetic data viable for query enhancement research?
-- How to avoid semantic similarity bias?
-- Can we use LLMs to generate diverse queries?
-- Should we use templates or free-form generation?
+**Question:** Which Arabic LLM should we use for query enhancement?
 
-**Concerns:**
-- Queries generated from documents → too easy to retrieve
-- Doesn't reflect real user queries (natural mismatch)
-- May not test query enhancement effectively
+**AI Suggested:** Jais, AceGPT, Gemini 1.5 Pro, GPT-4
 
-**Potential Solutions:**
-1. Generate queries without showing documents (like MIRACL)
-2. Use diverse prompts to increase query variety
-3. Add noise (typos, paraphrasing) to synthetic queries
-4. Validate synthetic data against human-written queries
+**Problem:** These may not be the best options available now.
 
-**Status:** Not critical for Checkpoint 1 (using MIRACL), revisit if needed
+**Action:** Research stronger Arabic LLM models.
 
 ---
 
-### 6. Hierarchical Structures (RAPTOR, LevelRAG)
-**Challenge:** How to integrate hierarchical approaches with retrieval-only evaluation?
+### 5. Meta-data Filtering Integration
+**Status:** ⏳ New Research Direction Identified
 
-**Questions:**
-- Can we test RAPTOR-style chunking with Recall@10 metrics?
-- Does hierarchical indexing improve retrieval or just generation?
-- How to provide "knowledge base structure" to LLM (Mohamed Rashad's suggestion)?
-- Is this too complex for our scope?
+**Question:** Can we combine query enhancement with meta-data filtering?
 
-**Mohamed Rashad's Feedback:**
-- Hierarchical structures are overly complex
-- Better to focus on simple baseline + query enhancement
-- Knowledge-aware RAG is interesting but not priority
+**Idea:** If MIRACL has meta-data columns, we could:
+- Use query enhancement to identify relevant sections
+- Filter 2.1M passages down to relevant subset
+- Potentially exponential improvement
 
-**Current Stance:** Defer hierarchical approaches, focus on query enhancement
-
-**Potential Future Work:**
-- Context injection: Provide LLM with corpus summary/tree
-- Test if knowledge awareness improves query formulation
-- Compare with RAPTOR in Checkpoint 5 (benchmarking)
-
-**Status:** Deferred, not critical for core contribution
+**Dependency:** Check if MIRACL has useful meta-data columns.
 
 ---
 
-### 7. Arabic Morphology Handling
-**Challenge:** Arabic has rich morphology (roots, patterns, affixes)
+## Technical Challenges (Ongoing)
 
-**Questions:**
-- Should we use Arabic-specific tokenization (Farasa, CAMeL Tools)?
-- Should we apply stemming/lemmatization?
-- How to handle spelling variations (Hamza, Ya, Alif)?
-- Can embedding models handle morphology automatically?
+### 6. Scale Challenge
+**Challenge:** MIRACL has 2.1 Million Arabic Wikipedia passages
 
-**Potential Solutions:**
-1. **Preprocessing:** Normalize spelling, apply stemming
-2. **LLM-based:** Use query rewriting to standardize
-3. **Embedding-based:** Trust multilingual embeddings to handle it
-4. **Hybrid:** Combine preprocessing + embeddings
+**Implications:**
+- ~50GB storage required
+- Embedding takes significant time/cost
+- Need careful resource planning
 
-**Trade-offs:**
-- Preprocessing: Explicit control, but may lose nuance
-- LLM-based: Flexible, but adds latency and cost
-- Embedding-based: Simple, but less control
+**Mitigations:**
+- Google Drive Pro (2TB) for storage
+- Google Colab Pro for GPU
+- Smaller subsets for prototyping (if not misleading)
 
+---
+
+### 7. Dialectical Support
+**Challenge:** Both MIRACL and ARABICA are MSA-only
+
+**Implication:** We cannot directly test dialectical improvements.
+
+**New Understanding:**
+- Dialectical mismatch was originally a key problem
+- But our datasets don't support testing this
+- Our techniques may still help with dialects (can't measure)
+- If approach improves Arabic AND English, that's a strong contribution
+
+**Status:** Not primary focus anymore.
+
+---
+
+### 8. Arabic Morphology Handling
 **Status:** Test with baseline first, add preprocessing if needed
 
+**Question:** How to handle Arabic morphology?
+
+**Options:**
+1. **Preprocessing:** Normalize spelling, apply stemming
+2. **LLM-based:** Use query rewriting to standardize
+3. **Embedding-based:** Trust multilingual embeddings
+4. **Hybrid:** Combine approaches
+
+**Approach:** Start simple, add complexity if needed.
+
 ---
 
-### 8. Evaluation Granularity
-**Challenge:** How to understand *what* improved, not just *that* it improved?
-
-**Questions:**
-- How to analyze which query types benefited from enhancement?
-- How to identify failure cases?
-- Should we categorize queries (simple, complex, dialectical, etc.)?
-- How to measure improvement beyond aggregate metrics?
-
-**Potential Solutions:**
-1. **Error Analysis:** Manually review improved/degraded queries
-2. **Query Categorization:** Group by length, complexity, domain
-3. **Ablation Studies:** Test individual components
-4. **Qualitative Analysis:** Case studies of interesting examples
-
-**Importance:** Critical for understanding contribution and writing paper
-
+### 9. Evaluation Granularity
 **Status:** Plan for this in experiment design
 
----
+**Question:** How to understand *what* improved, not just *that* it improved?
 
-## Methodological Questions
+**Solutions:**
+1. Error analysis: Review improved/degraded queries
+2. Query categorization: Group by length, complexity, domain
+3. Ablation studies: Test individual components
+4. Qualitative analysis: Case studies
 
-### 9. Baseline Definition
-**Question:** What constitutes a "fair" baseline?
-
-**Options:**
-1. **Minimal:** BM25 only (sparse retrieval)
-2. **Standard:** Dense retrieval with off-the-shelf embeddings
-3. **Hybrid:** Dense + BM25 (our current plan)
-4. **SOTA:** Best-performing system on MIRACL leaderboard
-
-**Trade-offs:**
-- Minimal: Easy to beat, but less impressive
-- Standard: Reasonable comparison
-- Hybrid: More realistic, but harder to beat
-- SOTA: Impressive if we beat it, but risky
-
-**Current Plan:** Hybrid (Dense + BM25) as baseline
-
-**Justification:** Represents realistic RAG system, allows fair comparison
+**Importance:** Critical for understanding contribution and writing paper.
 
 ---
 
-### 10. Generalization Testing
-**Question:** How to prove our approach generalizes beyond MIRACL?
+### 10. Prototyping with Subsets
+**Status:** Allowed but with caution
 
-**Options:**
-1. Test on secondary dataset (Arabic QA)
-2. Test on different embedding models
-3. Test on different query enhancement techniques
-4. Test on dialectical dataset (Multi-Native QA)
-5. Test on English datasets (prove technique is language-agnostic)
+**Question:** Can we use smaller subsets for faster iteration?
 
-**Current Plan:**
-- Checkpoint 1: MIRACL only
-- Checkpoint 2: Multiple techniques on MIRACL
-- Checkpoint 3: Multiple models on MIRACL
-- Checkpoint 4: Secondary dataset (Arabic QA)
-- Checkpoint 5: (Optional) English datasets
+**Decision:** Yes, but must ensure subsets don't give misleading results.
 
-**Status:** Phased approach, prioritize depth over breadth initially
+**Use Cases:**
+- Technique exploration (HyDE vs Query Rewriting)
+- Debugging and development
+- NOT for final results
 
 ---
+
+## Questions for Future Consideration
 
 ### 11. Contribution Framing
 **Question:** What is our primary contribution?
 
 **Options:**
-1. **Technique Adaptation:** Adapting English techniques (HyDE, etc.) to Arabic
-2. **Problem Solving:** Solving dialectical/morphological challenges in Arabic RAG
-3. **Empirical Study:** Comprehensive evaluation of query enhancement for Arabic
-4. **System Building:** Building a better Arabic RAG system
-5. **Benchmark:** Creating new evaluation framework for Arabic query enhancement
+1. Technique adaptation (English → Arabic)
+2. Empirical study of query enhancement for Arabic
+3. System building (better Arabic RAG)
 
-**Current Uncertainty:** Depends on results and approach (problem vs. tech-oriented)
-
-**Ideal Contribution:** "We show that query enhancement technique X improves Arabic RAG retrieval by Y%, particularly for Z types of queries, addressing the W challenge in Arabic NLP."
-
-**Status:** Will clarify after Checkpoint 1 results
+**Status:** Will clarify after Checkpoint 1 results.
 
 ---
 
-## Resource & Practical Challenges
+### 12. Generalization Testing
+**Question:** How to prove approach generalizes?
 
-### 12. Computational Budget
-**Question:** How to manage computational costs?
+**Options:**
+1. Test on ARABICA (secondary dataset)
+2. Test on different embedding models
+3. Test on English datasets (language-agnostic proof)
 
-**Constraints:**
-- Limited GPU access
-- API costs for closed-source models
-- Time constraints (graduation deadline)
-
-**Strategies:**
-1. Use free tiers (Jina AI, Google Colab)
-2. Prioritize experiments (don't test everything)
-3. Use smaller subsets for prototyping
-4. Cache embeddings to avoid recomputation
-
-**Status:** Monitor costs, adjust strategy as needed
+**Status:** Phased approach, prioritize depth over breadth initially.
 
 ---
 
-### 13. Time Management
-**Question:** How to balance depth vs. breadth given time constraints?
+## Summary of Status
 
-**Priorities:**
-1. **Must Have:** Baseline + one technique on MIRACL
-2. **Should Have:** Multiple techniques, secondary dataset
-3. **Nice to Have:** Multiple models, dialectical support, generation evaluation
-
-**Current Plan:** Focus on Checkpoint 1, scale based on time available
-
-**Status:** Adjust based on supervisor feedback and progress
-
----
-
-## Questions for Supervisor (Today's Meeting)
-
-1. **Approach:** Do you prefer problem-oriented or technology-oriented approach?
-2. **Dialectical:** Should we prioritize dialectical support or defer it?
-3. **Scope:** Is focusing on retrieval (not generation) acceptable for graduation project?
-4. **Contribution:** What level of contribution is expected (technique adaptation vs. novel method)?
-5. **Timeline:** What are the key milestones and deadlines?
-6. **Resources:** Any recommendations for computational resources or collaborations?
+| Question | Status |
+|----------|--------|
+| Approach (Tech vs Problem) | ✅ Resolved |
+| Baseline Strategy | ✅ Resolved |
+| Evaluation Metrics | ✅ Resolved |
+| Secondary Dataset | ✅ Resolved |
+| Generation Deferral | ✅ Resolved |
+| Timeline | ✅ Resolved |
+| Embedding Model | ⏳ Under Investigation |
+| First Technique | ⏳ Under Investigation |
+| Hierarchical Structures | ⏳ Under Investigation |
+| Arabic LLMs | ⏳ Under Investigation |
+| Meta-data Filtering | ⏳ New Direction |
 
 ---
 
-**Document Status:** ✅ Complete  
-**Next Update:** After supervisor meeting (today)
+**Document Status:** ✅ Updated after 6/1/2026 meeting  
+**Next Update:** After baseline is established
