@@ -20,34 +20,46 @@
 
 1. **Open Kiro** in this project folder
 2. **Trigger "Daily Research Standup" hook** (in Agent Hooks panel)
-   - This will ask Kiro to check your tasks and suggest focus areas
-3. **Check `TASKS.md`** for your assigned tasks
-4. **Update task status** as you work
+   - Kiro will read TASKS.md and show available tasks
+   - For each task, you'll see its Context Files
+   - Choose a task to work on
+   - Kiro will summarize the task's Why, Deliverables, and what files to reference
+3. **Read the Context Files** listed for your chosen task
+4. **Start working**
 
-### During Coding/Implementation
+### During Work
 
-**Option A: Use Kiro (Preferred)**
-- For baseline implementation: Type `#baseline-implementation` in chat to load coding patterns
-- For debugging: Just describe the issue, Kiro has project context
-- For paper research: Use arXiv MCP - ask "Search arXiv for [topic]"
+**Use Kiro for:**
+- Coding help: Type `#baseline-implementation` for code patterns
+- Paper research: Use arXiv MCP - "Search arXiv for [topic]"
+- Questions: Ask about the project (Kiro has context from steering)
 
-**Option B: Work Outside Kiro**
-- That's fine! Just document your work
-- When done, use "Update Experiment Log" hook to document results
+**Work outside Kiro if preferred:**
+- Google Colab experiments
+- Reading papers
+- Team discussions
 
-### After Completing an Experiment
+### After Completing Work
 
-1. **Trigger "Update Experiment Log" hook**
-2. Answer the prompts about what you tested and results
-3. Kiro will create a doc in `experiments/exp_XXX.md`
-4. **Update `TASKS.md`** - mark task as done
+**For experiments:**
+1. Trigger **"Update Experiment Log"** hook
+2. Provide your actual metric values
+3. Kiro creates experiment doc + updates TASKS.md outcomes
+
+**For any task:**
+1. Trigger **"Complete Task"** hook
+2. Confirm deliverables and outcomes
+3. Kiro updates:
+   - Task status in TASKS.md
+   - Outcomes section
+   - Related context files
+   - Notes which tasks are now unblocked
 
 ### After a Meeting/Discussion
 
-1. **Trigger "Sync Decision Status" hook**
-2. Tell Kiro what was discussed
-3. Kiro will update the relevant context files
-4. Review the changes
+1. Trigger **"Sync Decision Status"** hook
+2. Tell Kiro what was decided
+3. Kiro updates relevant files
 
 ---
 
@@ -71,13 +83,14 @@
 
 ### Hooks (In Agent Hooks Panel)
 
-| Hook | Use When |
-|------|----------|
-| Daily Research Standup | Start of work session |
-| Update Experiment Log | After running an experiment |
-| Summarize Paper | Found a relevant paper to add |
-| Sync Decision Status | After meeting or decision change |
-| Prepare Supervisor Meeting | Before meeting with supervisor |
+| Hook | Use When | What It Does |
+|------|----------|--------------|
+| **Daily Research Standup** | Start of work session | Shows available tasks with their context files, helps you pick one |
+| **Complete Task** | Finished a task | Updates TASKS.md status & outcomes, updates related context files |
+| **Update Experiment Log** | After running experiment | Creates experiment doc, updates task outcomes |
+| **Summarize Paper** | Found relevant paper | Creates paper summary, links to relevant tasks |
+| **Sync Decision Status** | After meeting/discussion | Updates decision docs based on what you tell it |
+| **Prepare Supervisor Meeting** | Before supervisor meeting | Generates progress summary from actual file contents |
 
 ### MCP Tools
 

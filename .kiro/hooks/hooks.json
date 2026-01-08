@@ -9,7 +9,7 @@
       },
       "action": {
         "type": "send-message",
-        "message": "Read TASKS.md and tell me: 1) Which tasks are marked 'In Progress'? 2) Which tasks can I start today based on dependencies? 3) Are there any blocked tasks? Do NOT invent task status - only report what's in the file."
+        "message": "Read TASKS.md and help me plan my work session. 1) List tasks that are 'In Progress' or can be started (dependencies met). 2) For each available task, show me its 'Context Files' section so I know what to reference. 3) Ask which task I want to work on. When I choose, summarize the task's Why, Deliverables, and Context Files. Do NOT invent task status - only report what's in TASKS.md."
       }
     },
     {
@@ -21,7 +21,19 @@
       },
       "action": {
         "type": "send-message",
-        "message": "I need to document an experiment. Ask me these questions one by one: 1) What did you test? (BM25 baseline / Dense baseline / Query enhancement) 2) What were the exact metric values? (Recall@10, NDCG@10, MRR) 3) What dataset subset did you use? 4) What did you learn? Then create a file in experiments/ following the template in experiment-documentation.md steering. Do NOT invent any metric values."
+        "message": "I completed an experiment and need to document it. Ask me: 1) Which task was this for? (e.g., Task 2.3) 2) What were the exact metric values? (Recall@10, NDCG@10, MRR) 3) What dataset subset did you use? 4) What did you learn? Then: A) Create experiment doc in experiments/exp_XXX.md following experiment-documentation.md template, B) Update the task's Outcomes section in TASKS.md, C) Tell me which other context files should be updated (e.g., RESEARCH_CONTEXT_KERNEL.md.md). Do NOT invent any metric values - only use what I provide."
+      }
+    },
+    {
+      "id": "complete-task",
+      "name": "Complete Task",
+      "description": "Mark a task as done and update all context",
+      "trigger": {
+        "type": "manual"
+      },
+      "action": {
+        "type": "send-message",
+        "message": "I finished a task and need to update all documentation. Ask me: 1) Which task number? (e.g., 1.4) 2) What were the deliverables completed? 3) What are the outcomes to record? Then: A) Update the task status to '✅ Done' in TASKS.md, B) Fill in the Outcomes section for that task, C) Check if any context files listed in that task need updates (e.g., RESEARCH_CONTEXT_KERNEL.md.md, open_questions.md), D) Check if this unblocks other tasks and note them. Do NOT mark anything done that I don't confirm."
       }
     },
     {
@@ -33,7 +45,7 @@
       },
       "action": {
         "type": "send-message",
-        "message": "I want to add a paper to our literature review. I'll give you the paper details. Create a summary in papers/[YEAR]_[Title].md following the exact template in paper-analysis.md steering. Only include information I provide or that you can verify from the paper - do NOT invent details about the paper's methodology or results."
+        "message": "I want to add a paper to our literature review. I'll give you the paper details. Create a summary in papers/[YEAR]_[Title].md following the exact template in paper-analysis.md steering. After creating, tell me which tasks this paper might be relevant to (check TASKS.md context files). Only include information I provide - do NOT invent details."
       }
     },
     {

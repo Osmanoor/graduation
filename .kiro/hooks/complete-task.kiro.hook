@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Complete Task",
+  "description": "Mark a task as done and update all context",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "I finished a task and need to update all documentation. Ask me: 1) Which task number? (e.g., 1.4) 2) What were the deliverables completed? 3) What are the outcomes to record? Then: A) Update the task status to '✅ Done' in TASKS.md, B) Fill in the Outcomes section for that task, C) Check if any context files listed in that task need updates (e.g., RESEARCH_CONTEXT_KERNEL.md.md, open_questions.md), D) Check if this unblocks other tasks and note them. Do NOT mark anything done that I don't confirm."
+  }
+}

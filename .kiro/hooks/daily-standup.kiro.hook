@@ -8,6 +8,8 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Read TASKS.md and tell me: 1) Which tasks are marked 'In Progress'? 2) Which tasks can I start today based on dependencies? 3) Are there any blocked tasks? Do NOT invent task status - only report what's in the file."
-  }
+    "prompt": "Read TASKS.md and help me plan my work session. 1) List tasks that are 'In Progress' or can be started (dependencies met). 2) For each available task, show me its 'Context Files' section so I know what to reference. 3) Ask which task I want to work on. When I choose, summarize the task's Why, Deliverables, and Context Files. Do NOT invent task status - only report what's in TASKS.md.\n"
+  },
+  "workspaceFolderName": "graduation",
+  "shortName": "daily-standup"
 }

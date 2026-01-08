@@ -8,6 +8,8 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "I need to document an experiment. Ask me these questions one by one: 1) What did you test? (BM25 baseline / Dense baseline / Query enhancement) 2) What were the exact metric values? (Recall@10, NDCG@10, MRR) 3) What dataset subset did you use? 4) What did you learn? Then create a file in experiments/ following the template in experiment-documentation.md steering. Do NOT invent any metric values."
-  }
+    "prompt": "I completed an experiment and need to document it. Ask me: 1) Which task was this for? (e.g., Task 2.3) 2) What were the exact metric values? (Recall@10, NDCG@10, MRR) 3) What dataset subset did you use? 4) What did you learn? Then: A) Create experiment doc in experiments/exp_XXX.md following experiment-documentation.md template, B) Update the task's Outcomes section in TASKS.md, C) Tell me which other context files should be updated (e.g., RESEARCH_CONTEXT_KERNEL.md.md). Do NOT invent any metric values - only use what I provide."
+  },
+  "workspaceFolderName": "graduation",
+  "shortName": "update-experiment-log"
 }

@@ -8,6 +8,8 @@
   },
   "then": {
     "type": "askAgent",
-    "prompt": "I want to add a paper to our literature review. I'll give you the paper details. Create a summary in papers/[YEAR]_[Title].md following the exact template in paper-analysis.md steering. Only include information I provide or that you can verify from the paper - do NOT invent details about the paper's methodology or results."
-  }
+    "prompt": "I want to add a paper to our literature review. I'll give you the paper details. Create a summary in papers/[YEAR]_[Title].md following the exact template in paper-analysis.md steering. After creating, tell me which tasks this paper might be relevant to (check TASKS.md context files). Only include information I provide - do NOT invent details."
+  },
+  "workspaceFolderName": "graduation",
+  "shortName": "summarize-paper"
 }
