@@ -5,7 +5,19 @@
       "args": ["tool", "run", "arxiv-mcp-server", "--storage-path", "./papers/arxiv_downloads"],
       "env": {},
       "disabled": false,
-      "autoApprove": ["search_papers", "list_papers", "read_paper", "download_paper"]
-    }
+      "autoApprove": ["search_papers", "download_paper", "read_paper", "list_papers"]
+    },
+    // "jina": {
+    //   "command": "npx",
+    //   "args": [
+    //     "mcp-remote",
+    //     "https://mcp.jina.ai/v1?exclude_tools=search_jina_blog,capture_screenshot_url,search_images,deduplicate_images,search_arxiv,parallel_search_arxiv"
+    //   ],
+    //   "env": {
+    //     "JINA_API_KEY": "${JINA_API_KEY}"
+    //   },
+    //   "disabled": false,
+    //   "autoApprove": ["read_url", "search_web"]
+    // }
   }
 }

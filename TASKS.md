@@ -17,7 +17,7 @@
 
 ### Task 1.1: Research Embedding Model Options
 **Owner:** TBD  
-**Status:** ⏳ Not Started  
+**Status:** ⏸️ Pending Discussion with Osman  
 **Depends On:** None (can start immediately)
 
 **Why:** We need to decide between open-source (BGE-m3, E5) vs closed-source (Jina AI). This affects iteration speed and costs.
@@ -26,17 +26,38 @@
 - `research_decisions/open_questions.md` - Section "Embedding Model Selection"
 - `research_decisions/technical_specifications.md` - Section "Embedding Model Selection"
 - `meetings/6.1.2026_meeting_outcomes.md` - Section 1.2 discusses the tradeoffs
+- `research_decisions/embedding_model_research.md` - **Full research document**
 
 **Deliverables:**
-- [ ] Cost comparison document
-- [ ] Performance benchmarks for Arabic
-- [ ] Recommendation with justification
+- [x] Cost comparison document
+- [x] Performance benchmarks for Arabic
+- [x] Recommendation with justification
+- [ ] **Final decision (pending team discussion)**
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Research complete - 9/1/2026, pending decision)*
 ```
-Decision made: [Yes/No]
-Chosen model: [If decided]
-Key findings: [Summary]
+Decision made: No (pending discussion with Osman)
+Research document: research_decisions/embedding_model_research.md
+
+Key findings:
+1. Swan models (UBC-NLP) - NOT AVAILABLE (models not released)
+2. Pre-built Pyserini indexes available for MIRACL Arabic (mDPR)
+3. BGE-M3: Best Arabic results (80.2 nDCG@10), multi-functional
+4. mE5-large: Trained on MIRACL (76.0 nDCG@10), well-documented
+5. Jina-v3: Free API (10M tokens), but not evaluated on MIRACL
+
+Paper summaries created:
+- papers/2024_BGE-M3.md
+- papers/2024_Multilingual_E5.md
+- papers/2024_Jina_Embeddings_v3.md
+
+Recommendation options:
+A) Use pre-built Pyserini indexes (fastest, limited flexibility)
+B) mE5-large (trained on MIRACL, recommended)
+C) BGE-M3 (best results, multi-functional)
+D) Jina API for prototyping only
+
+Next step: Discuss with Osman to finalize choice
 ```
 
 ---
