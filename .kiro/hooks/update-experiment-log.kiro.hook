@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Update Experiment Log",
+  "description": "Document a completed experiment by collecting test details, metric values, dataset info, and learnings, then creating a structured file in experiments/ following the experiment-documentation.md template",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "I need to document an experiment. Ask me these questions one by one: 1) What did you test? (BM25 baseline / Dense baseline / Query enhancement) 2) What were the exact metric values? (Recall@10, NDCG@10, MRR) 3) What dataset subset did you use? 4) What did you learn? Then create a file in experiments/ following the template in experiment-documentation.md steering. Do NOT invent any metric values."
+  }
+}

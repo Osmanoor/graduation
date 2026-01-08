@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Sync Decision Status",
+  "description": "Update docs after a meeting or discussion",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "I had a meeting or discussion and need to update our docs. I'll tell you what was decided. Based ONLY on what I tell you, suggest updates to: 1) TASKS.md if task status changed, 2) RESEARCH_CONTEXT_KERNEL.md.md if decisions changed, 3) research_decisions/open_questions.md if questions were resolved. Do NOT assume any decisions I don't explicitly state."
+  }
+}

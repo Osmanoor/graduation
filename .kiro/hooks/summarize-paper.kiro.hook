@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Summarize Paper",
+  "description": "Add a paper to literature review",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "I want to add a paper to our literature review. I'll give you the paper details. Create a summary in papers/[YEAR]_[Title].md following the exact template in paper-analysis.md steering. Only include information I provide or that you can verify from the paper - do NOT invent details about the paper's methodology or results."
+  }
+}

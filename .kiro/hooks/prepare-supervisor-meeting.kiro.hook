@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Prepare Supervisor Meeting",
+  "description": "Generate meeting prep materials by reading TASKS.md and RESEARCH_CONTEXT_KERNEL.md.md to summarize completed tasks, current blockers, and questions needing supervisor input",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Help me prepare for a supervisor meeting. Read TASKS.md and RESEARCH_CONTEXT_KERNEL.md.md, then generate: 1) Tasks completed since last update (only those marked Done), 2) Current blockers (from open_questions.md), 3) Questions we need supervisor input on. Base everything on the actual file contents - do NOT invent progress."
+  }
+}
