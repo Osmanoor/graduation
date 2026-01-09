@@ -2,19 +2,36 @@
   "mcpServers": {
     "arxiv": {
       "command": "uv",
-      "args": ["tool", "run", "arxiv-mcp-server", "--storage-path", "./papers/arxiv_downloads"],
+      "args": [
+        "tool",
+        "run",
+        "arxiv-mcp-server",
+        "--storage-path",
+        "./papers/arxiv_downloads"
+      ],
       "env": {},
       "disabled": false,
-      "autoApprove": ["search_papers", "download_paper", "read_paper", "list_papers"]
+      "autoApprove": [
+        "search_papers",
+        "download_paper",
+        "read_paper",
+        "list_papers"
+      ]
     },
     "gemini-cli": {
       "command": "node",
-      "args": ["C:/Users/moham/Desktop/graduation/gemini-mcp-server/build/index.js"],
+      "args": [
+        "C:/Users/moham/Desktop/graduation/gemini-mcp-server/build/index.js"
+      ],
       "env": {
         "GEMINI_API_KEY": "${GEMINI_API_KEY}"
       },
-      "disabled": false,
-      "autoApprove": ["deep_research", "summarize", "compare"]
+      "disabled": true,
+      "autoApprove": [
+        "deep_research",
+        "summarize",
+        "compare"
+      ]
     }
   }
 }
