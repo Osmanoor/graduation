@@ -7,17 +7,14 @@
       "disabled": false,
       "autoApprove": ["search_papers", "download_paper", "read_paper", "list_papers"]
     },
-    // "jina": {
-    //   "command": "npx",
-    //   "args": [
-    //     "mcp-remote",
-    //     "https://mcp.jina.ai/v1?exclude_tools=search_jina_blog,capture_screenshot_url,search_images,deduplicate_images,search_arxiv,parallel_search_arxiv"
-    //   ],
-    //   "env": {
-    //     "JINA_API_KEY": "${JINA_API_KEY}"
-    //   },
-    //   "disabled": false,
-    //   "autoApprove": ["read_url", "search_web"]
-    // }
+    "gemini-cli": {
+      "command": "node",
+      "args": ["C:/Users/moham/Desktop/graduation/gemini-mcp-server/build/index.js"],
+      "env": {
+        "GEMINI_API_KEY": "${GEMINI_API_KEY}"
+      },
+      "disabled": false,
+      "autoApprove": ["deep_research", "summarize", "compare"]
+    }
   }
 }
