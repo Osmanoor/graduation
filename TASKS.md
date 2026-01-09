@@ -16,9 +16,9 @@
 ## Phase 1: Baseline Implementation (Weeks 1-3)
 
 ### Task 1.1: Research Embedding Model Options
-**Owner:** TBD  
-**Status:** ⏸️ Pending Discussion with Osman  
-**Depends On:** None (can start immediately)
+**Owner:** Mohammed  
+**Status:** ✅ Done  
+**Depends On:** None
 
 **Why:** We need to decide between open-source (BGE-m3, E5) vs closed-source (Jina AI). This affects iteration speed and costs.
 
@@ -27,16 +27,17 @@
 - `research_decisions/technical_specifications.md` - Section "Embedding Model Selection"
 - `meetings/6.1.2026_meeting_outcomes.md` - Section 1.2 discusses the tradeoffs
 - `research_decisions/embedding_model_research.md` - **Full research document**
+- `meetings/9.1.2026_meeting_outcomes.md` - **Decision meeting outcomes**
 
 **Deliverables:**
 - [x] Cost comparison document
 - [x] Performance benchmarks for Arabic
 - [x] Recommendation with justification
-- [ ] **Final decision (pending team discussion)**
+- [x] **Final decision (discussed with Osman 9/1/2026)**
 
-**Outcomes:** *(Research complete - 9/1/2026, pending decision)*
+**Outcomes:** *(Completed 9/1/2026)*
 ```
-Decision made: No (pending discussion with Osman)
+Decision made: Yes - Use Pyserini pre-built indexes initially
 Research document: research_decisions/embedding_model_research.md
 
 Key findings:
@@ -51,13 +52,11 @@ Paper summaries created:
 - papers/2024_Multilingual_E5.md
 - papers/2024_Jina_Embeddings_v3.md
 
-Recommendation options:
-A) Use pre-built Pyserini indexes (fastest, limited flexibility)
-B) mE5-large (trained on MIRACL, recommended)
-C) BGE-M3 (best results, multi-functional)
-D) Jina API for prototyping only
-
-Next step: Discuss with Osman to finalize choice
+DECISION (9/1/2026 meeting):
+- Start with Pyserini pre-built indexes (BM25 + mDPR) for fastest iteration
+- mDPR chosen intentionally as "weaker" baseline (not fine-tuned on MIRACL)
+- This gives more room for Query Enhancement improvement
+- Future: Test QE techniques on stronger models (BGE-M3, E5) after initial results
 ```
 
 ---
@@ -113,8 +112,8 @@ Shared with: [Team members]
 ---
 
 ### Task 1.4: Implement BM25 Baseline Retriever
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
+**Owner:** Osman  
+**Status:** 🔄 In Progress (Preliminary notebook exists, needs finalization)  
 **Depends On:** Task 1.2 (need dataset)
 
 **Why:** BM25 is our sparse retrieval baseline. Simpler than Dense (no GPU needed). Test separately per our decision.
@@ -122,93 +121,137 @@ Shared with: [Team members]
 **Context Files:**
 - `research_decisions/technical_specifications.md` - Section "Sparse Retrieval"
 - `.kiro/steering/baseline-implementation.md` - Code patterns (use `#baseline-implementation` in chat)
+- `meetings/9.1.2026_meeting_outcomes.md` - Implementation status discussed
 
 **Deliverables:**
-- [ ] BM25 retriever implemented
+- [x] BM25 retriever implemented (preliminary notebook)
 - [ ] Can retrieve top-10 for any query
-- [ ] Code saved to repo/Colab
+- [ ] Code finalized and pushed to repo
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(In progress - 9/1/2026)*
 ```
-Implementation: [Pyserini / rank-bm25 / other]
-Code location: [Path or Colab link]
-Issues encountered: [Any problems]
+Implementation: Pyserini (using pre-built MIRACL indexes)
+Code location: Preliminary notebook exists (Osman), needs push to repo
+Status: Working but needs cleanup and documentation
+Next step: Osman to finalize and push notebook
 ```
 
 ---
 
-### Task 1.5: Implement Evaluation Pipeline
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
+### Task 1.5: Implement Evaluation Pipeline + Research Analysis Framework
+**Owner:** Mohammed (Research), Osman (Implementation)  
+**Status:** 🔄 In Progress (Design clarified, needs implementation)  
 **Depends On:** Task 1.2 (need dataset with qrels)
 
-**Why:** Need to compute Recall@10, NDCG@10, MRR for all experiments. Build once, reuse.
+**Why:** Need to compute Recall@10, NDCG@10, MRR for all experiments. Build once, reuse. Also need framework for analysis/insights.
 
 **Context Files:**
 - `research_decisions/technical_specifications.md` - Section "Evaluation Framework"
 - `meetings/6.1.2026_meeting_outcomes.md` - Section 1.3 confirms metrics
+- `meetings/9.1.2026_meeting_outcomes.md` - **Detailed pipeline design**
 
 **Deliverables:**
 - [ ] Evaluation script that computes all 3 metrics
 - [ ] Tested on sample data
 - [ ] Code saved to repo/Colab
+- [ ] **Research: Analysis framework (what insights can we extract?)**
+- [ ] **Research: Error Analysis approach (MIRACL lacks metadata)**
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Design clarified 9/1/2026, implementation pending)*
 ```
-Code location: [Path or Colab link]
-Metrics implemented: [Recall@10, NDCG@10, MRR]
-Verified correct: [Yes/No]
+PIPELINE DESIGN (from 9/1/2026 meeting):
+
+Two-Phase Approach:
+1. EXPERIMENT PHASE: Run search → Save results to file
+2. EVALUATION PHASE: Calculate metrics from saved results
+
+Storage Format:
+- Save as IDs only (Query ID + Passage ID) - NOT full passages
+- Save top 100 results per query (can extract top 10 later)
+- Lightweight, easy to store
+
+Two Purposes:
+1. Documentation for thesis (show our work)
+2. Context for incremental improvement (act as context for Kiro/team)
+
+Experiment Documentation (MD file per experiment):
+- Why we started the experiment
+- Parameters/setup used
+- Prompts used (if any)
+- Results and immediate effects
+- Concise but comprehensive
+
+RESEARCH NEEDED (Osman's suggestion):
+- What analysis/insights can we extract from results?
+- How to do Error Analysis when MIRACL lacks metadata?
+- Find if anyone created metadata for MIRACL passages
+- Framework for transforming results → reports → insights
 ```
 
 ---
 
 ### Task 2.1: Decide on Embedding Model
 **Owner:** Both  
-**Status:** ⏳ Not Started  
+**Status:** ✅ Done  
 **Depends On:** Task 1.1 (need research complete)
 
 **Why:** Can't implement Dense baseline without this decision.
 
 **Context Files:**
-- Task 1.1 outcomes (when complete)
+- Task 1.1 outcomes
 - `research_decisions/open_questions.md`
+- `meetings/9.1.2026_meeting_outcomes.md` - **Decision meeting**
 
 **Deliverables:**
-- [ ] Decision documented in `research_decisions/open_questions.md`
-- [ ] Update `RESEARCH_CONTEXT_KERNEL.md.md` to mark as decided
+- [x] Decision documented in `research_decisions/open_questions.md`
+- [x] Update `RESEARCH_CONTEXT_KERNEL.md.md` to mark as decided
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 9/1/2026)*
 ```
-Decision: [Model name]
-Rationale: [Why this one]
-Updated files: [List files updated]
+Decision: Pyserini pre-built indexes (BM25 + mDPR) for initial baselines
+
+Rationale:
+1. Fastest path to implement Query Enhancement techniques
+2. mDPR intentionally "weaker" (not fine-tuned on MIRACL) = more room for improvement
+3. Avoids 12-15 hour embedding time on Colab
+4. Query Enhancement is our main contribution, not beating already-trained models
+
+Future Plan:
+- After testing QE techniques on mDPR baseline
+- Try stronger models (BGE-M3, E5) to see how improvement scales
+
+Updated files: TASKS.md, research_decisions/open_questions.md, RESEARCH_CONTEXT_KERNEL.md.md
 ```
 
 ---
 
 ### Task 2.2: Implement Dense Baseline Retriever
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 2.1 (need embedding model decision), Task 1.2 (need dataset)
+**Owner:** Osman  
+**Status:** 🔄 In Progress (Using Pyserini pre-built mDPR index)  
+**Depends On:** Task 2.1 (✅ decided), Task 1.2 (need dataset)
 
 **Why:** Dense retrieval is our second baseline. Test separately from BM25.
 
 **Context Files:**
 - `research_decisions/technical_specifications.md` - Section "Dense Retrieval"
 - `.kiro/steering/baseline-implementation.md` - Code patterns
-- Task 2.1 outcomes (which model to use)
+- Task 2.1 outcomes - **mDPR via Pyserini**
+- `meetings/9.1.2026_meeting_outcomes.md` - Implementation approach
 
 **Deliverables:**
-- [ ] Corpus embedded and indexed
+- [x] Embedding model decided (mDPR via Pyserini pre-built index)
 - [ ] Dense retriever implemented
 - [ ] Can retrieve top-10 for any query
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(In progress - 9/1/2026)*
 ```
-Embedding model: [Model used]
-Index type: [FAISS / other]
-Code location: [Path or Colab link]
-Embedding time: [How long for full corpus]
+Embedding model: mDPR (Pyserini pre-built index)
+Index type: Pyserini pre-built FAISS index
+Code location: To be added to same notebook as BM25
+Embedding time: N/A - using pre-built index (no embedding needed!)
+
+Note: mDPR chosen as "weaker" baseline (not fine-tuned on MIRACL)
+This is intentional - gives more room for Query Enhancement improvement
 ```
 
 ---

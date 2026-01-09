@@ -4,7 +4,7 @@
 
 ---
 
-## ✅ Resolved Questions (from 6/1/2026 Meeting)
+## ✅ Resolved Questions (from 6/1/2026 and 9/1/2026 Meetings)
 
 ### 1. Problem-Oriented vs. Technology-Oriented Approach
 **Status:** ✅ RESOLVED - Technology-Oriented
@@ -74,34 +74,84 @@
 
 ---
 
-## ⏳ Still Under Investigation
+### 7. Evaluation Pipeline Design
+**Status:** ✅ RESOLVED - Two-Phase Approach (9/1/2026)
 
-### 1. Embedding Model Selection
-**Status:** ⏳ Under Investigation - Research Needed
+**Decision:** Separate experiment execution from evaluation calculation.
 
-**Question:** Which embedding model should we use?
+**Pipeline Design:**
+1. **Experiment Phase:** Run search → Save results to file (IDs only)
+2. **Evaluation Phase:** Calculate metrics from saved results
 
-**Options:**
-| Model | Type | Pros | Cons |
-|-------|------|------|------|
-| BGE-m3 | Open Source | Free, widely used | Slow iteration |
-| E5 | Open Source | Good benchmarks | Slow iteration |
-| Jina AI | Closed Source | Fast iteration, good Arabic | API costs |
+**Storage Format:**
+- Save as IDs only (Query ID + Passage ID) - NOT full passages
+- Save top 100 results per query (can extract top 10 later)
 
-**Key Tradeoff:** Iteration speed vs cost
-- Open Source: Hours for embedding large corpus
-- Closed Source: API calls, fast but costs money
+**Two Purposes:**
+1. Documentation for thesis (show our work)
+2. Context for incremental improvement (act as context for Kiro/team)
 
-**Approach:** Keep as side task, don't block main work. Research actual benchmarks.
-
-**Action Items:**
-- [ ] Research Open Source vs Closed Source performance gap for Arabic
-- [ ] Calculate embedding costs for MIRACL corpus (~2.1M passages)
-- [ ] Consider: Open Source for experiments, Jina for final results
+**Experiment Documentation (MD file per experiment):**
+- Why we started the experiment
+- Parameters/setup used
+- Prompts used (if any)
+- Results and immediate effects
+- Concise but comprehensive
 
 ---
 
-### 2. First Query Enhancement Technique
+### 8. Embedding Model Selection
+**Status:** ✅ RESOLVED - Pyserini Pre-built Indexes (9/1/2026)
+
+**Decision:** Start with Pyserini pre-built indexes (BM25 + mDPR) for initial baselines. Later test on stronger models (BGE-M3, E5).
+
+**Rationale:**
+1. Fastest path to implement Query Enhancement techniques
+2. mDPR intentionally "weaker" (not fine-tuned on MIRACL) = more room for improvement
+3. Avoids 12-15 hour embedding time on Colab
+4. Query Enhancement is our main contribution, not beating already-trained models
+5. Data leakage concern: E5/BGE-M3 trained on MIRACL, so high scores are "expected" not "achieved"
+
+**Future Plan:**
+- After testing QE techniques on mDPR baseline
+- Try stronger models (BGE-M3, E5) to see how improvement scales
+
+**Research Completed:** See `research_decisions/embedding_model_research.md`
+
+---
+
+## ⏳ Still Under Investigation
+
+### 1. Error Analysis Approach
+**Status:** ⏳ Under Investigation - Research Needed (9/1/2026)
+
+**Challenge:** MIRACL passages lack metadata (no domain labels like Law, Medical, etc.)
+
+**Research Needed:**
+- Find if anyone has created metadata for MIRACL passages
+- Determine what analysis/insights we can extract from results
+- Framework for transforming results → reports → insights
+
+**Potential Directions:**
+- Query categorization by length, complexity
+- Manual sampling and analysis
+- Look for existing MIRACL analysis papers
+
+---
+
+### 2. Pyserini vs HuggingFace Understanding
+**Status:** ⏳ Under Investigation - Research Needed (9/1/2026)
+
+**Question:** What does Pyserini do that HuggingFace doesn't? Why use one over the other?
+
+**Context:**
+- HuggingFace is standard practice
+- May switch to HuggingFace later for other methods
+- Need to understand the difference for future flexibility
+
+---
+
+### 3. First Query Enhancement Technique
 **Status:** ⏳ Under Investigation - Decide After Baseline
 
 **Question:** Which technique should we implement first?
@@ -122,7 +172,7 @@
 
 ---
 
-### 3. Hierarchical Structures
+### 4. Hierarchical Structures
 **Status:** ⏳ Interesting but Needs Feasibility Study
 
 **Question:** Can we implement Mohamed Rashad's suggestion about context injection?
@@ -138,7 +188,7 @@
 
 ---
 
-### 4. Arabic LLM Selection
+### 5. Arabic LLM Selection
 **Status:** ⏳ Under Investigation - Current Suggestions Weak
 
 **Question:** Which Arabic LLM should we use for query enhancement?
@@ -151,7 +201,7 @@
 
 ---
 
-### 5. Meta-data Filtering Integration
+### 6. Meta-data Filtering Integration
 **Status:** ⏳ New Research Direction Identified
 
 **Question:** Can we combine query enhancement with meta-data filtering?
@@ -167,7 +217,7 @@
 
 ## Technical Challenges (Ongoing)
 
-### 6. Scale Challenge
+### 7. Scale Challenge
 **Challenge:** MIRACL has 2.1 Million Arabic Wikipedia passages
 
 **Implications:**
@@ -179,10 +229,11 @@
 - Google Drive Pro (2TB) for storage
 - Google Colab Pro for GPU
 - Smaller subsets for prototyping (if not misleading)
+- **NEW (9/1/2026):** Using Pyserini pre-built indexes avoids embedding time entirely
 
 ---
 
-### 7. Dialectical Support
+### 8. Dialectical Support
 **Challenge:** Both MIRACL and ARABICA are MSA-only
 
 **Implication:** We cannot directly test dialectical improvements.
@@ -197,7 +248,7 @@
 
 ---
 
-### 8. Arabic Morphology Handling
+### 9. Arabic Morphology Handling
 **Status:** Test with baseline first, add preprocessing if needed
 
 **Question:** How to handle Arabic morphology?
@@ -212,7 +263,7 @@
 
 ---
 
-### 9. Evaluation Granularity
+### 10. Evaluation Granularity
 **Status:** Plan for this in experiment design
 
 **Question:** How to understand *what* improved, not just *that* it improved?
@@ -227,7 +278,7 @@
 
 ---
 
-### 10. Prototyping with Subsets
+### 11. Prototyping with Subsets
 **Status:** Allowed but with caution
 
 **Question:** Can we use smaller subsets for faster iteration?
@@ -243,7 +294,7 @@
 
 ## Questions for Future Consideration
 
-### 11. Contribution Framing
+### 12. Contribution Framing
 **Question:** What is our primary contribution?
 
 **Options:**
@@ -255,7 +306,7 @@
 
 ---
 
-### 12. Generalization Testing
+### 13. Generalization Testing
 **Question:** How to prove approach generalizes?
 
 **Options:**
@@ -277,13 +328,16 @@
 | Secondary Dataset | ✅ Resolved |
 | Generation Deferral | ✅ Resolved |
 | Timeline | ✅ Resolved |
-| Embedding Model | ⏳ Under Investigation |
+| Evaluation Pipeline Design | ✅ Resolved (9/1/2026) |
+| Embedding Model | ✅ Resolved (9/1/2026) - Pyserini pre-built |
 | First Technique | ⏳ Under Investigation |
 | Hierarchical Structures | ⏳ Under Investigation |
 | Arabic LLMs | ⏳ Under Investigation |
 | Meta-data Filtering | ⏳ New Direction |
+| Error Analysis Approach | ⏳ Research Needed (9/1/2026) |
+| Pyserini vs HuggingFace | ⏳ Research Needed (9/1/2026) |
 
 ---
 
-**Document Status:** ✅ Updated after 6/1/2026 meeting  
+**Document Status:** ✅ Updated after 9/1/2026 meeting  
 **Next Update:** After baseline is established

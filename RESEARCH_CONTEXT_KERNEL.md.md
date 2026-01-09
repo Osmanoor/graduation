@@ -1,7 +1,7 @@
 # 🧬 RESEARCH_CONTEXT_KERNEL.md
 **Project:** Improving Retrieval Recall in Arabic RAG Systems via Query Enhancement
 **Status:** Phase 1 - Active Investigation & Baseline Setup
-**Last Updated:** 6/1/2026
+**Last Updated:** 9/1/2026
 
 ---
 
@@ -14,22 +14,26 @@
 
 **Important Note:** Our datasets (MIRACL, ARABICA) are MSA-only, so dialectical mismatch is NOT our primary focus anymore. Our techniques may still help with dialects, but we can't directly measure this.
 
-## 2. 📍 Current Status: Active Investigation, Baseline Setup Starting
+## 2. 📍 Current Status: Baseline Implementation In Progress
 We are currently in the **Baseline Implementation** stage.
 *   **What we have done:** 
     *   Conducted broad landscape analysis of English-centric RAG papers (HyDE, RQ-RAG, QE-RAG, etc.)
     *   Consulted with Mohamed Rashad (AI researcher) on approach
     *   Analyzed 10+ Arabic datasets for suitability
     *   Clarified decision status in 6/1/2026 review meeting
+    *   **Completed embedding model research (9/1/2026)**
+    *   **Decided on Pyserini pre-built indexes for baselines (9/1/2026)**
+    *   **Designed evaluation pipeline (9/1/2026)**
+    *   **Preliminary BM25 notebook implemented by Osman**
 *   **What we are doing now:** 
-    *   Setting up baseline RAG system with MIRACL dataset
-    *   Researching embedding model options (cost vs performance)
-    *   Planning parallel tasks for team members
-*   **Critical Note for Agents:** We are in **active investigation** mode. Many decisions are confirmed but some remain open. Check `meetings/6.1.2026_meeting_outcomes.md` for the latest decision status. Document what we DON'T know, not just what we know.
+    *   Finalizing baseline BM25 and mDPR retrievers using Pyserini
+    *   Implementing evaluation pipeline (two-phase: experiment → evaluation)
+    *   Researching analysis framework (what insights can we extract?)
+*   **Critical Note for Agents:** We are in **active investigation** mode. Many decisions are confirmed but some remain open. Check `meetings/9.1.2026_meeting_outcomes.md` for the latest decision status. Document what we DON'T know, not just what we know.
 
 ---
 
-## 3. Decision Status (Updated January 6, 2026)
+## 3. Decision Status (Updated January 9, 2026)
 
 ### A. The Dataset: **MIRACL (Arabic subset)** ✅ Confirmed
 **Status:** High confidence (~95%)
@@ -55,36 +59,55 @@ We are currently in the **Baseline Implementation** stage.
 *   **Rationale:** More flexibility for engineers, aligns with Mohamed Rashad's advice
 *   **Details:** See `meetings/Consultation with Mohammed Rashad.md`
 
+### D. Evaluation Pipeline Design ✅ RESOLVED (9/1/2026)
+**Status:** Decided - Two-Phase Approach
+*   **Pipeline:** Experiment Phase (run search, save results) → Evaluation Phase (calculate metrics)
+*   **Storage Format:** Save as IDs only (Query ID + Passage ID), save top 100 per query
+*   **Two Purposes:** (1) Documentation for thesis, (2) Context for incremental improvement
+*   **Experiment Documentation:** MD file per experiment with setup, parameters, prompts, results
+*   **Details:** See `meetings/9.1.2026_meeting_outcomes.md`
+
 ---
 
 ## 4. 🔄 Under Investigation (Active Research Questions)
 
-### A. Embedding Model Selection ⏳
+### A. Error Analysis Approach ⏳ (NEW - 9/1/2026)
 **Status:** Under Investigation - Research Needed
-*   *Candidates:* BGE-m3, E5 (Open Source) vs Jina AI (Closed Source)
-*   *Key Tradeoff:* Open Source = free but slow iteration; Closed Source = fast iteration but API costs
-*   *Concern:* Iteration speed with Open Source (hours for embedding vs API calls)
-*   *Next Steps:* Research cost/performance benchmarks, calculate MIRACL embedding costs
-*   *Decision Approach:* Keep as side task, don't block main work
+*   *Challenge:* MIRACL passages lack metadata (no domain labels like Law, Medical, etc.)
+*   *Research Needed:* Find if anyone created metadata for MIRACL; determine what insights we can extract
+*   *Potential Directions:* Query categorization by length/complexity, manual sampling, existing MIRACL analysis papers
 
-### B. First Query Enhancement Technique ⏳
+### B. Pyserini vs HuggingFace Understanding ⏳ (NEW - 9/1/2026)
+**Status:** Under Investigation - Research Needed
+*   *Question:* What does Pyserini do that HuggingFace doesn't? Why use one over the other?
+*   *Context:* HuggingFace is standard practice; may switch to it later for other methods
+
+### C. First Query Enhancement Technique ⏳
 **Status:** Under Investigation - Decide After Baseline
 *   *Candidates:* HyDE, Query Rewriting, Query Expansion, Query Decomposition
 *   *Approach:* Build baseline first, analyze errors, then select technique
 *   *Lead:* Found paper about "efficient generation augmented query rewriter" citing MIRACL - needs reading
 *   *Decision Needed By:* After baseline is established
 
-### C. Hierarchical Structures ⏳
+### D. Hierarchical Structures ⏳
 **Status:** Interesting but Needs Feasibility Study
 *   *Context:* Mohamed Rashad suggested context injection (knowledge base structure awareness)
 *   *Challenge:* Is this feasible given our constraints? Does it require re-embedding?
 *   *Current Stance:* Defer, focus on simpler query enhancement first
 
-### D. Arabic LLM Selection ⏳
+### E. Arabic LLM Selection ⏳
 **Status:** Under Investigation - Current Suggestions Weak
 *   *Problem:* AI suggested Jais, AceGPT - these may not be the best options
 *   *Need:* Research stronger Arabic LLM models for query enhancement
 *   *Use Case:* HyDE, Query Rewriting, Query Decomposition
+
+### E. Embedding Model Selection ✅ RESOLVED (9/1/2026)
+**Status:** Decided - Pyserini Pre-built Indexes
+*   **Decision:** Start with Pyserini pre-built indexes (BM25 + mDPR) for initial baselines
+*   **Rationale:** Fastest path to implement Query Enhancement techniques; mDPR intentionally "weaker" (not fine-tuned on MIRACL) = more room for improvement
+*   **Data Leakage Concern:** E5/BGE-M3 trained on MIRACL, so high scores are "expected" not "achieved"
+*   **Future Plan:** After testing QE techniques on mDPR, try stronger models (BGE-M3, E5)
+*   **Research Document:** `research_decisions/embedding_model_research.md`
 
 ---
 
@@ -93,11 +116,13 @@ We are currently in the **Baseline Implementation** stage.
 
 ### Core Documentation
 *   **`RESEARCH_CONTEXT_KERNEL.md.md`** (this file): Project overview, status, and decisions
-*   **`meetings/6.1.2026_meeting_outcomes.md`**: Latest decision clarifications (READ THIS FIRST)
+*   **`meetings/9.1.2026_meeting_outcomes.md`**: Latest meeting outcomes - embedding decision, evaluation pipeline design
+*   **`meetings/6.1.2026_meeting_outcomes.md`**: Decision clarifications from review meeting
 *   **`meetings/2.1.2026_meeting_outcomes.md`**: Original planning meeting outcomes
 *   **`meetings/Consultation with Mohammed Rashad.md`**: Expert advisor feedback and recommendations
 *   **`research_decisions/technical_specifications.md`**: System architecture, components, implementation details
 *   **`research_decisions/open_questions.md`**: Pending decisions and research challenges
+*   **`research_decisions/embedding_model_research.md`**: Full embedding model research (BGE-M3, E5, Jina)
 *   **`research_decisions/AI_ASSUMED_DECISIONS_REVIEW.md`**: What AI got wrong (for context)
 
 ### Strategic Discussions
@@ -111,10 +136,12 @@ We are currently in the **Baseline Implementation** stage.
 
 ### Meeting Records
 *   **`/meetings/`**: Full transcriptions and summaries of planning sessions
-    *   `6.1.2026.md`: Decision review meeting (3 parts) - clarified AI assumptions
+    *   `9.1.2026_meeting_outcomes.md`: Embedding decision meeting outcomes - **LATEST**
+    *   `9.1.2026.md`: Full transcription (3 parts)
     *   `6.1.2026_meeting_outcomes.md`: Structured outcomes from review meeting
-    *   `2.1.2026.md`: Full 4-part planning meeting transcription
+    *   `6.1.2026.md`: Decision review meeting (3 parts)
     *   `2.1.2026_meeting_outcomes.md`: Original structured outcomes
+    *   `2.1.2026.md`: Full 4-part planning meeting transcription
     *   `Consultation with Mohammed Rashad.md`: Expert consultation notes
 
 ---
@@ -151,9 +178,9 @@ We are currently in the **Baseline Implementation** stage.
 ---
 
 ## 7. ⚠️ Current Challenges & Risks
-1.  **Scale Challenge:** MIRACL has 2.1M passages - significant storage (~50GB) and compute requirements
+1.  **Scale Challenge:** MIRACL has 2.1M passages - significant storage (~50GB) and compute requirements. **Mitigated:** Using Pyserini pre-built indexes avoids embedding time.
 2.  **Dialectical Gap:** MIRACL and ARABICA are MSA-only. We cannot directly test dialectical improvements.
-3.  **Embedding Model Tradeoff:** Open Source = slow iteration; Closed Source = API costs
+3.  **Error Analysis Challenge (NEW):** MIRACL passages lack metadata for categorization (no domain labels).
 4.  **Evaluation Rigor:** Need to understand *what* improved, not just *that* it improved
 5.  **Resource Constraints:** Limited GPU access, API costs, 6-week timeline
 6.  **Arabic LLM Quality:** Current candidates (Jais, AceGPT) may not be optimal
@@ -161,6 +188,7 @@ We are currently in the **Baseline Implementation** stage.
 **Mitigations:**
 - Use Google Drive (2TB with Pro) for storage
 - Use Google Colab Pro for GPU
+- Use Pyserini pre-built indexes (avoids 12-15h embedding time)
 - Use smaller subsets for prototyping (if not misleading)
 - Prioritize experiments, document everything
 
@@ -170,7 +198,7 @@ We are currently in the **Baseline Implementation** stage.
 
 ## 8. 🎯 Guidance for AI Agents
 When interacting with this codebase, the Agent should:
-1.  **Check Latest Status:** Read `meetings/6.1.2026_meeting_outcomes.md` FIRST for current decision status
+1.  **Check Latest Status:** Read `meetings/9.1.2026_meeting_outcomes.md` for latest decisions, then `research_decisions/open_questions.md`
 2.  **Understand Uncertainty:** Many things are "under investigation" - don't assume decisions are final
 3.  **Document What We Don't Know:** Uncertainty is valuable information
 4.  **Technical Details:** Refer to `research_decisions/technical_specifications.md` for architecture
@@ -184,26 +212,28 @@ When interacting with this codebase, the Agent should:
 
 ## 9. 📅 Next Actions (Priority Order)
 
-### Immediate (This Week - Jan 6-12)
+### Immediate (This Week - Jan 9-12)
 - [x] Update documentation to reflect actual decision status
-- [ ] Research embedding model costs/performance (side task)
-- [ ] Prepare clear task list for parallel work
-- [ ] Download MIRACL dataset
-- [ ] Set up development environment
+- [x] Research embedding model costs/performance ✅ Complete
+- [x] Decide on embedding model approach ✅ Pyserini pre-built indexes
+- [x] Design evaluation pipeline ✅ Two-phase approach
+- [ ] Osman: Finalize and push baseline notebook to repo
+- [ ] Mohammed: Research analysis framework (what insights can we extract?)
 
 ### Short-term (Weeks 2-3)
-- [ ] Implement baseline Dense retriever
-- [ ] Implement baseline BM25 retriever
-- [ ] Establish evaluation pipeline (Recall@10, NDCG@10, MRR)
+- [ ] Finalize baseline BM25 retriever (Pyserini)
+- [ ] Finalize baseline mDPR retriever (Pyserini)
+- [ ] Implement evaluation pipeline (two-phase: experiment → evaluation)
 - [ ] Document baseline performance
-- [ ] Analyze baseline errors
+- [ ] Analyze baseline errors (research needed on approach)
 
 ### Medium-term (Weeks 4-6)
 - [ ] Select first query enhancement technique (based on baseline analysis)
 - [ ] Implement enhancement layer
 - [ ] Run experiments and iterate
+- [ ] Try stronger models (BGE-M3, E5) if time permits
 - [ ] Document findings thoroughly
 - [ ] Write thesis chapters
 
-*Details:* See `meetings/6.1.2026_meeting_outcomes.md`
+*Details:* See `meetings/9.1.2026_meeting_outcomes.md` and `TASKS.md`
 
