@@ -62,8 +62,8 @@ DECISION (9/1/2026 meeting):
 ---
 
 ### Task 1.2: Download MIRACL Arabic Dataset
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
+**Owner:** Osman  
+**Status:** ✅ Done  
 **Depends On:** None (can start immediately)
 
 **Why:** MIRACL is our primary dataset (~2.1M Arabic Wikipedia passages). Need it set up before any experiments.
@@ -71,50 +71,94 @@ DECISION (9/1/2026 meeting):
 **Context Files:**
 - `research_decisions/technical_specifications.md` - Section "Dataset Specifications"
 - `papers/bible.md` - MIRACL paper summary (if exists)
+- `meetings/9.1.2026.md` - Dataset discussion and setup
 
 **Deliverables:**
-- [ ] Dataset downloaded to Google Drive
-- [ ] Verify corpus size and structure
-- [ ] Document storage location
+- [x] Dataset URLs identified on HuggingFace
+- [x] Verify corpus size and structure
+- [x] Document storage location and access method
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 9/1/2026)*
 ```
-Storage location: [Google Drive path]
-Corpus size: [X passages]
-Query count: [X queries]
-Issues encountered: [Any problems]
+Dataset Access: HuggingFace (no local download needed - will use directly in Colab)
+
+MIRACL Corpus URL: https://huggingface.co/datasets/miracl/miracl-corpus
+MIRACL Topics/Qrels URL: https://huggingface.co/datasets/miracl/miracl
+
+Arabic Dataset Structure:
+1. Corpus (miracl-corpus):
+   - 2,061,414 passages
+   - 656,982 Wikipedia articles
+   - Fields: docid, title, text
+   - DocID format: X#Y (X = article, Y = passage number)
+
+2. Topics & Qrels (miracl):
+   - Train: 3,495 queries, 25,382 judgments
+   - Dev: 2,896 queries, 29,197 judgments
+   - Includes positive and negative passages (annotated by native speakers)
+
+Pyserini Integration:
+- MIRACL provides pre-built indexes via Pyserini
+- Can reproduce baseline results (BM25 + mDPR) using Pyserini toolkit
+- No need to manually embed corpus - pre-built indexes available
+
+Storage Strategy:
+- Access datasets directly from HuggingFace in Colab
+- No Google Drive storage needed for corpus (saves ~50GB)
+- Only store experiment results and processed data
 ```
 
 ---
 
 ### Task 1.3: Set Up Google Drive Storage
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
+**Owner:** Mohammed  
+**Status:** 🔄 In Progress  
 **Depends On:** None (can start immediately)
 
-**Why:** MIRACL corpus is ~50GB. Need Google Drive Pro (2TB) for storage.
+**Why:** Need dedicated Google account for project storage and Colab integration. May upgrade to Pro (2TB) if needed.
 
 **Context Files:**
 - `meetings/6.1.2026_meeting_outcomes.md` - Resource planning discussion
+- `meetings/9.1.2026.md` - Storage strategy discussion
 
 **Deliverables:**
-- [ ] Google Drive Pro subscription active
+- [x] Dedicated Google account created
+- [ ] Google Drive Pro subscription (if needed for 2TB storage)
 - [ ] Folder structure created
 - [ ] Sharing configured for team
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(In progress - 9/1/2026)*
 ```
-Drive path: [Path]
-Storage used: [X GB]
-Shared with: [Team members]
+Account Created: ✅
+Email: graduation.uofk@gmail.com
+Password: Uofk@2026
+
+Storage Plan:
+- Current: Free tier (15GB)
+- Planned: Google Drive Pro (2TB) - pending subscription
+- Note: With HuggingFace direct access, may not need full 2TB
+
+Next Steps:
+1. Decide if Pro subscription needed (based on experiment storage requirements)
+2. Create folder structure for:
+   - Experiment results
+   - Processed data
+   - Notebooks
+   - Documentation
+3. Share access with Osman
+
+Storage Strategy (from 9/1/2026 meeting):
+- MIRACL corpus: Access directly from HuggingFace (no Drive storage)
+- Experiment results: Store in Drive
+- Large embeddings: Consider HuggingFace datasets hosting if needed
 ```
 
 ---
 
 ### Task 1.4: Implement BM25 Baseline Retriever
 **Owner:** Osman  
-**Status:** 🔄 In Progress (Preliminary notebook exists, needs finalization)  
-**Depends On:** Task 1.2 (need dataset)
+**Status:** 🔄 In Progress (CLI reproduction successful, Python code blocked)  
+**Depends On:** Task 1.2 (✅ completed)
 
 **Why:** BM25 is our sparse retrieval baseline. Simpler than Dense (no GPU needed). Test separately per our decision.
 
@@ -122,18 +166,44 @@ Shared with: [Team members]
 - `research_decisions/technical_specifications.md` - Section "Sparse Retrieval"
 - `.kiro/steering/baseline-implementation.md` - Code patterns (use `#baseline-implementation` in chat)
 - `meetings/9.1.2026_meeting_outcomes.md` - Implementation status discussed
+- `reports/bm25_baseline_report.md` - **Technical report on reproduction attempts**
 
 **Deliverables:**
 - [x] BM25 retriever implemented (preliminary notebook)
-- [ ] Can retrieve top-10 for any query
+- [x] Can retrieve top-10 for any query (via CLI)
+- [ ] Python code execution working (BLOCKED)
 - [ ] Code finalized and pushed to repo
 
-**Outcomes:** *(In progress - 9/1/2026)*
+**Outcomes:** *(In progress - 10/1/2026)*
 ```
 Implementation: Pyserini (using pre-built MIRACL indexes)
-Code location: Preliminary notebook exists (Osman), needs push to repo
-Status: Working but needs cleanup and documentation
-Next step: Osman to finalize and push notebook
+Technical Report: reports/bm25_baseline_report.md
+
+SUMMARY OF ATTEMPTS:
+✅ Attempt C (CLI): Successfully reproduced SOTA (Recall@100 = 0.889)
+   - Environment: Python 3.8, OpenJDK 11, Pyserini 0.19.0
+   - Command: python -m pyserini.search.lucene ...
+   
+❌ Attempt D (Python Code): BLOCKED (Recall@100 = 0.235)
+   - Same environment as Attempt C
+   - Issue: Python code (LuceneSearcher) falls back to System Java 21
+   - Root cause: Pyjnius JVM initialization ignores Conda JAVA_HOME
+   
+CRITICAL BLOCKER:
+Phase 2 (Query Enhancement) requires Python code execution to intercept queries
+in a loop for LLM expansion. Cannot use CLI approach for this.
+
+CURRENT STATUS:
+- Environment validated ✅
+- Binary dependencies fixed ✅
+- Code execution BLOCKED ⚠️
+
+NEXT STEPS:
+1. Investigate JVM injection to force Java 11 in Python code
+2. Consider "Scorched Earth": Remove System Java 21 entirely
+3. Manual Pyjnius binding to Conda libjvm.so before import
+
+Code location: Preliminary notebook exists, pending blocker resolution
 ```
 
 ---
