@@ -206,6 +206,22 @@ NEXT STEPS:
 Code location: Preliminary notebook exists, pending blocker resolution
 ```
 
+**Update (12/1/2026) - BM25S Alternative Solution:**
+```
+ATTEMPT E: BM25S (Pure Python Implementation)
+
+Given Pyserini blocker, implemented alternative using BM25S library:
+- Library: BM25S v0.2+ (https://github.com/xhluca/bm25s)
+- No Java dependencies
+- Clean API for QE integration
+
+PERFORMANCE RESULTS:
+- Recall@100: 0.8603 (Target: 0.889) = 96.8% achievement
+- NDCG@10: 0.4610 (Target: 0.481) = 95.8% achievement  
+- Recall@10: 0.5926 (Thesis metric)
+- MRR: 0.4821
+```
+
 ---
 
 ### Task 1.5: Implement Evaluation Pipeline + Research Analysis Framework

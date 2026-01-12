@@ -4,6 +4,7 @@ Here is the updated Technical Report. It explicitly distinguishes between the su
 
 # Technical Report: MIRACL Arabic BM25 Baseline Reproduction
 **Date:** January 10, 2026  
+**Updated:** January 12, 2026  
 **Subject:** Discrepancy Between CLI and Python Code Execution in Reproducing SOTA Retrieval  
 **Dataset:** MIRACL (Arabic Subset)  
 **Method:** Sparse Retrieval (BM25)
@@ -15,7 +16,9 @@ The objective was to reproduce the official BM25 baseline for the MIRACL Arabic 
 
 While we successfully reproduced this result using the **Command Line Interface (CLI)** within a specific legacy environment, attempts to reproduce the same result using **Python Code** (required for future Query Enhancement experiments) consistently failed, yielding a significantly lower score (**Recall@100 $\approx$ 0.23**).
 
-This report documents the four distinct implementation attempts and analyzes the critical open issue regarding the Python-Java bridge configuration.
+**Update (12/1/2026):** After documenting the Pyserini blocker, we implemented an alternative solution using **BM25S** (pure Python) that achieves **Recall@100 = 0.8603** (96.8% of target) and provides clean QE integration without Java dependencies.
+
+This report documents the five distinct implementation attempts.
 
 ---
 
@@ -79,7 +82,70 @@ We must force the Python script to ignore the System Java and strictly utilize t
 
 ---
 
-## 5. Next Steps
+## 5. Alternative Solution: BM25S Implementation (Attempt E)
+
+**Date:** January 12, 2026
+
+Given the Pyserini blocker documented above, we implemented an alternative approach using BM25S, a pure-Python BM25 library.
+
+### Configuration
+*   **Library:** BM25S v0.2+ (https://github.com/xhluca/bm25s)
+*   **Environment:** Python 3.10+, Google Colab
+*   **Stemmer:** PyStemmer (Arabic)
+*   **Stopwords:** Manual list (20 words), testing NLTK (245 words)
+*   **BM25 Parameters:** k1=0.9, b=0.4 (matching Lucene-style)
+
+### Results
+
+| Metric | BM25S Result | MIRACL Target | Achievement |
+|--------|--------------|---------------|-------------|
+| **Recall@100** | 0.8603 | 0.889 | 96.8% |
+| **NDCG@10** | 0.4610 | 0.481 | 95.8% |
+| **Recall@10** | 0.5926 | - | (Thesis metric) |
+| **MRR** | 0.4821 | - | - |
+
+### Gap Analysis
+The 3.2% gap in Recall@100 is attributed to:
+1. **Tokenization:** Whitespace-based vs Lucene's advanced Arabic analyzer
+2. **Stemmer:** PyStemmer vs Lucene's ISRI implementation  
+3. **Stopwords:** Currently 20 manual words vs Lucene's proprietary list (testing NLTK's 245 words)
+
+### Advantages for Phase 2
+1. ✅ **No Java dependencies** - eliminates all JVM configuration issues
+2. ✅ **Clean Python API** - easy QE integration in loops
+3. ✅ **Fast performance** - 500x faster than rank-bm25
+4. ✅ **Index persistence** - save/load for reuse across experiments
+5. ✅ **Reproducible** - works consistently in Colab
+
+### Code Example (QE Integration)
+```python
+# Load saved index
+retriever = bm25s.BM25.load("data/miracl_ar/bm25s_index")
+
+# Apply query enhancement
+enhanced_query = llm_enhance(original_query)
+
+# Retrieve
+query_tokens = bm25s.tokenize([enhanced_query], 
+                               stopwords=arabic_stopwords,
+                               stemmer=stemmer)
+results, scores = retriever.retrieve(query_tokens, k=100)
+```
+
+### Resources
+- **Colab Notebook:** https://colab.research.google.com/drive/1KJ5bWrrJnSqQ8NYI7gd0uAT1db4F69T_?usp=sharing
+- **Local Code:** `experiments/bm25s_baseline.ipynb`
+
+---
+
+## 6. Next Steps
+
+### For Pyserini (if needed in future)
 1.  **Investigate JVM Injection:** Determine how to pass `-Djava.home` arguments explicitly to the `LuceneSearcher` constructor or `pyjnius` backend.
 2.  **System Java Removal:** Attempt the "Scorched Earth" strategy: uninstall Java 21 from the host OS entirely so Python has no incorrect option to fall back on.
 3.  **Manual Binding:** Verify if we can manually point `pyjnius` to the specific `libjvm.so` file inside the Conda directory before importing Pyserini.
+
+### For BM25S (current path)
+1. ✅ **Baseline established** - 0.8603 Recall@100
+2. ⏳ **Validate NLTK stopwords** - may improve to ~0.87-0.88
+3. ⏳ **Optional: Test Farasa stemmer** - potential 1-2% additional improvement
