@@ -313,8 +313,8 @@ Updated files: TASKS.md, research_decisions/open_questions.md, RESEARCH_CONTEXT_
 
 ### Task 2.2: Implement Dense Baseline Retriever
 **Owner:** Osman  
-**Status:** 🔄 In Progress (Using Pyserini pre-built mDPR index)  
-**Depends On:** Task 2.1 (✅ decided), Task 1.2 (need dataset)
+**Status:** ✅ Done  
+**Depends On:** Task 2.1 (✅ decided), Task 1.2 (✅ completed)
 
 **Why:** Dense retrieval is our second baseline. Test separately from BM25.
 
@@ -323,21 +323,57 @@ Updated files: TASKS.md, research_decisions/open_questions.md, RESEARCH_CONTEXT_
 - `.kiro/steering/baseline-implementation.md` - Code patterns
 - Task 2.1 outcomes - **mDPR via Pyserini**
 - `meetings/9.1.2026_meeting_outcomes.md` - Implementation approach
+- `reports/mdpr_baseline_report.md` - **Full technical report**
 
 **Deliverables:**
 - [x] Embedding model decided (mDPR via Pyserini pre-built index)
-- [ ] Dense retriever implemented
-- [ ] Can retrieve top-10 for any query
+- [x] Dense retriever implemented
+- [x] Can retrieve top-10 for any query
+- [x] GPU-accelerated implementation (5-7x speedup)
+- [x] Technical report documenting reproduction
 
-**Outcomes:** *(In progress - 9/1/2026)*
+**Outcomes:** *(Completed 14/1/2026)*
 ```
-Embedding model: mDPR (Pyserini pre-built index)
-Index type: Pyserini pre-built FAISS index
-Code location: To be added to same notebook as BM25
-Embedding time: N/A - using pre-built index (no embedding needed!)
+Implementation: GPU-Accelerated mDPR via Pyserini
+Technical Report: reports/mdpr_baseline_report.md
+Code Location: arabic-rag-query-enhancement/experiments/mDPR_baseline.ipynb
+Colab Link: https://colab.research.google.com/drive/15_9-gna4tJD9ST2CLtxfIZ1p8t2HUspg 
 
-Note: mDPR chosen as "weaker" baseline (not fine-tuned on MIRACL)
-This is intentional - gives more room for Query Enhancement improvement
+RESULTS (MIRACL Arabic Dev Set - 2,896 queries):
+✅ Recall@100: 0.8407 (Target: 0.841) = 99.96% achievement
+✅ NDCG@10:    0.4993 (Target: 0.499) = 100.06% achievement
+✅ Recall@10:  0.6156 (Thesis baseline metric)
+✅ MRR:        0.5328
+
+IMPLEMENTATION APPROACH:
+- Manual GPU batch encoding (64 queries/batch)
+- Bypassed Pyserini's slow CPU encoder
+- Speed: ~2-3 minutes (vs 35 minutes CPU)
+- Hardware: Google Colab T4 GPU
+
+KEY TECHNICAL DETAILS:
+- Encoder: castorini/mdpr-tied-pft-msmarco (loaded on GPU)
+- Index: Pyserini pre-built FAISS (5.47 GB)
+- Batch size: 64 queries
+- GPU utilization: 80-90% during encoding
+
+COMPARISON WITH BM25:
+- BM25 higher Recall@100 (0.8603 vs 0.8407) - retrieves more relevant docs
+- mDPR higher NDCG@10 (0.4993 vs 0.4610) - better ranking in top 10
+- mDPR higher MRR (0.5328 vs 0.4821) - finds first relevant doc earlier
+- Complementary strengths suggest potential for hybrid approaches
+
+ADVANTAGES FOR PHASE 2:
+✅ Clean QE integration points
+✅ Fast iteration (2-3 min per experiment)
+✅ No Java conflicts (unlike BM25)
+✅ Modular design ready for conversion
+✅ Reproducible in Colab
+
+NEXT STEPS:
+1. Convert notebook to module for QE integration
+2. Design QueryEnhancer interface
+3. Select first QE technique based on error analysis
 ```
 
 ---
