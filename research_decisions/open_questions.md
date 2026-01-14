@@ -1,6 +1,6 @@
 # Open Questions & Research Challenges
-**Last Updated:** 6/1/2026  
-**Status:** Updated after decision review meeting
+**Last Updated:** 14/1/2026  
+**Status:** Updated after error analysis research completion
 
 ---
 
@@ -123,19 +123,31 @@
 ## ⏳ Still Under Investigation
 
 ### 1. Error Analysis Approach
-**Status:** ⏳ Under Investigation - Research Needed (9/1/2026)
+**Status:** ✅ RESOLVED - Research Complete (14/1/2026)
 
 **Challenge:** MIRACL passages lack metadata (no domain labels like Law, Medical, etc.)
 
-**Research Needed:**
-- Find if anyone has created metadata for MIRACL passages
-- Determine what analysis/insights we can extract from results
-- Framework for transforming results → reports → insights
+**Research Completed:** See `research_decisions/error_analysis_research.md`
 
-**Potential Directions:**
-- Query categorization by length, complexity
-- Manual sampling and analysis
-- Look for existing MIRACL analysis papers
+**Key Findings:**
+1. **No native metadata exists** - Confirmed by all 4 research providers
+2. **NoMIRACL dataset** - Provides hard negatives and robustness labels (HuggingFace)
+3. **Wikipedia categories** - Can be fetched via MediaWiki API (passages are from Wikipedia)
+4. **Query-side analysis** - Highest ROI: length, AAFAQ taxonomy, score gaps
+
+**Practical Framework (Immediate Actions):**
+- Use NoMIRACL for hard negative analysis
+- Fetch Wikipedia categories for domain-based analysis
+- Calculate score gaps to identify low-confidence retrievals
+- Query feature engineering (length, IDF variance)
+
+**Tools Identified:**
+- `ranx` - Ranking evaluation & visualization
+- `wikipedia-api` - Category extraction
+- `NoMIRACL` dataset on HuggingFace
+- AAFAQ framework for Arabic query classification
+
+**Specification:** See `research_decisions/evaluation_pipeline_spec.md`
 
 ---
 
@@ -334,7 +346,7 @@
 | Hierarchical Structures | ⏳ Under Investigation |
 | Arabic LLMs | ⏳ Under Investigation |
 | Meta-data Filtering | ⏳ New Direction |
-| Error Analysis Approach | ⏳ Research Needed (9/1/2026) |
+| Error Analysis Approach | ✅ Resolved (14/1/2026) - See error_analysis_research.md |
 | Pyserini vs HuggingFace | ⏳ Research Needed (9/1/2026) |
 
 ---

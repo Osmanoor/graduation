@@ -1,7 +1,7 @@
 # 🧬 RESEARCH_CONTEXT_KERNEL.md
 **Project:** Improving Retrieval Recall in Arabic RAG Systems via Query Enhancement
 **Status:** Phase 1 - Active Investigation & Baseline Setup
-**Last Updated:** 9/1/2026
+**Last Updated:** 14/1/2026
 
 ---
 
@@ -25,6 +25,9 @@ We are currently in the **Baseline Implementation** stage.
     *   **Decided on Pyserini pre-built indexes for baselines (9/1/2026)**
     *   **Designed evaluation pipeline (9/1/2026)**
     *   **Preliminary BM25 notebook implemented by Osman**
+    *   **Completed error analysis research (14/1/2026)** - See `research_decisions/error_analysis_research.md`
+    *   **Created evaluation pipeline specification (14/1/2026)** - See `research_decisions/evaluation_pipeline_spec.md`
+    *   **Created experiment documentation template (14/1/2026)** - See `experiments/EXPERIMENT_TEMPLATE.md`
 *   **What we are doing now:** 
     *   Finalizing baseline BM25 and mDPR retrievers using Pyserini
     *   Implementing evaluation pipeline (two-phase: experiment → evaluation)
@@ -71,11 +74,17 @@ We are currently in the **Baseline Implementation** stage.
 
 ## 4. 🔄 Under Investigation (Active Research Questions)
 
-### A. Error Analysis Approach ⏳ (NEW - 9/1/2026)
-**Status:** Under Investigation - Research Needed
-*   *Challenge:* MIRACL passages lack metadata (no domain labels like Law, Medical, etc.)
-*   *Research Needed:* Find if anyone created metadata for MIRACL; determine what insights we can extract
-*   *Potential Directions:* Query categorization by length/complexity, manual sampling, existing MIRACL analysis papers
+### A. Error Analysis Approach ✅ RESOLVED (14/1/2026)
+**Status:** Research Complete
+*   **Challenge:** MIRACL passages lack metadata (no domain labels like Law, Medical, etc.)
+*   **Research Completed:** See `research_decisions/error_analysis_research.md`
+*   **Key Findings:**
+    - No native metadata exists in MIRACL (confirmed by 4 research providers)
+    - NoMIRACL dataset provides hard negatives (HuggingFace available)
+    - Wikipedia categories can be fetched via MediaWiki API
+    - Query-side analysis is highest ROI for our timeline
+*   **Framework:** Score gaps, query length, Wikipedia categories, NoMIRACL hard negatives
+*   **Specification:** See `research_decisions/evaluation_pipeline_spec.md`
 
 ### B. Pyserini vs HuggingFace Understanding ⏳ (NEW - 9/1/2026)
 **Status:** Under Investigation - Research Needed
@@ -180,7 +189,7 @@ We are currently in the **Baseline Implementation** stage.
 ## 7. ⚠️ Current Challenges & Risks
 1.  **Scale Challenge:** MIRACL has 2.1M passages - significant storage (~50GB) and compute requirements. **Mitigated:** Using Pyserini pre-built indexes avoids embedding time.
 2.  **Dialectical Gap:** MIRACL and ARABICA are MSA-only. We cannot directly test dialectical improvements.
-3.  **Error Analysis Challenge (NEW):** MIRACL passages lack metadata for categorization (no domain labels).
+3.  **Error Analysis Challenge (NEW):** MIRACL passages lack metadata for categorization (no domain labels). **Mitigated:** Use NoMIRACL hard negatives, Wikipedia categories, query-side analysis (see `research_decisions/error_analysis_research.md`)
 4.  **Evaluation Rigor:** Need to understand *what* improved, not just *that* it improved
 5.  **Resource Constraints:** Limited GPU access, API costs, 6-week timeline
 6.  **Arabic LLM Quality:** Current candidates (Jais, AceGPT) may not be optimal
