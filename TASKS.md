@@ -210,7 +210,7 @@ Code location: Preliminary notebook exists, pending blocker resolution
 
 ### Task 1.5: Implement Evaluation Pipeline + Research Analysis Framework
 **Owner:** Mohammed (Research), Osman (Implementation)  
-**Status:** 🔄 In Progress (Design clarified, needs implementation)  
+**Status:** 🔄 In Progress (Research complete, implementation pending)  
 **Depends On:** Task 1.2 (need dataset with qrels)
 
 **Why:** Need to compute Recall@10, NDCG@10, MRR for all experiments. Build once, reuse. Also need framework for analysis/insights.
@@ -219,43 +219,45 @@ Code location: Preliminary notebook exists, pending blocker resolution
 - `research_decisions/technical_specifications.md` - Section "Evaluation Framework"
 - `meetings/6.1.2026_meeting_outcomes.md` - Section 1.3 confirms metrics
 - `meetings/9.1.2026_meeting_outcomes.md` - **Detailed pipeline design**
+- `research_decisions/error_analysis_research.md` - **Error analysis research (NEW)**
+- `research_decisions/evaluation_pipeline_spec.md` - **Pipeline specification (NEW)**
 
 **Deliverables:**
 - [ ] Evaluation script that computes all 3 metrics
 - [ ] Tested on sample data
 - [ ] Code saved to repo/Colab
-- [ ] **Research: Analysis framework (what insights can we extract?)**
-- [ ] **Research: Error Analysis approach (MIRACL lacks metadata)**
+- [x] **Research: Analysis framework (what insights can we extract?)** ✅ Complete
+- [x] **Research: Error Analysis approach (MIRACL lacks metadata)** ✅ Complete
+- [x] **Experiment documentation template** ✅ Complete
 
-**Outcomes:** *(Design clarified 9/1/2026, implementation pending)*
+**Outcomes:** *(Research complete 14/1/2026, implementation pending)*
 ```
-PIPELINE DESIGN (from 9/1/2026 meeting):
+RESEARCH COMPLETED (14/1/2026):
+- Error analysis research: research_decisions/error_analysis_research.md
+- Pipeline specification: research_decisions/evaluation_pipeline_spec.md
+- Experiment template: experiments/EXPERIMENT_TEMPLATE.md
 
-Two-Phase Approach:
-1. EXPERIMENT PHASE: Run search → Save results to file
-2. EVALUATION PHASE: Calculate metrics from saved results
+KEY FINDINGS:
+1. MIRACL has NO native metadata (confirmed by 4 research providers)
+2. NoMIRACL dataset provides hard negatives (HuggingFace available)
+3. Wikipedia categories can be fetched via API
+4. Query-side analysis is highest ROI for our timeline
 
-Storage Format:
-- Save as IDs only (Query ID + Passage ID) - NOT full passages
-- Save top 100 results per query (can extract top 10 later)
-- Lightweight, easy to store
+ANALYSIS FRAMEWORK:
+- Immediate: Score gaps, query length correlation, rank distribution
+- Short-term: Wikipedia categories, NoMIRACL hard negatives, AAFAQ taxonomy
+- Advanced: Failed query clustering, LLM topic labeling
 
-Two Purposes:
-1. Documentation for thesis (show our work)
-2. Context for incremental improvement (act as context for Kiro/team)
+TOOLS IDENTIFIED:
+- ranx: Ranking evaluation & visualization
+- wikipedia-api: Category extraction
+- NoMIRACL: Hard negative dataset
+- pytrec_eval: Standard IR metrics
 
-Experiment Documentation (MD file per experiment):
-- Why we started the experiment
-- Parameters/setup used
-- Prompts used (if any)
-- Results and immediate effects
-- Concise but comprehensive
-
-RESEARCH NEEDED (Osman's suggestion):
-- What analysis/insights can we extract from results?
-- How to do Error Analysis when MIRACL lacks metadata?
-- Find if anyone created metadata for MIRACL passages
-- Framework for transforming results → reports → insights
+IMPLEMENTATION PENDING (Osman):
+- Results saving function (JSONL format)
+- Metric calculation function
+- Integration with Pyserini
 ```
 
 ---
