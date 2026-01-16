@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data (large files)
+data/miracl/*.jsonl
+data/miracl/*.tsv
+data/processed/*
+!data/miracl/.gitkeep
+!data/processed/.gitkeep
+
+# Results (keep structure, ignore content)
+results/**/*.txt
+results/**/*.json
+!results/*/.gitkeep
+
+# Cache
+.cache/
+*.cache
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pyserini cache
+~/.cache/pyserini/
+
+# Model checkpoints
+*.pt
+*.pth
+*.bin
+*.ckpt
+
+# Logs
+*.log
+logs/

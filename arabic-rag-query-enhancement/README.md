@@ -1,0 +1,176 @@
+# Arabic RAG Query Enhancement
+
+Query enhancement techniques for improving Arabic retrieval-augmented generation systems.
+
+## Project Structure
+
+```
+arabic-rag-query-enhancement/
+├── data/                    # Dataset storage
+│   ├── miracl/             # MIRACL dataset (accessed via HuggingFace)
+│   └── processed/          # Processed data
+├── src/                    # Source code
+│   ├── retrievers/         # Retrieval implementations
+│   │   └── dense.py        # mDPR dense retriever
+│   ├── enhancers/          # Query enhancement techniques
+│   │   └── base.py         # Base classes (Identity, QueryEnhancer)
+│   ├── evaluation/         # Evaluation metrics
+│   │   └── metrics.py      # Recall, NDCG, MRR
+│   └── utils/              # Utilities
+│       └── data_loader.py  # MIRACL data loader
+├── experiments/            # Experiment notebooks
+│   └── exp_001_baseline_dense.ipynb  # First baseline experiment
+├── results/                # Experiment results
+│   ├── baseline_dense/     # Dense baseline results
+│   ├── baseline_bm25/      # BM25 baseline results (future)
+│   └── enhanced/           # Enhanced results (future)
+├── configs/                # Configuration files
+├── requirements.txt        # Python dependencies
+└── README.md              # This file
+```
+
+## Setup (Google Colab)
+
+### 1. Clone Repository
+
+```bash
+!git clone https://github.com/Osmanoor/graduation.git
+%cd graduation/arabic-rag-query-enhancement
+```
+
+### 2. Install Dependencies
+
+```bash
+# Install Java 21 (required for Pyserini)
+!apt-get install -qq openjdk-21-jdk-headless
+
+# Install Python packages
+!pip install -q -r requirements.txt
+```
+
+### 3. Restart Runtime
+
+**IMPORTANT:** After installation, restart the Colab runtime:
+- Runtime → Restart runtime
+
+### 4. Configure Environment
+
+```python
+import os
+import sys
+
+# Set Java home
+os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-21-openjdk-amd64'
+
+# Add project to path
+sys.path.insert(0, '/content/graduation/arabic-rag-query-enhancement')
+```
+
+## Quick Start
+
+### Run Baseline Experiment
+
+```python
+# Open and run: experiments/exp_001_baseline_dense.ipynb
+```
+
+### Use Components Programmatically
+
+```python
+from src.utils.data_loader import MIRACLDataLoader
+from src.retrievers.dense import mDPRRetriever
+from src.enhancers.base import IdentityEnhancer
+from src.evaluation.metrics import RetrievalEvaluator
+
+# Load data
+loader = MIRACLDataLoader(language="ar", split="dev")
+topics, qrels = loader.load_all()
+
+# Initialize components
+enhancer = IdentityEnhancer()  # No enhancement (baseline)
+retriever = mDPRRetriever()
+evaluator = RetrievalEvaluator(qrels)
+
+# Run experiment
+query_ids = list(topics.keys())
+queries = [topics[qid]['title'] for qid in query_ids]
+enhanced = enhancer.enhance_batch(queries)
+results = retriever.search(enhanced, k=100)
+
+# Evaluate
+metrics = evaluator.evaluate(results)
+print(f"NDCG@10: {metrics['ndcg_cut_10']:.4f}")
+```
+
+## Experiments
+
+### Experiment 001: Dense Baseline
+
+- **Notebook:** `experiments/exp_001_baseline_dense.ipynb`
+- **Enhancement:** Identity (no enhancement)
+- **Expected Results:**
+  - Recall@100: ~0.841
+  - NDCG@10: ~0.499
+- **Status:** Ready to run
+
+## Adding New Query Enhancement Techniques
+
+1. Create a new class in `src/enhancers/`:
+
+```python
+from src.enhancers.base import QueryEnhancer
+
+class MyEnhancer(QueryEnhancer):
+    def enhance(self, query: str, query_id: str = None) -> str:
+        # Your enhancement logic here
+        enhanced = query + " additional context"
+        return enhanced
+```
+
+2. Use it in experiments:
+
+```python
+from src.enhancers.my_enhancer import MyEnhancer
+
+enhancer = MyEnhancer()
+enhanced_queries = enhancer.enhance_batch(queries)
+```
+
+## Dataset
+
+**MIRACL Arabic:**
+- Corpus: 2,061,414 passages
+- Queries: 2,896 (dev set)
+- Language: Modern Standard Arabic (MSA)
+- Access: Via Pyserini (no manual download needed)
+
+## Hardware Requirements
+
+- **GPU:** Recommended (T4 or better)
+- **RAM:** 12GB+ (Google Colab free tier sufficient)
+- **Storage:** ~6GB for mDPR index (downloaded on first run)
+
+## Performance
+
+- **Baseline retrieval:** ~2-3 minutes (T4 GPU)
+- **CPU fallback:** ~10-15 minutes
+
+## Citation
+
+```bibtex
+@misc{arabic-rag-qe-2026,
+  title={Query Enhancement for Arabic Retrieval-Augmented Generation},
+  author={Mohammed Elhaj and Osman Bashir},
+  year={2026},
+  institution={University of Khartoum}
+}
+```
+
+## License
+
+[Add your license here]
+
+## Contact
+
+- Mohammed Elhaj: [email]
+- Osman Bashir: [email]
