@@ -48,8 +48,8 @@ data/processed/*
 !data/processed/.gitkeep
 
 # Results (keep structure, ignore content)
-results/**/*.txt
-results/**/*.json
+# results/**/*.txt
+# results/**/*.json
 !results/*/.gitkeep
 
 # Cache

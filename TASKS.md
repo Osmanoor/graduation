@@ -434,28 +434,62 @@ Context files updated: [List]
 ---
 
 ### Task 3.1: Run Dense Baseline Experiments
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 2.2, Task 1.5
+**Owner:** Osman  
+**Status:** ✅ Done  
+**Depends On:** Task 2.2 (✅ completed), Task 1.5 (evaluation pipeline)
 
 **Why:** Establish Dense baseline metrics before any enhancements.
 
 **Context Files:**
 - `.kiro/steering/experiment-documentation.md`
 - Task 2.2 outcomes (retriever code)
+- `docs/experiments/exp_001_baseline_dense.md` - **Full experiment documentation**
 
 **Deliverables:**
-- [ ] Run on full dev set (or document subset size)
-- [ ] Record all 3 metrics
-- [ ] Create `experiments/exp_002_baseline_dense.md`
+- [x] Run on full dev set (2,896 queries)
+- [x] Record all 3 metrics
+- [x] Create experiment documentation
+- [x] Save results to `results/baseline_dense/`
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 16/1/2026)*
 ```
-Recall@10: [X.XXX]
-NDCG@10: [X.XXX]
-MRR: [X.XXX]
-Embedding model: [Model used]
-Experiment doc: experiments/exp_002_baseline_dense.md
+EXPERIMENT 001: Dense Baseline (mDPR + Identity Enhancement)
+
+RESULTS (MIRACL Arabic Dev Set - 2,896 queries):
+✅ Recall@10:  0.6156 (Thesis baseline metric)
+✅ Recall@100: 0.8407 (Target: 0.841) = 99.96% achievement
+✅ NDCG@10:    0.4993 (Target: 0.499) = 100.06% achievement
+✅ MRR:        0.5328
+
+PERFORMANCE:
+- Runtime: ~2-3 minutes (T4 GPU)
+- GPU utilization: 80-90% during encoding
+- Index size: 5.47 GB (cached after first run)
+
+FILES GENERATED:
+- results/baseline_dense/exp_001_baseline_dense.txt (TREC format)
+- results/baseline_dense/exp_001_metrics.json (metrics)
+- docs/experiments/exp_001_baseline_dense.md (documentation)
+
+COLAB NOTEBOOK:
+https://colab.research.google.com/drive/1WAqG5-fK0NTjKZFCir15x4km3a1n4P1M?usp=sharing
+
+KEY FINDINGS:
+1. Successfully reproduced MIRACL results (<0.1% difference)
+2. GPU acceleration provides 5-7x speedup vs CPU
+3. mDPR better at ranking (NDCG@10) than recall (vs BM25)
+4. Complementary strengths with BM25 suggest hybrid potential
+
+COMPARISON WITH BM25:
+- BM25 higher Recall@100 (0.8603 vs 0.8407) - retrieves more docs
+- mDPR higher NDCG@10 (0.4993 vs 0.4610) - better ranking
+- mDPR higher MRR (0.5328 vs 0.4821) - finds first relevant doc earlier
+
+NEXT STEPS:
+1. Error analysis - identify which queries fail
+2. Select first QE technique based on error patterns
+3. Implement QE technique in src/enhancers/
+4. Run Experiment 002 (QE + Dense)
 ```
 
 ---
