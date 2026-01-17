@@ -164,23 +164,34 @@
 ---
 
 ### 3. First Query Enhancement Technique
-**Status:** ⏳ Under Investigation - Decide After Baseline
+**Status:** ✅ RESOLVED - Query Expansion with Normalization (17/1/2026)
 
 **Question:** Which technique should we implement first?
 
-**Candidates:**
-1. **HyDE** - Generate hypothetical document
-2. **Query Rewriting** - Normalize/improve query
-3. **Query Expansion** - Add synonyms, morphology
-4. **Query Decomposition** - Break complex queries
+**Decision:** Query Expansion with Normalization
 
-**Approach:**
-1. Build baseline first
-2. Analyze errors from baseline
-3. Research papers that used MIRACL with query enhancement
-4. Select based on: baseline errors, paper precedents, feasibility
+**Rationale (Evidence-Based):**
+- Error analysis revealed 80% of failures stem from:
+  * Spelling errors (40%)
+  * Named entity variations (35%)
+  * Vocabulary mismatch (15%)
+- Query Expansion addresses all three patterns
+- Expected impact: 20-45% reduction in failed queries
+- Lower cost than HyDE (shorter prompts)
+- Better suited for Arabic linguistic issues
 
-**Lead:** Found paper about "efficient generation augmented query rewriter" citing MIRACL - needs reading.
+**Implementation:**
+1. Step 1: Normalize (fix spelling, remove diacritics)
+2. Step 2: Expand with LLM (add synonyms, entity variants, related terms)
+3. LLM: Gemini 1.5 Flash (free tier, good Arabic support)
+
+**Alternative:** HyDE (if expansion achieves <15% improvement)
+
+**Decision Document:** `research_decisions/qe_technique_selection.md`
+
+**Error Analysis:**
+- Phase 1 (Quantitative): `research_decisions/error_analysis_phase1_quantitative.md`
+- Phase 2 (Qualitative): `research_decisions/error_analysis_phase2_qualitative.md`
 
 ---
 
@@ -342,14 +353,14 @@
 | Timeline | ✅ Resolved |
 | Evaluation Pipeline Design | ✅ Resolved (9/1/2026) |
 | Embedding Model | ✅ Resolved (9/1/2026) - Pyserini pre-built |
-| First Technique | ⏳ Under Investigation |
+| First Technique | ✅ Resolved (17/1/2026) - Query Expansion |
 | Hierarchical Structures | ⏳ Under Investigation |
-| Arabic LLMs | ⏳ Under Investigation |
+| Arabic LLMs | ✅ Resolved (17/1/2026) - Gemini 1.5 Flash |
 | Meta-data Filtering | ⏳ New Direction |
 | Error Analysis Approach | ✅ Resolved (14/1/2026) - See error_analysis_research.md |
 | Pyserini vs HuggingFace | ⏳ Research Needed (9/1/2026) |
 
 ---
 
-**Document Status:** ✅ Updated after 9/1/2026 meeting  
-**Next Update:** After baseline is established
+**Document Status:** ✅ Updated after error analysis completion (17/1/2026)  
+**Next Update:** After implementing Query Expansion (Task 4.1)

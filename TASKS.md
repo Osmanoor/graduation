@@ -521,53 +521,96 @@ Context files updated: [List]
 
 ### Task 3.3: Analyze Baseline Errors
 **Owner:** Both  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 2.4, Task 3.2
+**Status:** ✅ Done  
+**Depends On:** Task 3.1 (✅ completed)
 
 **Why:** Understanding what queries fail helps us choose the right QE technique.
 
 **Context Files:**
-- `experiments/exp_001_baseline_bm25.md`
-- `experiments/exp_002_baseline_dense.md`
-- `research_decisions/open_questions.md` - Section on first technique selection
+- `docs/experiments/exp_001_baseline_dense.md` - Experiment documentation
+- `research_decisions/error_analysis_plan_exp001.md` - Analysis plan
+- `research_decisions/error_analysis_phase1_quantitative.md` - **Phase 1 results**
+- `research_decisions/error_analysis_phase2_qualitative.md` - **Phase 2 results**
+- `research_decisions/HANDOFF_ERROR_ANALYSIS.md` - Handoff document
 
 **Deliverables:**
-- [ ] List of query types that fail
-- [ ] Hypotheses about why they fail
-- [ ] Recommendations for which QE technique to try
+- [x] **Phase 1: Quantitative Analysis** ✅ Complete (17/1/2026)
+- [x] **Phase 2: Qualitative Analysis** ✅ Complete (17/1/2026)
+- [x] **Phase 3: Synthesis & Recommendation** ✅ Complete (17/1/2026)
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 17/1/2026)*
 ```
-Common failure patterns: [List]
-Hypotheses: [Why queries fail]
-Recommended technique: [HyDE / Rewriting / etc]
-Analysis doc: [Path if created]
+QUANTITATIVE FINDINGS (N=2,896 - VALIDATED):
+- 39% failure rate (1,130 queries with NDCG@10 < 0.3)
+- Short queries achieve 59% of long query performance (NDCG 0.240 vs 0.406)
+- Query length correlation: r=0.125 (p<0.001, weak but significant)
+- Retrieval vs ranking gap: 84% Recall@100 but 50% NDCG@10
+
+KEY INSIGHT:
+Information poverty (short queries) is a validated, dataset-wide driver of failure.
+
+QUALITATIVE OBSERVATIONS (N=20 - EXPLORATORY ONLY):
+- Observed spelling variations, entity mismatches, diacritics in sample
+- Status: Hypotheses only, NOT used for decision-making
+
+SCIENTIFIC REVIEW: ✅ Approved (Gemini expert review)
+- Decision basis: Quantitative evidence only (short query gap)
+- Qualitative findings: Labeled as exploratory hypotheses
+
+FILES:
+- ERROR_ANALYSIS_COMPLETE.md ← Main reference
+- arabic-rag-query-enhancement/SCIENTIFIC_REVIEW_ERROR_ANALYSIS.md
+- research_decisions/error_analysis_phase1_quantitative.md
+- archive/error_analysis/ ← Process documents archived
 ```
 
 ---
 
 ### Task 3.4: Select First Query Enhancement Technique
 **Owner:** Both  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 3.3
+**Status:** ✅ Done  
+**Depends On:** Task 3.3 (✅ completed)
 
 **Why:** This is a key decision that shapes Phase 2.
 
 **Context Files:**
 - Task 3.3 outcomes (error analysis)
+- `research_decisions/qe_technique_selection.md` - **Decision document**
+- `research_decisions/error_analysis_phase1_quantitative.md`
+- `research_decisions/error_analysis_phase2_qualitative.md`
 - `research_decisions/open_questions.md` - Technique candidates
-- `papers/` - Relevant paper summaries
 
 **Deliverables:**
-- [ ] Decision documented
-- [ ] Update `research_decisions/open_questions.md`
-- [ ] Update `RESEARCH_CONTEXT_KERNEL.md.md`
+- [x] Decision documented
+- [x] Update `research_decisions/open_questions.md`
+- [x] Update `RESEARCH_CONTEXT_KERNEL.md.md`
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 17/1/2026)*
 ```
-Chosen technique: [Name]
-Rationale: [Why this one based on error analysis]
-Updated files: [List]
+DECISION: Query Expansion with Normalization ✅
+
+JUSTIFICATION (Quantitative Evidence Only, N=2,896):
+- Primary: Short queries achieve 59% of long query performance
+- Problem: Information poverty in short queries
+- Solution: Query Expansion adds context to address this gap
+- Secondary: Normalization as low-cost preprocessing
+
+IMPLEMENTATION APPROACH:
+1. Normalization: Fix spelling, remove diacritics, standardize spacing
+2. Expansion: Use Gemini 1.5 Flash to add synonyms, entity variants, related terms
+
+HYPOTHESIS TO TEST (Experiment 002):
+Query Expansion will improve performance by addressing short query information poverty.
+NO PREDICTED ROI - actual impact will be measured in Experiment 002.
+
+ALTERNATIVE: HyDE (if expansion shows <15% improvement)
+
+FILES:
+- ERROR_ANALYSIS_COMPLETE.md ← Main reference
+- research_decisions/qe_technique_selection.md
+- arabic-rag-query-enhancement/SCIENTIFIC_REVIEW_ERROR_ANALYSIS.md
+
+NEXT: Task 4.1 - Implement Query Expansion with Normalization
 ```
 
 ---
