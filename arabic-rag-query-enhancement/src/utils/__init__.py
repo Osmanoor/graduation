@@ -1,3 +1,3 @@
-from .data_loader import MIRACLDataLoader
+from .data_loader_hf import MIRACLDataLoader
 
 __all__ = ['MIRACLDataLoader']

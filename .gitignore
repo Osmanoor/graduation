@@ -208,6 +208,5 @@ __marimo__/
 gemini-mcp-server
 
 # Project-specific: Large data files
-arabic-rag-query-enhancement/results/**/*.json
 arabic-rag-query-enhancement/data/processed/*.json
 arabic-rag-query-enhancement/arabic-rag-query-enhancement/data/processed/*.json

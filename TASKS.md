@@ -157,7 +157,7 @@ Storage Strategy (from 9/1/2026 meeting):
 
 ### Task 1.4: Implement BM25 Baseline Retriever
 **Owner:** Osman  
-**Status:** 🔄 In Progress (CLI reproduction successful, Python code blocked)  
+**Status:** ✅ Done (BM25S approach)  
 **Depends On:** Task 1.2 (✅ completed)
 
 **Why:** BM25 is our sparse retrieval baseline. Simpler than Dense (no GPU needed). Test separately per our decision.
@@ -167,59 +167,41 @@ Storage Strategy (from 9/1/2026 meeting):
 - `.kiro/steering/baseline-implementation.md` - Code patterns (use `#baseline-implementation` in chat)
 - `meetings/9.1.2026_meeting_outcomes.md` - Implementation status discussed
 - `reports/bm25_baseline_report.md` - **Technical report on reproduction attempts**
+- `src/retrievers/bm25.py` - **Final BM25S implementation**
 
 **Deliverables:**
-- [x] BM25 retriever implemented (preliminary notebook)
-- [x] Can retrieve top-10 for any query (via CLI)
-- [ ] Python code execution working (BLOCKED)
-- [ ] Code finalized and pushed to repo
+- [x] BM25 retriever implemented (BM25S library)
+- [x] Can retrieve top-10 for any query
+- [x] Python code execution working
+- [x] Code finalized and pushed to repo
 
-**Outcomes:** *(In progress - 10/1/2026)*
+**Outcomes:** *(Completed 26/1/2026)*
 ```
-Implementation: Pyserini (using pre-built MIRACL indexes)
-Technical Report: reports/bm25_baseline_report.md
+DECISION: Implement using BM25S (Approach E)
 
-SUMMARY OF ATTEMPTS:
-✅ Attempt C (CLI): Successfully reproduced SOTA (Recall@100 = 0.889)
-   - Environment: Python 3.8, OpenJDK 11, Pyserini 0.19.0
-   - Command: python -m pyserini.search.lucene ...
-   
-❌ Attempt D (Python Code): BLOCKED (Recall@100 = 0.235)
-   - Same environment as Attempt C
-   - Issue: Python code (LuceneSearcher) falls back to System Java 21
-   - Root cause: Pyjnius JVM initialization ignores Conda JAVA_HOME
-   
-CRITICAL BLOCKER:
-Phase 2 (Query Enhancement) requires Python code execution to intercept queries
-in a loop for LLM expansion. Cannot use CLI approach for this.
+After Pyserini blocker (Java 21 vs Java 11 conflict), switched to pure Python solution:
 
-CURRENT STATUS:
-- Environment validated ✅
-- Binary dependencies fixed ✅
-- Code execution BLOCKED ⚠️
-
-NEXT STEPS:
-1. Investigate JVM injection to force Java 11 in Python code
-2. Consider "Scorched Earth": Remove System Java 21 entirely
-3. Manual Pyjnius binding to Conda libjvm.so before import
-
-Code location: Preliminary notebook exists, pending blocker resolution
-```
-
-**Update (12/1/2026) - BM25S Alternative Solution:**
-```
-ATTEMPT E: BM25S (Pure Python Implementation)
-
-Given Pyserini blocker, implemented alternative using BM25S library:
-- Library: BM25S v0.2+ (https://github.com/xhluca/bm25s)
+Implementation: BM25S Library
+- Library: bm25s v0.2+ (https://github.com/xhluca/bm25s)
 - No Java dependencies
 - Clean API for QE integration
+- Pure Python implementation
 
-PERFORMANCE RESULTS:
-- Recall@100: 0.8603 (Target: 0.889) = 96.8% achievement
-- NDCG@10: 0.4610 (Target: 0.481) = 95.8% achievement  
-- Recall@10: 0.5926 (Thesis metric)
-- MRR: 0.4821
+IMPLEMENTATION DETAILS:
+- Tokenization: Arabic stemming (PyStemmer) + NLTK stopwords (245+ words)
+- BM25 Parameters: k1=0.9, b=0.4 (Lucene-style)
+- Index Storage: Google Drive (~5GB)
+- Loading: Symbolic links in Colab
+
+TRADE-OFF ACCEPTED:
+- 96% of Pyserini performance (vs 100%)
+- Benefits: No Java, easier QE integration, pure Python
+- Conclusion: Acceptable trade-off for thesis goals
+
+BLOCKER RESOLUTION:
+- Original blocker: Pyserini Java 21 vs Java 11 conflict
+- Solution: Switch to BM25S (pure Python)
+- Status: ✅ Resolved and implemented
 ```
 
 ---
@@ -381,8 +363,8 @@ NEXT STEPS:
 ---
 
 ### Task 2.3: Run BM25 Baseline Experiments
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
+**Owner:** Osman  
+**Status:** ✅ Done  
 **Depends On:** Task 1.4, Task 1.5
 
 **Why:** Establish BM25 baseline metrics before any enhancements.
@@ -391,19 +373,43 @@ NEXT STEPS:
 - `.kiro/steering/experiment-documentation.md` - Documentation template
 - Task 1.4 outcomes (retriever code)
 - Task 1.5 outcomes (evaluation code)
+- `docs/experiments/exp_002_baseline_bm25.md` - **Full experiment documentation**
 
 **Deliverables:**
-- [ ] Run on full dev set (or document subset size)
-- [ ] Record all 3 metrics
-- [ ] Create `experiments/exp_001_baseline_bm25.md`
+- [x] Run on full dev set (2,896 queries)
+- [x] Record all 3 metrics
+- [x] Create experiment documentation
+- [x] Save results to `results/baseline_bm25/`
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 26/1/2026)*
 ```
-Recall@10: [X.XXX]
-NDCG@10: [X.XXX]
-MRR: [X.XXX]
-Dataset: [Full / subset of X]
-Experiment doc: experiments/exp_001_baseline_bm25.md
+EXPERIMENT 002: BM25 Baseline (BM25S + Identity Enhancement)
+
+RESULTS (MIRACL Arabic Dev Set - 2,896 queries):
+✅ Recall@10:  0.5964 (Thesis baseline metric)
+✅ Recall@100: 0.8577 (Target: 0.889) = 96.48% achievement
+✅ NDCG@10:    0.4621 (Target: 0.481) = 96.07% achievement
+✅ MRR:        0.4836
+
+FILES GENERATED:
+- results/baseline_bm25/exp_002_baseline_bm25.txt (TREC format)
+- results/baseline_bm25/exp_002_metrics.json (metrics)
+- docs/experiments/exp_002_baseline_bm25.md (documentation)
+
+COLAB NOTEBOOK:
+https://colab.research.google.com/drive/1AJmPYlLrhY1kLbwTWF2Ga7AyXWNWYemh
+
+KEY FINDINGS:
+1. Achieved 96%+ of Pyserini target (acceptable for pure Python)
+2. Higher Recall@100 than mDPR (0.8577 vs 0.8407) = +2.0%
+3. Lower NDCG@10 than mDPR (0.4621 vs 0.4993) = -7.5%
+4. Complementary strengths: BM25 better at recall, mDPR better at ranking
+
+COMPARISON WITH DENSE (Exp 001):
+- BM25 retrieves more relevant docs (higher Recall@100)
+- mDPR ranks them better (higher NDCG@10, MRR)
+- Suggests potential for hybrid approaches
+
 ```
 
 ---
