@@ -11,13 +11,15 @@ arabic-rag-query-enhancement/
 │   └── processed/          # Processed data
 ├── src/                    # Source code
 │   ├── retrievers/         # Retrieval implementations
-│   │   └── dense.py        # mDPR dense retriever
+│   │   ├── dense.py        # mDPR dense retriever
+│   │   └── bm25.py         # BM25S sparse retriever
 │   ├── enhancers/          # Query enhancement techniques
-│   │   └── base.py         # Base classes (Identity, QueryEnhancer)
+│   │   ├── base.py         # Base classes (Identity, QueryEnhancer)
+│   │   └── query2doc.py    # Query2Doc LLM-based expansion
 │   ├── evaluation/         # Evaluation metrics
 │   │   └── metrics.py      # Recall, NDCG, MRR
 │   └── utils/              # Utilities
-│       └── data_loader.py  # MIRACL data loader
+│       └── data_loader_hf.py  # MIRACL data loader (HuggingFace)
 ├── experiments/            # Experiment notebooks
 │   └── exp_001_baseline_dense.ipynb  # First baseline experiment
 ├── results/                # Experiment results
@@ -111,6 +113,23 @@ print(f"NDCG@10: {metrics['ndcg_cut_10']:.4f}")
 - **Expected Results:**
   - Recall@100: ~0.841
   - NDCG@10: ~0.499
+- **Status:** Complete
+
+### Experiment 002: BM25 Baseline
+
+- **Notebook:** `experiments/exp_002_baseline_bm25.ipynb`
+- **Enhancement:** Identity (no enhancement)
+- **Expected Results:**
+  - Recall@100: ~0.860
+  - NDCG@10: ~0.461
+- **Status:** Ready to run
+
+### Experiment 003: Query2Doc + Dense
+
+- **Notebook:** `experiments/exp_003_query2doc_dense.ipynb`
+- **Enhancement:** Query2Doc (LLM-based pseudo-document generation)
+- **LLM:** Qwen 2.5 3B Instruct
+- **Baseline:** Exp 001
 - **Status:** Ready to run
 
 ## Adding New Query Enhancement Techniques
@@ -135,6 +154,11 @@ from src.enhancers.my_enhancer import MyEnhancer
 enhancer = MyEnhancer()
 enhanced_queries = enhancer.enhance_batch(queries)
 ```
+
+### Available Enhancers
+
+- **IdentityEnhancer** (`base.py`): No enhancement, returns query unchanged (baseline)
+- **Query2DocEnhancer** (`query2doc.py`): LLM-based pseudo-document generation using Qwen 2.5 3B
 
 ## Dataset
 
