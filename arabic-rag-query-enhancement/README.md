@@ -127,10 +127,15 @@ print(f"NDCG@10: {metrics['ndcg_cut_10']:.4f}")
 ### Experiment 003: Query2Doc + Dense
 
 - **Notebook:** `experiments/exp_003_query2doc_dense.ipynb`
+- **Documentation:** `experiments/exp_003_query2doc_dense.md`
 - **Enhancement:** Query2Doc (LLM-based pseudo-document generation)
 - **LLM:** Qwen 2.5 3B Instruct
 - **Baseline:** Exp 001
-- **Status:** Ready to run
+- **Results:**
+  - Recall@100: 0.8594 (+2.19% vs baseline)
+  - NDCG@10: 0.5435 (+8.93% vs baseline)
+  - MRR: 0.5742
+- **Status:** ✅ Complete (Feb 11, 2026)
 
 ## Adding New Query Enhancement Techniques
 
