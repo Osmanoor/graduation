@@ -5,11 +5,20 @@ pyserini>=0.22.1
 faiss-cpu>=1.7.4
 pytrec-eval>=0.5
 
+# For Query2Doc (LLM-based expansion)
+accelerate>=0.20.0
+bitsandbytes>=0.41.0
+
+# Data loading
+datasets>=2.14.0
+
 # Utilities
 numpy>=1.24.0
 tqdm>=4.65.0
 
+# Dense retrieval
+sentence-transformers>=2.2.0
+
 # Optional (for future enhancements)
-# sentence-transformers>=2.2.0
 # openai>=1.0.0
 # google-generativeai>=0.3.0

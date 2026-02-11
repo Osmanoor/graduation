@@ -157,7 +157,7 @@ Storage Strategy (from 9/1/2026 meeting):
 
 ### Task 1.4: Implement BM25 Baseline Retriever
 **Owner:** Osman  
-**Status:** ✅ Done (BM25S selected and implemented)  
+**Status:** 🔄 In Progress (CLI reproduction successful, Python code blocked)  
 **Depends On:** Task 1.2 (✅ completed)
 
 **Why:** BM25 is our sparse retrieval baseline. Simpler than Dense (no GPU needed). Test separately per our decision.
@@ -166,41 +166,60 @@ Storage Strategy (from 9/1/2026 meeting):
 - `research_decisions/technical_specifications.md` - Section "Sparse Retrieval"
 - `.kiro/steering/baseline-implementation.md` - Code patterns (use `#baseline-implementation` in chat)
 - `meetings/9.1.2026_meeting_outcomes.md` - Implementation status discussed
-- `meetings/23.1.2026.md` - **BM25S decision meeting**
-- `reports/bm25_baseline_report.md` - Technical report on reproduction attempts
+- `reports/bm25_baseline_report.md` - **Technical report on reproduction attempts**
 
 **Deliverables:**
-- [x] BM25 retriever implemented (BM25S)
-- [x] Can retrieve top-10 for any query
-- [x] Python code execution working
-- [x] Decision finalized
+- [x] BM25 retriever implemented (preliminary notebook)
+- [x] Can retrieve top-10 for any query (via CLI)
+- [ ] Python code execution working (BLOCKED)
+- [ ] Code finalized and pushed to repo
 
-**Outcomes:** *(Completed 23/1/2026)*
+**Outcomes:** *(In progress - 10/1/2026)*
 ```
-DECISION: BM25S (Pure Python Implementation) ✅
+Implementation: Pyserini (using pre-built MIRACL indexes)
+Technical Report: reports/bm25_baseline_report.md
 
-RATIONALE (from 23/1/2026 meeting):
-- Pure Python (no Java dependencies) - better flexibility
-- 500x faster than traditional Pyserini (pre-computed scores)
-- Recent (July 2024) and scientifically valid
-- Results: 2% difference from MIRACL baseline (acceptable)
-- Used in recent papers (2024-2026)
-- Same algorithm, different implementation (optimization, not algorithm change)
-- Can cite as "BM25 implemented using BM25S"
+SUMMARY OF ATTEMPTS:
+✅ Attempt C (CLI): Successfully reproduced SOTA (Recall@100 = 0.889)
+   - Environment: Python 3.8, OpenJDK 11, Pyserini 0.19.0
+   - Command: python -m pyserini.search.lucene ...
+   
+❌ Attempt D (Python Code): BLOCKED (Recall@100 = 0.235)
+   - Same environment as Attempt C
+   - Issue: Python code (LuceneSearcher) falls back to System Java 21
+   - Root cause: Pyjnius JVM initialization ignores Conda JAVA_HOME
+   
+CRITICAL BLOCKER:
+Phase 2 (Query Enhancement) requires Python code execution to intercept queries
+in a loop for LLM expansion. Cannot use CLI approach for this.
+
+CURRENT STATUS:
+- Environment validated ✅
+- Binary dependencies fixed ✅
+- Code execution BLOCKED ⚠️
+
+NEXT STEPS:
+1. Investigate JVM injection to force Java 11 in Python code
+2. Consider "Scorched Earth": Remove System Java 21 entirely
+3. Manual Pyjnius binding to Conda libjvm.so before import
+
+Code location: Preliminary notebook exists, pending blocker resolution
+```
+
+**Update (12/1/2026) - BM25S Alternative Solution:**
+```
+ATTEMPT E: BM25S (Pure Python Implementation)
+
+Given Pyserini blocker, implemented alternative using BM25S library:
+- Library: BM25S v0.2+ (https://github.com/xhluca/bm25s)
+- No Java dependencies
+- Clean API for QE integration
 
 PERFORMANCE RESULTS:
 - Recall@100: 0.8603 (Target: 0.889) = 96.8% achievement
 - NDCG@10: 0.4610 (Target: 0.481) = 95.8% achievement  
 - Recall@10: 0.5926 (Thesis metric)
 - MRR: 0.4821
-
-ADVANTAGES:
-- Python-native (no Java/Pyserini complexity)
-- Clean API for Query Enhancement integration
-- Faster iteration for experiments
-- Modern implementation (2024)
-
-NEXT: Task 2.3 - Run full BM25S baseline experiment with documentation
 ```
 
 ---
@@ -361,36 +380,30 @@ NEXT STEPS:
 
 ---
 
-### Task 2.3: Run BM25S Baseline Experiments
-**Owner:** Osman  
-**Status:** 🔄 In Progress  
-**Depends On:** Task 1.4 (✅ completed), Task 1.5 (evaluation pipeline)
+### Task 2.3: Run BM25 Baseline Experiments
+**Owner:** TBD  
+**Status:** ⏳ Not Started  
+**Depends On:** Task 1.4, Task 1.5
 
 **Why:** Establish BM25S baseline metrics before any enhancements. Document as Experiment 002.
 
 **Context Files:**
 - `.kiro/steering/experiment-documentation.md` - Documentation template
-- Task 1.4 outcomes (BM25S implementation)
-- `meetings/23.1.2026.md` - Decision to use BM25S
-- `docs/experiments/exp_001_baseline_dense.md` - Template reference
+- Task 1.4 outcomes (retriever code)
+- Task 1.5 outcomes (evaluation code)
 
 **Deliverables:**
-- [ ] Run BM25S on full dev set (2,896 queries)
-- [ ] Record all 3 metrics (Recall@10, NDCG@10, MRR)
-- [ ] Create `experiments/exp_002_baseline_bm25s.md`
-- [ ] Save results to `results/baseline_bm25s/`
+- [ ] Run on full dev set (or document subset size)
+- [ ] Record all 3 metrics
+- [ ] Create `experiments/exp_001_baseline_bm25.md`
 
-**Outcomes:** *(In progress - 23/1/2026)*
+**Outcomes:** *(Fill when complete)*
 ```
-Implementation: BM25S (Python-native)
-Target: Complete experiment documentation following exp_001 template
-Expected metrics: ~96% of MIRACL baseline (based on initial tests)
-
-Next steps:
-1. Finalize BM25S code structure
-2. Run full experiment
-3. Document results
-4. Compare with Dense baseline (exp_001)
+Recall@10: [X.XXX]
+NDCG@10: [X.XXX]
+MRR: [X.XXX]
+Dataset: [Full / subset of X]
+Experiment doc: experiments/exp_001_baseline_bm25.md
 ```
 
 ---
