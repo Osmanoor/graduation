@@ -1,6 +1,6 @@
 # Open Questions & Research Challenges
-**Last Updated:** 14/1/2026  
-**Status:** Updated after error analysis research completion
+**Last Updated:** 24/1/2026  
+**Status:** Updated after 23/1/2026 meeting - BM25S decision, LLM research task added
 
 ---
 
@@ -19,14 +19,25 @@
 ---
 
 ### 2. Baseline Retrieval Strategy
-**Status:** ✅ RESOLVED - Test All Three Separately
+**Status:** ✅ RESOLVED - Test Dense and BM25S Separately
 
-**Decision:** Test Dense, BM25, and optionally Hybrid as separate baselines.
+**Decision:** Test Dense (mDPR) and BM25S as separate baselines.
 
 **Rationale:**
 - Testing separately gives more insight into where improvements come from
 - Papers often test both effects independently
 - Hybrid is optional third comparison
+
+**BM25 Implementation Decision (23/1/2026):**
+- **Selected:** BM25S (pure Python implementation)
+- **Rationale:** 
+  * No Java dependencies (better flexibility)
+  * 500x faster than traditional Pyserini (pre-computed scores)
+  * Recent (July 2024) and scientifically valid
+  * Results: 96% of MIRACL baseline (2% difference acceptable)
+  * Used in recent papers (2024-2026)
+- **Results:** Recall@100: 0.8603, NDCG@10: 0.4610, Recall@10: 0.5926, MRR: 0.4821
+- **Meeting:** `meetings/23.1.2026.md`
 
 ---
 
@@ -152,46 +163,53 @@
 ---
 
 ### 2. Pyserini vs HuggingFace Understanding
-**Status:** ⏳ Under Investigation - Research Needed (9/1/2026)
+**Status:** ✅ RESOLVED - Using BM25S (23/1/2026)
 
 **Question:** What does Pyserini do that HuggingFace doesn't? Why use one over the other?
 
-**Context:**
-- HuggingFace is standard practice
-- May switch to HuggingFace later for other methods
-- Need to understand the difference for future flexibility
+**Decision:** Moved away from Pyserini entirely due to Java dependency issues.
+
+**Solution:** BM25S - pure Python implementation, no Java required.
+
+**Outcome:** Better flexibility, faster iteration, modern implementation (2024).
+
+**Meeting:** `meetings/23.1.2026.md`
 
 ---
 
 ### 3. First Query Enhancement Technique
-**Status:** ✅ RESOLVED - Query Expansion with Normalization (17/1/2026)
+**Status:** ✅ RESOLVED - Query Expansion (17/1/2026, Refined 23/1/2026)
 
 **Question:** Which technique should we implement first?
 
-**Decision:** Query Expansion with Normalization
+**Decision:** Query Expansion using small LLM
 
-**Rationale (Evidence-Based):**
-- Error analysis revealed 80% of failures stem from:
-  * Spelling errors (40%)
-  * Named entity variations (35%)
-  * Vocabulary mismatch (15%)
-- Query Expansion addresses all three patterns
-- Expected impact: 20-45% reduction in failed queries
-- Lower cost than HyDE (shorter prompts)
-- Better suited for Arabic linguistic issues
+**Rationale (Quantitative Evidence, N=2,896):**
+- Short queries achieve only 59% of long query performance (NDCG 0.240 vs 0.406)
+- Problem: Information poverty in short queries
+- Solution: Query Expansion adds context to address this gap
 
-**Implementation:**
-1. Step 1: Normalize (fix spelling, remove diacritics)
-2. Step 2: Expand with LLM (add synonyms, entity variants, related terms)
-3. LLM: Gemini 1.5 Flash (free tier, good Arabic support)
+**Implementation Approach (Refined 23/1/2026):**
+1. Start with Query Expansion (not HyDE initially)
+2. Use small LLM that can run in Google Colab free tier (2-4B parameters)
+3. Simple implementation (similar to HyDE approach but for expansion)
+4. Avoid API costs initially (try local models first)
+5. Fallback to API if needed (Groq with GPT-OSS 20B or Gemini 1.5 Flash)
 
-**Alternative:** HyDE (if expansion achieves <15% improvement)
+**LLM Selection:** ⏳ Under Investigation (Task 4.0 - see below)
+
+**Monitoring Strategy (Discussed 23/1/2026):**
+- Track quantitative improvements (query length, etc.)
+- Consider Wikipedia API for metadata enrichment
+- Need clear indicators of what improves with prompt engineering
+
+**Papers Referenced:** GRF (Generative Relevance Feedback), HyDE, Query2Doc
 
 **Decision Document:** `research_decisions/qe_technique_selection.md`
 
-**Error Analysis:**
-- Phase 1 (Quantitative): `research_decisions/error_analysis_phase1_quantitative.md`
-- Phase 2 (Qualitative): `research_decisions/error_analysis_phase2_qualitative.md`
+**Meetings:** 
+- 17/1/2026: Initial decision
+- 23/1/2026: Implementation approach refined
 
 ---
 
@@ -211,20 +229,64 @@
 
 ---
 
-### 5. Arabic LLM Selection
-**Status:** ⏳ Under Investigation - Current Suggestions Weak
+### 5. Arabic LLM Selection for Query Expansion
+**Status:** ⏳ Active Research (Task 4.0 - Mohammed) - 23/1/2026
 
-**Question:** Which Arabic LLM should we use for query enhancement?
+**Question:** Which small multilingual LLM should we use for Query Expansion?
 
-**AI Suggested:** Jais, AceGPT, Gemini 1.5 Pro, GPT-4
+**Requirements (from 23/1/2026 meeting):**
+1. **Size:** Must run on T4 GPU (Colab free tier) - Target: 2-4B parameters
+2. **Language:** Multilingual with good Arabic support
+3. **Capability:** Can follow prompts for query expansion/rewriting
+4. **Truthfulness:** Generates accurate expansions (not hallucinations)
 
-**Problem:** These may not be the best options available now.
+**Candidate Models to Research:**
+- **Gemma 2B** - Google's efficient model, multilingual
+- **Qwen 4B** - With quantization (initial test failed on T4)
+- **GPT-OSS 20B** - Quantized via Unsloth (4-bit/8-bit)
+- **Llama variants** - Small versions with quantization
+- **Gemma Translator 270M** - Very small, but translation-focused
 
-**Action:** Research stronger Arabic LLM models.
+**Research Approach:**
+1. Review HyDE and Query2Doc papers - what models do they use?
+2. Search for "latest most powerful multilingual models" that fit constraints
+3. Check model cards for Arabic performance
+4. Test quantized versions in Colab
+5. Evaluate prompt-following capability
+
+**Fallback Options (if local models don't work):**
+- **Groq API** with GPT-OSS 20B (8000 tokens/min rate limit)
+- **Gemini 1.5 Flash** (free tier, good Arabic)
+- Note: Prefer local models to avoid API costs and dependencies
+
+**Fine-tuning Consideration:**
+- Status: Deferred ("to be determined later")
+- Potential approach: Use AI Studio to generate correct rewriting examples, then fine-tune
+- Only if small models can't follow prompts well enough
+
+**Meeting:** `meetings/23.1.2026.md`
 
 ---
 
-### 6. Meta-data Filtering Integration
+### 6. Monitoring/Evaluation Strategy for Query Enhancement
+**Status:** ⏳ Needs Planning (23/1/2026)
+
+**Question:** How to track what improves during prompt engineering iterations?
+
+**Challenge:** Need clear indicators of where improvement happens with different prompts.
+
+**Potential Approaches (Discussed 23/1/2026):**
+- Wikipedia API for metadata enrichment
+- Track quantitative metrics (query length improvements)
+- Need clear indicators of what improves
+
+**Context:** Related to error analysis, important for iterative prompt optimization.
+
+**Meeting:** `meetings/23.1.2026.md`
+
+---
+
+### 7. Meta-data Filtering Integration
 **Status:** ⏳ New Research Direction Identified
 
 **Question:** Can we combine query enhancement with meta-data filtering?
@@ -240,7 +302,7 @@
 
 ## Technical Challenges (Ongoing)
 
-### 7. Scale Challenge
+### 8. Scale Challenge
 **Challenge:** MIRACL has 2.1 Million Arabic Wikipedia passages
 
 **Implications:**
@@ -256,7 +318,7 @@
 
 ---
 
-### 8. Dialectical Support
+### 9. Dialectical Support
 **Challenge:** Both MIRACL and ARABICA are MSA-only
 
 **Implication:** We cannot directly test dialectical improvements.
@@ -271,7 +333,7 @@
 
 ---
 
-### 9. Arabic Morphology Handling
+### 10. Arabic Morphology Handling
 **Status:** Test with baseline first, add preprocessing if needed
 
 **Question:** How to handle Arabic morphology?
@@ -286,7 +348,7 @@
 
 ---
 
-### 10. Evaluation Granularity
+### 11. Evaluation Granularity
 **Status:** Plan for this in experiment design
 
 **Question:** How to understand *what* improved, not just *that* it improved?
@@ -301,7 +363,7 @@
 
 ---
 
-### 11. Prototyping with Subsets
+### 12. Prototyping with Subsets
 **Status:** Allowed but with caution
 
 **Question:** Can we use smaller subsets for faster iteration?
@@ -317,7 +379,7 @@
 
 ## Questions for Future Consideration
 
-### 12. Contribution Framing
+### 13. Contribution Framing
 **Question:** What is our primary contribution?
 
 **Options:**
@@ -329,7 +391,7 @@
 
 ---
 
-### 13. Generalization Testing
+### 14. Generalization Testing
 **Question:** How to prove approach generalizes?
 
 **Options:**
@@ -355,12 +417,14 @@
 | Embedding Model | ✅ Resolved (9/1/2026) - Pyserini pre-built |
 | First Technique | ✅ Resolved (17/1/2026) - Query Expansion |
 | Hierarchical Structures | ⏳ Under Investigation |
-| Arabic LLMs | ✅ Resolved (17/1/2026) - Gemini 1.5 Flash |
+| Arabic LLMs | ⏳ Active Research (23/1/2026) - Task 4.0 |
+| Monitoring Strategy | ⏳ Needs Planning (23/1/2026) |
 | Meta-data Filtering | ⏳ New Direction |
 | Error Analysis Approach | ✅ Resolved (14/1/2026) - See error_analysis_research.md |
-| Pyserini vs HuggingFace | ⏳ Research Needed (9/1/2026) |
+| Pyserini vs HuggingFace | ✅ Resolved (23/1/2026) - Using BM25S |
+| BM25 Implementation | ✅ Resolved (23/1/2026) - BM25S selected |
 
 ---
 
-**Document Status:** ✅ Updated after error analysis completion (17/1/2026)  
-**Next Update:** After implementing Query Expansion (Task 4.1)
+**Document Status:** ✅ Updated after 23/1/2026 meeting  
+**Next Update:** After LLM model research (Task 4.0) and Query Expansion implementation (Task 4.1)

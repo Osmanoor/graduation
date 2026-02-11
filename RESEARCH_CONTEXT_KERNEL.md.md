@@ -47,12 +47,15 @@ We are currently in the **Query Enhancement Implementation** stage.
 *   **Details:** See `meetings/6.1.2026_meeting_outcomes.md`
 
 ### B. The Baseline Pipeline: **Test All Three Separately** ✅ Confirmed
-**Status:** Decided - test Dense, BM25, and optionally Hybrid separately
-*   **Dense Retriever:** Test independently to measure its contribution
-*   **BM25 (Sparse):** Test independently to measure its contribution
+**Status:** Decided - test Dense and BM25S separately
+*   **Dense Retriever:** ✅ Complete - mDPR baseline (Recall@10: 0.6156, NDCG@10: 0.4993)
+*   **BM25S (Sparse):** ✅ Decided (23/1/2026) - Python-native implementation
+    - Decision: Use BM25S instead of Pyserini (no Java dependencies)
+    - Results: 96% of MIRACL baseline, 2% difference acceptable
+    - Status: Implementation complete, experiment documentation in progress
 *   **Hybrid:** Optional third comparison if time permits
 *   **Rationale:** Testing separately gives more insight into where improvements come from
-*   **Details:** See `meetings/6.1.2026_meeting_outcomes.md`
+*   **Details:** See `meetings/6.1.2026_meeting_outcomes.md`, `meetings/23.1.2026.md`
 
 ### C. The Approach: **Technology-Oriented** ✅ Confirmed
 **Status:** Decided
@@ -74,7 +77,30 @@ We are currently in the **Query Enhancement Implementation** stage.
 
 ## 4. 🔄 Under Investigation (Active Research Questions)
 
-### A. Error Analysis Approach ✅ RESOLVED (14/1/2026)
+### A. LLM Model Selection for Query Expansion 🆕 (23/1/2026)
+**Status:** Active Research (Task 4.0 - Mohammed)
+*   **Goal:** Identify small multilingual LLM that can run in Google Colab free tier
+*   **Requirements:**
+    - Size: 2-4B parameters (must run on T4 GPU)
+    - Multilingual with good Arabic support
+    - Can follow prompts for query expansion
+    - Truthful generation (not hallucinations)
+*   **Candidates:**
+    - Gemma 2B (Google's efficient model)
+    - Qwen 4B with quantization (initial test failed on T4)
+    - GPT-OSS 20B quantized via Unsloth (4-bit/8-bit)
+    - Llama variants (small versions)
+    - Gemma Translator 270M (very small, translation-focused)
+*   **Research Approach:**
+    1. Review HyDE and Query2Doc papers for model choices
+    2. Search for latest multilingual models fitting constraints
+    3. Test quantized versions in Colab
+    4. Evaluate prompt-following capability
+*   **Fallback:** Groq API (GPT-OSS 20B) or Gemini 1.5 Flash if local models don't work
+*   **Fine-tuning:** Deferred - "to be determined later"
+*   **Meeting:** `meetings/23.1.2026.md`
+
+### B. Error Analysis Approach ✅ RESOLVED (14/1/2026)
 **Status:** Research Complete
 *   **Challenge:** MIRACL passages lack metadata (no domain labels like Law, Medical, etc.)
 *   **Research Completed:** See `research_decisions/error_analysis_research.md`
@@ -86,43 +112,55 @@ We are currently in the **Query Enhancement Implementation** stage.
 *   **Framework:** Score gaps, query length, Wikipedia categories, NoMIRACL hard negatives
 *   **Specification:** See `research_decisions/evaluation_pipeline_spec.md`
 
-### B. Pyserini vs HuggingFace Understanding ⏳ (NEW - 9/1/2026)
-**Status:** Under Investigation - Research Needed
-*   *Question:* What does Pyserini do that HuggingFace doesn't? Why use one over the other?
-*   *Context:* HuggingFace is standard practice; may switch to it later for other methods
+### C. Pyserini vs HuggingFace Understanding ✅ RESOLVED (23/1/2026)
+**Status:** Resolved - Using BM25S (Python-native)
+*   **Decision:** Moved away from Pyserini entirely due to Java dependency issues
+*   **Solution:** BM25S - pure Python implementation, no Java required
+*   **Outcome:** Better flexibility, faster iteration, modern implementation (2024)
 
-### C. First Query Enhancement Technique ✅ RESOLVED (17/1/2026)
-**Status:** Decided - Query Expansion with Normalization
-*   **Decision:** Query Expansion with Normalization
+### C. First Query Enhancement Technique ✅ RESOLVED (17/1/2026, Refined 23/1/2026)
+**Status:** Decided - Query Expansion (LLM-based)
+*   **Decision:** Query Expansion using small LLM
 *   **Justification (Quantitative Evidence, N=2,896):**
     - Short queries achieve only 59% of long query performance (NDCG 0.240 vs 0.406)
     - Problem: Information poverty in short queries
     - Solution: Query Expansion adds context to address this gap
-*   **Implementation:** Two-step approach
-    1. Normalize query (fix spelling, remove diacritics)
-    2. Expand with LLM (add synonyms, entity variants, related terms)
-*   **LLM:** Gemini 1.5 Flash (free tier, good Arabic support)
-*   **Hypothesis to Test:** Query Expansion will improve performance by addressing short query information poverty (no predicted ROI)
-*   **Alternative:** HyDE (if expansion shows <15% improvement)
+*   **Implementation Approach (Refined 23/1/2026):**
+    1. Start with Query Expansion (not HyDE initially)
+    2. Use small LLM that can run in Google Colab free tier
+    3. Simple implementation (similar to HyDE approach but for expansion)
+    4. Avoid API costs initially (try local models first)
+    5. Fallback to API if needed (Groq with GPT-OSS 20B or Gemini 1.5 Flash)
+*   **LLM Selection:** ⏳ Under Investigation (Task 4.0)
+    - Target: 2-4B parameters, multilingual, runs on T4 GPU
+    - Candidates: Gemma 2B, Qwen 4B (quantized), GPT-OSS 20B (quantized)
+*   **Monitoring Strategy (Discussed 23/1/2026):**
+    - Track quantitative improvements (query length, etc.)
+    - Consider Wikipedia API for metadata enrichment
+    - Need clear indicators of what improves with prompt engineering
+*   **Papers Referenced:** GRF (Generative Relevance Feedback), HyDE, Query2Doc
 *   **Documentation:** 
     - Main reference: `ERROR_ANALYSIS_COMPLETE.md`
     - Decision: `research_decisions/qe_technique_selection.md`
-    - Scientific review: `arabic-rag-query-enhancement/SCIENTIFIC_REVIEW_ERROR_ANALYSIS.md`
+    - Meeting: `meetings/23.1.2026.md`
 
-### D. Hierarchical Structures ⏳
+### D. Monitoring/Evaluation Strategy for Query Enhancement ⏳ (23/1/2026)
+**Status:** Needs Planning
+*   **Challenge:** Need to track what improves with prompt engineering iterations
+*   **Potential Approaches (Discussed):**
+    - Wikipedia API for metadata enrichment
+    - Track quantitative metrics (query length improvements)
+    - Need clear indicators of where improvement happens
+*   **Context:** Related to error analysis, important for iterative prompt optimization
+*   **Meeting:** `meetings/23.1.2026.md`
+
+### E. Hierarchical Structures ⏳
 **Status:** Interesting but Needs Feasibility Study
 *   *Context:* Mohamed Rashad suggested context injection (knowledge base structure awareness)
 *   *Challenge:* Is this feasible given our constraints? Does it require re-embedding?
 *   *Current Stance:* Defer, focus on simpler query enhancement first
 
-### E. Arabic LLM Selection ✅ RESOLVED (17/1/2026)
-**Status:** Decided - Gemini 1.5 Flash
-*   **Decision:** Use Gemini 1.5 Flash for Query Expansion
-*   **Rationale:** Free tier (15 RPM), fast, good Arabic support, lower cost than GPT-4
-*   **Backup:** GPT-4o-mini (if Gemini quality insufficient)
-*   **Use Case:** Query Expansion (generate synonyms, entity variants, related terms)
-
-### E. Embedding Model Selection ✅ RESOLVED (9/1/2026)
+### F. Embedding Model Selection ✅ RESOLVED (9/1/2026)
 **Status:** Decided - Pyserini Pre-built Indexes
 *   **Decision:** Start with Pyserini pre-built indexes (BM25 + mDPR) for initial baselines
 *   **Rationale:** Fastest path to implement Query Enhancement techniques; mDPR intentionally "weaker" (not fine-tuned on MIRACL) = more room for improvement
@@ -146,7 +184,7 @@ We are currently in the **Query Enhancement Implementation** stage.
 - Dataset: MIRACL Arabic dev set (2,896 queries)
 - Documentation: `docs/experiments/exp_001_baseline_dense.md`
 
-**Comparison with BM25:**
+**Comparison with BM25S (23/1/2026):**
 | Metric | mDPR (Dense) | BM25S (Sparse) | Winner |
 |--------|--------------|----------------|--------|
 | Recall@100 | 0.8407 | 0.8603 | BM25S (+2.3%) |
@@ -154,7 +192,13 @@ We are currently in the **Query Enhancement Implementation** stage.
 | Recall@10 | 0.6156 | 0.5926 | mDPR (+3.9%) |
 | MRR | 0.5328 | 0.4821 | mDPR (+10.5%) |
 
-**Key Insight:** BM25 retrieves more docs, mDPR ranks them better. Complementary strengths!
+**Key Insight:** BM25S retrieves more docs, mDPR ranks them better. Complementary strengths!
+
+**BM25S Implementation Decision (23/1/2026):**
+- **Selected:** BM25S (pure Python, no Java)
+- **Rationale:** 500x faster, modern (2024), scientifically valid, better flexibility
+- **Results:** 96% of MIRACL baseline (2% difference acceptable)
+- **Status:** Implementation complete, experiment documentation in progress (Task 2.3)
 
 ### Error Analysis Findings (17/1/2026)
 **Phase 1: Quantitative Analysis (N=2,896 queries - VALIDATED)**
@@ -288,29 +332,35 @@ When interacting with this codebase, the Agent should:
 
 ## 9. 📅 Next Actions (Priority Order)
 
-### Immediate (This Week - Jan 17-19)
-- [x] Update documentation to reflect actual decision status
-- [x] Research embedding model costs/performance ✅ Complete
-- [x] Decide on embedding model approach ✅ Pyserini pre-built indexes
-- [x] Design evaluation pipeline ✅ Two-phase approach
-- [x] Finalize baseline BM25 retriever (BM25S) ✅ Complete
-- [x] Finalize baseline mDPR retriever ✅ Complete
-- [x] Analyze baseline errors ✅ Complete (Phase 1 & 2)
-- [x] Select first QE technique ✅ Query Expansion with Normalization
-- [ ] Implement Query Expansion with Normalization (Task 4.1)
-- [ ] Run Experiment 002 (QE + Dense)
+### Immediate (This Week - Jan 24-26)
+- [x] Update documentation to reflect meeting decisions (23/1/2026) ✅
+- [ ] **Task 4.0:** Research LLM models for Query Expansion (Mohammed)
+  - Review HyDE and Query2Doc papers for model choices
+  - Test small multilingual models in Colab (Gemma 2B, Qwen 4B quantized, etc.)
+  - Document findings
+- [ ] **Task 2.3:** Complete BM25S baseline experiment documentation (Osman)
+  - Run full experiment on 2,896 queries
+  - Create `experiments/exp_002_baseline_bm25s.md`
+  - Compare with Dense baseline
 
-### Short-term (Weeks 4-5)
-- [ ] Evaluate Experiment 002 results
-- [ ] Iterate on Query Expansion if needed
-- [ ] Consider HyDE if expansion <15% improvement
-- [ ] Try stronger models (BGE-M3, E5) if time permits
-- [ ] Document findings thoroughly
+### Short-term (Week 4-5)
+- [ ] **Task 4.1:** Implement Query Expansion with selected LLM
+  - Start simple (similar to HyDE approach)
+  - Test on sample queries
+  - Integrate with Dense baseline
+- [ ] **Task 4.2 & 4.3:** Run Query Enhancement experiments
+  - Test with BM25S baseline
+  - Test with Dense baseline
+  - Document results
+- [ ] Develop monitoring strategy for prompt engineering iterations
+- [ ] Consider Wikipedia API for metadata enrichment
 
 ### Medium-term (Week 6)
-- [ ] Final experiments and analysis
+- [ ] Analyze Query Enhancement results
+- [ ] Iterate on prompts if needed
+- [ ] Consider fine-tuning if small models don't follow prompts well
 - [ ] Write thesis chapters
 - [ ] Prepare final presentation
 
-*Details:* See `meetings/9.1.2026_meeting_outcomes.md` and `TASKS.md`
+*Details:* See `meetings/23.1.2026.md` and `TASKS.md`
 
