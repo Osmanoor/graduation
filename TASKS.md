@@ -157,7 +157,7 @@ Storage Strategy (from 9/1/2026 meeting):
 
 ### Task 1.4: Implement BM25 Baseline Retriever
 **Owner:** Osman  
-**Status:** 🔄 In Progress (CLI reproduction successful, Python code blocked)  
+**Status:** ✅ Done (BM25S approach)  
 **Depends On:** Task 1.2 (✅ completed)
 
 **Why:** BM25 is our sparse retrieval baseline. Simpler than Dense (no GPU needed). Test separately per our decision.
@@ -167,59 +167,41 @@ Storage Strategy (from 9/1/2026 meeting):
 - `.kiro/steering/baseline-implementation.md` - Code patterns (use `#baseline-implementation` in chat)
 - `meetings/9.1.2026_meeting_outcomes.md` - Implementation status discussed
 - `reports/bm25_baseline_report.md` - **Technical report on reproduction attempts**
+- `src/retrievers/bm25.py` - **Final BM25S implementation**
 
 **Deliverables:**
-- [x] BM25 retriever implemented (preliminary notebook)
-- [x] Can retrieve top-10 for any query (via CLI)
-- [ ] Python code execution working (BLOCKED)
-- [ ] Code finalized and pushed to repo
+- [x] BM25 retriever implemented (BM25S library)
+- [x] Can retrieve top-10 for any query
+- [x] Python code execution working
+- [x] Code finalized and pushed to repo
 
-**Outcomes:** *(In progress - 10/1/2026)*
+**Outcomes:** *(Completed 26/1/2026)*
 ```
-Implementation: Pyserini (using pre-built MIRACL indexes)
-Technical Report: reports/bm25_baseline_report.md
+DECISION: Implement using BM25S (Approach E)
 
-SUMMARY OF ATTEMPTS:
-✅ Attempt C (CLI): Successfully reproduced SOTA (Recall@100 = 0.889)
-   - Environment: Python 3.8, OpenJDK 11, Pyserini 0.19.0
-   - Command: python -m pyserini.search.lucene ...
-   
-❌ Attempt D (Python Code): BLOCKED (Recall@100 = 0.235)
-   - Same environment as Attempt C
-   - Issue: Python code (LuceneSearcher) falls back to System Java 21
-   - Root cause: Pyjnius JVM initialization ignores Conda JAVA_HOME
-   
-CRITICAL BLOCKER:
-Phase 2 (Query Enhancement) requires Python code execution to intercept queries
-in a loop for LLM expansion. Cannot use CLI approach for this.
+After Pyserini blocker (Java 21 vs Java 11 conflict), switched to pure Python solution:
 
-CURRENT STATUS:
-- Environment validated ✅
-- Binary dependencies fixed ✅
-- Code execution BLOCKED ⚠️
-
-NEXT STEPS:
-1. Investigate JVM injection to force Java 11 in Python code
-2. Consider "Scorched Earth": Remove System Java 21 entirely
-3. Manual Pyjnius binding to Conda libjvm.so before import
-
-Code location: Preliminary notebook exists, pending blocker resolution
-```
-
-**Update (12/1/2026) - BM25S Alternative Solution:**
-```
-ATTEMPT E: BM25S (Pure Python Implementation)
-
-Given Pyserini blocker, implemented alternative using BM25S library:
-- Library: BM25S v0.2+ (https://github.com/xhluca/bm25s)
+Implementation: BM25S Library
+- Library: bm25s v0.2+ (https://github.com/xhluca/bm25s)
 - No Java dependencies
 - Clean API for QE integration
+- Pure Python implementation
 
-PERFORMANCE RESULTS:
-- Recall@100: 0.8603 (Target: 0.889) = 96.8% achievement
-- NDCG@10: 0.4610 (Target: 0.481) = 95.8% achievement  
-- Recall@10: 0.5926 (Thesis metric)
-- MRR: 0.4821
+IMPLEMENTATION DETAILS:
+- Tokenization: Arabic stemming (PyStemmer) + NLTK stopwords (245+ words)
+- BM25 Parameters: k1=0.9, b=0.4 (Lucene-style)
+- Index Storage: Google Drive (~5GB)
+- Loading: Symbolic links in Colab
+
+TRADE-OFF ACCEPTED:
+- 96% of Pyserini performance (vs 100%)
+- Benefits: No Java, easier QE integration, pure Python
+- Conclusion: Acceptable trade-off for thesis goals
+
+BLOCKER RESOLUTION:
+- Original blocker: Pyserini Java 21 vs Java 11 conflict
+- Solution: Switch to BM25S (pure Python)
+- Status: ✅ Resolved and implemented
 ```
 
 ---
@@ -381,29 +363,53 @@ NEXT STEPS:
 ---
 
 ### Task 2.3: Run BM25 Baseline Experiments
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
+**Owner:** Osman  
+**Status:** ✅ Done  
 **Depends On:** Task 1.4, Task 1.5
 
-**Why:** Establish BM25S baseline metrics before any enhancements. Document as Experiment 002.
+**Why:** Establish BM25 baseline metrics before any enhancements.
 
 **Context Files:**
 - `.kiro/steering/experiment-documentation.md` - Documentation template
 - Task 1.4 outcomes (retriever code)
 - Task 1.5 outcomes (evaluation code)
+- `docs/experiments/exp_002_baseline_bm25.md` - **Full experiment documentation**
 
 **Deliverables:**
-- [ ] Run on full dev set (or document subset size)
-- [ ] Record all 3 metrics
-- [ ] Create `experiments/exp_001_baseline_bm25.md`
+- [x] Run on full dev set (2,896 queries)
+- [x] Record all 3 metrics
+- [x] Create experiment documentation
+- [x] Save results to `results/baseline_bm25/`
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 26/1/2026)*
 ```
-Recall@10: [X.XXX]
-NDCG@10: [X.XXX]
-MRR: [X.XXX]
-Dataset: [Full / subset of X]
-Experiment doc: experiments/exp_001_baseline_bm25.md
+EXPERIMENT 002: BM25 Baseline (BM25S + Identity Enhancement)
+
+RESULTS (MIRACL Arabic Dev Set - 2,896 queries):
+✅ Recall@10:  0.5964 (Thesis baseline metric)
+✅ Recall@100: 0.8577 (Target: 0.889) = 96.48% achievement
+✅ NDCG@10:    0.4621 (Target: 0.481) = 96.07% achievement
+✅ MRR:        0.4836
+
+FILES GENERATED:
+- results/baseline_bm25/exp_002_baseline_bm25.txt (TREC format)
+- results/baseline_bm25/exp_002_metrics.json (metrics)
+- docs/experiments/exp_002_baseline_bm25.md (documentation)
+
+COLAB NOTEBOOK:
+https://colab.research.google.com/drive/1AJmPYlLrhY1kLbwTWF2Ga7AyXWNWYemh
+
+KEY FINDINGS:
+1. Achieved 96%+ of Pyserini target (acceptable for pure Python)
+2. Higher Recall@100 than mDPR (0.8577 vs 0.8407) = +2.0%
+3. Lower NDCG@10 than mDPR (0.4621 vs 0.4993) = -7.5%
+4. Complementary strengths: BM25 better at recall, mDPR better at ranking
+
+COMPARISON WITH DENSE (Exp 001):
+- BM25 retrieves more relevant docs (higher Recall@100)
+- mDPR ranks them better (higher NDCG@10, MRR)
+- Suggests potential for hybrid approaches
+
 ```
 
 ---
@@ -568,7 +574,7 @@ FILES:
 
 ### Task 3.4: Select First Query Enhancement Technique
 **Owner:** Both  
-**Status:** ✅ Done (Refined in 23/1/2026 meeting)  
+**Status:** ✅ Done  
 **Depends On:** Task 3.3 (✅ completed)
 
 **Why:** This is a key decision that shapes Phase 2.
@@ -577,133 +583,187 @@ FILES:
 - Task 3.3 outcomes (error analysis)
 - `research_decisions/qe_technique_selection.md` - **Decision document**
 - `research_decisions/error_analysis_phase1_quantitative.md`
-- `meetings/23.1.2026.md` - **Implementation approach discussion**
+- `research_decisions/error_analysis_phase2_qualitative.md`
 - `research_decisions/open_questions.md` - Technique candidates
 
 **Deliverables:**
 - [x] Decision documented
 - [x] Update `research_decisions/open_questions.md`
 - [x] Update `RESEARCH_CONTEXT_KERNEL.md.md`
-- [x] Implementation approach clarified (23/1/2026)
 
-**Outcomes:** *(Completed 17/1/2026, Refined 23/1/2026)*
+**Outcomes:** *(Completed 17/1/2026)*
 ```
-DECISION: Query Expansion (LLM-based) ✅
+DECISION: Query Expansion with Normalization ✅
 
 JUSTIFICATION (Quantitative Evidence Only, N=2,896):
 - Primary: Short queries achieve 59% of long query performance
 - Problem: Information poverty in short queries
 - Solution: Query Expansion adds context to address this gap
+- Secondary: Normalization as low-cost preprocessing
 
-IMPLEMENTATION APPROACH (Refined 23/1/2026):
-1. Start with Query Expansion (not HyDE initially)
-2. Use small LLM that can run in Google Colab free tier
-3. Simple implementation (similar to HyDE approach but for expansion)
-4. Avoid API costs initially (try local models first)
-5. Fallback to API if needed (Groq with GPT-OSS 20B)
+IMPLEMENTATION APPROACH:
+1. Normalization: Fix spelling, remove diacritics, standardize spacing
+2. Expansion: Use Gemini 1.5 Flash to add synonyms, entity variants, related terms
 
-LLM SELECTION: See Task 4.0 (NEW) - LLM Model Research
+HYPOTHESIS TO TEST (Experiment 002):
+Query Expansion will improve performance by addressing short query information poverty.
+NO PREDICTED ROI - actual impact will be measured in Experiment 002.
 
-MONITORING STRATEGY (Discussed):
-- Track quantitative improvements (query length, etc.)
-- Consider Wikipedia API for metadata enrichment
-- Need clear indicators of what improves
+ALTERNATIVE: HyDE (if expansion shows <15% improvement)
 
-PAPERS REFERENCED:
-- GRF (Generative Relevance Feedback) - 2 papers
-- HyDE, Query2Doc approaches
+FILES:
+- ERROR_ANALYSIS_COMPLETE.md ← Main reference
+- research_decisions/qe_technique_selection.md
+- arabic-rag-query-enhancement/SCIENTIFIC_REVIEW_ERROR_ANALYSIS.md
 
-NEXT: Task 4.0 - Research LLM models, then Task 4.1 - Implementation
+NEXT: Task 4.1 - Implement Query Expansion with Normalization
 ```
 
 ---
 
 ## Phase 2: Query Enhancement (Weeks 4-5)
 
-### Task 4.0: Research LLM Models for Query Expansion (NEW)
-**Owner:** Mohammed  
-**Status:** 🔄 In Progress  
+### Task 4.0: Research LLM Models for Query Expansion
+**Owner:** Mohammed
+**Status:** ✅ Done (Research complete)
 **Depends On:** Task 3.4 (✅ completed)
 
-**Why:** Need to identify small multilingual LLMs that can run in Google Colab free tier for Query Expansion implementation.
+**Why:** Identify multilingual LLMs for Arabic Query Expansion on Google Colab.
 
 **Context Files:**
+- `research_decisions/llm_model_research.md` - **Full research document**
+- `research_decisions/models_reserch.md` - **ChatGPT Deep Research raw output**
+- `research_decisions/model_comparison_guide.md` - **Model comparison experiment guide**
 - `meetings/23.1.2026.md` - LLM discussion and requirements
-- `research_decisions/qe_technique_selection.md` - Query Expansion decision
-- `papers/2023_GRF_dense.md` - GRF/PRF approaches for reference
 
 **Deliverables:**
-- [ ] Research small multilingual LLMs (<4B parameters)
-- [ ] Test models in Google Colab free tier (T4 GPU)
-- [ ] Identify quantization options (4-bit, 8-bit)
-- [ ] Review HyDE and Query2Doc papers for model choices
-- [ ] Document findings in `research_decisions/llm_model_research.md`
+- [x] Research multilingual LLMs (2-8B parameters, open-source focus)
+- [x] Review 15 QE papers for model choices (8 foundational + 7 from Deep Research)
+- [x] Identify quantization options (4-bit via bitsandbytes)
+- [x] Identify 10 open-source candidate models with Arabic benchmarks (OALL)
+- [x] Map API options with pricing for fallback
+- [x] Document findings in `research_decisions/llm_model_research.md`
+- [x] Create model comparison guide: `research_decisions/model_comparison_guide.md`
 
-**Requirements (from 23/1/2026 meeting):**
-1. **Size:** Must run on T4 GPU (Colab free tier)
-   - Target: 2-4B parameters
-   - Consider quantized versions (4-bit, 8-bit)
-2. **Language:** Multilingual with good Arabic support
-3. **Capability:** Can follow prompts for query expansion/rewriting
-4. **Truthfulness:** Generates accurate expansions (not hallucinations)
-
-**Candidate Models to Research:**
-- **Gemma 2B** - Google's efficient model, multilingual
-- **Qwen 4B** - With quantization (initial test failed on T4)
-- **GPT-OSS 20B** - Quantized via Unsloth (4-bit/8-bit)
-- **Llama variants** - Small versions with quantization
-- **Gemma Translator 270M** - Very small, but translation-focused
-
-**Research Approach:**
-1. Review HyDE and Query2Doc papers - what models do they use?
-2. Search for "latest most powerful multilingual models" that fit constraints
-3. Check model cards for Arabic performance
-4. Test quantized versions in Colab
-5. Evaluate prompt-following capability
-
-**Fallback Options (if local models don't work):**
-- **Groq API** with GPT-OSS 20B (8000 tokens/min rate limit)
-- **Gemini 1.5 Flash** (free tier, good Arabic)
-- Note: Prefer local models to avoid API costs and dependencies
-
-**Fine-tuning Consideration:**
-- Status: Deferred ("to be determined later")
-- Potential approach: Use AI Studio to generate correct rewriting examples, then fine-tune
-- Only if small models can't follow prompts well enough
-
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 11/2/2026)*
 ```
-Selected Model: [Name]
-Size: [Parameters]
-Quantization: [4-bit/8-bit/none]
-Arabic Performance: [Benchmark scores if available]
-Colab Compatibility: [Yes/No, RAM usage]
-Prompt Following: [Test results]
-Fallback: [API option if needed]
+RESEARCH COMPLETED (11/2/2026):
+
+Phase 1: Literature Review (15 papers)
+- All foundational QE papers used 175B models (GPT-3)
+- Query2Doc (2023) tested small models (OPT-1.3B/6.7B) → failed
+- BUT 2024-2025 papers prove modern 7-8B models work (CSQE, MUGI, KAR, ThinkQE)
+- CSQE: Llama2-7B gave +30% mAP over BM25
+- No paper tested modern 2-4B for zero-shot Arabic QE → our research gap
+
+Phase 2: Model Discovery
+- 10 open-source candidates identified and ranked by Arabic quality
+- Arabic-specialized: Falcon-H1-Arabic-3B (~62% OALL), Jais-2-8B (best 8B)
+- Multilingual: Qwen 2.5 3B/7B, Qwen3-4B/8B, Gemma 3 4B, Aya 8B
+- Specialty: SILMA Kashif-2B (Arabic RAG), GPT-OSS 20B (experimental)
+- API fallback: Gemini 2.0 Flash (free), Groq Qwen3-32B (free), Cohere Aya (~$2)
+
+Phase 3: Preliminary Testing (Osman)
+- Qwen 2.5 3B tested → +8.93% NDCG@10 over baseline (exp_003)
+- Confirms: modern 3B models CAN do zero-shot Arabic QE
+
+DECISION: Compare 10 open-source models (breadth-first)
+- Split 5/5 between Mohammed and Osman
+- Guide: research_decisions/model_comparison_guide.md
+- Preference: Open-source, API as comparison/backup only
 ```
 
 ---
 
-### Task 4.1: Implement First QE Technique
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 3.4
+### Task 4.0b: Model Comparison Experiments (NEW)
+**Owner:** Both (Mohammed: 5 models, Osman: 5 models)
+**Status:** 🔄 In Progress
+**Depends On:** Task 4.0 (✅), Task 4.1 (✅)
+
+**Why:** Compare multiple open-source LLMs to find the best model for Arabic query expansion. Replicate exp_003 (Query2Doc) methodology with different models.
 
 **Context Files:**
-- Task 3.4 outcomes (which technique)
-- `research_decisions/technical_specifications.md` - QE section
-- Relevant paper in `papers/`
+- `research_decisions/model_comparison_guide.md` - **Experiment guide with per-model instructions**
+- `research_decisions/llm_model_research.md` - Model research and benchmarks
+- `docs/experiments/exp_003_query2doc_dense.md` - Reference experiment to replicate
+
+**Mohammed's Models:**
+1. Falcon-H1-Arabic-3B (FP16, Arabic-specialized)
+2. Jais-2-8B-Chat (4-bit, Arabic-specialized)
+3. ALLaM-7B (4-bit, Arabic)
+4. Qwen3-4B (FP16, multilingual)
+5. GPT-OSS 20B (4-bit, experimental)
+
+**Osman's Models:**
+1. SILMA Kashif-2B (FP16, Arabic RAG)
+2. Qwen 2.5-7B (4-bit, multilingual)
+3. Qwen3-8B (4-bit, multilingual)
+4. Gemma 3 4B-IT (FP16, multilingual)
+5. Aya Expanse 8B (4-bit, multilingual)
 
 **Deliverables:**
-- [ ] QE layer implemented
-- [ ] Can enhance any query
-- [ ] Code saved
+- [ ] Dense retrieval results for all 10 models
+- [ ] BM25S results for top models
+- [ ] Hybrid (RRF) results for top models
+- [ ] Comparison table with all metrics
+- [ ] Best model selection with justification
 
-**Outcomes:** *(Fill when complete)*
+**Testing Protocol:**
+1. Phase 1: Dense retrieval for all models (priority)
+2. Phase 2: BM25S for top models
+3. Phase 3: Hybrid (RRF) for top models
+
+---
+
+### Task 4.1: Implement First QE Technique
+**Owner:** Osman
+**Status:** ✅ Done
+**Depends On:** Task 3.4 (✅), Task 4.0 (✅)
+
+**Why:** Implement Query2Doc (LLM-based query expansion) as our first QE technique.
+
+**Context Files:**
+- `src/enhancers/query2doc.py` - **Query2Doc enhancer implementation**
+- `src/enhancers/base.py` - **QueryEnhancer base class**
+- `docs/experiments/exp_003_query2doc_dense.md` - **Experiment documentation**
+
+**Deliverables:**
+- [x] QE layer implemented (Query2DocEnhancer class)
+- [x] Can enhance any query (single + batch with parallel processing)
+- [x] Code saved to `src/enhancers/query2doc.py`
+- [x] Batch processing optimized (8x speedup, 16x total with other optimizations)
+
+**Outcomes:** *(Completed 11/2/2026)*
 ```
-Technique: [Name]
-Implementation: [Approach used]
-Code location: [Path]
+Technique: Query2Doc (Wang et al., 2023)
+Implementation: LLM generates pseudo-document, concatenated with original query
+Model: Qwen 2.5 3B Instruct (zero-shot, FP16)
+Code: src/enhancers/query2doc.py (Query2DocEnhancer class)
+
+PROMPT:
+- System: "You are asked to write a passage that answers the given query.
+  Do not ask the user for further clarification. Respond in Arabic only."
+- User: [original query]
+
+GENERATION PARAMS:
+- max_new_tokens: 128
+- temperature: 0.7
+- top_p: 0.9
+- batch_size: 8
+
+OPTIMIZATIONS:
+1. Batch processing (8 queries in parallel) → 8x speedup
+2. Reduced token generation (128 vs 256) → 2x speedup
+3. FP16 + eval mode + no_grad → inference optimized
+4. Left-padding for decoder-only models (critical for correctness)
+Total: 16x speedup → ~40 min for 2,896 queries
+
+ARCHITECTURE:
+- Inherits from QueryEnhancer base class
+- enhance() for single query
+- enhance_batch_parallel() for batch processing
+- enhance_batch() orchestrates batched processing with progress bar
+- model_name parameter allows swapping LLM (used in model comparison)
 ```
 
 ---
@@ -733,25 +793,46 @@ Improvement: [+X.X% / -X.X%]
 ---
 
 ### Task 4.3: Run QE + Dense Experiments
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 4.1
+**Owner:** Osman
+**Status:** ✅ Done (Qwen 2.5 3B; other models in Task 4.0b)
+**Depends On:** Task 4.1 (✅)
 
 **Context Files:**
-- Task 4.1 outcomes
-- `experiments/exp_002_baseline_dense.md` (baseline to compare)
+- `docs/experiments/exp_003_query2doc_dense.md` - **Full experiment documentation**
+- `results/exp_003_query2doc_dense/exp_003_metrics.json` - **Metrics**
+- `experiments/exp_003_query2doc_dense.ipynb` - **Colab notebook**
 
 **Deliverables:**
-- [ ] Run enhanced queries through Dense
-- [ ] Record all 3 metrics
-- [ ] Create `experiments/exp_004_qe_dense.md`
+- [x] Run enhanced queries through Dense (2,896 queries)
+- [x] Record all metrics
+- [x] Create experiment documentation
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 11/2/2026)*
 ```
-Recall@10: [X.XXX] (baseline was [X.XXX])
-NDCG@10: [X.XXX] (baseline was [X.XXX])
-MRR: [X.XXX] (baseline was [X.XXX])
-Improvement: [+X.X% / -X.X%]
+EXPERIMENT 003: Query2Doc + Dense Retrieval (Qwen 2.5 3B)
+
+RESULTS (MIRACL Arabic Dev Set - 2,896 queries):
+✅ Recall@10:  0.6608 (baseline: 0.6156) = +7.3%
+✅ Recall@100: 0.8594 (baseline: 0.8407) = +2.2%
+✅ NDCG@10:    0.5435 (baseline: 0.4993) = +8.9%
+✅ MRR:        0.5742 (baseline: 0.5328) = +7.8%
+
+ALL METRICS IMPROVED. Key finding: +8.9% NDCG@10 is significant.
+
+QUERY EXPANSION STATISTICS:
+- Original query length: 29.5 chars (median: 27.0)
+- Enhanced query length: 247.6 chars (median: 250.0)
+- Expansion ratio: 9.73x (median: 8.45x)
+
+COMPARISON WITH QUERY2DOC PAPER:
+- Paper (GPT-3 175B, few-shot, English): +2-5% NDCG@10 on dense
+- Ours (Qwen 2.5 3B, zero-shot, Arabic): +8.9% NDCG@10 on dense
+- Our improvement EXCEEDS the original paper's results
+
+RUNTIME: ~40 minutes on Colab T4 (free tier), cost: $0
+COLAB: https://colab.research.google.com/drive/1dfjqvgYbELPimgUvtnnFkTegZHPL5IQl
+
+NEXT: Model comparison (Task 4.0b) - test 10 more models
 ```
 
 ---

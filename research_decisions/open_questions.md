@@ -1,6 +1,6 @@
 # Open Questions & Research Challenges
-**Last Updated:** 24/1/2026  
-**Status:** Updated after 23/1/2026 meeting - BM25S decision, LLM research task added
+**Last Updated:** 11/2/2026
+**Status:** Updated - LLM research complete, model comparison phase started
 
 ---
 
@@ -230,39 +230,31 @@
 ---
 
 ### 5. Arabic LLM Selection for Query Expansion
-**Status:** ⏳ Active Research (Task 4.0 - Mohammed) - 23/1/2026
+**Status:** ✅ Research Complete (11/2/2026) - Now in Model Comparison Phase
 
 **Question:** Which small multilingual LLM should we use for Query Expansion?
 
-**Requirements (from 23/1/2026 meeting):**
-1. **Size:** Must run on T4 GPU (Colab free tier) - Target: 2-4B parameters
-2. **Language:** Multilingual with good Arabic support
-3. **Capability:** Can follow prompts for query expansion/rewriting
-4. **Truthfulness:** Generates accurate expansions (not hallucinations)
+**Research Completed (Task 4.0):**
+- 15 papers reviewed covering QE techniques and model choices
+- 10 open-source models identified for comparison
+- Key research gap found: No paper tests modern 2-4B models for zero-shot Arabic QE
 
-**Candidate Models to Research:**
-- **Gemma 2B** - Google's efficient model, multilingual
-- **Qwen 4B** - With quantization (initial test failed on T4)
-- **GPT-OSS 20B** - Quantized via Unsloth (4-bit/8-bit)
-- **Llama variants** - Small versions with quantization
-- **Gemma Translator 270M** - Very small, but translation-focused
+**First Result (exp_003):**
+- Qwen 2.5 3B (FP16, zero-shot) → NDCG@10: 0.5435 (+8.9% over dense baseline)
+- Validates Query2Doc approach for Arabic
 
-**Research Approach:**
-1. Review HyDE and Query2Doc papers - what models do they use?
-2. Search for "latest most powerful multilingual models" that fit constraints
-3. Check model cards for Arabic performance
-4. Test quantized versions in Colab
-5. Evaluate prompt-following capability
+**10 Models Selected for Comparison (Task 4.0b):**
+- Mohammed: Falcon-H1-Arabic-3B, Jais-2-8B, ALLaM-7B, Qwen3-4B, GPT-OSS 20B
+- Osman: SILMA Kashif-2B, Qwen2.5-7B, Qwen3-8B, Gemma 3 4B-IT, Aya Expanse 8B
 
-**Fallback Options (if local models don't work):**
-- **Groq API** with GPT-OSS 20B (8000 tokens/min rate limit)
-- **Gemini 1.5 Flash** (free tier, good Arabic)
-- Note: Prefer local models to avoid API costs and dependencies
+**Technical Approach:** 4-bit quantization (bitsandbytes NF4) for 7B+ models on T4 GPU
 
-**Fine-tuning Consideration:**
-- Status: Deferred ("to be determined later")
-- Potential approach: Use AI Studio to generate correct rewriting examples, then fine-tune
-- Only if small models can't follow prompts well enough
+**API Options:** Documented but deferred (focus on open-source first)
+
+**Documentation:**
+- Full research: `research_decisions/llm_model_research.md`
+- Deep Research data: `research_decisions/models_reserch.md`
+- Comparison guide: `research_decisions/model_comparison_guide.md`
 
 **Meeting:** `meetings/23.1.2026.md`
 
@@ -417,7 +409,7 @@
 | Embedding Model | ✅ Resolved (9/1/2026) - Pyserini pre-built |
 | First Technique | ✅ Resolved (17/1/2026) - Query Expansion |
 | Hierarchical Structures | ⏳ Under Investigation |
-| Arabic LLMs | ⏳ Active Research (23/1/2026) - Task 4.0 |
+| Arabic LLMs | ✅ Research Complete (11/2/2026) - Model Comparison Phase |
 | Monitoring Strategy | ⏳ Needs Planning (23/1/2026) |
 | Meta-data Filtering | ⏳ New Direction |
 | Error Analysis Approach | ✅ Resolved (14/1/2026) - See error_analysis_research.md |
@@ -426,5 +418,5 @@
 
 ---
 
-**Document Status:** ✅ Updated after 23/1/2026 meeting  
-**Next Update:** After LLM model research (Task 4.0) and Query Expansion implementation (Task 4.1)
+**Document Status:** ✅ Updated 11/2/2026
+**Next Update:** After model comparison experiments (Task 4.0b) complete

@@ -1,7 +1,7 @@
 # 🧬 RESEARCH_CONTEXT_KERNEL.md
 **Project:** Improving Retrieval Recall in Arabic RAG Systems via Query Enhancement
-**Status:** Phase 2 - Query Enhancement Implementation
-**Last Updated:** 17/1/2026
+**Status:** Phase 2 - Query Enhancement (Model Comparison)
+**Last Updated:** 11/2/2026
 
 ---
 
@@ -14,9 +14,9 @@
 
 **Important Note:** Our datasets (MIRACL, ARABICA) are MSA-only, so dialectical mismatch is NOT our primary focus anymore. Our techniques may still help with dialects, but we can't directly measure this.
 
-## 2. 📍 Current Status: Query Enhancement Implementation
-We are currently in the **Query Enhancement Implementation** stage.
-*   **What we have done:** 
+## 2. 📍 Current Status: Model Comparison for Query Expansion
+We are currently in the **Model Comparison** stage of Query Enhancement.
+*   **What we have done:**
     *   Conducted broad landscape analysis of English-centric RAG papers (HyDE, RQ-RAG, QE-RAG, etc.)
     *   Consulted with Mohamed Rashad (AI researcher) on approach
     *   Analyzed 10+ Arabic datasets for suitability
@@ -24,15 +24,19 @@ We are currently in the **Query Enhancement Implementation** stage.
     *   **Completed embedding model research (9/1/2026)**
     *   **Decided on Pyserini pre-built indexes for baselines (9/1/2026)**
     *   **Designed evaluation pipeline (9/1/2026)**
-    *   **Implemented BM25 baseline (BM25S) - Recall@100: 0.8603 (12/1/2026)**
+    *   **Implemented BM25S baseline - Recall@100: 0.8577, NDCG@10: 0.4621 (26/1/2026)**
     *   **Implemented Dense baseline (mDPR) - Recall@100: 0.8407, NDCG@10: 0.4993 (14/1/2026)**
     *   **Completed error analysis (17/1/2026)** - 39% failure rate, short query gap identified
-    *   **Selected first QE technique (17/1/2026)** - Query Expansion with Normalization (evidence-based)
-    *   **Scientific validation (17/1/2026)** - Gemini expert review approved methodology
-*   **What we are doing now:** 
-    *   Ready to implement Query Expansion with Normalization (Task 4.1)
-    *   Next: Experiment 002 (QE + Dense)
-*   **Critical Note for Agents:** Error analysis complete and validated. Decision based on quantitative evidence (short query performance gap, N=2,896). See `ERROR_ANALYSIS_COMPLETE.md` for summary.
+    *   **Selected QE technique (17/1/2026)** - Query Expansion (LLM-based, Query2Doc approach)
+    *   **Completed LLM model research (11/2/2026)** - 15 papers reviewed, 10 models identified
+    *   **Implemented Query2Doc with Qwen 2.5 3B (11/2/2026)** - +8.9% NDCG@10 improvement!
+    *   **Created model comparison guide (11/2/2026)** - 10 models split between team members
+*   **What we are doing now:**
+    *   **Model comparison experiments** - Testing 10 open-source models on same Query2Doc pipeline
+    *   Split: Mohammed (Falcon-H1-3B, Jais-2-8B, ALLaM-7B, Qwen3-4B, GPT-OSS 20B)
+    *   Split: Osman (SILMA Kashif-2B, Qwen2.5-7B, Qwen3-8B, Gemma 3 4B, Aya 8B)
+    *   Testing on Dense (priority), then BM25S, then Hybrid for top models
+*   **Critical Note for Agents:** First QE experiment (exp_003) shows strong results (+8.9% NDCG@10 with Qwen 2.5 3B). Now comparing models to find the best one for Arabic.
 
 ---
 
@@ -77,27 +81,23 @@ We are currently in the **Query Enhancement Implementation** stage.
 
 ## 4. 🔄 Under Investigation (Active Research Questions)
 
-### A. LLM Model Selection for Query Expansion 🆕 (23/1/2026)
-**Status:** Active Research (Task 4.0 - Mohammed)
-*   **Goal:** Identify small multilingual LLM that can run in Google Colab free tier
-*   **Requirements:**
-    - Size: 2-4B parameters (must run on T4 GPU)
-    - Multilingual with good Arabic support
-    - Can follow prompts for query expansion
-    - Truthful generation (not hallucinations)
-*   **Candidates:**
-    - Gemma 2B (Google's efficient model)
-    - Qwen 4B with quantization (initial test failed on T4)
-    - GPT-OSS 20B quantized via Unsloth (4-bit/8-bit)
-    - Llama variants (small versions)
-    - Gemma Translator 270M (very small, translation-focused)
-*   **Research Approach:**
-    1. Review HyDE and Query2Doc papers for model choices
-    2. Search for latest multilingual models fitting constraints
-    3. Test quantized versions in Colab
-    4. Evaluate prompt-following capability
-*   **Fallback:** Groq API (GPT-OSS 20B) or Gemini 1.5 Flash if local models don't work
-*   **Fine-tuning:** Deferred - "to be determined later"
+### A. LLM Model Selection for Query Expansion ✅ Research Complete (11/2/2026)
+**Status:** Research done, now in model comparison phase (Task 4.0b)
+*   **Goal:** Compare 10 open-source models for Arabic Query2Doc expansion
+*   **Research Completed:**
+    - 15 papers reviewed (HyDE, Query2Doc, CSQE, PBR, MUGI, KAR, AQE, ThinkQE, etc.)
+    - 10 open-source models identified and split between team members
+    - First model tested: Qwen 2.5 3B → +8.9% NDCG@10 improvement
+*   **10 Models Selected (split between Mohammed & Osman):**
+    - Mohammed: Falcon-H1-Arabic-3B, Jais-2-8B, ALLaM-7B, Qwen3-4B, GPT-OSS 20B
+    - Osman: SILMA Kashif-2B, Qwen2.5-7B, Qwen3-8B, Gemma 3 4B-IT, Aya Expanse 8B
+*   **Key Research Gap Identified:** No paper tests modern 2-4B models for zero-shot Arabic QE
+*   **Technical Approach:** 4-bit quantization (bitsandbytes NF4) for 7B+ models on T4 GPU
+*   **API Options:** Documented but deferred (focus on open-source first)
+*   **Documentation:**
+    - Full research: `research_decisions/llm_model_research.md`
+    - Deep Research raw data: `research_decisions/models_reserch.md`
+    - Model comparison guide: `research_decisions/model_comparison_guide.md`
 *   **Meeting:** `meetings/23.1.2026.md`
 
 ### B. Error Analysis Approach ✅ RESOLVED (14/1/2026)
@@ -131,9 +131,9 @@ We are currently in the **Query Enhancement Implementation** stage.
     3. Simple implementation (similar to HyDE approach but for expansion)
     4. Avoid API costs initially (try local models first)
     5. Fallback to API if needed (Groq with GPT-OSS 20B or Gemini 1.5 Flash)
-*   **LLM Selection:** ⏳ Under Investigation (Task 4.0)
-    - Target: 2-4B parameters, multilingual, runs on T4 GPU
-    - Candidates: Gemma 2B, Qwen 4B (quantized), GPT-OSS 20B (quantized)
+*   **LLM Selection:** ✅ Research Complete (11/2/2026) - See Section 4.A
+    - 10 open-source models selected for comparison
+    - First test: Qwen 2.5 3B → +8.9% NDCG@10
 *   **Monitoring Strategy (Discussed 23/1/2026):**
     - Track quantitative improvements (query length, etc.)
     - Consider Wikipedia API for metadata enrichment
@@ -173,7 +173,7 @@ We are currently in the **Query Enhancement Implementation** stage.
 
 ---
 
-## 4.5. 📊 Baseline Results & Error Analysis (NEW - 17/1/2026)
+## 4.5. 📊 Experiment Results & Error Analysis
 
 ### Baseline Performance
 **Experiment 001: Dense Baseline (mDPR + Identity Enhancement)**
@@ -184,21 +184,38 @@ We are currently in the **Query Enhancement Implementation** stage.
 - Dataset: MIRACL Arabic dev set (2,896 queries)
 - Documentation: `docs/experiments/exp_001_baseline_dense.md`
 
-**Comparison with BM25S (23/1/2026):**
+**Experiment 002: BM25S Baseline (26/1/2026)**
+- Recall@10: 0.5964
+- Recall@100: 0.8577
+- NDCG@10: 0.4621
+- MRR: 0.4836
+- Documentation: `docs/experiments/exp_002_baseline_bm25.md`
+
+**Baseline Comparison:**
 | Metric | mDPR (Dense) | BM25S (Sparse) | Winner |
 |--------|--------------|----------------|--------|
-| Recall@100 | 0.8407 | 0.8603 | BM25S (+2.3%) |
-| NDCG@10 | 0.4993 | 0.4610 | mDPR (+8.3%) |
-| Recall@10 | 0.6156 | 0.5926 | mDPR (+3.9%) |
-| MRR | 0.5328 | 0.4821 | mDPR (+10.5%) |
+| Recall@100 | 0.8407 | 0.8577 | BM25S (+2.0%) |
+| NDCG@10 | 0.4993 | 0.4621 | mDPR (+8.1%) |
+| Recall@10 | 0.6156 | 0.5964 | mDPR (+3.2%) |
+| MRR | 0.5328 | 0.4836 | mDPR (+10.2%) |
 
 **Key Insight:** BM25S retrieves more docs, mDPR ranks them better. Complementary strengths!
+
+### First Query Enhancement Result
+**Experiment 003: Query2Doc + Dense Retrieval (11/2/2026)**
+- Model: Qwen 2.5 3B (FP16, zero-shot)
+- Method: Query2Doc (LLM generates pseudo-document, concatenated with original query)
+- Recall@10: 0.6608 (+7.3% over dense baseline)
+- NDCG@10: 0.5435 (+8.9% over dense baseline)
+- MRR: 0.5742 (+7.8% over dense baseline)
+- Runtime: ~40 min on free Colab T4 for 2,896 queries
+- Documentation: `docs/experiments/exp_003_query2doc_dense.md`
 
 **BM25S Implementation Decision (23/1/2026):**
 - **Selected:** BM25S (pure Python, no Java)
 - **Rationale:** 500x faster, modern (2024), scientifically valid, better flexibility
 - **Results:** 96% of MIRACL baseline (2% difference acceptable)
-- **Status:** Implementation complete, experiment documentation in progress (Task 2.3)
+- **Status:** Implementation complete, experiment documented
 
 ### Error Analysis Findings (17/1/2026)
 **Phase 1: Quantitative Analysis (N=2,896 queries - VALIDATED)**
@@ -241,7 +258,12 @@ We are currently in the **Query Enhancement Implementation** stage.
 *   **`research_decisions/error_analysis_phase1_quantitative.md`**: Quantitative error analysis results
 *   **`research_decisions/error_analysis_phase2_qualitative.md`**: Qualitative error analysis results
 *   **`research_decisions/evaluation_pipeline_spec.md`**: Evaluation pipeline specification
-*   **`docs/experiments/exp_001_baseline_dense.md`**: Baseline experiment documentation
+*   **`docs/experiments/exp_001_baseline_dense.md`**: Dense baseline experiment (mDPR)
+*   **`docs/experiments/exp_002_baseline_bm25.md`**: BM25S baseline experiment
+*   **`docs/experiments/exp_003_query2doc_dense.md`**: Query2Doc + Dense (Qwen 2.5 3B)
+*   **`research_decisions/llm_model_research.md`**: Comprehensive LLM research (15 papers, 10 models)
+*   **`research_decisions/models_reserch.md`**: ChatGPT Deep Research raw output
+*   **`research_decisions/model_comparison_guide.md`**: Model comparison experiment guide (10 models)
 *   **`reports/mdpr_baseline_report.md`**: Technical report on mDPR baseline reproduction
 *   **`research_decisions/AI_ASSUMED_DECISIONS_REVIEW.md`**: What AI got wrong (for context)
 
@@ -332,35 +354,27 @@ When interacting with this codebase, the Agent should:
 
 ## 9. 📅 Next Actions (Priority Order)
 
-### Immediate (This Week - Jan 24-26)
+### Completed
 - [x] Update documentation to reflect meeting decisions (23/1/2026) ✅
-- [ ] **Task 4.0:** Research LLM models for Query Expansion (Mohammed)
-  - Review HyDE and Query2Doc papers for model choices
-  - Test small multilingual models in Colab (Gemma 2B, Qwen 4B quantized, etc.)
-  - Document findings
-- [ ] **Task 2.3:** Complete BM25S baseline experiment documentation (Osman)
-  - Run full experiment on 2,896 queries
-  - Create `experiments/exp_002_baseline_bm25s.md`
-  - Compare with Dense baseline
+- [x] **Task 4.0:** Research LLM models for Query Expansion ✅ (11/2/2026)
+- [x] **Task 2.3:** BM25S baseline experiment (exp_002) ✅ (Osman)
+- [x] **Task 4.1:** Implement Query2Doc enhancer ✅ (Osman)
+- [x] **Task 4.3:** First QE experiment - exp_003 with Qwen 2.5 3B ✅
 
-### Short-term (Week 4-5)
-- [ ] **Task 4.1:** Implement Query Expansion with selected LLM
-  - Start simple (similar to HyDE approach)
-  - Test on sample queries
-  - Integrate with Dense baseline
-- [ ] **Task 4.2 & 4.3:** Run Query Enhancement experiments
-  - Test with BM25S baseline
-  - Test with Dense baseline
-  - Document results
+### Current (Model Comparison Phase)
+- [ ] **Task 4.0b:** Model Comparison Experiments
+  - Mohammed: Falcon-H1-3B → Jais-2-8B → ALLaM-7B → Qwen3-4B → GPT-OSS 20B
+  - Osman: SILMA Kashif-2B → Qwen2.5-7B → Qwen3-8B → Gemma 3 4B → Aya 8B
+  - Test each on Dense retrieval first, then BM25S and Hybrid for top models
+  - Guide: `research_decisions/model_comparison_guide.md`
+
+### Upcoming
+- [ ] Analyze model comparison results, select best model(s)
+- [ ] Run full experiments on Dense, Sparse, and Hybrid with top models
 - [ ] Develop monitoring strategy for prompt engineering iterations
-- [ ] Consider Wikipedia API for metadata enrichment
-
-### Medium-term (Week 6)
-- [ ] Analyze Query Enhancement results
-- [ ] Iterate on prompts if needed
-- [ ] Consider fine-tuning if small models don't follow prompts well
+- [ ] Error analysis on enhanced queries
 - [ ] Write thesis chapters
-- [ ] Prepare final presentation
+- [ ] Explore use cases (voice agents, etc.)
 
-*Details:* See `meetings/23.1.2026.md` and `TASKS.md`
+*Details:* See `TASKS.md`
 
