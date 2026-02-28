@@ -769,25 +769,29 @@ ARCHITECTURE:
 ---
 
 ### Task 4.2: Run QE + BM25 Experiments
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Task 4.1
+**Owner:** Osman  
+**Status:** ✅ Done  
+**Depends On:** Task 4.1 (✅)
 
 **Context Files:**
-- Task 4.1 outcomes
-- `experiments/exp_001_baseline_bm25.md` (baseline to compare)
+- `docs/experiments/exp_004_query2doc_bm25.md` - **Full experiment documentation**
+- `docs/TWO_NOTEBOOK_WORKFLOW.md` - Two-notebook approach used
+- `experiments/exp_002_baseline_bm25.md` (baseline comparison)
 
 **Deliverables:**
-- [ ] Run enhanced queries through BM25
-- [ ] Record all 3 metrics
-- [ ] Create `experiments/exp_003_qe_bm25.md`
+- [x] Run enhanced queries through BM25 (2,896 queries)
+- [x] Record all metrics
+- [x] Create experiment documentation
 
-**Outcomes:** *(Fill when complete)*
+**Outcomes:** *(Completed 12/2/2026)*
 ```
-Recall@10: [X.XXX] (baseline was [X.XXX])
-NDCG@10: [X.XXX] (baseline was [X.XXX])
-MRR: [X.XXX] (baseline was [X.XXX])
-Improvement: [+X.X% / -X.X%]
+EXPERIMENT 004: Query2Doc + BM25 Retrieval (Qwen 2.5 3B)
+
+RESULTS (MIRACL Arabic Dev Set - 2,896 queries):
+❌ Recall@10:  0.5384 (baseline: 0.5964) = -9.7%
+❌ Recall@100: 0.8155 (baseline: 0.8577) = -4.9%
+❌ NDCG@10:    0.4090 (baseline: 0.4621) = -11.5%
+❌ MRR:        0.4342 (baseline: 0.4836) = -10.2%
 ```
 
 ---

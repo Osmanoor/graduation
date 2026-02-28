@@ -137,6 +137,23 @@ print(f"NDCG@10: {metrics['ndcg_cut_10']:.4f}")
   - MRR: 0.5742
 - **Status:** ✅ Complete (Feb 11, 2026)
 
+### Experiment 004: Query2Doc + BM25
+
+- **Notebooks:** 
+  - Generator: `experiments/Query_generator_query2doc.ipynb`
+  - Evaluator: `experiments/evaluate_enhanced_queries.ipynb`
+- **Documentation:** `docs/experiments/exp_004_query2doc_bm25.md`
+- **Enhancement:** Query2Doc (same as Exp 003)
+- **LLM:** Qwen 2.5 3B Instruct
+- **Baseline:** Exp 002
+- **Results:**
+  - Recall@100: 0.8155 (-4.92% vs baseline) ❌
+  - NDCG@10: 0.4090 (-11.5% vs baseline) ❌
+  - MRR: 0.4342 (-10.2% vs baseline) ❌
+- **Key Finding:** Query2Doc DECREASED BM25 performance (opposite to Dense +8.93%)
+- **Likely Cause:** Missing query repetition (paper recommends 5x for BM25)
+- **Status:** ✅ Complete (Feb 12, 2026)
+
 ## Adding New Query Enhancement Techniques
 
 1. Create a new class in `src/enhancers/`:
