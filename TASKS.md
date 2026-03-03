@@ -688,7 +688,7 @@ DECISION: Compare 10 open-source models (breadth-first)
 - `docs/experiments/exp_003_query2doc_dense.md` - Reference experiment to replicate
 
 **Mohammed's Models:**
-1. Falcon-H1-Arabic-3B (FP16, Arabic-specialized)
+1. ✅ Falcon-H1-Arabic-3B — exp_005 (Dense NDCG@10=0.5359, BM25 NDCG@10=0.4038)
 2. Jais-2-8B-Chat (4-bit, Arabic-specialized)
 3. ALLaM-7B (4-bit, Arabic)
 4. Qwen3-4B (FP16, multilingual)
@@ -707,6 +707,11 @@ DECISION: Compare 10 open-source models (breadth-first)
 - [ ] Hybrid (RRF) results for top models
 - [ ] Comparison table with all metrics
 - [ ] Best model selection with justification
+
+**Progress (Mohammed):**
+- ✅ Falcon-H1-3B: Dense +7.3% NDCG@10, BM25 -12.6% (technique issue, not model)
+  - Key finding: Batching bug in falcon_h1 — requires single-query loop + A100
+  - See: `docs/experiments/exp_005_falcon_h1_3b_dense.md`, `research_decisions/falcon_h1_research.md`
 
 **Testing Protocol:**
 1. Phase 1: Dense retrieval for all models (priority)
