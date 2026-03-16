@@ -689,10 +689,10 @@ DECISION: Compare 10 open-source models (breadth-first)
 
 **Mohammed's Models:**
 1. ✅ Falcon-H1-Arabic-3B — exp_005 (Dense NDCG@10=0.5359, BM25 NDCG@10=0.4038)
-2. Jais-2-8B-Chat (4-bit, Arabic-specialized)
-3. ALLaM-7B (4-bit, Arabic)
-4. Qwen3-4B (FP16, multilingual)
-5. GPT-OSS 20B (4-bit, experimental)
+2. ✅ Jais-2-8B-Chat — exp_006 (Dense NDCG@10=0.6018, BM25 NDCG@10=0.5122) **BEST MODEL**
+3. ✅ ALLaM-7B — exp_008 (Dense NDCG@10=0.2550) **WORST — DROP**
+4. ✅ Qwen3-4B — exp_007 (Dense NDCG@10=0.5691, BM25 NDCG@10=0.4145) **2nd BEST**
+5. ✅ GPT-OSS 20B — exp_009 **DROPPED** (70x slower than Jais-2, 3/5 hallucinations, English-dominant)
 
 **Osman's Models:**
 1. SILMA Kashif-2B (FP16, Arabic RAG)
@@ -709,9 +709,20 @@ DECISION: Compare 10 open-source models (breadth-first)
 - [ ] Best model selection with justification
 
 **Progress (Mohammed):**
-- ✅ Falcon-H1-3B: Dense +7.3% NDCG@10, BM25 -12.6% (technique issue, not model)
+- ✅ Falcon-H1-3B (exp_005): Dense +7.3% NDCG@10, BM25 -12.6% (technique issue, not model)
   - Key finding: Batching bug in falcon_h1 — requires single-query loop + A100
   - See: `docs/experiments/exp_005_falcon_h1_3b_dense.md`, `research_decisions/falcon_h1_research.md`
+- ✅ Jais-2-8B (exp_006): Dense +20.5% NDCG@10, BM25 +10.8%. **BEST MODEL** by wide margin.
+  - Key finding: Only model to improve BM25. Arabic-specialized vocab produces lexically precise expansions.
+  - See: `research_decisions/jais_2_research.md`
+- ✅ ALLaM-7B (exp_008): Dense -48.9% NDCG@10. **WORST — DROPPED.** Tokenizer bug + hallucinations.
+  - See: `research_decisions/allam_7b_research.md`
+- ✅ Qwen3-4B (exp_007): Dense +14.0% NDCG@10, BM25 -10.3%. **2nd BEST.** Easiest model.
+  - Key finding: Generational improvement confirmed — Qwen3 beats Qwen 2.5 by +4.7% NDCG.
+  - See: `docs/experiments/exp_007_qwen3_4b_dense.md`, `research_decisions/qwen3_4b_research.md`
+- ✅ GPT-OSS-20B (exp_009): **DROPPED.** MoE 70x slower than Jais-2. 3/5 sanity queries hallucinated.
+  - Key findings: MoE+BNB4bit impractical for batch QE. Forced-final-channel fix achieved 100% Arabic but facts wrong.
+  - See: `research_decisions/gpt_oss_20b_research.md`
 
 **Testing Protocol:**
 1. Phase 1: Dense retrieval for all models (priority)

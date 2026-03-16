@@ -173,81 +173,131 @@ enhancer = Query2DocEnhancer(
 ### M2: Jais-2-8B-Chat (Mohammed)
 
 **HuggingFace ID:** `inceptionai/Jais-2-8B-Chat`
-**License:** Open source
-**Why test:** Best 8B Arabic model, custom Arabic vocabulary
+**License:** Apache 2.0 (gated — click-through)
+**Why test:** Best 8B Arabic model, custom Arabic vocabulary, 2.6T training tokens
+**Status:** Query generation DONE (12 min, 0 errors). Dense evaluation pending.
 
-#### Loading (4-bit quantization required)
+#### Research Complete (March 2026)
+See `research_decisions/jais_2_research.md` for full technical findings.
+
+#### Architecture: Standard Transformer (jais2)
+- **NOT hybrid** — standard decoder-only Transformer, batching works perfectly
+- 32 layers, 3328 hidden, 26 attention heads, MHA (not GQA)
+- RoPE position encoding, Squared-ReLU activation, LayerNorm
+- Vocab: 150,272 (Arabic-centric, trained from scratch)
+- Context: 8,192 tokens
+- Developers: Inception (G42) + MBZUAI + Cerebras
+
+#### Loading (BF16 on A100 — MUST NOT use FP16)
 ```python
-# Install: pip install bitsandbytes accelerate
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
+MODEL_NAME = "inceptionai/Jais-2-8B-Chat"
 
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
-    bnb_4bit_use_double_quant=True
-)
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+tokenizer.pad_token = tokenizer.eos_token  # MUST set — not set by default
+tokenizer.padding_side = 'left'
 
+# CRITICAL: Use bfloat16, NOT float16
+# Squared-ReLU activation overflows FP16 range (max 65,504)
+# causing CUDA device-side assert in torch.multinomial
 model = AutoModelForCausalLM.from_pretrained(
-    "inceptionai/Jais-2-8B-Chat",
-    quantization_config=bnb_config,
+    MODEL_NAME,
+    torch_dtype=torch.bfloat16,
     device_map="auto"
 )
-tokenizer = AutoTokenizer.from_pretrained("inceptionai/Jais-2-8B-Chat")
 ```
 
 #### Special Considerations
-- **Custom chat format:** Jais uses its own prompt format. Check model card for exact template.
-  May need custom prompt formatting instead of `apply_chat_template`:
-  ```python
-  # Jais-specific format (check model card):
-  prompt = f"### Instruction:\n{system_prompt}\n\n### Input:\n{query}\n\n### Response:\n"
-  ```
-- **Tokenizer:** Has custom Arabic-centric vocabulary (different from Qwen/Llama)
-- **VRAM (4-bit):** ~5-6 GB weights + overhead ≈ 8-10 GB total
-- **Batch size:** Start with 4 (larger model), increase if VRAM allows
-- **Speed:** Will be slower than 3B models. Expect ~60-90 min for 2,896 queries
+- **CRITICAL: Must use BF16** — FP16 causes CUDA assert (Squared-ReLU overflow)
+- **MUST remove `token_type_ids`** before `generate()` (documented in model card)
+- **MUST set pad_token** — `tokenizer.pad_token = tokenizer.eos_token`
+- **Chat template:** Standard HF format, `apply_chat_template()` works perfectly
+- **Gated model** — accept terms on HF + `notebook_login()`
+- **VRAM (BF16):** 16.6 GB used on A100. No quantization needed.
+- **Batch size:** 16 on A100 (25.8 GB free after model load)
+- **Speed:** 241.5 queries/min — fastest model tested so far
+
+#### Actual Results (Query Generation)
+| Metric | Value |
+|--------|-------|
+| Runtime | 12.0 min |
+| Speed | 241.5 q/min |
+| Avg expansion | 10.46x (256.0 chars) |
+| Median expansion | 5.04x |
+| Errors | 0 |
 
 #### Resources
 - Model card: https://huggingface.co/inceptionai/Jais-2-8B-Chat
 - Blog: https://www.cerebras.ai/blog/jais2
+- Paper (Jais-1): arXiv:2308.16149
+- Research doc: `research_decisions/jais_2_research.md`
+- Notebook: `experiments/Query_generator_jais_2_8b.ipynb`
 
 ---
 
-### M3: ALLaM-7B-Instruct (Mohammed)
+### M3: ALLaM-7B-Instruct (Mohammed) — COMPLETED, DROP
 
 **HuggingFace ID:** `ALLaM-AI/ALLaM-7B-Instruct-preview`
-**License:** TBD (check model card)
-**Why test:** Saudi Arabic LLM, trained on 5.2T tokens (Arabic + English)
+**License:** Apache 2.0
+**Why test:** Saudi Arabic LLM, 5.2T tokens training, ICLR 2025 paper, Arabic MMLU 67.78
+**Status:** COMPLETE — **Worst performing model. Degraded retrieval -48.9% below baseline. DROP.**
 
-#### Loading (4-bit quantization required)
+#### Results (exp_007)
+| Metric | Dense | BM25 | vs Baseline |
+|--------|-------|------|-------------|
+| NDCG@10 | 0.2550 | 0.3341 | -48.9% |
+| Recall@10 | 0.3335 | 0.4348 | -45.8% |
+| Recall@100 | 0.5465 | 0.7004 | -35.0% |
+| MRR | 0.2708 | 0.3676 | -49.2% |
+| Runtime | 16.1 min | — | 179.5 q/min |
+
+**Root causes:** (1) Sentencepiece `▁` token markers leaking into decoded text — corrupts retriever input. (2) Severe factual hallucinations. (3) Inconsistent expansion ratios (3.3x-23.3x). Preview/alpha model quality issues.
+
+#### Research Complete (March 2026)
+See `research_decisions/allam_7b_research.md` for full technical findings.
+
+#### Architecture: Standard LlamaForCausalLM
+- **NOT hybrid** — standard Transformer, batching works
+- 32 layers, 4096 hidden, 32 attention heads, 32 KV heads (full MHA, no GQA)
+- RoPE position encoding, SiLU activation, RMSNorm
+- Vocab: 64,000 (expanded from Llama-2's 32K for Arabic)
+- Context: 4,096 tokens
+
+#### Loading (FP16 on A100 — no 4-bit needed)
 ```python
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
-    bnb_4bit_use_double_quant=True
-)
+MODEL_NAME = "ALLaM-AI/ALLaM-7B-Instruct-preview"
+MODEL_REVISION = "v2"  # Pin preview model revision
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, revision=MODEL_REVISION)
+tokenizer.pad_token = tokenizer.eos_token  # MUST set — not set by default
+tokenizer.padding_side = 'left'
 
 model = AutoModelForCausalLM.from_pretrained(
-    "ALLaM-AI/ALLaM-7B-Instruct-preview",
-    quantization_config=bnb_config,
+    MODEL_NAME,
+    revision=MODEL_REVISION,
+    torch_dtype=torch.float16,
     device_map="auto"
 )
-tokenizer = AutoTokenizer.from_pretrained("ALLaM-AI/ALLaM-7B-Instruct-preview")
 ```
 
 #### Special Considerations
-- **Preview model** — may have quirks or missing features
-- **Access:** May require HuggingFace access request (gated model). Check model card. If gated, run `huggingface-cli login` in Colab first
-- **Chat template:** Check if it uses Llama-style or custom format
-- **VRAM (4-bit):** ~4 GB weights + overhead ≈ 6-8 GB total
-- **Batch size:** Start with 4, increase if VRAM allows
-- **Risk:** Limited community testing — may have unexpected behavior
+- **PREVIEW model** — alpha status, pin to `revision="v2"` for reproducibility
+- **NOT gated** — no HuggingFace login required
+- **MUST use `return_token_type_ids=False`** when tokenizing (same as Jais-2)
+- **MUST set pad_token** — `tokenizer.pad_token = tokenizer.eos_token`
+- **Chat template:** Llama-2 [INST] style, `apply_chat_template()` works
+- **Recommended temp:** 0.6 (from model card), also test 0.7 for cross-model comparison
+- **VRAM (FP16):** ~16-17 GB total — fits A100 (40 GB) comfortably
+- **VRAM (4-bit):** ~6-7 GB total — fits T4 (15 GB) if needed
+- **Batch size:** Start with 8 on A100
+- **No pre-quantized versions** (GGUF/GPTQ/AWQ) — use bitsandbytes for 4-bit fallback
+- **No `trust_remote_code` needed** — standard LlamaForCausalLM
 
 #### Resources
 - Model card: https://huggingface.co/ALLaM-AI/ALLaM-7B-Instruct-preview
-- May need to check SDAIA documentation for proper usage
+- Paper: https://arxiv.org/abs/2407.15390 (ICLR 2025)
+- OpenReview: https://openreview.net/forum?id=MscdsFVZrN
+- Research doc: `research_decisions/allam_7b_research.md`
+- Notebook: `experiments/Query_generator_allam_7b.ipynb`
 
 ---
 
@@ -256,101 +306,147 @@ tokenizer = AutoTokenizer.from_pretrained("ALLaM-AI/ALLaM-7B-Instruct-preview")
 **HuggingFace ID:** `Qwen/Qwen3-4B`
 **License:** Apache 2.0
 **Why test:** Newer generation than Qwen 2.5, matches 7B quality, 119 languages
+**Status:** COMPLETE — 2nd best model. Dense NDCG@10=0.5691 (+14.0%). BM25 NDCG@10=0.4145 (-10.3%).
+**Research doc:** `research_decisions/qwen3_4b_research.md`
+**Notebook:** `experiments/Query_generator_qwen3_4b.ipynb`
+**Experiment doc:** `docs/experiments/exp_007_qwen3_4b_dense.md`
+
+#### Architecture (Researched)
+- **Standard dense Transformer** — GQA (32Q/8KV heads), 36 layers, hidden=2560
+- **NOT hybrid** — no Mamba/SSM. Batching works normally.
+- **4.02B params** (3.6B non-embedding), ~8 GB in FP16
+- **151,936 vocab** (same as Qwen 2.5), `tie_word_embeddings=true`
+- **Trained on ~36T tokens** (2x Qwen 2.5's 18T), 119 languages (8 Arabic dialects)
 
 #### Loading
 ```python
-enhancer = Query2DocEnhancer(
-    model_name="Qwen/Qwen3-4B",
-    max_new_tokens=128,
-    temperature=0.7,
-    batch_size=8
-)
-```
-
-#### Special Considerations
-- **Qwen3 has "thinking mode"** — by default it may produce `<think>...</think>` reasoning traces before answering. To disable:
-  ```python
-  # Add to generation config to skip thinking:
-  generated_ids = model.generate(
-      **inputs,
-      max_new_tokens=128,
-      temperature=0.7,
-      top_p=0.9,
-      do_sample=True,
-      # Force no-thinking mode:
-      chat_template_kwargs={"enable_thinking": False}
-  )
-  ```
-  Or use the `/no_think` tag in the prompt. Check model card for details.
-- **If thinking mode leaks into output:** Strip `<think>` tags from generated text:
-  ```python
-  import re
-  pseudo_doc = re.sub(r'<think>.*?</think>', '', pseudo_doc, flags=re.DOTALL).strip()
-  ```
-- **Chat template:** Uses Qwen chat format (same family as Qwen 2.5, `apply_chat_template` should work)
-- **VRAM:** ~8-10 GB in FP16. Fits T4.
-- **Batch size:** Start with 8
-
-#### Resources
-- Model card: https://huggingface.co/Qwen/Qwen3-4B
-- Blog: https://qwenlm.github.io/blog/qwen3/
-
----
-
-### M5: GPT-OSS 20B (Mohammed)
-
-**HuggingFace ID:** Needs identification — see notes below
-**License:** TBD
-**Why test:** Largest model in our comparison, tests quality vs size tradeoff
-
-#### Identifying the Model
-This model was discussed in the 23/1/2026 meeting as "GPT-OSS 20B via Unsloth." You need to identify the exact model. Candidates:
-- **Mistral-Small-24B** → `mistralai/Mistral-Small-24B-Instruct-2501` (actually 24B)
-- **Gemma 2 27B** → `google/gemma-2-27b-it` (actually 27B)
-- **Command-R 35B** → too large
-- **Check Unsloth hub for 20B models:** https://huggingface.co/unsloth
-
-If you can't identify the exact "GPT-OSS 20B", pick the best available ~20B model that Unsloth supports on T4.
-
-#### Loading (4-bit quantization REQUIRED, use Unsloth for efficiency)
-```python
-# Option A: Unsloth (faster, recommended)
-# pip install unsloth
-from unsloth import FastLanguageModel
-
-model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name="unsloth/MODEL-NAME-bnb-4bit",  # Find on Unsloth hub
-    max_seq_length=2048,
-    dtype=None,
-    load_in_4bit=True
-)
-
-# Option B: bitsandbytes (fallback)
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
-    bnb_4bit_use_double_quant=True
-)
-
+# FP16 on T4 — no quantization needed
 model = AutoModelForCausalLM.from_pretrained(
-    "MODEL-ID",
-    quantization_config=bnb_config,
+    "Qwen/Qwen3-4B",
+    torch_dtype=torch.float16,
     device_map="auto"
 )
 ```
 
 #### Special Considerations
-- **VRAM (4-bit):** ~10 GB weights + overhead ≈ 12-14 GB. VERY tight on T4 (15 GB)
-- **Batch size:** Must use 1 or 2 — cannot fit larger batches
-- **Speed:** Will be very slow. Expect 2-4 hours for 2,896 queries
-- **Risk:** May OOM during generation. If so, reduce `max_new_tokens` to 64
-- **Priority:** LOW — do this last, only if time permits
-- **Why still test:** If it fits and produces better expansions, the quality-size tradeoff is valuable for the thesis
+- **CRITICAL: Disable thinking mode** — Qwen3 produces `<think>...</think>` traces by default:
+  ```python
+  # Disable via apply_chat_template (RECOMMENDED):
+  chat_text = tokenizer.apply_chat_template(
+      messages,
+      tokenize=False,
+      add_generation_prompt=True,
+      enable_thinking=False  # <-- This is the key parameter
+  )
+  ```
+- **Alternative:** Append `/no_think` to user message for per-turn control
+- **Safety fallback:** Strip leaked traces: `re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)`
+- **NEVER use greedy decoding** — causes infinite repetitions (model card warning)
+- **Non-thinking sampling:** temp=0.7, top_p=0.8, top_k=20 (model card recommendation)
+- **Requires transformers >= 4.51.0** (earlier versions: `KeyError: 'qwen3'`)
+- **No `token_type_ids` issue** (unlike Jais-2)
+- **VRAM:** ~8-10 GB in FP16. Fits T4 easily.
+- **Batch size:** 32 on A100 (33.9 GB free), 8 on T4
+
+#### Actual Results (exp_007)
+| Metric | Dense | BM25 |
+|--------|-------|------|
+| NDCG@10 | 0.5691 (+14.0%) | 0.4145 (-10.3%) |
+| Recall@10 | 0.6824 (+10.9%) | 0.5403 (-9.4%) |
+| Recall@100 | 0.8726 (+3.8%) | 0.8152 (-5.0%) |
+| MRR | 0.6015 (+12.9%) | 0.4415 (-8.7%) |
+| Runtime | 12.4 min | — |
+| Speed | 232.6 q/min | — |
+| Batch size | 32 | — |
+| GPU | A100 (8.5 GB used) | — |
+| Errors | 0 | — |
+
+#### Key Benchmarks (vs Qwen 2.5-3B)
+| Benchmark | Qwen3-4B | Qwen 2.5-3B | Delta |
+|-----------|----------|-------------|-------|
+| MMLU | 72.99 | 65.62 | +7.37 |
+| BBH | 72.59 | 56.30 | +16.29 |
+| MMMLU (multilingual) | 71.42 | 65.55 | +5.87 |
 
 #### Resources
-- Unsloth models: https://huggingface.co/unsloth
-- Unsloth GitHub: https://github.com/unslothai/unsloth
+- Model card: https://huggingface.co/Qwen/Qwen3-4B
+- Blog: https://qwenlm.github.io/blog/qwen3/
+- Paper: arXiv:2505.09388
+
+---
+
+### M5: GPT-OSS 20B (Mohammed)
+
+**HuggingFace ID:** `openai/gpt-oss-20b`
+**License:** Apache 2.0
+**Why test:** Only MoE model + only non-Arabic-specialized model in comparison. OpenAI's first open-source LLM.
+**Status:** Research complete (March 2026). Implementation pending.
+
+#### Research Complete (March 2026)
+See `research_decisions/gpt_oss_20b_research.md` for full technical findings.
+
+#### Architecture: MoE Transformer (GptOssForCausalLM)
+- **NOT hybrid** — standard Transformer with MoE routing, batching should work
+- 24 layers, 2880 hidden, 64 attention heads, 8 KV heads (GQA), head_dim=64
+- **32 experts, top-4 routed per token** → 3.61B active params (of 20.91B total)
+- Alternating sliding window (128 tokens) + full attention layers
+- RoPE with YaRN scaling, SwiGLU activation, RMSNorm
+- Vocab: 201,088 (o200k_harmony BPE via tiktoken, same base as GPT-4o)
+- Context: 131,072 tokens (128K)
+- Native MXFP4 quantization on MoE weights (trained at this precision)
+- Developers: OpenAI
+- Paper: arXiv:2508.10925
+
+#### Loading (Unsloth BNB 4-bit — RECOMMENDED)
+```python
+from unsloth import FastLanguageModel
+
+model, tokenizer = FastLanguageModel.from_pretrained(
+    model_name="unsloth/gpt-oss-20b",
+    dtype=None,
+    max_seq_length=1024,
+    load_in_4bit=True,
+    full_finetuning=False,
+)
+FastLanguageModel.for_inference(model)  # 2x speedup
+
+# Generation with harmony format:
+messages = [
+    {"role": "system", "content": system_prompt},
+    {"role": "user", "content": query}
+]
+inputs = tokenizer.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    return_tensors="pt",
+    return_dict=True,
+    reasoning_effort="low"  # Minimize CoT overhead
+).to("cuda")
+
+outputs = model.generate(**inputs, max_new_tokens=128, temperature=0.7, top_p=0.9, do_sample=True)
+```
+
+#### Special Considerations
+- **CRITICAL: Harmony chat format is MANDATORY** — model "will not work correctly otherwise." `apply_chat_template()` handles this automatically.
+- **Set `reasoning_effort="low"`** — minimizes chain-of-thought tokens for query expansion
+- **Output parsing:** May need to extract `final` channel content and strip `analysis` reasoning tokens
+- **Bleeding-edge dependencies:** Requires `torch>=2.8.0`, `triton>=3.4.0`, `transformers==4.56.2`, specific Unsloth commits
+- **Arabic is a HIGH RISK:** English-dominant training, model card warns about non-English degradation. ILMAAM Arabic ~58%. Sanity-check first 5 queries carefully.
+- **MoE batching:** Standard Transformer routing, should work — but MoE overhead may limit batch sizes. Start with 4, reduce if OOM.
+- **NOT gated** — no HuggingFace login required
+- **VRAM (Unsloth BNB 4-bit):** ~14 GB on T4. Use A100 for comfortable headroom.
+- **Batch size:** Start with 4 on A100, 1-2 on T4
+- **Model default temp:** 1.0 — test both 1.0 and 0.7 for comparison
+- **Priority:** LOW — do this last, only if time permits
+- **Thesis value:** ANY result is a finding — either MoE works for Arabic QE or Arabic-specialized training is essential
+
+#### Resources
+- Model card: https://huggingface.co/openai/gpt-oss-20b
+- Paper: https://arxiv.org/abs/2508.10925
+- Announcement: https://openai.com/index/introducing-gpt-oss/
+- Unsloth model: https://huggingface.co/unsloth/gpt-oss-20b
+- Unsloth docs: https://unsloth.ai/docs/models/gpt-oss-how-to-run-and-fine-tune
+- Research doc: `research_decisions/gpt_oss_20b_research.md`
 
 ---
 
@@ -642,11 +738,11 @@ Copy this table and fill in results:
 | Model | Type | Params | Quant | Recall@10 | Recall@100 | NDCG@10 | MRR | Runtime | Notes |
 |-------|------|--------|-------|-----------|------------|---------|-----|---------|-------|
 | Qwen 2.5 3B (ref) | Multi | 3B | FP16 | 0.6608 | 0.8594 | 0.5435 | 0.5742 | 40m | DONE |
-| Falcon-H1-Arabic-3B | Arabic | 3B | FP16 | | | | | | |
-| Jais-2-8B-Chat | Arabic | 8B | 4-bit | | | | | | |
-| ALLaM-7B | Arabic | 7B | 4-bit | | | | | | |
-| Qwen3-4B | Multi | 4B | FP16 | | | | | | |
-| GPT-OSS 20B | TBD | 20B | 4-bit | | | | | | |
+| Falcon-H1-Arabic-3B | Arabic | 3B | BF16 | 0.6484 | 0.8531 | 0.5359 | 0.5681 | ~60-90m | batch=1 (Mamba bug). BM25: 0.4038. |
+| **Jais-2-8B-Chat** | **Arabic** | **8B** | **BF16** | **0.7161** | **0.8981** | **0.6018** | **0.6356** | **12m** | **BEST MODEL. +20.5% NDCG. BM25: 0.5122 (+10.8%). BF16 required.** |
+| **ALLaM-7B (preview)** | **Arabic** | **7B** | **FP16** | **0.3335** | **0.5465** | **0.2550** | **0.2708** | **16m** | **WORST MODEL. -48.9% NDCG vs baseline. Tokenizer bug (sentencepiece leak) + hallucinations. DROP.** |
+| **Qwen3-4B (exp_007)** | **Multi** | **4B** | **FP16** | **0.6824** | **0.8726** | **0.5691** | **0.6015** | **12m** | **2nd BEST. +14.0% NDCG. BM25: 0.4145 (-10.3%). Easiest model — no quirks. batch=32.** |
+| ~~GPT-OSS 20B~~ | ~~MoE~~ | ~~20.9B (3.6B active)~~ | ~~BNB 4-bit~~ | ~~—~~ | ~~—~~ | ~~—~~ | ~~—~~ | ~~~14h est.~~ | **DROPPED: 70x slower than Jais-2 (71.4s/batch vs 12m total). Severe hallucinations (3/5 queries factually wrong). English-dominant training. Forced-final-channel fix achieved 100% Arabic but facts unreliable.** |
 | SILMA Kashif-2B | Arabic | 2B | FP16 | | | | | | |
 | Qwen 2.5-7B | Multi | 7B | 4-bit | | | | | | |
 | Qwen3-8B | Multi | 8B | 4-bit | | | | | | |

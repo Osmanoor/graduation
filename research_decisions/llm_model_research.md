@@ -311,7 +311,7 @@ Identify a multilingual LLM for Arabic query expansion in our MIRACL retrieval p
 | **AceGPT v1.5 13B** | Based on old LLaMA 2. 13B too heavy. Superseded by newer models |
 | **SmolLM3 3B** | Arabic only secondary in training data |
 | **Gemma Translator 270M** | Too specialized for translation. Too small for generative expansion |
-| **GPT-OSS 20B** | Too large even with quantization. Unknown Arabic support |
+| **GPT-OSS 20B** | English-dominant training. Arabic ILMAAM ~58%. MoE with only 3.6B active params. Testing as experimental comparison (Task 4.0b M5). |
 
 ---
 

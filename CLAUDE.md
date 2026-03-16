@@ -62,3 +62,58 @@ When the user says any of these phrases, read `.claude/contexts/workflows.md` an
 | "summarize paper" or "add paper" | Summarize Paper |
 | "sync decisions" or "after meeting" | Sync Decisions |
 | "prepare meeting" or "supervisor meeting" | Prepare Supervisor Meeting |
+
+---
+
+## Model Experiment Workflow (Task 4.0b)
+
+When Mohammed asks to work on a new model for the model comparison experiments, follow this workflow **in order**:
+
+### Phase 1: Research (BEFORE writing any code)
+1. **Read context files first:**
+   - `research_decisions/model_comparison_guide.md` — per-model instructions
+   - `research_decisions/llm_model_research.md` — benchmarks and rankings
+   - `research_decisions/falcon_h1_research.md` — lessons learned from first model
+   - `research_decisions/jais_2_research.md` — lessons learned from second model
+2. **Research the model** (use Agent tool for web research):
+   - Architecture: Is it a standard Transformer? (critical for batching)
+   - VRAM: FP16 size, 4-bit size, overhead (SSM buffers? KV cache?)
+   - Arabic benchmarks: OALL, AraGen, AMMLU scores
+   - Known issues: chat template, token_type_ids, padding, gated access
+   - Citations: paper/blog, developers, training details
+3. **Create research doc:** `research_decisions/{model_name}_research.md` with all findings + citations
+
+### Phase 2: Implementation
+4. **GPU strategy:**
+   - A100 (40GB): Try FP16 first, 4-bit fallback
+   - T4 (15GB): 4-bit required for 7B+, FP16 for ≤4B
+5. **Create/update notebook** in `experiments/Query_generator_{model}.ipynb`:
+   - Apply batching (if standard Transformer) or single-query (if hybrid architecture)
+   - Include OOM fallback handler
+   - Include VRAM reporting and batch-size suggestion
+   - Remove `token_type_ids` if model requires it
+6. **Sanity check:** Always test first 5 queries before full run
+
+### Phase 3: Documentation
+7. **After experiment runs:** Fill in "Lessons Learned" section in notebook
+8. **Create experiment doc:** `docs/experiments/exp_NNN_{model}_dense.md`
+9. **Update comparison table** in `research_decisions/model_comparison_guide.md`
+
+### Key Lessons from Previous Models
+- **Falcon-H1 (exp_005):** Hybrid Mamba architecture has batching bugs — forced batch_size=1. Always check architecture type first.
+- **Jais-2 (exp_006):** Standard Transformer, batching works. Must remove token_type_ids. BF16 required (Squared-ReLU overflows FP16).
+- **ALLaM-7B (exp_008):** Preview/alpha model DESTROYED retrieval (-48.9%). Sentencepiece tokenizer bug leaked `▁` into output. Verify decoded output for special chars before full runs.
+- **Qwen3-4B (exp_007):** Easiest model. Must disable thinking mode (`enable_thinking=False`). Never use greedy decoding. FP16 on T4/A100, batch_size=32 on A100.
+- **GPT-OSS-20B (exp_009):** DROPPED. MoE architecture (32 experts) is 70x slower than dense models via BNB 4-bit. Harmony chat format requires forced-final-channel prefix to skip English reasoning. 3/5 sanity queries had severe factual hallucinations despite 100% Arabic output. English-dominant training = unreliable for Arabic QE.
+- **General:** Model-specific temperature settings matter. Don't assume temp=0.7 works for all models.
+
+### Reference Baselines
+| Model | NDCG@10 | Recall@10 | Recall@100 | MRR |
+|-------|---------|-----------|------------|-----|
+| mDPR (no QE) | 0.4993 | 0.6156 | 0.8407 | 0.5328 |
+| Qwen 2.5 3B (exp_003) | 0.5435 | 0.6608 | 0.8594 | 0.5742 |
+| Falcon-H1-3B (exp_005) | 0.5359 | 0.6484 | 0.8531 | 0.5681 |
+| **Qwen3-4B (exp_007)** | **0.5691** | **0.6824** | **0.8726** | **0.6015** |
+| **Jais-2-8B (exp_006)** | **0.6018** | **0.7161** | **0.8981** | **0.6356** |
+| ~~ALLaM-7B (exp_008)~~ | ~~0.2550~~ | ~~0.3335~~ | ~~0.5465~~ | ~~0.2708~~ |
+| ~~GPT-OSS-20B (exp_009)~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ |
