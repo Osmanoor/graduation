@@ -880,40 +880,264 @@ Next steps: [Iterate / Move to writing]
 
 ---
 
-## Phase 3: Documentation & Writing (Week 6)
+## Phase 3: Thesis Initial Draft (March–April 2026)
 
-### Task 5.1: Write Methodology Chapter
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Phase 2 complete
+**Goal:** Complete the first full draft of the thesis based on existing Query2Doc experiments (10 models).
+**Deadline:** Mid-April 2026 (per Dr. Tahani — thesis must be ready before May exams)
+**Writing Guide:** `research_decisions/thesis_writing_guide.md` — read this BEFORE starting any chapter
 
-**Context Files:**
-- `research_decisions/technical_specifications.md`
-- All experiment docs in `experiments/`
-- `.kiro/steering/thesis-writing.md`
+**Writing Order (from supervisor):** Chapter 2 → Chapter 3 (zigzag with 4) → Chapter 4 → Chapter 1 → Chapter 5 → Abstract
 
 ---
 
-### Task 5.2: Write Experiments/Results Chapter
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** Phase 2 complete
+### Task 5.1: Update Chapter 2 — Literature Review & Theoretical Background
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** None (can start immediately)
+**Priority:** HIGH — write first
+
+**Why:** Chapter 2 is the thickest chapter. ALL definitions, models, and background go here. Chapter 3 will only reference Chapter 2 by section number, so this must be complete first.
 
 **Context Files:**
-- All experiment docs in `experiments/`
-- `.kiro/steering/thesis-writing.md`
+- `research_decisions/thesis_writing_guide.md` — Section 2 (Chapter 2 guidelines)
+- `.claude/contexts/thesis-writing.md` — writing context and rules
+- `meetings/chapter2_initial_draft.md` — existing initial draft
+- `University_of_Khartoum__EEE_bachelor_s_thesis_template/Chapters/chapter2_generated.tex` — generated version
+- `papers/` — all paper summaries
+- `research_decisions/llm_model_research.md` — model research
+- Per-model research: `research_decisions/falcon_h1_research.md`, `jais_2_research.md`, `qwen3_4b_research.md`, `allam_7b_research.md`, `gpt_oss_20b_research.md`
+
+**Deliverables:**
+- [ ] 2.1 Theoretical background: LLMs, Transformers, RAG systems, Query Enhancement
+- [ ] 2.2 Mathematical models: BM25 formula, dense retrieval / cosine similarity, NDCG, MRR, Recall@k
+- [ ] 2.3 Description of ALL models used: Falcon-H1, Jais-2, Qwen 2.5 3B, Qwen3-4B, ALLaM, Aya, Gemma, SILMA, Qwen 2.5 7B, Qwen3 8B, GPT-OSS 20B
+- [ ] 2.4 Related Work: Query2Doc, HyDE, CSQE, PBR, MUGI, KAR, AQE, ThinkQE, and other reviewed papers
+- [ ] All abbreviations written in full on first use
+- [ ] IEEE references numbered by order of appearance
 
 ---
 
-### Task 5.3: Update Literature Review (Chapter 2)
-**Owner:** TBD  
-**Status:** ⏳ Not Started  
-**Depends On:** None
+### Task 5.2: Write Chapter 3 — Methodology
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Task 5.1 (Chapter 2 must define all concepts/models first)
+**Priority:** HIGH — most important chapter
+
+**Why:** Dr. Tahani: "This is the most important chapter — it contains your real research process." Write in zigzag with Chapter 4.
 
 **Context Files:**
-- `meetings/chapter2_initial_draft.md`
-- `University_of_Khartoum__EEE_bachelor_s_thesis_template/Chapters/chapter2_generated.tex`
-- All papers in `papers/`
+- `research_decisions/thesis_writing_guide.md` — Section 2 (Chapter 3 guidelines)
+- `research_decisions/technical_specifications.md` — system architecture
+- `docs/experiments/exp_001_baseline_dense.md` through `exp_009` — all experiment documentation
+- `research_decisions/error_analysis_phase1_quantitative.md` — error analysis methodology
+- `research_decisions/qe_technique_selection.md` — technique selection rationale
+- `research_decisions/model_comparison_guide.md` — experiment design
+
+**Deliverables:**
+- [ ] 3.1 Dataset: MIRACL Arabic description, dev set (2,896 queries, 2.1M passages)
+- [ ] 3.2 Baseline Implementation: BM25S approach, mDPR approach, evaluation pipeline
+- [ ] 3.3 Error Analysis: quantitative analysis methodology, short query gap discovery
+- [ ] 3.4 Query Enhancement Technique: Query2Doc approach, modifications (zero-shot, temperature tuning, no repetition for BM25)
+- [ ] 3.5 Model Comparison: experimental setup, 10 models, same prompt/pipeline, GPU/quantization config
+- [ ] Flowcharts: overall pipeline, Query2Doc process, evaluation workflow
+- [ ] Processing diagrams for each major step
+- [ ] NO code in the body — reference Appendix for code
+
+---
+
+### Task 5.3: Write Chapter 4 — Results and Discussion
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Task 5.2 (zigzag — write sections as corresponding Ch. 3 sections are written)
+**Priority:** HIGH
+
+**Why:** Contains all results, comparisons, and engineering analysis. Written in zigzag with Chapter 3.
+
+**Context Files:**
+- `research_decisions/thesis_writing_guide.md` — Section 2 (Chapter 4 guidelines)
+- `.claude/contexts/thesis-writing.md` — results reference tables
+- All `docs/experiments/exp_*` files
+- `research_decisions/error_analysis_phase1_quantitative.md`
+
+**Deliverables:**
+- [ ] 4.1 Baseline Results: Dense vs BM25 comparison, complementary strengths analysis
+- [ ] 4.2 Error Analysis Findings: 39% failure rate, short query gap (59% performance), query length correlation
+- [ ] 4.3 Query2Doc Results (Dense): +8.9% NDCG@10, comparison with original paper (zero-shot Arabic > few-shot English)
+- [ ] 4.4 Query2Doc Results (BM25): term dilution problem, negative results analysis
+- [ ] 4.5 Model Comparison (Dense): full leaderboard, best model (Jais-2 / Aya), dropped models analysis
+- [ ] 4.6 Model Comparison (BM25): Jais-2 and Aya success, why most models degrade BM25
+- [ ] 4.7 Key Findings: model size vs performance, multilingual support importance, Arabic vocab impact
+- [ ] All figures properly numbered (Figure 4.X), captions below
+- [ ] All tables properly numbered (Table 4.X), captions above
+- [ ] Engineering analysis for every result
+
+---
+
+### Task 5.4: Write Chapter 1 — Introduction
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Tasks 5.1, 5.2, 5.3 (write AFTER Chapters 2, 3, 4)
+**Priority:** MEDIUM
+
+**Why:** Dr. Tahani: "Write this after the other chapters — it should read like the Proposal but written by people who understand the work." Objectives must match actual methodology.
+
+**Deliverables:**
+- [ ] 1.1 General Introduction / Preamble
+- [ ] 1.2 Problem Definition (Arabic query-document mismatch, short query information poverty)
+- [ ] 1.3 Objectives (must match what was actually done in Chapter 3)
+- [ ] 1.4 Thesis Layout (brief description of each chapter)
+
+---
+
+### Task 5.5: Write Chapter 5 — Conclusion and Recommendations
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Tasks 5.1, 5.2, 5.3 (write AFTER Chapters 2, 3, 4)
+**Priority:** MEDIUM
+
+**Why:** Conclusions summarize findings. Recommendations guide future researchers — Dr. Tahani: "Your recommendations are very important because you are the domain experts."
+
+**Deliverables:**
+- [ ] 5.1 Conclusions: overall findings, what was proven, best model selection
+- [ ] 5.2 Challenges: resource limitations, dropped models, BM25 term dilution
+- [ ] 5.3 Recommendations for Future Work: stronger embedding models, hybrid retrieval, chunking-aware QE, dialect testing, prompt optimization
+
+---
+
+### Task 5.6: Write Abstract (English) + المستخلص (Arabic)
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Tasks 5.1–5.5 (write LAST — summarizes everything)
+**Priority:** MEDIUM
+
+**Why:** First thing the examiner reads. ~300–350 words. Must cover: intro → problem → objectives → methodology → results → conclusion.
+
+**Deliverables:**
+- [ ] English Abstract (~300-350 words, ~3/4 page)
+- [ ] Arabic المستخلص (faithful translation)
+
+---
+
+### Task 5.7: Front Matter & Appendices
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** All other Phase 3 tasks
+**Priority:** LOW (generate after content is written)
+
+**Deliverables:**
+- [ ] Cover page (per university guidelines)
+- [ ] Table of Contents with page numbers
+- [ ] List of Figures
+- [ ] List of Tables
+- [ ] List of Abbreviations (alphabetically sorted)
+- [ ] Roman numeral page numbering for front matter
+- [ ] Appendix A: Code listings
+- [ ] Appendix B: Supplementary material (if needed)
+- [ ] IEEE references list (numbered by order of appearance)
+
+---
+
+## Phase 4: Expanded Experiments & Research (March–April 2026)
+
+**Goal:** Build on Query2Doc results to make a stronger, publishable contribution. Explore chunking-aware query enhancement and other techniques that logically extend our current work.
+**Constraint:** Must be consistent with existing Query2Doc work — not a completely new path, but a logical addition.
+**Deadline:** Mid-April 2026 (practical work must be done before May exams)
+
+---
+
+### Task 6.1: Literature Review — Chunking-Aware Query Enhancement
+**Owner:** Both (Mohammed leads, with AI research assistance)
+**Status:** ⏳ Not Started
+**Depends On:** None (can start immediately, in parallel with thesis writing)
+
+**Why:** We want to explore how knowledge of the knowledge base structure (chunks, hierarchy, metadata) can improve query enhancement. This could be our key research contribution beyond basic Query2Doc.
+
+**Context Files:**
+- Previous papers on chunking-aware approaches (Rebarter, etc.) — referenced in earlier meetings
+- `papers/` — existing paper summaries
+- `research_decisions/llm_model_research.md` — context on current approach
+
+**Deliverables:**
+- [ ] Collect and review all papers on chunking-aware QE, knowledge-base-aware QE, hierarchical retrieval
+- [ ] Summarize each approach: what they did, what gap remains
+- [ ] Create `research_decisions/chunking_aware_qe_research.md` with findings
+- [ ] Identify ideas that can logically build on our Query2Doc pipeline
+
+---
+
+### Task 6.2: Brainstorm & Select Expanded Experiment Approach
+**Owner:** Both (with AI as research assistant)
+**Status:** ⏳ Not Started
+**Depends On:** Task 6.1
+
+**Why:** Need to select the best approach that (a) builds logically on Query2Doc, (b) represents a true contribution, (c) is feasible within our timeline and resources.
+
+**Key Constraint (from Mohammed):** "We don't want to start a completely new path. We want consistency with all efforts done so far — the expanded work should be a logical addition to Query2Doc."
+
+**Deliverables:**
+- [ ] List all candidate ideas from literature review
+- [ ] Evaluate each for: feasibility, contribution potential, consistency with Query2Doc
+- [ ] Select 1-2 approaches to implement
+- [ ] Document rationale in `research_decisions/expanded_experiments_plan.md`
+
+**Candidate Ideas to Explore:**
+- Chunking-aware query enhancement (hierarchical structure / metadata injection)
+- Knowledge-base-aware prompting (inject KB structure into LLM prompt)
+- Query2Doc + re-ranking combination
+- Multi-stage query enhancement (iterative refinement)
+- Hybrid retrieval optimization (tuning RRF with QE)
+- Other approaches from Rebarter and related papers
+
+---
+
+### Task 6.3: Implement Expanded Experiments
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Task 6.2
+
+**Why:** Run the selected expanded experiments to generate results for the thesis contribution.
+
+**Deliverables:**
+- [ ] Implementation notebook(s) in `experiments/`
+- [ ] Run on Dense + BM25 (same evaluation pipeline)
+- [ ] Compare against Query2Doc baselines
+- [ ] Document experiments in `docs/experiments/`
+- [ ] Sanity check first 5 queries before full run
+
+---
+
+### Task 6.4: Analyze Expanded Results & Update Thesis
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Task 6.3
+
+**Why:** Integrate expanded experiment results into thesis Chapters 3, 4, and 5.
+
+**Deliverables:**
+- [ ] Add methodology sections to Chapter 3
+- [ ] Add results sections to Chapter 4
+- [ ] Update Chapter 5 conclusions and recommendations
+- [ ] Update comparison tables and leaderboards
+
+---
+
+### Task 6.5: Evaluate Publication Potential
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Task 6.4
+
+**Why:** Dr. Tahani strongly encouraged publishing. Having a published paper significantly strengthens the graduation evaluation.
+
+**Options (from supervisor):**
+1. Pre-print (arXiv) — fastest, ~3 pages
+2. Faculty of Engineering journal (University of Khartoum)
+3. Engineering Society journal
+4. Regional/International conference
+
+**Deliverables:**
+- [ ] Assess if results constitute a publishable contribution
+- [ ] Select target venue
+- [ ] Draft paper outline (if proceeding)
 
 ---
 
@@ -931,7 +1155,10 @@ Next steps: [Iterate / Move to writing]
 | Document | Purpose |
 |----------|---------|
 | `RESEARCH_CONTEXT_KERNEL.md.md` | Project state & decisions |
+| `research_decisions/thesis_writing_guide.md` | **Dr. Tahani's thesis writing guidelines** |
+| `.claude/contexts/thesis-writing.md` | Writing context for AI assistant |
 | `WORKFLOW.md` | How we work |
 | `research_decisions/technical_specifications.md` | Architecture details |
 | `research_decisions/open_questions.md` | Undecided items |
-| `experiments/` | Experiment documentation |
+| `docs/experiments/` | Experiment documentation |
+| `research_decisions/model_comparison_guide.md` | Model comparison guide |
