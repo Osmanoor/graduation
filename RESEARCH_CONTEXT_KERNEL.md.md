@@ -1,7 +1,7 @@
 # 🧬 RESEARCH_CONTEXT_KERNEL.md
 **Project:** Improving Retrieval Recall in Arabic RAG Systems via Query Enhancement
-**Status:** Phase 2 - Query Enhancement (Model Comparison)
-**Last Updated:** 11/2/2026
+**Status:** Phase 3 - Thesis Writing & Phase 4 - Expanded Experiments
+**Last Updated:** 27/3/2026
 
 ---
 
@@ -14,29 +14,35 @@
 
 **Important Note:** Our datasets (MIRACL, ARABICA) are MSA-only, so dialectical mismatch is NOT our primary focus anymore. Our techniques may still help with dialects, but we can't directly measure this.
 
-## 2. 📍 Current Status: Model Comparison for Query Expansion
-We are currently in the **Model Comparison** stage of Query Enhancement.
-*   **What we have done:**
-    *   Conducted broad landscape analysis of English-centric RAG papers (HyDE, RQ-RAG, QE-RAG, etc.)
-    *   Consulted with Mohamed Rashad (AI researcher) on approach
-    *   Analyzed 10+ Arabic datasets for suitability
-    *   Clarified decision status in 6/1/2026 review meeting
-    *   **Completed embedding model research (9/1/2026)**
-    *   **Decided on Pyserini pre-built indexes for baselines (9/1/2026)**
-    *   **Designed evaluation pipeline (9/1/2026)**
-    *   **Implemented BM25S baseline - Recall@100: 0.8577, NDCG@10: 0.4621 (26/1/2026)**
-    *   **Implemented Dense baseline (mDPR) - Recall@100: 0.8407, NDCG@10: 0.4993 (14/1/2026)**
-    *   **Completed error analysis (17/1/2026)** - 39% failure rate, short query gap identified
-    *   **Selected QE technique (17/1/2026)** - Query Expansion (LLM-based, Query2Doc approach)
-    *   **Completed LLM model research (11/2/2026)** - 15 papers reviewed, 10 models identified
-    *   **Implemented Query2Doc with Qwen 2.5 3B (11/2/2026)** - +8.9% NDCG@10 improvement!
-    *   **Created model comparison guide (11/2/2026)** - 10 models split between team members
-*   **What we are doing now:**
-    *   **Model comparison experiments** - Testing 10 open-source models on same Query2Doc pipeline
-    *   Split: Mohammed (Falcon-H1-3B, Jais-2-8B, ALLaM-7B, Qwen3-4B, GPT-OSS 20B)
-    *   Split: Osman (SILMA Kashif-2B, Qwen2.5-7B, Qwen3-8B, Gemma 3 4B, Aya 8B)
-    *   Testing on Dense (priority), then BM25S, then Hybrid for top models
-*   **Critical Note for Agents:** First QE experiment (exp_003) shows strong results (+8.9% NDCG@10 with Qwen 2.5 3B). Now comparing models to find the best one for Arabic.
+## 2. 📍 Current Status (Updated 27/3/2026)
+
+### Phase 2 — Model Comparison: ✅ COMPLETE
+*   **All 10 models tested** on Query2Doc pipeline with MIRACL Arabic
+*   **Best model (Dense):** Aya Expanse 8B (+23.5% NDCG@10) and Jais-2-8B (+20.5%)
+*   **Best model (BM25):** Jais-2-8B (+10.8%), Aya (+9.2%) — only 3/9 models improved BM25
+*   **Dropped:** ALLaM-7B (-48.9%, tokenizer bug), GPT-OSS-20B (70x slower, hallucinations)
+*   **Key findings:** Model size correlates with QE quality; multilingual support critical; Arabic vocab helps BM25
+
+### Phase 3 — Thesis Writing: 🔄 IN PROGRESS
+*   **Chapters 2, 3, 4:** ✅ First draft complete (27/3/2026)
+*   **Chapters 1, 5, Abstract:** ⏳ Next to write
+*   **Supervisor meeting (17/3/2026):** Dr. Tahani provided comprehensive thesis writing guidelines
+*   **Writing guide:** `research_decisions/thesis_writing_guide.md`
+*   **Deadline:** Mid-April 2026 (thesis draft + all practical work)
+
+### Phase 4 — Expanded Experiments: ⏳ PLANNING
+*   **Goal:** Build on Query2Doc with chunking-aware QE or other techniques
+*   **Constraint:** Must be consistent with existing work, not a new path
+*   **Research needed:** Literature review of chunking-aware QE, brainstorming, idea selection
+*   **Publication:** Dr. Tahani encouraged publishing a paper (pre-print or journal)
+
+### What was done (chronological):
+*   Landscape analysis, dataset selection, baseline pipeline design (Jan 2026)
+*   BM25S + mDPR baselines implemented (Jan 2026)
+*   Error analysis: 39% failure rate, short query gap identified (Jan 2026)
+*   Query2Doc selected as QE technique, implemented with Qwen 2.5 3B: +8.9% NDCG@10 (Feb 2026)
+*   10-model comparison completed across Dense + BM25 retrieval (Feb–Mar 2026)
+*   Thesis Chapters 2, 3, 4 drafted (Mar 2026)
 
 ---
 
@@ -81,24 +87,25 @@ We are currently in the **Model Comparison** stage of Query Enhancement.
 
 ## 4. 🔄 Under Investigation (Active Research Questions)
 
-### A. LLM Model Selection for Query Expansion ✅ Research Complete (11/2/2026)
-**Status:** Research done, now in model comparison phase (Task 4.0b)
-*   **Goal:** Compare 10 open-source models for Arabic Query2Doc expansion
-*   **Research Completed:**
-    - 15 papers reviewed (HyDE, Query2Doc, CSQE, PBR, MUGI, KAR, AQE, ThinkQE, etc.)
-    - 10 open-source models identified and split between team members
-    - First model tested: Qwen 2.5 3B → +8.9% NDCG@10 improvement
-*   **10 Models Selected (split between Mohammed & Osman):**
-    - Mohammed: Falcon-H1-Arabic-3B, Jais-2-8B, ALLaM-7B, Qwen3-4B, GPT-OSS 20B
-    - Osman: SILMA Kashif-2B, Qwen2.5-7B, Qwen3-8B, Gemma 3 4B-IT, Aya Expanse 8B
-*   **Key Research Gap Identified:** No paper tests modern 2-4B models for zero-shot Arabic QE
-*   **Technical Approach:** 4-bit quantization (bitsandbytes NF4) for 7B+ models on T4 GPU
-*   **API Options:** Documented but deferred (focus on open-source first)
+### A. LLM Model Selection & Comparison ✅ COMPLETE (Mar 2026)
+**Status:** All 10 models tested, best models identified
+*   **Research:** 15 papers reviewed, 10 open-source models selected
+*   **Results (Dense NDCG@10):**
+    - **Aya Expanse 8B: 0.6166 (+23.5%)** — Best overall
+    - **Jais-2-8B: 0.6018 (+20.5%)** — Best for BM25 too
+    - Qwen3-8B: 0.5958 (+19.3%), Qwen 2.5-7B: 0.5813 (+16.4%)
+    - Qwen3-4B: 0.5691 (+14.0%), Gemma 3 4B: 0.5435 (+8.9%)
+    - Qwen 2.5 3B: 0.5435 (+8.9%), Falcon-H1-3B: 0.5359 (+7.3%)
+    - SILMA Kashif-2B: 0.5178 (+3.7%)
+    - ~~ALLaM-7B: 0.2550 (-48.9%)~~ — DROPPED
+    - ~~GPT-OSS-20B~~ — DROPPED (70x slower, hallucinations)
+*   **BM25 results:** Only Jais-2 (+10.8%), Aya (+9.2%), Qwen 2.5-7B (+1.3%) improved BM25
+*   **Key findings:** Model size → QE quality correlation; Arabic vocab helps BM25; preview models risky
 *   **Documentation:**
     - Full research: `research_decisions/llm_model_research.md`
-    - Deep Research raw data: `research_decisions/models_reserch.md`
     - Model comparison guide: `research_decisions/model_comparison_guide.md`
-*   **Meeting:** `meetings/23.1.2026.md`
+    - Per-model research: `research_decisions/{model}_research.md`
+    - Osman's results: `arabic-rag-query-enhancement/docs/OSMAN_MODEL_COMPARISON_RESULTS.md`
 
 ### B. Error Analysis Approach ✅ RESOLVED (14/1/2026)
 **Status:** Research Complete
@@ -154,11 +161,13 @@ We are currently in the **Model Comparison** stage of Query Enhancement.
 *   **Context:** Related to error analysis, important for iterative prompt optimization
 *   **Meeting:** `meetings/23.1.2026.md`
 
-### E. Hierarchical Structures ⏳
-**Status:** Interesting but Needs Feasibility Study
-*   *Context:* Mohamed Rashad suggested context injection (knowledge base structure awareness)
-*   *Challenge:* Is this feasible given our constraints? Does it require re-embedding?
-*   *Current Stance:* Defer, focus on simpler query enhancement first
+### E. Hierarchical Structures / Chunking-Aware QE ⏳ Phase 4 (Mar 2026)
+**Status:** Planning — next research priority
+*   *Context:* Mohamed Rashad suggested context injection; team wants to build on Query2Doc
+*   *Goal:* Use knowledge of knowledge base structure (chunks, hierarchy, metadata) to improve QE
+*   *Constraint:* Must be consistent extension of Query2Doc work, not a new path
+*   *Papers to review:* Rebarter and related chunking-aware approaches
+*   *Current Stance:* Active research track — Task 6.1 in TASKS.md
 
 ### F. Embedding Model Selection ✅ RESOLVED (9/1/2026)
 **Status:** Decided - Pyserini Pre-built Indexes
@@ -290,32 +299,23 @@ We are currently in the **Model Comparison** stage of Query Enhancement.
 
 ## 6. 🎯 Project Checkpoints & Timeline
 
-**Total Time Available:** ~6 weeks (Jan 6 - Feb 15, 2026)
-**Note:** Timeline is acknowledged as "optimistic"
+### Completed Checkpoints
+*   **Checkpoint 1: Proof of Concept** ✅ (Feb 2026) — Query2Doc improves Arabic RAG retrieval (+8.9% NDCG@10)
+*   **Checkpoint 2: Model Comparison** ✅ (Mar 2026) — 10 models tested, best models identified (Aya, Jais-2)
+*   **Checkpoint 3: Thesis Draft (Chapters 2-4)** ✅ (27/3/2026) — First draft complete
 
-### Checkpoint 1: Proof of Concept (Current Focus)
-**Goal:** Prove query enhancement improves Arabic RAG retrieval
-*   **Fixed:** MIRACL dataset, baseline retrievers (Dense + BM25 separately)
-*   **Success:** Measurable improvement in Recall@10, NDCG@10, MRR
-*   **Timeline:** Weeks 1-3
+### Current Timeline (from supervisor meeting 17/3/2026)
+| Milestone | Target | Status |
+|-----------|--------|--------|
+| Thesis Chapters 2, 3, 4 | March 2026 | ✅ Done |
+| Thesis Chapters 1, 5, Abstract | Late March 2026 | ⏳ Next |
+| Expanded experiments (chunking-aware QE) | April 2026 | ⏳ Planning |
+| Full thesis draft ready | Mid-April 2026 | 🔄 In Progress |
+| Exams period | May 2026 | — |
+| Presentation recording | After exams | — |
+| Project submission | 1 week after last exam | — |
 
-### Checkpoint 2: Technique Iteration
-**Goal:** Test multiple query enhancement approaches
-*   **Experiments:** Multiple techniques, versioned improvements
-*   **Versioning:** Track improvements across technique variations
-*   **Timeline:** Weeks 4-5
-
-### Checkpoint 3: Analysis & Documentation
-**Goal:** Comprehensive analysis and thesis writing
-*   **Analysis:** Error analysis, query categorization, insights
-*   **Documentation:** Full experiment documentation, thesis chapters
-*   **Timeline:** Week 6
-
-### Scenarios:
-*   **Average Case:** Complete Checkpoint 1 + some iteration
-*   **Best Case:** Complete Checkpoint 1 and 2 with good documentation
-
-*Details:* See `meetings/6.1.2026_meeting_outcomes.md`
+*Details:* See `meetings/17.3.2026.md`, `research_decisions/thesis_writing_guide.md`
 
 ---
 
@@ -325,7 +325,7 @@ We are currently in the **Model Comparison** stage of Query Enhancement.
 3.  **Error Analysis Challenge (NEW):** MIRACL passages lack metadata for categorization (no domain labels). **Mitigated:** Use NoMIRACL hard negatives, Wikipedia categories, query-side analysis (see `research_decisions/error_analysis_research.md`)
 4.  **Evaluation Rigor:** Need to understand *what* improved, not just *that* it improved
 5.  **Resource Constraints:** Limited GPU access, API costs, 6-week timeline
-6.  **Arabic LLM Quality:** Current candidates (Jais, AceGPT) may not be optimal
+6.  **Arabic LLM Quality:** ✅ Resolved — Aya and Jais-2 identified as best models
 
 **Mitigations:**
 - Use Google Drive (2TB with Pro) for storage
@@ -354,27 +354,25 @@ When interacting with this codebase, the Agent should:
 
 ## 9. 📅 Next Actions (Priority Order)
 
-### Completed
-- [x] Update documentation to reflect meeting decisions (23/1/2026) ✅
-- [x] **Task 4.0:** Research LLM models for Query Expansion ✅ (11/2/2026)
-- [x] **Task 2.3:** BM25S baseline experiment (exp_002) ✅ (Osman)
-- [x] **Task 4.1:** Implement Query2Doc enhancer ✅ (Osman)
-- [x] **Task 4.3:** First QE experiment - exp_003 with Qwen 2.5 3B ✅
+### Completed (Phases 1 & 2)
+- [x] Baselines: BM25S (exp_002) + mDPR (exp_001) ✅
+- [x] Error analysis: 39% failure rate, short query gap ✅
+- [x] Query2Doc implementation + first experiment (exp_003) ✅
+- [x] Model comparison: all 10 models tested (exp_003–009 + Osman's 5) ✅
+- [x] Thesis Chapters 2, 3, 4 first draft ✅ (27/3/2026)
 
-### Current (Model Comparison Phase)
-- [ ] **Task 4.0b:** Model Comparison Experiments
-  - Mohammed: Falcon-H1-3B → Jais-2-8B → ALLaM-7B → Qwen3-4B → GPT-OSS 20B
-  - Osman: SILMA Kashif-2B → Qwen2.5-7B → Qwen3-8B → Gemma 3 4B → Aya 8B
-  - Test each on Dense retrieval first, then BM25S and Hybrid for top models
-  - Guide: `research_decisions/model_comparison_guide.md`
+### Current (Phase 3: Thesis Writing)
+- [ ] **Task 5.4:** Write Chapter 1 (Introduction)
+- [ ] **Task 5.5:** Write Chapter 5 (Conclusion & Recommendations)
+- [ ] **Task 5.6:** Write Abstract (English + Arabic)
+- [ ] **Task 5.7:** Front matter & Appendices
 
-### Upcoming
-- [ ] Analyze model comparison results, select best model(s)
-- [ ] Run full experiments on Dense, Sparse, and Hybrid with top models
-- [ ] Develop monitoring strategy for prompt engineering iterations
-- [ ] Error analysis on enhanced queries
-- [ ] Write thesis chapters
-- [ ] Explore use cases (voice agents, etc.)
+### Upcoming (Phase 4: Expanded Experiments)
+- [ ] **Task 6.1:** Literature review — chunking-aware QE and other extensions
+- [ ] **Task 6.2:** Brainstorm & select approach (must build on Query2Doc logically)
+- [ ] **Task 6.3:** Implement expanded experiments
+- [ ] **Task 6.4:** Update thesis with new results
+- [ ] **Task 6.5:** Evaluate publication potential
 
 *Details:* See `TASKS.md`
 

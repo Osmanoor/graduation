@@ -1,37 +1,59 @@
 \chapter{Introduction}
+\label{chap:introduction}
 
-\paragraph{General guidelines page :) }
+The rapid growth of digital Arabic content has intensified the need for intelligent information retrieval systems capable of accurately locating relevant information within large corpora. Retrieval-Augmented Generation (RAG) has emerged as the dominant paradigm for grounding Large Language Model (LLM) outputs in external knowledge, mitigating hallucination by retrieving relevant passages before generation. However, the quality of a RAG system's final output is fundamentally bounded by the quality of its retrieval component: if the retriever fails to surface relevant documents, the generator cannot compensate for this deficiency regardless of its capabilities.
 
-% To add a new Title, use the 'hash section' as shown below: 
+Arabic information retrieval faces challenges that compound this retrieval bottleneck. The Arabic language employs a root-and-pattern morphological system in which a single root can yield dozens of surface forms, creating severe vocabulary mismatch between queries and documents. Orthographic variations in characters such as Hamza and Alif introduce further inconsistencies, while the diglossic nature of Arabic---where Modern Standard Arabic (MSA) is used in formal text but regional dialects dominate informal communication---creates a systematic gap between how users formulate queries and how knowledge bases are written. These linguistic characteristics amplify the retrieval failure rate beyond what is observed for English and other morphologically simpler languages.
 
-\section{Overview}
-Write your paragraph here.
+Query enhancement---the modification of a user's query before it is submitted to the retriever---offers a promising pre-retrieval intervention. Rather than modifying the retriever or reindexing the knowledge base, query enhancement operates as a modular layer that enriches the query with additional vocabulary, context, and semantic information. This approach is retriever-agnostic, requires no changes to the existing infrastructure, and can be deployed incrementally. Recent work has demonstrated that LLMs can generate effective query expansions by producing pseudo-documents that bridge the vocabulary gap between queries and relevant passages.
 
-To start another paragraph, keep an empty line.
-If you don't, it will continue in the same line.
+However, existing query enhancement research is overwhelmingly English-centric and relies on proprietary models with 175 billion or more parameters. The foundational techniques---Query2Doc, HyDE, and GRF---were all developed and validated using GPT-3 or comparable commercial APIs. Whether these techniques transfer effectively to Arabic, and whether small open-source models running on consumer-grade hardware can serve as viable alternatives, has not been systematically investigated.
 
-\section{Problem Statement}
-\section{Literature Review}
+%======================================================================
+\section{Problem Definition}
+\label{sec:problem_definition}
+%======================================================================
+
+The problem addressed in this thesis lies at the intersection of three gaps in the current state of Arabic information retrieval.
+
+\textbf{The retrieval gap.} Arabic information retrieval systems exhibit high failure rates even on standard benchmarks. Dense and sparse retrieval methods, while achieving reasonable aggregate performance, fail on a substantial proportion of individual queries. Short queries, which carry insufficient information for the retriever to identify relevant passages, are disproportionately affected. This information poverty in short queries is a fundamental limitation that cannot be addressed by improving the retriever alone.
+
+\textbf{The language gap.} LLM-based query enhancement techniques were developed for English and validated on English benchmarks using English-language models. Arabic presents distinct challenges---morphological richness, orthographic variation, and vocabulary mismatch---that may cause these techniques to behave differently. The effectiveness of generative query enhancement for Arabic has not been empirically established.
+
+\textbf{The resource gap.} The query enhancement literature relies almost exclusively on proprietary models with hundreds of billions of parameters, accessed through commercial APIs. This creates a practical barrier for deployment in resource-constrained settings. Whether small open-source models with 2--8 billion parameters, executable on freely available cloud GPUs, can generate useful Arabic query expansions remains an open question.
+
+These three gaps motivate the central research question of this thesis: \textit{To what extent can small, open-source LLMs improve Arabic information retrieval through query enhancement, and what model characteristics determine effectiveness?}
+
+%======================================================================
 \section{Objectives}
+\label{sec:objectives}
+%======================================================================
 
-%to add a numbered list, use the following code:
-This is a numbered list:
-\begin{enumerate}
-    \item the first item
-    \item the second item
+The objectives of this thesis are as follows:
+
+\begin{enumerate}[label=\arabic*.]
+    \item To establish retrieval baselines for Arabic information retrieval using both dense and sparse methods, tested independently to isolate the sources of improvement from subsequent query enhancement experiments.
+
+    \item To conduct systematic error analysis on the baseline results to identify the primary failure patterns in Arabic retrieval and guide the selection of query enhancement techniques.
+
+    \item To adapt and implement the Query2Doc query enhancement technique for Arabic zero-shot application using small open-source LLMs, including engineering optimisations for practical deployment on consumer-grade GPUs.
+
+    \item To evaluate and compare ten open-source LLMs with 2--8 billion parameters for Arabic query expansion quality using a standardised evaluation protocol across both dense and sparse retrieval paradigms.
+
+    \item To analyse the interaction between LLM-based query enhancement and retrieval paradigm to identify model characteristics---such as parameter count, training data composition, and vocabulary design---that predict query expansion effectiveness for Arabic.
 \end{enumerate}
 
-\section{Methodology}
-This is a bullet list: 
-\begin{itemize}
-    \item the first item
-    \item the second item
-\end{itemize}
-
+%======================================================================
 \section{Thesis Layout}
+\label{sec:thesis_layout}
+%======================================================================
 
-This is another bullet list: 
-\begin{itemize}[label=-]
-    \item the first item
-    \item the second item
-\end{itemize}
+The remainder of this thesis is organised as follows:
+
+\textbf{Chapter~\ref{chap:background}} establishes the theoretical foundations required to understand the research. It introduces the core concepts of Large Language Models, Retrieval-Augmented Generation, information retrieval methods (sparse, dense, and hybrid), and query enhancement techniques. The mathematical formulations underlying the retrieval and evaluation methods are presented, followed by detailed descriptions of all models used in the experimental work. The chapter concludes with a review of related literature and the identification of the research gap addressed by this thesis.
+
+\textbf{Chapter~\ref{chap:methodology}} presents the methodology employed throughout the research. It describes the dataset (MIRACL Arabic), hardware and software environment, and evaluation metrics. The baseline implementation for both dense (mDPR) and sparse (BM25S) retrieval is detailed, followed by the error analysis methodology that guided technique selection. The adaptation of Query2Doc for Arabic zero-shot application is described, including modifications from the original paper and engineering optimisations. The chapter concludes with the model comparison methodology, covering model selection criteria, the standardised evaluation protocol, and model-specific technical considerations.
+
+\textbf{Chapter~\ref{chap:results}} reports the results and discussion in zigzag correspondence with the methodology. Baseline performance is analysed, error analysis findings are presented, and Query2Doc results are reported for both dense and sparse retrieval. The comprehensive model comparison leaderboards are presented and analysed, including the examination of dropped models. The chapter synthesises the key findings, including the relationship between model size and performance, the divergent behaviour of dense and sparse retrieval under query enhancement, and recommendations for model selection.
+
+\textbf{Chapter~\ref{chap:conclusion}} presents the overall conclusions, discusses the challenges encountered during the research, and provides recommendations for future work in Arabic query enhancement for RAG systems.

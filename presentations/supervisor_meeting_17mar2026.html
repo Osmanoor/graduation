@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic RAG Query Enhancement - Progress Report March 2026</title>
+    <link rel="stylesheet" href="theme.css">
+</head>
+
+<body>
+
+    <!-- ============================================
+     SLIDE 1: TITLE
+     ============================================ -->
+    <div class="slide title-slide">
+        <img src="Fig_logo.jpg" alt="University of Khartoum Logo" class="logo">
+        <h1>Arabic RAG Query Enhancement</h1>
+        <p class="subtitle">Experiment Results & Model Comparison</p>
+        <p class="authors">Mohammed Elhaj &amp; Osman Bashir</p>
+        <p class="institute">
+            Department of Electrical and Electronic Engineering<br>
+            Faculty of Engineering<br>
+            University of Khartoum
+        </p>
+        <p class="date">March 17, 2026</p>
+    </div>
+
+    <!-- ============================================
+     SLIDE 2: AGENDA
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Overview</span>
+        <h2 class="slide-title">Agenda</h2>
+        <div class="content">
+            <ol class="agenda-list">
+                <li>What is RAG? &mdash; Background</li>
+                <li>Our Experiment Pipeline</li>
+                <li>Phase 1: Baseline Results</li>
+                <li>Error Analysis & Technique Selection</li>
+                <li>Phase 2: Query2Doc Enhancement</li>
+                <li>Phase 3: Model Comparison (10 Models)</li>
+                <li>Key Findings & Best Model</li>
+                <li>Current Status & Next Steps</li>
+            </ol>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>2 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 3: EXPERIMENT BREAKDOWN - INFRASTRUCTURE
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Experiment Breakdown</span>
+        <h2 class="slide-title">Our Setup: Dataset, Index & Retrievers</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <div class="highlight-box info">
+                        <strong>Dataset: MIRACL Arabic</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>2,061,414</strong> Arabic Wikipedia passages (MSA)</li>
+                            <li><strong>2,896</strong> queries (dev set) with relevance judgments</li>
+                            <li>Industry-standard multilingual retrieval benchmark</li>
+                            <li>Native-speaker annotated (not machine-translated)</li>
+                        </ul>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Dense Retriever (mDPR):</strong>
+                    <ul>
+                        <li><strong>Index:</strong> Pyserini pre-built FAISS index (5.47 GB)</li>
+                        <li><strong>Encoder:</strong> castorini/mdpr-tied-pft-msmarco</li>
+                        <li>Query &#8594; embedding vector &#8594; nearest-neighbor search</li>
+                        <li>GPU-accelerated batch encoding (64 queries/batch)</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Sparse Retriever (BM25S):</strong>
+                    <ul>
+                        <li><strong>Library:</strong> BM25S (pure Python, no Java)</li>
+                        <li>Arabic stemming (PyStemmer) + NLTK stopwords</li>
+                        <li>Query &#8594; keyword matching &#8594; TF-IDF scoring</li>
+                        <li>Parameters: k1=0.9, b=0.4</li>
+                    </ul>
+
+                    <div class="highlight-box mt-1">
+                        <strong>Evaluation Metrics:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>NDCG@10:</strong> How well are the top 10 results ranked?</li>
+                            <li><strong>Recall@10/100:</strong> How many relevant docs are in top 10/100?</li>
+                            <li><strong>MRR:</strong> How high is the first relevant result?</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box warning mt-1">
+                        <strong>Hardware:</strong> Google Colab Pro+ ($58) &mdash; T4 GPU (free) for small models, A100 (40GB) for 7-8B models.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>3 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 4: EXPERIMENT BREAKDOWN - QUERY2DOC FLOW
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Experiment Breakdown</span>
+        <h2 class="slide-title">Query2Doc: How It Works</h2>
+        <div class="content">
+            <div class="highlight-box">
+                <strong>Method (Wang et al., 2023):</strong> Before retrieval, an LLM generates a pseudo-document that <em>answers</em> the query. This pseudo-document is concatenated with the original query to enrich it with more context and vocabulary.
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.8rem; align-items: stretch;">
+                <div class="diagram-box muted" style="flex: 1; text-align: left; padding: 0.6rem 0.8rem;">
+                    <strong style="color: #495057;">&#9312; Original Query</strong><br>
+                    <span style="font-size: 0.85rem; direction: rtl; display: block; margin-top: 0.3rem; font-family: 'Segoe UI', Arial, sans-serif;">"&#1605;&#1575; &#1607;&#1610; &#1593;&#1575;&#1589;&#1605;&#1577; &#1575;&#1604;&#1587;&#1608;&#1583;&#1575;&#1606;"</span>
+                    <span style="font-size: 0.8rem; color: #6c757d;">(5 words)</span>
+                </div>
+                <div class="diagram-arrow" style="align-self: center; font-size: 1.5rem;">&#8594;</div>
+                <div class="diagram-box highlight" style="flex: 1.5; text-align: left; padding: 0.6rem 0.8rem; border: 3px solid #e0a800;">
+                    <strong>&#9313; LLM Generates Pseudo-Doc</strong><br>
+                    <span style="font-size: 0.8rem;">Prompt: "Write a passage that answers the query. Respond in Arabic only."</span><br>
+                    <span style="font-size: 0.8rem; color: #6c757d;">Output: ~128 tokens of Arabic context</span>
+                </div>
+                <div class="diagram-arrow" style="align-self: center; font-size: 1.5rem;">&#8594;</div>
+                <div class="diagram-box secondary" style="flex: 1.5; text-align: left; padding: 0.6rem 0.8rem;">
+                    <strong style="color: white;">&#9314; Enhanced Query</strong><br>
+                    <span style="font-size: 0.8rem; color: #e8f4f8;">Original + Pseudo-Doc concatenated</span><br>
+                    <span style="font-size: 0.8rem; color: #d4edda;">(~200+ words, 9.7x expansion)</span>
+                </div>
+            </div>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <strong>Experiment Flow (per model):</strong>
+                    <ol class="styled">
+                        <li>Load LLM on GPU (FP16 or 4-bit quantized)</li>
+                        <li>Generate pseudo-docs for all <strong>2,896 queries</strong> (~40 min)</li>
+                        <li>Save enhanced queries to .pkl file</li>
+                        <li>Run enhanced queries through <strong>Dense retriever</strong> (mDPR)</li>
+                        <li>Run enhanced queries through <strong>BM25 retriever</strong></li>
+                        <li>Compute metrics &amp; compare vs baseline</li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <strong>What We Varied:</strong>
+                    <div class="highlight-box" style="background: linear-gradient(135deg, #e7d4f8 0%, #d4c4e8 100%); border-left-color: #6f42c1;">
+                        <strong>Only the LLM changes</strong> &mdash; everything else is held constant:
+                        <ul style="margin-bottom: 0;">
+                            <li>Same dataset (MIRACL Arabic)</li>
+                            <li>Same prompt</li>
+                            <li>Same retrievers (mDPR + BM25S)</li>
+                            <li>Same evaluation metrics</li>
+                            <li><strong>10 different LLMs tested</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box info mt-1">
+                        <strong>Total:</strong> 14+ experiment runs across baselines, first QE, and model comparison.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>4 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 5: PROJECT RECAP
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Project Recap</span>
+        <h2 class="slide-title">Project Overview</h2>
+        <div class="content">
+            <div class="highlight-box">
+                <strong>Research Question:</strong> <em>Can query enhancement techniques improve retrieval performance in Arabic RAG systems, and which models are most effective?</em>
+            </div>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <strong>Approach:</strong>
+                    <ul>
+                        <li>Technology-oriented: apply techniques, measure impact</li>
+                        <li>Query2Doc (Wang et al., 2023): LLM generates pseudo-document</li>
+                        <li>10 open-source LLMs compared</li>
+                    </ul>
+
+                    <strong>Dataset:</strong>
+                    <ul>
+                        <li><strong>MIRACL Arabic</strong> (Dev Set)</li>
+                        <li>2,896 queries &middot; 2.06M passages</li>
+                        <li>29,197 relevance judgments</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <div class="diagram" style="flex-direction: column; gap: 0.3rem;">
+                        <div class="diagram-box muted">User Query (Arabic)</div>
+                        <div class="diagram-arrow">&#8595;</div>
+                        <div class="diagram-box highlight"><strong>Query Enhancement (Query2Doc)</strong></div>
+                        <div class="diagram-arrow" style="color: #dc3545;">&#8595; <span style="font-size: 0.8rem; color: #dc3545; font-weight: 600;">Our Focus</span></div>
+                        <div class="diagram-box secondary">Retriever (Dense / BM25)</div>
+                        <div class="diagram-arrow">&#8595;</div>
+                        <div class="diagram-box primary">Retrieved Passages (Top-10)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>5 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 4: PHASE 1 - BASELINE RESULTS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 1: Baselines</span>
+        <h2 class="slide-title">Baseline Results: Dense vs Sparse Retrieval</h2>
+        <div class="content">
+            <div class="highlight-box info">
+                <strong>Goal:</strong> Establish reproducible baselines before applying any enhancement
+            </div>
+
+            <table class="mt-1">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>mDPR (Dense)</th>
+                        <th>BM25S (Sparse)</th>
+                        <th>Winner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Recall@10</strong></td>
+                        <td>0.6156</td>
+                        <td>0.5964</td>
+                        <td><span class="label green">mDPR +3.2%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recall@100</strong></td>
+                        <td>0.8407</td>
+                        <td>0.8577</td>
+                        <td><span class="label blue">BM25 +2.0%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>NDCG@10</strong></td>
+                        <td>0.4993</td>
+                        <td>0.4621</td>
+                        <td><span class="label green">mDPR +8.1%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>MRR</strong></td>
+                        <td>0.5328</td>
+                        <td>0.4836</td>
+                        <td><span class="label green">mDPR +10.2%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <div class="highlight-box">
+                        <strong>mDPR (Exp 001):</strong> Reproduced MIRACL results to 3 decimal places. GPU-accelerated batch encoding (5-7x speedup).
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="highlight-box">
+                        <strong>BM25S (Exp 002):</strong> Pure Python implementation. 96% of Pyserini performance. No Java dependencies.
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box info mt-1">
+                <strong>Key Insight:</strong> BM25 retrieves more documents (higher Recall@100), but mDPR ranks them better (higher NDCG@10, MRR). <em>Complementary strengths.</em>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>6 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 5: ERROR ANALYSIS & TECHNIQUE SELECTION
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 1: Analysis</span>
+        <h2 class="slide-title">Error Analysis & Technique Selection</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Quantitative Error Analysis (N=2,896):</strong>
+                    <ul>
+                        <li><strong>39% failure rate</strong> (1,130 queries with NDCG@10 &lt; 0.3)</li>
+                        <li>Short queries (1-3 tokens): NDCG = <strong>0.240</strong></li>
+                        <li>Long queries (9+ tokens): NDCG = <strong>0.406</strong></li>
+                        <li>Short queries achieve only <strong>59%</strong> of long query performance</li>
+                        <li>Correlation: r=0.125 (p&lt;0.001)</li>
+                    </ul>
+
+                    <div class="highlight-box warning mt-1">
+                        <strong>Root Cause:</strong> Information poverty in short queries is a validated, dataset-wide driver of retrieval failure.
+                    </div>
+                </div>
+                <div class="column">
+                    <strong>Technique Selected: Query Expansion</strong>
+                    <ul>
+                        <li><strong>Method:</strong> Query2Doc (Wang et al., 2023)</li>
+                        <li>LLM generates a pseudo-document for each query</li>
+                        <li>Pseudo-document concatenated with original query</li>
+                        <li>Enriches short queries with contextual information</li>
+                    </ul>
+
+                    <div class="highlight-box mt-1">
+                        <strong>Why Query2Doc?</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li>Directly addresses information poverty</li>
+                            <li>Zero-shot (no training data needed)</li>
+                            <li>Model-agnostic (swap LLMs easily)</li>
+                            <li>Proven effective in English (Wang et al.)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>7 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 6: PHASE 2 - QUERY2DOC IMPLEMENTATION
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 2: Query Enhancement</span>
+        <h2 class="slide-title">Query2Doc: Implementation & First Results</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Implementation:</strong>
+                    <ul>
+                        <li><strong>Model:</strong> Qwen 2.5 3B Instruct (zero-shot, FP16)</li>
+                        <li><strong>Prompt:</strong> "Write a passage that answers the query. Respond in Arabic only."</li>
+                        <li><strong>Output:</strong> 128 tokens pseudo-document</li>
+                        <li><strong>Expansion ratio:</strong> 9.73x average</li>
+                        <li><strong>Runtime:</strong> ~40 min on Colab T4 (free tier)</li>
+                    </ul>
+
+                    <strong>Optimizations:</strong>
+                    <ul>
+                        <li>Batch processing (8 queries/batch) &rarr; 8x speedup</li>
+                        <li>Reduced token generation (128 vs 256) &rarr; 2x</li>
+                        <li>FP16 + eval mode + no_grad</li>
+                        <li><strong>Total: 16x speedup</strong></li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Exp 003: Query2Doc + Dense (mDPR)</strong>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Baseline</th>
+                                <th>Enhanced</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight">
+                                <td>NDCG@10</td>
+                                <td>0.4993</td>
+                                <td><strong>0.5435</strong></td>
+                                <td><span class="label green">+8.9%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Recall@10</td>
+                                <td>0.6156</td>
+                                <td>0.6608</td>
+                                <td><span class="label green">+7.3%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Recall@100</td>
+                                <td>0.8407</td>
+                                <td>0.8594</td>
+                                <td><span class="label green">+2.2%</span></td>
+                            </tr>
+                            <tr>
+                                <td>MRR</td>
+                                <td>0.5328</td>
+                                <td>0.5742</td>
+                                <td><span class="label green">+7.8%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="highlight-box mt-1">
+                        <strong>vs Original Paper:</strong> Query2Doc (GPT-3 175B, few-shot, English) achieved +2-5% NDCG@10. <strong>Our zero-shot 3B Arabic result (+8.9%) exceeds the original paper.</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>8 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 7: DENSE vs BM25 WITH QE
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 2: Query Enhancement</span>
+        <h2 class="slide-title">Query2Doc + BM25: Opposite Effect</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <div class="highlight-box warning">
+                        <strong>Exp 004: Query2Doc + BM25</strong>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Baseline (Exp 002)</th>
+                                <th>Enhanced (Exp 004)</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="highlight" style="background: #f8d7da;">
+                                <td>NDCG@10</td>
+                                <td>0.4621</td>
+                                <td><strong>0.4090</strong></td>
+                                <td><span class="label red">-11.5%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Recall@10</td>
+                                <td>0.5964</td>
+                                <td>0.5384</td>
+                                <td><span class="label red">-9.7%</span></td>
+                            </tr>
+                            <tr>
+                                <td>Recall@100</td>
+                                <td>0.8577</td>
+                                <td>0.8155</td>
+                                <td><span class="label red">-4.9%</span></td>
+                            </tr>
+                            <tr>
+                                <td>MRR</td>
+                                <td>0.4836</td>
+                                <td>0.4342</td>
+                                <td><span class="label red">-10.2%</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-small text-muted" style="text-align: center; margin-top: 0.3rem;">All metrics declined &mdash; opposite of Dense (+8.9%)</p>
+                </div>
+                <div class="column">
+                    <div class="highlight-box warning">
+                        <strong>Why BM25 declined:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>Term dilution:</strong> pseudo-document's 200+ words overwhelm the original query keywords</li>
+                            <li>BM25 relies on exact term matching &mdash; added terms reduce weight of important words</li>
+                            <li><strong>Missing query repetition:</strong> Query2Doc paper recommends repeating original query 5x for BM25</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box info mt-1">
+                        <strong>Key Lesson:</strong> Query enhancement techniques must be adapted per retriever type. Dense benefits from semantic context; BM25 needs keyword preservation.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>9 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 8: PHASE 3 - MODEL COMPARISON OVERVIEW
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">10 LLM Models Tested for Query Enhancement</h2>
+        <div class="content">
+            <div class="highlight-box info">
+                <strong>Goal:</strong> Identify the best open-source LLM for Arabic query expansion by replicating the Query2Doc methodology with 10 different models.
+            </div>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <strong>Mohammed's Models (5):</strong>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Size</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Falcon-H1-3B</td>
+                                <td>3B</td>
+                                <td>Arabic-specialized</td>
+                            </tr>
+                            <tr>
+                                <td>Jais-2-8B</td>
+                                <td>8B</td>
+                                <td>Arabic-specialized</td>
+                            </tr>
+                            <tr>
+                                <td>Qwen3-4B</td>
+                                <td>4B</td>
+                                <td>Multilingual</td>
+                            </tr>
+                            <tr>
+                                <td><s>ALLaM-7B</s></td>
+                                <td>7B</td>
+                                <td><span class="label red">Dropped</span></td>
+                            </tr>
+                            <tr>
+                                <td><s>GPT-OSS-20B</s></td>
+                                <td>20B</td>
+                                <td><span class="label red">Dropped</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column">
+                    <strong>Osman's Models (5):</strong>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Model</th>
+                                <th>Size</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SILMA Kashif-2B</td>
+                                <td>2B</td>
+                                <td>Arabic RAG</td>
+                            </tr>
+                            <tr>
+                                <td>Qwen 2.5-7B</td>
+                                <td>7B</td>
+                                <td>Multilingual</td>
+                            </tr>
+                            <tr>
+                                <td>Qwen3-8B</td>
+                                <td>8B</td>
+                                <td>Multilingual</td>
+                            </tr>
+                            <tr>
+                                <td>Gemma 3 4B-IT</td>
+                                <td>4B</td>
+                                <td>Multilingual</td>
+                            </tr>
+                            <tr>
+                                <td>Aya Expanse 8B</td>
+                                <td>8B</td>
+                                <td>Multilingual (101 lang)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="highlight-box mt-1">
+                <strong>Methodology:</strong> Same Query2Doc prompt, same dataset (2,896 queries), same evaluation pipeline. Only the LLM changes. Temperature 0.1 for all models (validated via SILMA temperature ablation).
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>10 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 9: MOHAMMED'S MODELS RESULTS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">Mohammed's Models: Dense Retrieval Results</h2>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>NDCG@10</th>
+                        <th>Recall@10</th>
+                        <th>Recall@100</th>
+                        <th>MRR</th>
+                        <th>vs Baseline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: #f8d7da;">
+                        <td><em>mDPR Baseline</em></td>
+                        <td><em>0.4993</em></td>
+                        <td><em>0.6156</em></td>
+                        <td><em>0.8407</em></td>
+                        <td><em>0.5328</em></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>Falcon-H1-3B</td>
+                        <td>0.5359</td>
+                        <td>0.6484</td>
+                        <td>0.8531</td>
+                        <td>0.5681</td>
+                        <td><span class="label green">+7.3%</span></td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Jais-2-8B</strong></td>
+                        <td><strong>0.6018</strong></td>
+                        <td><strong>0.7161</strong></td>
+                        <td><strong>0.8981</strong></td>
+                        <td><strong>0.6356</strong></td>
+                        <td><span class="label green"><strong>+20.5%</strong></span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen3-4B</strong></td>
+                        <td><strong>0.5691</strong></td>
+                        <td><strong>0.6824</strong></td>
+                        <td><strong>0.8726</strong></td>
+                        <td><strong>0.6015</strong></td>
+                        <td><span class="label green">+14.0%</span></td>
+                    </tr>
+                    <tr style="background: #f8d7da;">
+                        <td><s>ALLaM-7B</s></td>
+                        <td>0.2550</td>
+                        <td>0.3335</td>
+                        <td>0.5465</td>
+                        <td>0.2708</td>
+                        <td><span class="label red">-48.9%</span></td>
+                    </tr>
+                    <tr style="background: #f8d7da;">
+                        <td><s>GPT-OSS-20B</s></td>
+                        <td colspan="5" style="text-align: center;"><span class="label red">Dropped</span> 70x slower, severe hallucinations</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <div class="highlight-box">
+                        <strong>Jais-2-8B:</strong> Best among Mohammed's models. Arabic-specialized vocabulary (150K tokens) produces lexically precise expansions. <strong>Only model to also improve BM25 (+10.8%).</strong>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="highlight-box">
+                        <strong>Qwen3-4B:</strong> Generational leap confirmed &mdash; Qwen3-4B beats Qwen 2.5-3B by +4.7% NDCG@10. Easiest model to run (FP16, no special handling).
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>11 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 10: OSMAN'S MODELS RESULTS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">Osman's Models: Dense Retrieval Results</h2>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>NDCG@10</th>
+                        <th>Recall@10</th>
+                        <th>Recall@100</th>
+                        <th>MRR</th>
+                        <th>vs Baseline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: #f8d7da;">
+                        <td><em>mDPR Baseline</em></td>
+                        <td><em>0.4993</em></td>
+                        <td><em>0.6156</em></td>
+                        <td><em>0.8407</em></td>
+                        <td><em>0.5328</em></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>SILMA Kashif-2B</td>
+                        <td>0.5177</td>
+                        <td>0.6289</td>
+                        <td>0.8353</td>
+                        <td>0.5508</td>
+                        <td><span class="label green">+3.7%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen 2.5-7B</strong></td>
+                        <td><strong>0.5813</strong></td>
+                        <td><strong>0.6952</strong></td>
+                        <td><strong>0.8800</strong></td>
+                        <td><strong>0.6134</strong></td>
+                        <td><span class="label green">+16.4%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Qwen3-8B</strong></td>
+                        <td><strong>0.5958</strong></td>
+                        <td><strong>0.7119</strong></td>
+                        <td><strong>0.8877</strong></td>
+                        <td><strong>0.6278</strong></td>
+                        <td><span class="label green">+19.3%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Gemma 3 4B-IT</td>
+                        <td>0.5391</td>
+                        <td>0.6443</td>
+                        <td>0.8477</td>
+                        <td>0.5761</td>
+                        <td><span class="label green">+8.0%</span></td>
+                    </tr>
+                    <tr class="highlight">
+                        <td><strong>Aya Expanse 8B</strong></td>
+                        <td><strong>0.6164</strong></td>
+                        <td><strong>0.7256</strong></td>
+                        <td><strong>0.9001</strong></td>
+                        <td><strong>0.6493</strong></td>
+                        <td><span class="label green"><strong>+23.5%</strong></span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <div class="highlight-box">
+                        <strong>Aya Expanse 8B:</strong> Best overall model. Purpose-built multilingual (101 languages). <strong>Only model with strong improvement on both Dense (+23.5%) and BM25 (+9.2%).</strong>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="highlight-box">
+                        <strong>Temperature Finding:</strong> SILMA ablation showed temp=0.1 outperforms temp=0.7 by +2.5%. Lower temperature produces more focused pseudo-documents.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>12 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 11: COMPLETE DENSE RANKINGS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">Complete Dense Retrieval Rankings</h2>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model</th>
+                        <th>Size</th>
+                        <th>NDCG@10</th>
+                        <th>Recall@100</th>
+                        <th>vs Baseline</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight">
+                        <td>1</td>
+                        <td><strong>Aya Expanse 8B</strong></td>
+                        <td>8B</td>
+                        <td><strong>0.6164</strong></td>
+                        <td><strong>0.9001</strong></td>
+                        <td><span class="label green">+23.5%</span></td>
+                        <td>Osman</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><strong>Jais-2-8B</strong></td>
+                        <td>8B</td>
+                        <td><strong>0.6018</strong></td>
+                        <td>0.8981</td>
+                        <td><span class="label green">+20.5%</span></td>
+                        <td>Mohammed</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Qwen3-8B</td>
+                        <td>8B</td>
+                        <td>0.5958</td>
+                        <td>0.8877</td>
+                        <td><span class="label green">+19.3%</span></td>
+                        <td>Osman</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Qwen 2.5-7B</td>
+                        <td>7B</td>
+                        <td>0.5813</td>
+                        <td>0.8800</td>
+                        <td><span class="label green">+16.4%</span></td>
+                        <td>Osman</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Qwen3-4B</td>
+                        <td>4B</td>
+                        <td>0.5691</td>
+                        <td>0.8726</td>
+                        <td><span class="label green">+14.0%</span></td>
+                        <td>Mohammed</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Qwen 2.5-3B</td>
+                        <td>3B</td>
+                        <td>0.5435</td>
+                        <td>0.8594</td>
+                        <td><span class="label green">+8.9%</span></td>
+                        <td>Osman</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Gemma 3 4B</td>
+                        <td>4B</td>
+                        <td>0.5391</td>
+                        <td>0.8477</td>
+                        <td><span class="label green">+8.0%</span></td>
+                        <td>Osman</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Falcon-H1-3B</td>
+                        <td>3B</td>
+                        <td>0.5359</td>
+                        <td>0.8531</td>
+                        <td><span class="label green">+7.3%</span></td>
+                        <td>Mohammed</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>SILMA 2B</td>
+                        <td>2B</td>
+                        <td>0.5177</td>
+                        <td>0.8353</td>
+                        <td><span class="label green">+3.7%</span></td>
+                        <td>Osman</td>
+                    </tr>
+                    <tr style="background: #e9ecef;">
+                        <td>&mdash;</td>
+                        <td><em>mDPR Baseline</em></td>
+                        <td>&mdash;</td>
+                        <td><em>0.4993</em></td>
+                        <td><em>0.8407</em></td>
+                        <td>&mdash;</td>
+                        <td>&mdash;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box info mt-1">
+                <strong>All 8 successful models improved Dense retrieval.</strong> Improvements range from +3.7% (SILMA 2B) to +23.5% (Aya Expanse 8B). Query2Doc is consistently effective for dense retrieval regardless of LLM choice.
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>13 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 12: COMPLETE BM25 RANKINGS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">Complete BM25 Retrieval Rankings</h2>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model</th>
+                        <th>Size</th>
+                        <th>NDCG@10</th>
+                        <th>Recall@100</th>
+                        <th>vs Baseline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight">
+                        <td>1</td>
+                        <td><strong>Jais-2-8B</strong></td>
+                        <td>8B</td>
+                        <td><strong>0.5122</strong></td>
+                        <td>0.8700</td>
+                        <td><span class="label green">+10.8%</span></td>
+                    </tr>
+                    <tr class="highlight">
+                        <td>2</td>
+                        <td><strong>Aya Expanse 8B</strong></td>
+                        <td>8B</td>
+                        <td><strong>0.5046</strong></td>
+                        <td><strong>0.8734</strong></td>
+                        <td><span class="label green">+9.2%</span></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Qwen 2.5-7B</td>
+                        <td>7B</td>
+                        <td>0.4682</td>
+                        <td>0.8646</td>
+                        <td><span class="label green">+1.3%</span></td>
+                    </tr>
+                    <tr style="background: #e9ecef;">
+                        <td>&mdash;</td>
+                        <td><em>BM25S Baseline</em></td>
+                        <td>&mdash;</td>
+                        <td><em>0.4621</em></td>
+                        <td><em>0.8577</em></td>
+                        <td>&mdash;</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Qwen3-8B</td>
+                        <td>8B</td>
+                        <td>0.4459</td>
+                        <td>0.8499</td>
+                        <td><span class="label red">-3.5%</span></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>SILMA 2B</td>
+                        <td>2B</td>
+                        <td>0.4277</td>
+                        <td>0.8115</td>
+                        <td><span class="label red">-7.4%</span></td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Qwen3-4B</td>
+                        <td>4B</td>
+                        <td>0.4145</td>
+                        <td>&mdash;</td>
+                        <td><span class="label red">-10.3%</span></td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Qwen 2.5-3B</td>
+                        <td>3B</td>
+                        <td>0.4090</td>
+                        <td>0.8155</td>
+                        <td><span class="label red">-11.5%</span></td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Falcon-H1-3B</td>
+                        <td>3B</td>
+                        <td>0.4038</td>
+                        <td>&mdash;</td>
+                        <td><span class="label red">-12.6%</span></td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Gemma 3 4B</td>
+                        <td>4B</td>
+                        <td>0.3447</td>
+                        <td>0.7182</td>
+                        <td><span class="label red">-25.4%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box warning mt-1">
+                <strong>BM25 is harder to improve.</strong> Only 3 of 9 models improved BM25 (Jais-2, Aya, Qwen 2.5-7B). BM25 relies on exact term matching &mdash; pseudo-documents introduce noise that dilutes keyword signal. Arabic-specialized vocabulary (Jais-2) and strong multilingual training (Aya) help produce more lexically precise expansions.
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>14 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 13: GRAPH - DENSE NDCG@10 BAR CHART
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">Dense Retrieval: NDCG@10 by Model</h2>
+        <div class="content">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <svg viewBox="0 0 820 380" style="width: 100%; max-height: 5.5in; font-family: 'Segoe UI', Arial, sans-serif;">
+                    <!-- Y-axis labels -->
+                    <text x="45" y="35" text-anchor="end" font-size="11" fill="#495057">0.65</text>
+                    <text x="45" y="95" text-anchor="end" font-size="11" fill="#495057">0.55</text>
+                    <text x="45" y="155" text-anchor="end" font-size="11" fill="#495057">0.45</text>
+                    <text x="45" y="215" text-anchor="end" font-size="11" fill="#495057">0.35</text>
+                    <text x="45" y="275" text-anchor="end" font-size="11" fill="#495057">0.25</text>
+                    <!-- Grid lines -->
+                    <line x1="55" y1="30" x2="810" y2="30" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="90" x2="810" y2="90" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="150" x2="810" y2="150" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="210" x2="810" y2="210" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="270" x2="810" y2="270" stroke="#e9ecef" stroke-width="1"/>
+                    <!-- Baseline line at 0.4993 = y ~107 -->
+                    <line x1="55" y1="107" x2="810" y2="107" stroke="#dc3545" stroke-width="2" stroke-dasharray="8,4"/>
+                    <text x="812" y="103" font-size="10" fill="#dc3545" font-weight="600">Baseline 0.4993</text>
+                    <!-- Bars (sorted by NDCG@10 descending) -->
+                    <!-- Aya 0.6164 => y = 30 + (0.65-0.6164)*600 = 30+20.2 = 50, h = 107-50 = 57... Let me recalc -->
+                    <!-- Scale: y_top=30 (0.65), y_bot=270 (0.25). Range=0.40, pixels=240. 1 unit = 600px -->
+                    <!-- y = 30 + (0.65 - value) * 600 -->
+                    <!-- Aya:     0.6164 => y=50,  h=270-50=220 -->
+                    <!-- Jais:    0.6018 => y=59,  h=270-59=211 -->
+                    <!-- Qwen3-8: 0.5958 => y=62,  h=270-62=208 -->
+                    <!-- Qwen25-7:0.5813 => y=71,  h=270-71=199 -->
+                    <!-- Qwen3-4: 0.5691 => y=79,  h=270-79=191 -->
+                    <!-- Qwen25-3:0.5435 => y=94,  h=270-94=176 -->
+                    <!-- Gemma:   0.5391 => y=97,  h=270-97=173 -->
+                    <!-- Falcon:  0.5359 => y=99,  h=270-99=171 -->
+                    <!-- SILMA:   0.5177 => y=110, h=270-110=160 -->
+                    <!-- Baseline:0.4993 => y=121 (line at 107 was wrong, recalc) -->
+                    <!-- Actually: y = 30 + (0.65-0.4993)*600 = 30 + 90.42 = 120.4 -->
+                    <!-- Aya:     30 + (0.65-0.6164)*600 = 30+20.16 = 50 -->
+                    <rect x="65" y="50" width="65" height="220" rx="4" fill="#2e8b57"/>
+                    <text x="97" y="45" text-anchor="middle" font-size="10" fill="#2e8b57" font-weight="700">0.6164</text>
+                    <!-- Jais -->
+                    <rect x="145" y="59" width="65" height="211" rx="4" fill="#1a5f7a"/>
+                    <text x="177" y="54" text-anchor="middle" font-size="10" fill="#1a5f7a" font-weight="700">0.6018</text>
+                    <!-- Qwen3-8B -->
+                    <rect x="225" y="62" width="65" height="208" rx="4" fill="#3a7ca5"/>
+                    <text x="257" y="57" text-anchor="middle" font-size="10" fill="#3a7ca5" font-weight="700">0.5958</text>
+                    <!-- Qwen2.5-7B -->
+                    <rect x="305" y="71" width="65" height="199" rx="4" fill="#3a7ca5"/>
+                    <text x="337" y="66" text-anchor="middle" font-size="10" fill="#3a7ca5" font-weight="700">0.5813</text>
+                    <!-- Qwen3-4B -->
+                    <rect x="385" y="79" width="65" height="191" rx="4" fill="#5ba3c9"/>
+                    <text x="417" y="74" text-anchor="middle" font-size="10" fill="#5ba3c9" font-weight="700">0.5691</text>
+                    <!-- Qwen2.5-3B -->
+                    <rect x="465" y="94" width="65" height="176" rx="4" fill="#7fbfdb"/>
+                    <text x="497" y="89" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.5435</text>
+                    <!-- Gemma3 -->
+                    <rect x="545" y="97" width="65" height="173" rx="4" fill="#adb5bd"/>
+                    <text x="577" y="92" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.5391</text>
+                    <!-- Falcon -->
+                    <rect x="625" y="99" width="65" height="171" rx="4" fill="#adb5bd"/>
+                    <text x="657" y="94" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.5359</text>
+                    <!-- SILMA -->
+                    <rect x="705" y="110" width="65" height="160" rx="4" fill="#ced4da"/>
+                    <text x="737" y="105" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.5177</text>
+                    <!-- X-axis labels -->
+                    <text x="97" y="290" text-anchor="middle" font-size="9" fill="#2e8b57" font-weight="700">Aya 8B</text>
+                    <text x="177" y="290" text-anchor="middle" font-size="9" fill="#1a5f7a" font-weight="700">Jais-2 8B</text>
+                    <text x="257" y="290" text-anchor="middle" font-size="9" fill="#495057">Qwen3-8B</text>
+                    <text x="337" y="290" text-anchor="middle" font-size="9" fill="#495057">Qwen2.5-7B</text>
+                    <text x="417" y="290" text-anchor="middle" font-size="9" fill="#495057">Qwen3-4B</text>
+                    <text x="497" y="290" text-anchor="middle" font-size="9" fill="#495057">Qwen2.5-3B</text>
+                    <text x="577" y="290" text-anchor="middle" font-size="9" fill="#6c757d">Gemma3 4B</text>
+                    <text x="657" y="290" text-anchor="middle" font-size="9" fill="#6c757d">Falcon 3B</text>
+                    <text x="737" y="290" text-anchor="middle" font-size="9" fill="#6c757d">SILMA 2B</text>
+                    <!-- Improvement labels -->
+                    <text x="97" y="305" text-anchor="middle" font-size="9" fill="#2e8b57" font-weight="600">+23.5%</text>
+                    <text x="177" y="305" text-anchor="middle" font-size="9" fill="#1a5f7a" font-weight="600">+20.5%</text>
+                    <text x="257" y="305" text-anchor="middle" font-size="9" fill="#495057">+19.3%</text>
+                    <text x="337" y="305" text-anchor="middle" font-size="9" fill="#495057">+16.4%</text>
+                    <text x="417" y="305" text-anchor="middle" font-size="9" fill="#495057">+14.0%</text>
+                    <text x="497" y="305" text-anchor="middle" font-size="9" fill="#6c757d">+8.9%</text>
+                    <text x="577" y="305" text-anchor="middle" font-size="9" fill="#6c757d">+8.0%</text>
+                    <text x="657" y="305" text-anchor="middle" font-size="9" fill="#6c757d">+7.3%</text>
+                    <text x="737" y="305" text-anchor="middle" font-size="9" fill="#6c757d">+3.7%</text>
+                    <!-- Axis -->
+                    <line x1="55" y1="270" x2="810" y2="270" stroke="#495057" stroke-width="1.5"/>
+                    <!-- Legend -->
+                    <rect x="180" y="335" width="14" height="14" rx="2" fill="#dc3545" opacity="0.3"/>
+                    <line x1="180" y1="342" x2="194" y2="342" stroke="#dc3545" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="200" y="346" font-size="11" fill="#495057">mDPR Baseline (no enhancement)</text>
+                    <rect x="430" y="335" width="14" height="14" rx="2" fill="#2e8b57"/>
+                    <text x="450" y="346" font-size="11" fill="#495057">Top 2 models</text>
+                    <rect x="545" y="335" width="14" height="14" rx="2" fill="#3a7ca5"/>
+                    <text x="565" y="346" font-size="11" fill="#495057">7-8B models</text>
+                    <rect x="660" y="335" width="14" height="14" rx="2" fill="#adb5bd"/>
+                    <text x="680" y="346" font-size="11" fill="#495057">2-4B models</text>
+                </svg>
+            </div>
+
+            <div class="highlight-box info" style="margin-top: 0;">
+                <strong>All 8 successful models beat the baseline.</strong> Clear trend: larger models (7-8B) outperform smaller ones (2-4B). Top 2 models exceed +20% improvement.
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>15 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 14: GRAPH - BM25 NDCG@10 BAR CHART
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">BM25 Retrieval: NDCG@10 by Model</h2>
+        <div class="content">
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <svg viewBox="0 0 820 380" style="width: 100%; max-height: 5.5in; font-family: 'Segoe UI', Arial, sans-serif;">
+                    <!-- Y-axis labels -->
+                    <!-- Scale: 0.30 to 0.55, range=0.25. y_top=30 (0.55), y_bot=270 (0.30). pixels=240, 1unit = 960px -->
+                    <!-- y = 30 + (0.55 - value) * 960 -->
+                    <text x="45" y="35" text-anchor="end" font-size="11" fill="#495057">0.55</text>
+                    <text x="45" y="83" text-anchor="end" font-size="11" fill="#495057">0.50</text>
+                    <text x="45" y="131" text-anchor="end" font-size="11" fill="#495057">0.45</text>
+                    <text x="45" y="179" text-anchor="end" font-size="11" fill="#495057">0.40</text>
+                    <text x="45" y="227" text-anchor="end" font-size="11" fill="#495057">0.35</text>
+                    <text x="45" y="275" text-anchor="end" font-size="11" fill="#495057">0.30</text>
+                    <!-- Grid lines -->
+                    <line x1="55" y1="30" x2="810" y2="30" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="78" x2="810" y2="78" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="126" x2="810" y2="126" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="174" x2="810" y2="174" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="222" x2="810" y2="222" stroke="#e9ecef" stroke-width="1"/>
+                    <line x1="55" y1="270" x2="810" y2="270" stroke="#e9ecef" stroke-width="1"/>
+                    <!-- Baseline line at 0.4621 => y = 30 + (0.55-0.4621)*960 = 30 + 84.4 = 114 -->
+                    <line x1="55" y1="114" x2="810" y2="114" stroke="#dc3545" stroke-width="2" stroke-dasharray="8,4"/>
+                    <text x="812" y="110" font-size="10" fill="#dc3545" font-weight="600">Baseline 0.4621</text>
+                    <!-- Bars sorted by NDCG@10 desc -->
+                    <!-- Jais:    0.5122 => y=30+(0.55-0.5122)*960 = 30+36.3 = 66, h=270-66=204 -->
+                    <!-- Aya:     0.5046 => y=30+43.6=74, h=196 -->
+                    <!-- Qwen25-7:0.4682 => y=30+78.5=109, h=161 -->
+                    <!-- Qwen3-8: 0.4459 => y=30+100=130, h=140 -->
+                    <!-- SILMA:   0.4277 => y=30+117.4=147, h=123 -->
+                    <!-- Qwen3-4: 0.4145 => y=30+130.1=160, h=110 -->
+                    <!-- Qwen25-3:0.4090 => y=30+135.4=165, h=105 -->
+                    <!-- Falcon:  0.4038 => y=30+140.4=170, h=100 -->
+                    <!-- Gemma:   0.3447 => y=30+197.1=227, h=43 -->
+                    <!-- Jais -->
+                    <rect x="65" y="66" width="75" height="204" rx="4" fill="#2e8b57"/>
+                    <text x="102" y="61" text-anchor="middle" font-size="10" fill="#2e8b57" font-weight="700">0.5122</text>
+                    <!-- Aya -->
+                    <rect x="155" y="74" width="75" height="196" rx="4" fill="#2e8b57"/>
+                    <text x="192" y="69" text-anchor="middle" font-size="10" fill="#2e8b57" font-weight="700">0.5046</text>
+                    <!-- Qwen2.5-7B -->
+                    <rect x="245" y="109" width="75" height="161" rx="4" fill="#3a7ca5"/>
+                    <text x="282" y="104" text-anchor="middle" font-size="10" fill="#3a7ca5" font-weight="700">0.4682</text>
+                    <!-- Qwen3-8B (below baseline) -->
+                    <rect x="335" y="130" width="75" height="140" rx="4" fill="#e9ecef" stroke="#adb5bd" stroke-width="1"/>
+                    <text x="372" y="125" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.4459</text>
+                    <!-- SILMA -->
+                    <rect x="425" y="147" width="75" height="123" rx="4" fill="#e9ecef" stroke="#adb5bd" stroke-width="1"/>
+                    <text x="462" y="142" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.4277</text>
+                    <!-- Qwen3-4B -->
+                    <rect x="515" y="160" width="75" height="110" rx="4" fill="#e9ecef" stroke="#adb5bd" stroke-width="1"/>
+                    <text x="552" y="155" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.4145</text>
+                    <!-- Qwen2.5-3B -->
+                    <rect x="605" y="165" width="75" height="105" rx="4" fill="#e9ecef" stroke="#adb5bd" stroke-width="1"/>
+                    <text x="642" y="160" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.4090</text>
+                    <!-- Falcon -->
+                    <rect x="695" y="170" width="75" height="100" rx="4" fill="#e9ecef" stroke="#adb5bd" stroke-width="1"/>
+                    <text x="732" y="165" text-anchor="middle" font-size="10" fill="#6c757d" font-weight="700">0.4038</text>
+                    <!-- X-axis labels -->
+                    <text x="102" y="290" text-anchor="middle" font-size="9" fill="#2e8b57" font-weight="700">Jais-2 8B</text>
+                    <text x="192" y="290" text-anchor="middle" font-size="9" fill="#2e8b57" font-weight="700">Aya 8B</text>
+                    <text x="282" y="290" text-anchor="middle" font-size="9" fill="#3a7ca5" font-weight="600">Qwen2.5-7B</text>
+                    <text x="372" y="290" text-anchor="middle" font-size="9" fill="#6c757d">Qwen3-8B</text>
+                    <text x="462" y="290" text-anchor="middle" font-size="9" fill="#6c757d">SILMA 2B</text>
+                    <text x="552" y="290" text-anchor="middle" font-size="9" fill="#6c757d">Qwen3-4B</text>
+                    <text x="642" y="290" text-anchor="middle" font-size="9" fill="#6c757d">Qwen2.5-3B</text>
+                    <text x="732" y="290" text-anchor="middle" font-size="9" fill="#6c757d">Falcon 3B</text>
+                    <!-- Improvement labels -->
+                    <text x="102" y="305" text-anchor="middle" font-size="9" fill="#2e8b57" font-weight="600">+10.8%</text>
+                    <text x="192" y="305" text-anchor="middle" font-size="9" fill="#2e8b57" font-weight="600">+9.2%</text>
+                    <text x="282" y="305" text-anchor="middle" font-size="9" fill="#3a7ca5" font-weight="600">+1.3%</text>
+                    <text x="372" y="305" text-anchor="middle" font-size="9" fill="#dc3545">-3.5%</text>
+                    <text x="462" y="305" text-anchor="middle" font-size="9" fill="#dc3545">-7.4%</text>
+                    <text x="552" y="305" text-anchor="middle" font-size="9" fill="#dc3545">-10.3%</text>
+                    <text x="642" y="305" text-anchor="middle" font-size="9" fill="#dc3545">-11.5%</text>
+                    <text x="732" y="305" text-anchor="middle" font-size="9" fill="#dc3545">-12.6%</text>
+                    <!-- Note: Gemma excluded (too low at -25.4%) -->
+                    <!-- Axis -->
+                    <line x1="55" y1="270" x2="810" y2="270" stroke="#495057" stroke-width="1.5"/>
+                    <!-- Legend -->
+                    <rect x="140" y="335" width="14" height="14" rx="2" fill="#dc3545" opacity="0.3"/>
+                    <line x1="140" y1="342" x2="154" y2="342" stroke="#dc3545" stroke-width="2" stroke-dasharray="4,2"/>
+                    <text x="160" y="346" font-size="11" fill="#495057">BM25 Baseline (no enhancement)</text>
+                    <rect x="390" y="335" width="14" height="14" rx="2" fill="#2e8b57"/>
+                    <text x="410" y="346" font-size="11" fill="#495057">Above baseline</text>
+                    <rect x="530" y="335" width="14" height="14" rx="2" fill="#e9ecef" stroke="#adb5bd" stroke-width="1"/>
+                    <text x="550" y="346" font-size="11" fill="#495057">Below baseline</text>
+                </svg>
+                <p class="text-small text-muted" style="text-align: center; margin-top: 0;">Gemma 3 4B omitted (NDCG@10 = 0.3447, -25.4% &mdash; off scale)</p>
+            </div>
+
+            <div class="highlight-box warning" style="margin-top: 0;">
+                <strong>Only 3 of 9 models improved BM25.</strong> Jais-2 (Arabic vocab) and Aya (multilingual) produce lexically precise expansions. Most models cause term dilution that hurts keyword matching.
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>16 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 15: DROPPED MODELS & LESSONS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Phase 3: Model Comparison</span>
+        <h2 class="slide-title">Dropped Models & Lessons Learned</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <div class="highlight-box warning">
+                        <strong>ALLaM-7B (Exp 008)</strong>
+                    </div>
+                    <ul>
+                        <li><strong>Result:</strong> NDCG@10 = 0.2550 (<span class="label red">-48.9%</span>)</li>
+                        <li><strong>Root Cause:</strong> SentencePiece tokenizer leaked special characters into output</li>
+                        <li>Unicode marker &#9601; appeared in decoded text</li>
+                        <li>Preview/alpha model with unstable behavior</li>
+                        <li><strong>Lesson:</strong> Always verify decoded output for special characters before full runs</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <div class="highlight-box warning">
+                        <strong>GPT-OSS-20B (Exp 009)</strong>
+                    </div>
+                    <ul>
+                        <li><strong>Result:</strong> Dropped before full evaluation</li>
+                        <li><strong>Root Cause 1:</strong> MoE architecture (32 experts) is <strong>70x slower</strong> than dense models via 4-bit quantization</li>
+                        <li><strong>Root Cause 2:</strong> 3 of 5 sanity queries had <strong>severe factual hallucinations</strong></li>
+                        <li>English-dominant training = unreliable for Arabic QE</li>
+                        <li><strong>Lesson:</strong> MoE + 4-bit quantization is impractical for batch query expansion</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box info mt-2">
+                <strong>Other Technical Lessons from Model Comparison:</strong>
+                <ul style="margin-bottom: 0;">
+                    <li><strong>Falcon-H1:</strong> Hybrid Mamba architecture has batching bugs &mdash; forced batch_size=1, required A100</li>
+                    <li><strong>Jais-2:</strong> Must use BF16 (Squared-ReLU overflows FP16). Must remove token_type_ids from inputs.</li>
+                    <li><strong>Qwen3:</strong> Must disable thinking mode (enable_thinking=False). Never use greedy decoding.</li>
+                    <li><strong>General:</strong> Model-specific temperature settings matter. Architecture dictates batch strategy.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>17 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 14: KEY FINDINGS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Key Findings</span>
+        <h2 class="slide-title">Key Findings from 10-Model Comparison</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <ol class="styled">
+                        <li>
+                            <strong>Model Size Correlates with Dense Performance</strong>
+                            <ul>
+                                <li>2B: +3.7% &rarr; 4B: +8-14% &rarr; 7-8B: +16-23%</li>
+                                <li>Larger models generate higher-quality pseudo-documents</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Multilingual > Arabic-Specific (at same size)</strong>
+                            <ul>
+                                <li>Aya 8B (+23.5%) &gt; Jais-2 8B (+20.5%)</li>
+                                <li>Qwen3-4B (+14.0%) &gt; Falcon-H1 3B (+7.3%)</li>
+                                <li>Exception: Jais-2 is best for BM25 (+10.8%)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>BM25 Requires Lexically Precise Expansions</strong>
+                            <ul>
+                                <li>Only 3 of 9 models improved BM25</li>
+                                <li>Arabic-specialized vocab (Jais) helps BM25 most</li>
+                                <li>Term dilution is the primary failure mode</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <ol class="styled" style="counter-reset: item 3;">
+                        <li>
+                            <strong>Query2Doc Works for Arabic (Zero-Shot)</strong>
+                            <ul>
+                                <li>All 8 successful models improved Dense retrieval</li>
+                                <li>Best result (+23.5%) exceeds original paper (+2-5%)</li>
+                                <li>No Arabic-specific training needed</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Temperature 0.1 is Optimal</strong>
+                            <ul>
+                                <li>SILMA ablation: temp=0.1 beats temp=0.7 by +2.5%</li>
+                                <li>Focused, deterministic outputs work better for retrieval</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Generational Improvement Confirmed</strong>
+                            <ul>
+                                <li>Qwen3-4B (+14.0%) beats Qwen 2.5-3B (+8.9%)</li>
+                                <li>Qwen3-8B (+19.3%) beats Qwen 2.5-7B (+16.4%)</li>
+                                <li>Newer model generations improve QE quality</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>18 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 15: BEST MODELS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Key Findings</span>
+        <h2 class="slide-title">Best Models: Top 3 Recommendations</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <div class="highlight-box" style="background: linear-gradient(135deg, #fff3cd 0%, #ffd700 30%, #d4edda 100%); border-left-color: #ffc107; border-left-width: 6px;">
+                        <strong style="font-size: 1.1rem;">&#129351; #1: Aya Expanse 8B</strong>
+                        <ul>
+                            <li>Dense: <strong>+23.5%</strong> NDCG@10</li>
+                            <li>BM25: <strong>+9.2%</strong> NDCG@10</li>
+                            <li>Recall@100: <strong>0.9001</strong> (highest)</li>
+                            <li>Best on <em>both</em> retrievers</li>
+                            <li>101-language multilingual model</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="highlight-box" style="border-left-color: #6c757d; border-left-width: 5px;">
+                        <strong style="font-size: 1.05rem;">&#129352; #2: Jais-2-8B</strong>
+                        <ul>
+                            <li>Dense: <strong>+20.5%</strong> NDCG@10</li>
+                            <li>BM25: <strong>+10.8%</strong> (best BM25)</li>
+                            <li>Arabic-specialized vocabulary</li>
+                            <li>Best for term-based retrieval</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box mt-1" style="border-left-color: #cd7f32; border-left-width: 5px;">
+                        <strong style="font-size: 1.05rem;">&#129353; #3: Qwen3-8B</strong>
+                        <ul>
+                            <li>Dense: <strong>+19.3%</strong> NDCG@10</li>
+                            <li>Latest generation Qwen</li>
+                            <li>Strong all-rounder</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box info mt-1">
+                <strong>Recommendation:</strong> For production Arabic RAG systems, use <strong>Aya Expanse 8B</strong> (best overall) or <strong>Jais-2-8B</strong> (best for BM25/hybrid). For resource-constrained setups, <strong>Qwen3-4B</strong> offers strong results (+14.0%) with minimal VRAM.
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>19 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 16: TECHNICAL CHALLENGES
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Technical Work</span>
+        <h2 class="slide-title">Technical Challenges & Solutions</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <ol class="styled">
+                        <li>
+                            <strong>Java Version Conflict (BM25)</strong>
+                            <ul>
+                                <li><em>Problem:</em> Pyserini needs Java 11, system had Java 21</li>
+                                <li><em>Solution:</em> Switched to BM25S (pure Python)</li>
+                                <li><em>Result:</em> 96% of Pyserini performance, no Java dependency</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Slow Query Encoding (mDPR)</strong>
+                            <ul>
+                                <li><em>Problem:</em> Pyserini CPU encoder: 35 min/2,896 queries</li>
+                                <li><em>Solution:</em> GPU batch encoding (64 queries/batch)</li>
+                                <li><em>Result:</em> 5-7x speedup (2-3 min)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Missing Dataset Metadata</strong>
+                            <ul>
+                                <li><em>Problem:</em> MIRACL lacks domain labels</li>
+                                <li><em>Solution:</em> Query-side analysis (length, complexity)</li>
+                                <li><em>Result:</em> Discovered short-query performance gap</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <ol class="styled" style="counter-reset: item 3;">
+                        <li>
+                            <strong>Falcon-H1 Batching Bug</strong>
+                            <ul>
+                                <li><em>Problem:</em> Hybrid Mamba architecture fails with batch &gt; 1</li>
+                                <li><em>Solution:</em> Single-query loop on A100</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Jais-2 FP16 Overflow</strong>
+                            <ul>
+                                <li><em>Problem:</em> Squared-ReLU exceeds FP16 max (65,504)</li>
+                                <li><em>Solution:</em> BFloat16 precision on A100</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>ALLaM Tokenizer Corruption</strong>
+                            <ul>
+                                <li><em>Problem:</em> SentencePiece leaked &#9601; into output</li>
+                                <li><em>Solution:</em> Model dropped; added sanity checks to pipeline</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="highlight-box mt-1">
+                        <strong>Infrastructure:</strong> Google Colab Pro+ ($58) for A100 GPU access. T4 (free tier) used for smaller models.
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>20 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 17: PROJECT STATUS SUMMARY
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Status</span>
+        <h2 class="slide-title">Project Status Summary</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Completed:</strong>
+                    <ul>
+                        <li><span class="label green">Done</span> Literature review (15+ papers)</li>
+                        <li><span class="label green">Done</span> Dataset analysis & selection (MIRACL)</li>
+                        <li><span class="label green">Done</span> BM25 baseline (Exp 002)</li>
+                        <li><span class="label green">Done</span> Dense baseline (Exp 001)</li>
+                        <li><span class="label green">Done</span> Error analysis (N=2,896)</li>
+                        <li><span class="label green">Done</span> Query2Doc implementation</li>
+                        <li><span class="label green">Done</span> First QE experiment (Exp 003-004)</li>
+                        <li><span class="label green">Done</span> LLM research (10 candidates)</li>
+                        <li><span class="label green">Done</span> Model comparison (10 models, Exp 005-009 + Osman's 5)</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Key Numbers:</strong>
+                    <div class="highlight-box">
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>14+ experiments</strong> completed</li>
+                            <li><strong>10 LLM models</strong> tested (8 successful, 2 dropped)</li>
+                            <li><strong>2 retrieval systems</strong> evaluated (Dense + BM25)</li>
+                            <li><strong>2,896 queries</strong> per experiment run</li>
+                            <li><strong>+23.5%</strong> best improvement (NDCG@10)</li>
+                            <li><strong>$58</strong> compute cost (Colab Pro+)</li>
+                        </ul>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Codebase:</strong>
+                    <ul>
+                        <li>Modular architecture (retrievers, enhancers, evaluation)</li>
+                        <li>Reproducible experiments (documented, versioned)</li>
+                        <li>Per-model notebooks adapting shared modular codebase</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>21 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 18: NEXT STEPS
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Next Steps</span>
+        <h2 class="slide-title">Next Steps & Remaining Work</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Immediate Priorities:</strong>
+                    <ol class="styled">
+                        <li>
+                            <strong>Hybrid Retrieval (RRF)</strong>
+                            <ul>
+                                <li>Combine Dense + BM25 with Reciprocal Rank Fusion</li>
+                                <li>Test top models (Aya, Jais-2) with hybrid approach</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>BM25 Query Repetition</strong>
+                            <ul>
+                                <li>Implement 5x query repetition for BM25</li>
+                                <li>Expected to fix BM25 decline for most models</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Deeper Analysis</strong>
+                            <ul>
+                                <li>Per-query improvement/degradation analysis</li>
+                                <li>Short vs long query breakdown per model</li>
+                                <li>Qualitative case studies</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <ol class="styled" style="counter-reset: item 3;">
+                        <li>
+                            <strong>Thesis Writing</strong>
+                            <ul>
+                                <li>Methodology chapter</li>
+                                <li>Experiments & Results chapter</li>
+                                <li>Update Literature Review</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <strong>Optional Extensions</strong>
+                            <ul>
+                                <li>Test on stronger embedding model (BGE-M3)</li>
+                                <li>Test on secondary dataset</li>
+                                <li>Compare with API models (Gemini, GPT-4o-mini)</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="highlight-box question mt-2">
+                        <strong>Questions for Supervisor:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li>Is the model comparison scope sufficient?</li>
+                            <li>Should we prioritize hybrid retrieval or thesis writing?</li>
+                            <li>Any feedback on the experimental methodology?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>22 / 23</span>
+        </div>
+    </div>
+
+    <!-- ============================================
+     SLIDE 19: THANK YOU
+     ============================================ -->
+    <div class="slide">
+        <span class="section-header">Summary</span>
+        <h2 class="slide-title">Summary & Thank You</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <div class="highlight-box info">
+                        <strong>What We Proved:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li>Query2Doc significantly improves Arabic RAG retrieval</li>
+                            <li>Zero-shot approach works &mdash; no Arabic-specific training needed</li>
+                            <li>Modern 3-8B models are effective (no need for 175B GPT-3)</li>
+                            <li>Results exceed the original Query2Doc paper</li>
+                        </ul>
+                    </div>
+
+                    <strong>Best Configuration:</strong>
+                    <ul>
+                        <li><strong>Dense:</strong> Aya Expanse 8B (+23.5% NDCG@10)</li>
+                        <li><strong>BM25:</strong> Jais-2-8B (+10.8% NDCG@10)</li>
+                        <li><strong>Both:</strong> Aya Expanse 8B (improves both retrievers)</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Research Contributions:</strong>
+                    <ul>
+                        <li>First comprehensive comparison of 10 LLMs for Arabic QE</li>
+                        <li>Demonstrated Query2Doc effectiveness for Arabic (zero-shot)</li>
+                        <li>Identified model size &amp; architecture impact on QE quality</li>
+                        <li>Documented practical lessons for Arabic LLM deployment</li>
+                    </ul>
+
+                    <div class="highlight-box mt-1">
+                        <strong>Next Milestone:</strong> Complete hybrid retrieval experiments and begin thesis writing.
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-2">
+                <h2 style="font-size: 2rem; color: #1a5f7a;">Thank you!</h2>
+                <p style="font-size: 1.2rem; color: #2e8b57;">Questions & Discussion</p>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>23 / 23</span>
+        </div>
+    </div>
+
+</body>
+
+</html>

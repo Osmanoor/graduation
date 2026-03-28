@@ -892,7 +892,7 @@ Next steps: [Iterate / Move to writing]
 
 ### Task 5.1: Update Chapter 2 — Literature Review & Theoretical Background
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Done
 **Depends On:** None (can start immediately)
 **Priority:** HIGH — write first
 
@@ -908,18 +908,29 @@ Next steps: [Iterate / Move to writing]
 - Per-model research: `research_decisions/falcon_h1_research.md`, `jais_2_research.md`, `qwen3_4b_research.md`, `allam_7b_research.md`, `gpt_oss_20b_research.md`
 
 **Deliverables:**
-- [ ] 2.1 Theoretical background: LLMs, Transformers, RAG systems, Query Enhancement
-- [ ] 2.2 Mathematical models: BM25 formula, dense retrieval / cosine similarity, NDCG, MRR, Recall@k
-- [ ] 2.3 Description of ALL models used: Falcon-H1, Jais-2, Qwen 2.5 3B, Qwen3-4B, ALLaM, Aya, Gemma, SILMA, Qwen 2.5 7B, Qwen3 8B, GPT-OSS 20B
-- [ ] 2.4 Related Work: Query2Doc, HyDE, CSQE, PBR, MUGI, KAR, AQE, ThinkQE, and other reviewed papers
-- [ ] All abbreviations written in full on first use
-- [ ] IEEE references numbered by order of appearance
+- [x] 2.1 Theoretical background: LLMs, Transformers, RAG systems, Query Enhancement
+- [x] 2.2 Mathematical models: BM25 formula, dense retrieval / cosine similarity, NDCG, MRR, Recall@k
+- [x] 2.3 Description of ALL models used: Falcon-H1, Jais-2, Qwen 2.5 3B, Qwen3-4B, ALLaM, Aya, Gemma, SILMA, Qwen 2.5 7B, Qwen3 8B, GPT-OSS 20B
+- [x] 2.4 Related Work: Query2Doc, HyDE, CSQE, PBR, MUGI, KAR, AQE, ThinkQE, and other reviewed papers
+- [x] All abbreviations written in full on first use
+- [x] IEEE references numbered by order of appearance
+
+**Outcomes:** *(Completed 27/3/2026)*
+```
+CHAPTER 2: Theoretical Background and Literature Review — 431 lines LaTeX
+- 5 main sections: 2.1 Theoretical Background, 2.2 Mathematical Models, 2.3 Models Used, 2.4 Related Work, 2.5 Summary
+- 40 citations, 33 labels, 14 cross-references
+- All 11 QE models + 2 retrieval models described
+- Table 2.1: Model comparison summary
+- Tracking document: Chapters/README_chapter2.md
+- References.bib updated with all new entries
+```
 
 ---
 
 ### Task 5.2: Write Chapter 3 — Methodology
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Done
 **Depends On:** Task 5.1 (Chapter 2 must define all concepts/models first)
 **Priority:** HIGH — most important chapter
 
@@ -934,20 +945,30 @@ Next steps: [Iterate / Move to writing]
 - `research_decisions/model_comparison_guide.md` — experiment design
 
 **Deliverables:**
-- [ ] 3.1 Dataset: MIRACL Arabic description, dev set (2,896 queries, 2.1M passages)
-- [ ] 3.2 Baseline Implementation: BM25S approach, mDPR approach, evaluation pipeline
-- [ ] 3.3 Error Analysis: quantitative analysis methodology, short query gap discovery
-- [ ] 3.4 Query Enhancement Technique: Query2Doc approach, modifications (zero-shot, temperature tuning, no repetition for BM25)
-- [ ] 3.5 Model Comparison: experimental setup, 10 models, same prompt/pipeline, GPU/quantization config
-- [ ] Flowcharts: overall pipeline, Query2Doc process, evaluation workflow
-- [ ] Processing diagrams for each major step
-- [ ] NO code in the body — reference Appendix for code
+- [x] 3.1 Dataset: MIRACL Arabic description, dev set (2,896 queries, 2.1M passages)
+- [x] 3.2 Baseline Implementation: BM25S approach, mDPR approach, evaluation pipeline
+- [x] 3.3 Error Analysis: quantitative analysis methodology, short query gap discovery
+- [x] 3.4 Query Enhancement Technique: Query2Doc approach, modifications (zero-shot, temperature tuning, no repetition for BM25)
+- [x] 3.5 Model Comparison: experimental setup, 10 models, same prompt/pipeline, GPU/quantization config
+- [ ] Flowcharts: overall pipeline, Query2Doc process, evaluation workflow — **PLACEHOLDER figures created, need actual diagrams**
+- [x] Processing diagrams described in prose
+- [x] NO code in the body — reference Appendix for code
+
+**Outcomes:** *(Completed 27/3/2026)*
+```
+CHAPTER 3: Methodology — 337 lines LaTeX
+- 5 main sections: 3.1 Dataset/Setup, 3.2 Baselines, 3.3 Error Analysis, 3.4 Query2Doc, 3.5 Model Comparison
+- 2 tables: generation params (Tab 3.1), model configs (Tab 3.2)
+- 1 placeholder figure: pipeline overview (needs actual flowchart)
+- All Ch.2 labels used for cross-referencing (no re-explanation)
+- Tracking document: Chapters/README_chapter3.md
+```
 
 ---
 
 ### Task 5.3: Write Chapter 4 — Results and Discussion
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Done
 **Depends On:** Task 5.2 (zigzag — write sections as corresponding Ch. 3 sections are written)
 **Priority:** HIGH
 
@@ -960,61 +981,101 @@ Next steps: [Iterate / Move to writing]
 - `research_decisions/error_analysis_phase1_quantitative.md`
 
 **Deliverables:**
-- [ ] 4.1 Baseline Results: Dense vs BM25 comparison, complementary strengths analysis
-- [ ] 4.2 Error Analysis Findings: 39% failure rate, short query gap (59% performance), query length correlation
-- [ ] 4.3 Query2Doc Results (Dense): +8.9% NDCG@10, comparison with original paper (zero-shot Arabic > few-shot English)
-- [ ] 4.4 Query2Doc Results (BM25): term dilution problem, negative results analysis
-- [ ] 4.5 Model Comparison (Dense): full leaderboard, best model (Jais-2 / Aya), dropped models analysis
-- [ ] 4.6 Model Comparison (BM25): Jais-2 and Aya success, why most models degrade BM25
-- [ ] 4.7 Key Findings: model size vs performance, multilingual support importance, Arabic vocab impact
-- [ ] All figures properly numbered (Figure 4.X), captions below
-- [ ] All tables properly numbered (Table 4.X), captions above
-- [ ] Engineering analysis for every result
+- [x] 4.1 Baseline Results: Dense vs BM25 comparison, complementary strengths analysis
+- [x] 4.2 Error Analysis Findings: 39% failure rate, short query gap (59% performance), query length correlation
+- [x] 4.3 Query2Doc Results (Dense + BM25): +8.9% Dense, -11.5% BM25, term dilution analysis, comparison with original paper
+- [x] 4.4 Model Comparison (Dense): full leaderboard, Aya best overall (+23.5%), Jais-2 best Dense (+20.5%)
+- [x] 4.5 Model Comparison (BM25): Jais-2 and Aya success, 6/9 models degrade BM25
+- [x] 4.6 Dropped Models: ALLaM (-48.9%, tokenizer bug), GPT-OSS (70x slower, hallucinations)
+- [x] 4.7 Key Findings: model size correlation, generational improvement, Arabic specialization vs multilingual, Dense vs BM25 behaviour, best model recommendations
+- [x] All tables properly numbered and captioned (12 tables)
+- [x] Engineering analysis for every result
+- [ ] 2 placeholder figures need actual diagrams (bar chart, scatter plot)
+
+**Outcomes:** *(Completed 27/3/2026)*
+```
+CHAPTER 4: Results and Discussion — 449 lines LaTeX
+- 5 main sections: 4.1 Baselines, 4.2 Error Analysis, 4.3 Query2Doc, 4.4 Model Comparison, 4.5 Key Findings
+- 12 tables, 2 placeholder figures
+- Full zigzag with Chapter 3 sections
+- Consolidated experiment summary table (Tab 4.10)
+- Tracking document: Chapters/README_chapter4.md
+```
 
 ---
 
 ### Task 5.4: Write Chapter 1 — Introduction
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Done (2026-03-28)
 **Depends On:** Tasks 5.1, 5.2, 5.3 (write AFTER Chapters 2, 3, 4)
 **Priority:** MEDIUM
 
 **Why:** Dr. Tahani: "Write this after the other chapters — it should read like the Proposal but written by people who understand the work." Objectives must match actual methodology.
 
 **Deliverables:**
-- [ ] 1.1 General Introduction / Preamble
-- [ ] 1.2 Problem Definition (Arabic query-document mismatch, short query information poverty)
-- [ ] 1.3 Objectives (must match what was actually done in Chapter 3)
-- [ ] 1.4 Thesis Layout (brief description of each chapter)
+- [x] 1.1 General Introduction / Preamble (4 paragraphs, funnel structure)
+- [x] 1.2 Problem Definition (3 gaps: retrieval, language, resource + research question)
+- [x] 1.3 Objectives (5 objectives matching Ch.3 methodology)
+- [x] 1.4 Thesis Layout (one paragraph per chapter)
+
+**Outcomes:** *(Completed 2026-03-28)*
+```
+File: Chapters/chapter1.tex (~60 lines)
+Tracking: Chapters/README_chapter1.md
+No references (per Dr. Tahani)
+Research question: "To what extent can small, open-source LLMs improve Arabic
+information retrieval through query enhancement, and what model characteristics
+determine effectiveness?"
+NOTE: AI decisions documented in research_decisions/THESIS_DRAFT_AI_DECISIONS_REVIEW.md
+      — review items 1.1–1.7 before finalizing
+```
 
 ---
 
 ### Task 5.5: Write Chapter 5 — Conclusion and Recommendations
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Done (2026-03-28)
 **Depends On:** Tasks 5.1, 5.2, 5.3 (write AFTER Chapters 2, 3, 4)
 **Priority:** MEDIUM
 
 **Why:** Conclusions summarize findings. Recommendations guide future researchers — Dr. Tahani: "Your recommendations are very important because you are the domain experts."
 
 **Deliverables:**
-- [ ] 5.1 Conclusions: overall findings, what was proven, best model selection
-- [ ] 5.2 Challenges: resource limitations, dropped models, BM25 term dilution
-- [ ] 5.3 Recommendations for Future Work: stronger embedding models, hybrid retrieval, chunking-aware QE, dialect testing, prompt optimization
+- [x] 5.1 Conclusions (6 topics: baseline, Q2D transfer, model comparison, analytics, dense/BM25 divergence, overall)
+- [x] 5.2 Challenges (6 challenges: resources, term dilution, dropped models, dataset scope, single technique, baseline strength)
+- [x] 5.3 Recommendations (8 items: chunking-aware QE, BM25 repetition, stronger embeddings, hybrid, dialect, few-shot, multi-stage, publication)
+
+**Outcomes:** *(Completed 2026-03-28)*
+```
+File: Chapters/chapter5.tex (~70 lines)
+Tracking: Chapters/README_chapter5.md
+Recommendations ordered to set up Phase 4 work (Rec 1 = chunking-aware QE)
+NOTE: AI decisions documented in research_decisions/THESIS_DRAFT_AI_DECISIONS_REVIEW.md
+      — review items 5.1–5.9 before finalizing
+```
 
 ---
 
 ### Task 5.6: Write Abstract (English) + المستخلص (Arabic)
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Done (2026-03-28)
 **Depends On:** Tasks 5.1–5.5 (write LAST — summarizes everything)
 **Priority:** MEDIUM
 
 **Why:** First thing the examiner reads. ~300–350 words. Must cover: intro → problem → objectives → methodology → results → conclusion.
 
 **Deliverables:**
-- [ ] English Abstract (~300-350 words, ~3/4 page)
-- [ ] Arabic المستخلص (faithful translation)
+- [x] English Abstract (334 words, covers full scope)
+- [x] Arabic المستخلص (AI-generated translation — needs native speaker review)
+
+**Outcomes:** *(Completed 2026-03-28)*
+```
+Files: 5-Abstract.tex, 6-ARAbstract.tex
+Key numbers: +3.7% to +23.5%, Aya best, 3B zero-shot > 175B few-shot
+NOTE: AI decisions documented in research_decisions/THESIS_DRAFT_AI_DECISIONS_REVIEW.md
+      — review items A.1–A.5 before finalizing
+      — Arabic translation MUST be reviewed by native speaker
+```
 
 ---
 

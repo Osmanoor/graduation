@@ -1,28 +1,69 @@
-l\chapter{Conclusion}
-\section{Adding an algorithm}
+\chapter{Conclusion and Recommendations}
+\label{chap:conclusion}
 
- USE ANY AI TOOL TO GENERATE LATEX CODE OF ALGORITHMS AND EQUATIONS SO YOU CAN GAIN TIME 
+This chapter summarises the key findings of the research, discusses the challenges encountered during the experimental work, and presents recommendations for future research directions in Arabic query enhancement for Retrieval-Augmented Generation systems.
 
-\subsection{Adding an algorithm}
+%======================================================================
+\section{Conclusions}
+\label{sec:conclusions}
+%======================================================================
 
-\begin{algorithm}
-\caption{Example Algorithm}
-\begin{algorithmic}[1]  % The number 1 here means that the lines will be numbered
-\State Initialize $x \gets 0$
-\For{$i = 1$ to $n$}
-    \State $x \gets x + i$
-\EndFor
-\State \textbf{Return} $x$
-\end{algorithmic}
-\end{algorithm}
+This thesis investigated the effectiveness of LLM-based query enhancement for Arabic information retrieval, focusing on the Query2Doc technique applied using small open-source models. The following conclusions were drawn from the experimental results.
 
-\subsection{Adding an equation}
-%You can use ChatGPT to generate each eqatiuon code :)
-        \begin{equation}
-        \text{A} = \frac{B}{C + D} 
-        \label{first_eq}
-        \end{equation}
-        
-You can mention it in any part of the text through it's label using the "hash ref" as shown below 
+\textbf{Baseline establishment and error analysis.} Dense (mDPR) and sparse (BM25S) retrieval baselines were successfully established on the MIRACL Arabic benchmark, confirming their complementary strengths: mDPR achieved superior ranking quality (NDCG@10 = 0.4993), while BM25S achieved broader retrieval coverage (Recall@100 = 0.8577). Error analysis on the dense baseline revealed a 39\% query failure rate, with short queries achieving only 59\% of long query performance (NDCG@10 = 0.240 vs. 0.406). This statistically significant short-query performance gap ($r = 0.125$, $p < 0.001$) validated the selection of query expansion as the primary enhancement technique.
 
-As shown in equation ~\ref{first_eq} %ADD THE LABEL HERE
+\textbf{Query2Doc transfers effectively to Arabic.} The Query2Doc technique, originally developed for English using GPT-3 (175B parameters) with few-shot prompting, was successfully adapted for Arabic zero-shot application using models as small as 3 billion parameters. The initial experiment with Qwen~2.5~3B achieved a +8.9\% improvement in NDCG@10, exceeding the original paper's reported improvement range of +2--5\% despite using a model 58 times smaller and without task-specific demonstrations. This result suggests that Arabic's morphological richness may cause it to benefit disproportionately from the vocabulary expansion provided by pseudo-document generation.
+
+\textbf{Comprehensive model comparison.} Ten open-source LLMs were evaluated using a standardised protocol across both dense and sparse retrieval. All nine viable models improved dense retrieval performance, with improvements ranging from +3.7\% (SILMA Kashif-2B) to +23.5\% (Aya Expanse 8B) in NDCG@10. Aya Expanse 8B was identified as the best overall model, achieving the highest dense improvement (+23.5\%) and the second-highest BM25 improvement (+9.2\%). Jais-2 8B was identified as the best model for sparse retrieval (+10.8\% NDCG@10), uniquely benefiting from its 150,000-token Arabic-centric vocabulary. For resource-constrained environments, Qwen3-4B achieved +14.0\% dense improvement while fitting on a T4 GPU in FP16 precision without quantisation.
+
+\textbf{Analytical findings on model characteristics.} Several cross-cutting patterns were identified from the model comparison. Model parameter count was positively correlated with dense retrieval improvement, with 2--3B models achieving +3.7\% to +8.9\%, 4B models achieving +8.0\% to +14.0\%, and 7--8B models achieving +16.4\% to +23.5\%. Generational improvement within the Qwen model family was confirmed, with Qwen3 outperforming Qwen~2.5 at both the 3--4B and 7--8B parameter scales. Notably, Arabic NLP benchmark scores did not directly predict query expansion quality; training data volume and diversity were found to be more significant factors than Arabic-specific architecture or benchmark performance.
+
+\textbf{Dense and sparse retrieval respond differently to query enhancement.} The most practically significant finding was the divergent behaviour of dense and sparse retrieval under query enhancement. Dense retrieval benefited universally (9 of 9 models improved), as additional semantic content improved the query embedding representation. BM25 was degraded by 6 of 9 models due to term dilution, where the pseudo-document vocabulary diluted the importance of original query keywords in the BM25 scoring function. Only models with strong Arabic vocabulary (Jais-2, Aya Expanse) or sufficient multilingual breadth (Qwen~2.5~7B) overcame this limitation. This finding has direct implications for RAG system design: query enhancement strategies must be adapted to the retrieval paradigm, and dense retrieval systems are more robust recipients of LLM-generated query expansions.
+
+\textbf{Overall.} LLM-based query enhancement via Query2Doc is an effective, modular, and resource-efficient strategy for improving Arabic information retrieval. Small open-source models with 4--8 billion parameters can deliver substantial retrieval improvements without API costs or proprietary dependencies, making this approach practical for real-world Arabic RAG deployments.
+
+%======================================================================
+\section{Challenges}
+\label{sec:challenges}
+%======================================================================
+
+Several challenges were encountered during the course of this research.
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Resource constraints.} All experiments were conducted on Google Colab with NVIDIA T4 (15\,GB) and A100 (40\,GB) GPUs. This limited model sizes to 8 billion parameters (with 4-bit quantisation for larger models) and required significant engineering optimisation---batch processing, reduced token generation (128 tokens), and a two-notebook workflow separating query generation from retrieval evaluation---to achieve practical runtimes of approximately 40 minutes per full experiment.
+
+    \item \textbf{BM25 term dilution.} Query enhancement degraded BM25 performance for 6 of 9 models. The query repetition strategy recommended by the original Query2Doc paper ($n=5$ repetitions of the original query before concatenation) was not implemented in the current work, as the focus was on establishing the baseline Query2Doc behaviour across models. This leaves BM25-specific optimisation as an open research direction.
+
+    \item \textbf{Dropped models.} Two of the eleven models evaluated were unusable for Arabic query enhancement. ALLaM-7B, a preview-stage model, exhibited a sentencepiece tokeniser artefact that leaked special characters into the pseudo-documents, producing a catastrophic $-$48.9\% decline in NDCG@10. GPT-OSS-20B, a Mixture-of-Experts model, proved impractical due to 70$\times$ slower inference speed and factual hallucinations in 3 of 5 sanity-check queries. These failures highlight the risk of relying on preview-stage or English-dominant models for Arabic NLP tasks.
+
+    \item \textbf{Dataset scope.} The MIRACL Arabic benchmark contains exclusively Modern Standard Arabic text. The effectiveness of query enhancement for dialectal Arabic queries---Egyptian, Levantine, Gulf, Maghrebi, and other regional varieties---could not be evaluated within the scope of this work. Given the diglossic nature of Arabic, where users may formulate queries in dialect while knowledge bases are written in MSA, this represents a significant gap in the evaluation.
+
+    \item \textbf{Single query enhancement technique.} Only the Query2Doc technique (generative query expansion via pseudo-document concatenation) was evaluated. Other approaches---HyDE (hypothetical document embedding), GRF (generative relevance feedback), query rewriting, and iterative refinement---were not compared. The results therefore reflect the potential of one specific technique rather than the broader landscape of query enhancement methods.
+
+    \item \textbf{Baseline retriever strength.} The mDPR dense retriever was intentionally selected as a weaker baseline (pre-trained on MS~MARCO, not fine-tuned on MIRACL Arabic). While this choice maximised the headroom for demonstrating query enhancement impact, the magnitude of improvement observed may differ when applied to stronger retrieval models that have been specifically fine-tuned on Arabic data.
+\end{enumerate}
+
+%======================================================================
+\section{Recommendations for Future Work}
+\label{sec:recommendations}
+%======================================================================
+
+Based on the findings and limitations of this research, the following recommendations are proposed for future work. These recommendations are ordered from direct extensions of the current work to broader research directions.
+
+\begin{enumerate}[label=\arabic*.]
+    \item \textbf{Knowledge-base-aware query enhancement.} The current Query2Doc implementation generates pseudo-documents without any knowledge of the target corpus structure. Future work should investigate injecting structural information from the knowledge base---such as passage hierarchy, article boundaries, section headings, and metadata---into the query enhancement prompt. This ``chunking-aware'' approach would enable the LLM to generate context-aware expansions tailored to the actual content organisation of the knowledge base, potentially bridging the gap between query-side and corpus-side optimisation.
+
+    \item \textbf{BM25 query repetition and retriever-specific strategies.} The query repetition strategy from the original Query2Doc paper ($n=5$ repetitions of the original query before concatenation with the pseudo-document) should be implemented and evaluated for Arabic BM25 retrieval. More broadly, retriever-aware query enhancement strategies should be developed that adapt the expansion format---vocabulary selection, term weighting, and concatenation method---to the characteristics of the target retrieval paradigm.
+
+    \item \textbf{Stronger embedding models.} The effectiveness of query enhancement should be evaluated with state-of-the-art Arabic-capable embedding models such as BGE-M3 and mE5-large, which are fine-tuned specifically for retrieval tasks. This evaluation would establish whether query enhancement provides additive improvement even over strong retrievers, or whether the benefits diminish as the baseline retriever becomes more capable.
+
+    \item \textbf{Hybrid retrieval with query enhancement.} The complementary strengths of dense and sparse retrieval identified in the baseline analysis---dense retrieval excels at ranking while sparse retrieval achieves broader coverage---suggest that combining both methods using score fusion techniques such as Reciprocal Rank Fusion (RRF) may yield further improvements. Future work should investigate the optimal integration of query enhancement with hybrid retrieval, including the possibility of applying different enhancement strategies to each retrieval component.
+
+    \item \textbf{Dialectal Arabic evaluation.} The effectiveness of query enhancement for dialectal Arabic queries should be evaluated using datasets that include regional Arabic varieties. The vocabulary expansion mechanism of Query2Doc may help bridge MSA--dialect gaps by generating MSA-vocabulary pseudo-documents from dialectal queries, effectively serving as an implicit dialect-to-MSA normalisation layer. Datasets containing dialectal queries with MSA knowledge bases would be required to test this hypothesis.
+
+    \item \textbf{Few-shot and chain-of-thought prompting.} The current work used exclusively zero-shot prompting for pseudo-document generation. Few-shot prompting with curated Arabic demonstration examples may improve pseudo-document quality by providing the model with explicit patterns for Arabic query expansion. Chain-of-thought reasoning before expansion---where the model analyses the query's information needs before generating the pseudo-document---may further improve quality for complex or ambiguous queries.
+
+    \item \textbf{Multi-stage query enhancement.} The current approach applies a single round of query enhancement. Future work should investigate iterative refinement, where the results of a first retrieval pass inform a second round of query enhancement through a relevance feedback loop. This multi-stage approach could combine Query2Doc with re-ranking techniques, using the initially retrieved passages to generate more targeted query expansions.
+
+    \item \textbf{Publication and reproducibility.} The experimental finding that small open-source models can outperform the original Query2Doc paper's results---achieved with a 175B-parameter proprietary model and few-shot prompting---for Arabic query enhancement represents a contribution suitable for publication. A pre-print submission or a faculty journal publication is recommended to disseminate these findings to the Arabic NLP research community before the rapidly evolving landscape of LLM-based retrieval renders the results less novel.
+\end{enumerate}

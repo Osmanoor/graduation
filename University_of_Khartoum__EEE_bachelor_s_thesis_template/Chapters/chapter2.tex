@@ -1,22 +1,431 @@
 \chapter{Theoretical Background and Literature Review}
-\section{This is the First Title in Chapter 2}
+\label{chap:background}
 
-To add a citation, use the "hash cite" and add your reference from 'References.bib' as shown below:
-This is The first reference \cite{yao2024survey}
+This chapter establishes the theoretical foundations and reviews the current state-of-the-art relevant to the research presented in this thesis. Section~\ref{sec:theoretical} introduces the core concepts of Large Language Models (LLMs), Retrieval-Augmented Generation (RAG) systems, information retrieval methods, query enhancement techniques, and the specific challenges posed by the Arabic language. Section~\ref{sec:math_models} presents the mathematical formulations underlying the retrieval and evaluation methods employed. Section~\ref{sec:models_used} provides detailed descriptions of all models utilized in the experimental work. Finally, Section~\ref{sec:related_work} surveys the related literature and identifies the research gap addressed by this thesis.
 
-For adding a subtitle and sub-subtitle, use "hash subsection" and "hash subsubsection" as shown below: 
+%======================================================================
+\section{Theoretical Background}
+\label{sec:theoretical}
+%======================================================================
 
-\subsection{This is the First Subtitle}
+\subsection{Large Language Models and the Transformer Architecture}
+\label{sec:llm_transformer}
 
-The term \ac{TE} is used in this document.
-The term \ac{AE} is used in this document.
+Large Language Models (LLMs) are deep neural networks trained on vast corpora of text data to model the statistical properties of natural language. The modern era of LLMs was initiated by the introduction of the Transformer architecture by Vaswani et al. \cite{vaswani_2017_attention}, which replaced recurrent processing with a self-attention mechanism that computes relationships between all positions in a sequence simultaneously.
 
-\subsubsection{This is the First sub-subtitle}
+The Transformer architecture consists of two main components: an encoder that processes input sequences into contextual representations, and a decoder that generates output sequences autoregressively. The core innovation is the \textit{scaled dot-product attention} mechanism, which computes attention weights between query ($Q$), key ($K$), and value ($V$) matrices as:
 
-The  main aim of this chapter:
+\begin{equation}
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right) V
+\label{eq:attention}
+\end{equation}
+
+\noindent where $d_k$ is the dimensionality of the key vectors. Multiple attention heads are employed in parallel, allowing the model to attend to information from different representation subspaces.
+
+Two dominant architectural paradigms have emerged from the original Transformer design. \textit{Encoder-only} models such as Bidirectional Encoder Representations from Transformers (BERT) process entire sequences bidirectionally and are well-suited for classification and retrieval tasks. \textit{Decoder-only} models, which underpin most modern LLMs, generate text autoregressively by predicting each token conditioned on all preceding tokens.
+
+The development of LLMs typically involves two stages. During \textit{pre-training}, the model is trained on trillions of tokens from diverse text sources using self-supervised objectives such as next-token prediction. This stage imbues the model with broad linguistic and world knowledge. During \textit{instruction tuning} (also called Supervised Fine-Tuning, or SFT), the pre-trained model is further trained on curated prompt-response pairs to follow user instructions. Alignment techniques such as Direct Preference Optimization (DPO) and Reinforcement Learning from Human Feedback (RLHF) are subsequently applied to improve helpfulness and safety \cite{song_2024_a}.
+
+A fundamental limitation of LLMs is that their knowledge is \textit{parametric}---encoded statically in model weights during training. This makes the knowledge prone to becoming outdated, incomplete for specialized domains, and susceptible to \textit{hallucination}: the generation of fluent but factually incorrect text. The model cannot distinguish between information it has reliably learned and information it is confabulating, nor can its knowledge be updated without costly retraining \cite{lewis_2021_retrievalaugmented}.
+
+\subsection{Retrieval-Augmented Generation}
+\label{sec:rag}
+
+Retrieval-Augmented Generation (RAG) was introduced by Lewis et al. \cite{lewis_2021_retrievalaugmented} to address the limitations of purely parametric language models. RAG augments an LLM with access to an external knowledge base by incorporating a retrieval step before generation, thereby grounding the model's outputs in verifiable sources.
+
+The standard RAG architecture consists of two primary components:
+
+\begin{itemize}
+    \item \textbf{The Retriever:} Given a user query $q$, the retriever searches a knowledge base $\mathcal{D} = \{d_1, d_2, \ldots, d_N\}$ to identify a set of relevant passages $\{d_1, d_2, \ldots, d_k\}$, ranked by relevance to $q$. Retrieval methods are discussed in detail in Section~\ref{sec:ir_methods}.
+    \item \textbf{The Generator:} An LLM that produces an answer $a$ conditioned on both the original query $q$ and the retrieved passages. The retrieved context provides factual grounding, reducing the likelihood of hallucination and enabling the model to cite sources.
+\end{itemize}
+
+The RAG pipeline operates sequentially: (1) the user submits a query $q$; (2) the retriever identifies the top-$k$ relevant passages from the knowledge base; (3) the generator produces an answer conditioned on the query and retrieved passages; and (4) the system returns the generated answer, optionally with source citations. This architecture effectively separates knowledge storage (in the external corpus) from language generation (in the LLM), allowing the knowledge base to be updated independently without retraining the model.
+
+The quality of the final generated answer is fundamentally bounded by the quality of the retrieved passages. If the retriever fails to surface relevant documents, the generator cannot compensate for this deficiency regardless of its capabilities. This \textit{retrieval bottleneck} motivates the investigation of techniques to improve retrieval effectiveness, which is the central focus of this thesis.
+
+\subsection{Information Retrieval Methods}
+\label{sec:ir_methods}
+
+Information retrieval methods can be broadly categorized into sparse, dense, and hybrid approaches, each with distinct strengths and limitations.
+
+\subsubsection{Sparse Retrieval}
+\label{sec:sparse_retrieval}
+
+Sparse retrieval methods represent queries and documents as high-dimensional sparse vectors, where each dimension corresponds to a term in the vocabulary and the value reflects the term's importance. The most widely used sparse retrieval method is Best Matching 25 (BM25), a probabilistic ranking function based on the bag-of-words model \cite{robertson_2009_probabilistic}. BM25 computes relevance scores using term frequency, inverse document frequency, and document length normalization. The mathematical formulation of BM25 is presented in Section~\ref{sec:bm25_math}.
+
+Sparse methods excel at exact term matching and are computationally efficient, requiring no neural network inference. However, they suffer from the \textit{vocabulary mismatch problem}: if the query and document use different terms to express the same concept, sparse methods fail to identify the relevance. This limitation is particularly acute for morphologically rich languages such as Arabic, where a single concept may be expressed through numerous surface forms.
+
+\subsubsection{Dense Retrieval}
+\label{sec:dense_retrieval}
+
+Dense retrieval methods address the vocabulary mismatch problem by encoding queries and documents into continuous vector representations (embeddings) within a shared semantic space. Karpukhin et al. \cite{karpukhin_2020_dense} introduced Dense Passage Retrieval (DPR), which employs a bi-encoder architecture: two independent BERT-based encoders produce fixed-size dense vectors for queries and passages respectively. Relevance is computed via vector similarity (typically dot product or cosine similarity, as formulated in Section~\ref{sec:cosine_math}) between the query embedding and passage embeddings.
+
+Dense retrievers are trained on relevance-annotated data using contrastive learning objectives, where the model learns to place relevant query-passage pairs closer together in the embedding space while pushing irrelevant pairs apart. At inference time, approximate nearest neighbor search algorithms (e.g., FAISS) enable efficient retrieval over millions of passages.
+
+While dense retrieval captures semantic relationships that sparse methods miss, it can struggle with rare terms, entity names, and highly specific queries where exact lexical matching is important \cite{wang_2023_query2doc}.
+
+\subsubsection{Hybrid Retrieval}
+\label{sec:hybrid_retrieval}
+
+Hybrid retrieval combines sparse and dense methods to leverage their complementary strengths. Sparse retrieval excels at exact matching and handles rare terms well, while dense retrieval captures semantic similarity and handles paraphrasing. Common fusion strategies include Reciprocal Rank Fusion (RRF), which combines ranked lists from both methods, and score-level interpolation, which computes a weighted sum of sparse and dense relevance scores.
+
+\subsection{Query Enhancement Techniques}
+\label{sec:qe_techniques}
+
+Query enhancement refers to a family of techniques that modify the user's query before it is submitted to the retriever, with the goal of improving retrieval effectiveness. Song and Zheng \cite{song_2024_a} categorize query optimization methods into four atomic operations: \textit{expansion}, \textit{decomposition}, \textit{disambiguation}, and \textit{abstraction}. This thesis focuses primarily on query expansion, which is described below.
+
+\textbf{Query Expansion} broadens the scope of a query by adding related terms, context, or generated text. Traditional query expansion methods such as Relevance Model 3 (RM3) extract expansion terms from pseudo-relevant documents retrieved in a first pass. Modern approaches leverage LLMs to generate expansion content, which can take several forms:
+
+\begin{itemize}
+    \item \textbf{Hypothetical Document Embeddings (HyDE):} Proposed by Gao et al. \cite{gao_2022_precise}, HyDE instructs an LLM to generate a hypothetical document that would answer the query. This generated document is then encoded using an unsupervised contrastive encoder, and the resulting embedding is used for retrieval. The encoder acts as a lossy compressor that filters out hallucinated details while retaining relevant semantic features.
+    \item \textbf{Query2Doc:} Introduced by Wang et al. \cite{wang_2023_query2doc}, this method generates a pseudo-document using an LLM and concatenates it with the original query to form an enriched query representation. For sparse retrieval, the original query is repeated multiple times before concatenation to prevent term dilution by the longer pseudo-document.
+    \item \textbf{Generative Relevance Feedback (GRF):} Proposed by Mackie et al. \cite{mackie_2023_grf}, GRF uses an LLM to generate diverse text (keywords, essays, facts) relevant to the query. The generated text is treated as a feedback set from which expansion terms are extracted using a probabilistic model.
+\end{itemize}
+
+\textbf{Query Rewriting} transforms the original query into a more effective form without necessarily adding new terms. The Rewrite-Retrieve-Read framework \cite{ma_2023_query} employs a trainable language model to reformulate queries before retrieval, optimizing the rewriter using reinforcement learning signals from the downstream reader model.
+
+These query enhancement techniques operate as modular layers that can be added to existing RAG systems without modifying the retriever index or the generator, making them particularly attractive for practical deployment.
+
+\subsection{Arabic Language Processing Challenges}
+\label{sec:arabic_challenges}
+
+The Arabic language presents several characteristics that compound the retrieval challenges described in the preceding sections.
+
+\textbf{Morphological Richness.} Arabic employs a root-and-pattern morphological system in which words are derived from typically tri-consonantal roots through templatic patterns and extensive affixation. A single root can yield dozens of surface forms through prefixes, suffixes, infixes, and clitics. For example, the root \textit{k-t-b} (\text{ك-ت-ب}, ``to write'') generates forms such as \textit{kitaab} (book), \textit{kaatib} (writer), \textit{maktaba} (library), and \textit{maktuub} (written). This morphological productivity creates a severe vocabulary mismatch problem, as queries and relevant documents may use different inflected forms of the same root.
+
+\textbf{Diglossia.} Arabic exhibits a diglossic situation in which Modern Standard Arabic (MSA) is used in formal writing, education, and media, while various regional dialects (Egyptian, Levantine, Gulf, Maghrebi, and others) are used in daily speech and informal written communication. Knowledge bases are predominantly composed of MSA text, whereas user queries---particularly in conversational settings---may be formulated in dialectal Arabic, creating a systematic gap between query and document vocabularies \cite{elbeltagysamhaar_2024_exploring}.
+
+\textbf{Orthographic Variations.} Arabic script permits multiple orthographic representations for certain characters, leading to inconsistencies even within MSA. Common variations include the different forms of Hamza (\text{ء، أ، إ، ؤ، ئ}), Alif (\text{ا، آ، ٱ}), and Ya/Alif Maqsura (\text{ي، ى}). These variations can cause both sparse and dense retrieval methods to treat orthographic variants as distinct terms.
+
+\textbf{Diacritical Marks.} Arabic diacritics (\textit{tashkeel}) disambiguate pronunciation and meaning but are typically omitted in modern texts. This omission increases lexical ambiguity, as identical consonantal skeletons may correspond to multiple words with different meanings.
+
+These characteristics collectively create what may be termed a ``morphological gap'' between user queries and knowledge base documents, which is distinct from and often more severe than the vocabulary mismatch observed in English information retrieval. Research by Alsubhi et al. \cite{alsubhi_2025_optimizing} has demonstrated that these linguistic properties significantly affect RAG pipeline component selection, with sentence-aware chunking and multilingual embedding models outperforming simpler alternatives for Arabic text.
+
+%======================================================================
+\section{Mathematical Models}
+\label{sec:math_models}
+%======================================================================
+
+This section presents the mathematical formulations of the retrieval scoring functions and evaluation metrics employed in this thesis.
+
+\subsection{BM25 Scoring Function}
+\label{sec:bm25_math}
+
+The BM25 ranking function \cite{robertson_2009_probabilistic} computes the relevance score of a document $d$ with respect to a query $q = \{q_1, q_2, \ldots, q_n\}$ consisting of $n$ terms:
+
+\begin{equation}
+\text{BM25}(q, d) = \sum_{i=1}^{n} \text{IDF}(q_i) \cdot \frac{f(q_i, d) \cdot (k_1 + 1)}{f(q_i, d) + k_1 \cdot \left(1 - b + b \cdot \frac{|d|}{\text{avgdl}}\right)}
+\label{eq:bm25}
+\end{equation}
+
+\noindent where $f(q_i, d)$ is the term frequency of query term $q_i$ in document $d$, $|d|$ is the length of document $d$ in tokens, $\text{avgdl}$ is the average document length across the collection, $k_1$ controls the term frequency saturation (typically $k_1 = 1.2$), and $b$ controls the degree of document length normalization (typically $b = 0.75$).
+
+The Inverse Document Frequency (IDF) component is computed as:
+
+\begin{equation}
+\text{IDF}(q_i) = \ln\left(\frac{N - n(q_i) + 0.5}{n(q_i) + 0.5} + 1\right)
+\label{eq:idf}
+\end{equation}
+
+\noindent where $N$ is the total number of documents in the collection and $n(q_i)$ is the number of documents containing term $q_i$. The IDF assigns higher weight to rarer terms, which are generally more discriminative for retrieval.
+
+\subsection{Dense Retrieval and Cosine Similarity}
+\label{sec:cosine_math}
+
+In dense retrieval, queries and documents are encoded into dense vector representations by neural encoder models. Given a query encoder $E_q$ and a document encoder $E_d$, the relevance score between query $q$ and document $d$ is computed as the cosine similarity between their embedding vectors:
+
+\begin{equation}
+\text{sim}(q, d) = \cos(\mathbf{e}_q, \mathbf{e}_d) = \frac{\mathbf{e}_q \cdot \mathbf{e}_d}{\|\mathbf{e}_q\| \; \|\mathbf{e}_d\|}
+\label{eq:cosine}
+\end{equation}
+
+\noindent where $\mathbf{e}_q = E_q(q)$ and $\mathbf{e}_d = E_d(d)$ are the embedding vectors for the query and document respectively, $\mathbf{e}_q \cdot \mathbf{e}_d$ denotes the dot product, and $\|\cdot\|$ denotes the Euclidean norm. When embedding vectors are $L_2$-normalized, cosine similarity is equivalent to the dot product, and retrieval can be performed efficiently using Maximum Inner Product Search (MIPS) algorithms.
+
+\subsection{Evaluation Metrics}
+\label{sec:eval_metrics}
+
+Three standard information retrieval metrics are used throughout this thesis to evaluate retrieval performance.
+
+\subsubsection{Recall at $k$ (Recall@$k$)}
+\label{sec:recall_math}
+
+Recall at $k$ measures the proportion of all relevant documents that appear within the top-$k$ retrieved results:
+
+\begin{equation}
+\text{Recall@}k = \frac{|\{\text{relevant documents}\} \cap \{\text{top-}k \text{ retrieved}\}|}{|\{\text{relevant documents}\}|}
+\label{eq:recall}
+\end{equation}
+
+\noindent Recall@$k$ captures the retriever's ability to surface relevant documents within the top-$k$ positions. In RAG systems, Recall@$k$ at the retrieval stage directly bounds the information available to the generator.
+
+\subsubsection{Normalized Discounted Cumulative Gain at $k$ (NDCG@$k$)}
+\label{sec:ndcg_math}
+
+Normalized Discounted Cumulative Gain (NDCG) measures ranking quality by considering both the relevance of retrieved documents and their positions. Documents at higher ranks contribute more to the score, reflecting the intuition that users examine top-ranked results more carefully.
+
+The Discounted Cumulative Gain at position $k$ is defined as:
+
+\begin{equation}
+\text{DCG@}k = \sum_{i=1}^{k} \frac{2^{\text{rel}_i} - 1}{\log_2(i + 1)}
+\label{eq:dcg}
+\end{equation}
+
+\noindent where $\text{rel}_i$ is the relevance grade of the document at position $i$. The ideal DCG (IDCG@$k$) is computed by sorting all relevant documents by decreasing relevance. NDCG@$k$ is the ratio:
+
+\begin{equation}
+\text{NDCG@}k = \frac{\text{DCG@}k}{\text{IDCG@}k}
+\label{eq:ndcg}
+\end{equation}
+
+\noindent NDCG@$k$ ranges from 0 to 1, where 1 indicates a perfect ranking.
+
+\subsubsection{Mean Reciprocal Rank (MRR)}
+\label{sec:mrr_math}
+
+Mean Reciprocal Rank measures the average of the reciprocal ranks of the first relevant document across a set of queries $Q$:
+
+\begin{equation}
+\text{MRR} = \frac{1}{|Q|} \sum_{i=1}^{|Q|} \frac{1}{\text{rank}_i}
+\label{eq:mrr}
+\end{equation}
+
+\noindent where $\text{rank}_i$ is the position of the first relevant document for the $i$-th query. MRR emphasizes the ability to place at least one relevant document at the top of the ranked list.
+
+%======================================================================
+\section{Models Used in Experiments}
+\label{sec:models_used}
+%======================================================================
+
+This section describes all language models employed in the experimental work of this thesis. The models were selected based on three primary criteria: (1) strong Arabic language support, either through specialized Arabic training or robust multilingual coverage; (2) compatibility with consumer-grade GPU hardware, specifically the NVIDIA T4 (15\,GB VRAM) available through Google Colab and the NVIDIA A100 (40\,GB VRAM); and (3) open-source availability with permissive licensing to ensure reproducibility \cite{song_2024_a}. Models are organized into Arabic-specialized, multilingual, and experimental categories. Additionally, the retrieval models used for passage ranking are described.
+
+\subsection{Arabic-Specialized Models}
+\label{sec:arabic_models}
+
+\subsubsection{Falcon-H1-Arabic-3B}
+\label{sec:falcon_h1}
+
+Falcon-H1-Arabic-3B is a 3.15 billion parameter language model developed by the Technology Innovation Institute (TII), Abu Dhabi \cite{falcon_h1_2025}. Unlike conventional Transformer-based LLMs, Falcon-H1 employs a hybrid Mamba2-Transformer architecture that combines State Space Model (SSM) layers \cite{gu_2024_mamba} with standard multi-head attention layers and SwiGLU activation functions. The model contains 32 layers with a hidden size of 2,560, utilizing 32 Mamba heads alongside 10 attention heads with Grouped Query Attention (GQA, 2 key-value heads).
+
+The hybrid architecture was designed to combine the linear-time sequence processing efficiency of SSMs with the strong in-context learning capabilities of attention mechanisms. The model supports a context length of 128K tokens and was purpose-built for Arabic, listing it as a primary language alongside 17 additional languages.
+
+On the Open Arabic LLM Leaderboard (OALL v2), Falcon-H1-Arabic-3B achieved an average score of approximately 62\%, roughly 10 points ahead of competing models at the same parameter count. The model was released in May 2025 under an open license. In FP16 precision, the model requires approximately 10--11\,GB of VRAM including SSM state buffers, fitting on both T4 and A100 GPUs without quantization.
+
+\subsubsection{Jais-2-8B}
+\label{sec:jais2}
+
+Jais-2-8B-Chat is an 8.09 billion parameter Arabic-centric language model developed collaboratively by Inception (G42), Mohamed bin Zayed University of Artificial Intelligence (MBZUAI), and Cerebras \cite{sengupta_2023_jais}. The model employs a standard decoder-only Transformer architecture with Rotary Position Embeddings (RoPE), Squared-ReLU activation, and LayerNorm. It contains 32 layers with a hidden size of 3,328 and 26 attention heads.
+
+A distinguishing feature of Jais-2 is its Arabic-centric vocabulary of 150,272 tokens, trained from scratch to optimize Arabic tokenization efficiency. The model was pre-trained on 2.6 trillion tokens---6.6 times more data than its predecessor Jais-1---with substantial Arabic and English representation. The instruction-tuned variant was refined through a three-stage alignment pipeline comprising Supervised Fine-Tuning (SFT) on approximately 4 million Arabic and 10 million English prompt-response pairs, followed by DPO, and finally Group Relative Policy Optimization (GRPO).
+
+On the AraGen-12-24 benchmark, Jais-2-8B-Chat achieved an overall 3C3H score of 58.64\%, outperforming Fanar-1-9B and ALLaM-7B. The model was released in December 2024 under Apache 2.0 license (gated access). It requires BF16 precision due to Squared-ReLU activation overflow in FP16, using approximately 16.6\,GB of VRAM on the A100.
+
+\subsubsection{ALLaM-7B}
+\label{sec:allam}
+
+ALLaM-7B-Instruct-preview is a 7 billion parameter Arabic-English language model developed by the National Center for Artificial Intelligence (NCAI) at the Saudi Data and Artificial Intelligence Authority (SDAIA) \cite{bari2025allam}. Published at the International Conference on Learning Representations (ICLR) 2025, ALLaM employs the LlamaForCausalLM architecture with an expanded vocabulary of 64,000 tokens (doubled from Llama-2's 32K to accommodate Arabic).
+
+The model was trained from scratch in two phases: (1) a foundation phase on 4 trillion English tokens, followed by (2) continued pre-training on 1.2 trillion mixed Arabic-English tokens at a 45\%/45\%/10\% Arabic/English/code ratio, totaling 5.2 trillion training tokens. The Arabic data comprised approximately 540 billion tokens, half of which were machine-translated from English sources. Instruction tuning was performed on 6 million samples, and alignment was achieved via DPO on approximately 245K preference pairs.
+
+On the Arabic Massive Multitask Language Understanding (MMLU) benchmark, ALLaM achieved a 0-shot score of 67.78. The model was released in February 2025 under Apache 2.0 license. Notably, the publicly available version carries ``preview'' (alpha) status, indicating that it may not fully reflect the capabilities described in the published paper. The model requires approximately 14.5\,GB of VRAM in FP16 on the A100.
+
+\subsubsection{SILMA Kashif-2B}
+\label{sec:silma}
+
+SILMA Kashif-2B-Instruct is a 2 billion parameter language model developed by SILMA AI, an Arabic AI startup, with a specific focus on Arabic RAG applications \cite{silma_2024}. The model was optimized for extractive question answering in Arabic, achieving a RAG Question Answering (RAGQA) benchmark score of 0.3575, which placed it at the top of the 3--9 billion parameter range on this benchmark.
+
+The model supports a context length of 12K tokens and operates in FP16 precision, requiring approximately 4--5\,GB of VRAM. Its small size makes it the most computationally efficient model in the comparison, suitable for deployment on consumer-grade hardware without quantization.
+
+\subsection{Multilingual Models}
+\label{sec:multilingual_models}
+
+\subsubsection{Qwen 2.5 3B}
+\label{sec:qwen25_3b}
+
+Qwen 2.5-3B-Instruct is a 3.09 billion parameter multilingual language model developed by the Qwen Team at Alibaba Cloud \cite{qwen2_5_2024}. The model employs a standard decoder-only Transformer architecture with GQA (16 query heads, 2 key-value heads), RMSNorm, SiLU activation, and a vocabulary of 151,936 tokens. It was pre-trained on approximately 18 trillion tokens spanning 29 or more languages, with Arabic included as a supported language.
+
+Qwen 2.5-3B-Instruct was released in September 2024 under Apache 2.0 license. The model requires approximately 6\,GB of VRAM in FP16, fitting comfortably on the T4 GPU. In the context of this thesis, Qwen 2.5-3B served as the reference model for the first Query2Doc experiment, establishing the initial query enhancement baseline.
+
+\subsubsection{Qwen 2.5 7B}
+\label{sec:qwen25_7b}
+
+Qwen 2.5-7B-Instruct is the 7 billion parameter variant in the same model family \cite{qwen2_5_2024}. It shares the same architecture and tokenizer as the 3B variant but with a wider hidden dimension and more attention heads, resulting in stronger performance across multilingual benchmarks (MMLU: 74.2). The model requires 4-bit quantization to fit on the T4 GPU but operates in full FP16 precision on the A100. Pre-quantized versions are available from both the Qwen team and the Unsloth community.
+
+\subsubsection{Qwen3-4B}
+\label{sec:qwen3_4b}
+
+Qwen3-4B is a 4.0 billion parameter (3.6 billion non-embedding) next-generation language model from the Qwen Team \cite{qwen3_2025}. Released in May 2025, it represents a significant architectural evolution over Qwen 2.5: the number of supported languages was expanded from 29 to 119 (including eight Arabic dialects: MSA, Najdi, Levantine, Egyptian, Moroccan, Mesopotamian, Ta'izzi-Adeni, and Tunisian), training data was doubled to approximately 36 trillion tokens, and attention capacity was increased to 32 query heads with 8 key-value heads.
+
+A notable feature of Qwen3 is its built-in \textit{thinking mode}, which generates internal reasoning within special tags before producing the final answer. For query expansion tasks, this thinking mode must be explicitly disabled to prevent reasoning artifacts from contaminating the generated pseudo-documents. The model also requires sampling-based decoding; greedy decoding causes performance degradation and repetitive output.
+
+Qwen3-4B matches or exceeds Qwen 2.5-7B on many benchmarks despite having fewer parameters, achieving an MMMLU (multilingual MMLU) score of 71.42. It operates in FP16 precision requiring approximately 8.5\,GB of VRAM.
+
+\subsubsection{Qwen3-8B}
+\label{sec:qwen3_8b}
+
+Qwen3-8B is the 8 billion parameter variant of the Qwen3 family \cite{qwen3_2025}, sharing the same architectural innovations as Qwen3-4B including 119-language support, thinking mode, and 36 trillion training tokens. As the larger variant, it provides stronger language understanding and generation capabilities. Like Qwen3-4B, thinking tags must be stripped from generated output when used for query expansion. The model operates in FP16 on the A100 GPU.
+
+\subsubsection{Gemma 3 4B-IT}
+\label{sec:gemma3}
+
+Gemma 3 4B-IT is a 4 billion parameter instruction-tuned language model developed by Google DeepMind \cite{gemma3_2025}. Released in March 2025, it supports over 140 languages and features a context length of 128K tokens. The model employs a standard dense Transformer architecture with multimodal capabilities (vision and text), though only the text modality was used in this thesis.
+
+Despite its broad language coverage, Gemma 3 exhibited the weakest Arabic performance among the tested models, scoring approximately 10 points below Falcon-H1-Arabic-3B on the OALL benchmark. It serves as a lower-bound comparison point in the model evaluation, representing a general-purpose multilingual model without Arabic-specific optimization.
+
+\subsubsection{Aya Expanse 8B}
+\label{sec:aya}
+
+Aya Expanse 8B is an 8 billion parameter multilingual language model developed by Cohere Labs (CohereForAI), purpose-built for 101 languages with Arabic as one of the explicitly optimized languages \cite{aya_2024}. The model was trained using a data-centric approach that emphasizes high-quality multilingual training data and achieves an 83.9\% win rate against Llama-3.1-8B-Instruct in multilingual evaluations.
+
+Aya Expanse employs a standard Transformer architecture and was loaded with 4-bit NF4 quantization in the experiments due to its 8 billion parameter size. Despite the quantization, it demonstrated strong Arabic generation quality, suggesting that architecture and training data quality outweigh precision for this task. The model is distributed under a CC-BY-NC-4.0 (non-commercial) license.
+
+\subsection{Experimental Models}
+\label{sec:experimental_models}
+
+\subsubsection{GPT-OSS-20B}
+\label{sec:gptoss}
+
+GPT-OSS-20B is a 20.91 billion parameter language model released by OpenAI in August 2025 \cite{gptoss_2025}---the organization's first open-source model. It employs a Mixture-of-Experts (MoE) Transformer architecture with 32 experts and top-4 routing per token, resulting in only 3.61 billion active parameters per forward pass despite the large total parameter count. The architecture features 24 layers with alternating sliding-window and full attention patterns, GQA (64 query heads, 8 key-value heads), and a vocabulary of 201,088 tokens using the \texttt{o200k\_harmony} byte-pair encoding tokenizer.
+
+The model's MoE expert weights are natively quantized to MXFP4 (Microscaling FP4) precision during training, achieving an effective 4.25 bits per parameter. This quantization-aware training means that the published benchmarks reflect MXFP4 performance rather than post-training quantization losses.
+
+On the Arabic MMMLU benchmark, GPT-OSS-20B scored 76.3 (high reasoning effort), while on the community ILMAAM Arabic benchmark it achieved approximately 58\%. The model's training data is predominantly English, with no disclosed Arabic data proportions, and the model card explicitly warns that ``GPT-OSS may not perform as well in other languages or may prefer English responses.'' This model was included in the comparison to evaluate whether a powerful English-dominant MoE architecture can perform effective Arabic query expansion without language-specific training.
+
+\subsection{Retrieval Models}
+\label{sec:retrieval_models}
+
+\subsubsection{Multilingual Dense Passage Retriever (mDPR)}
+\label{sec:mdpr}
+
+The Multilingual Dense Passage Retriever (mDPR) \cite{karpukhin_2020_dense} is a bi-encoder dense retrieval model based on multilingual BERT. In this thesis, the pre-built mDPR index for MIRACL Arabic was used, which encodes the 2.1 million Arabic Wikipedia passages into dense vectors. mDPR was intentionally selected as the dense baseline because it was \textit{not} fine-tuned on MIRACL training data, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice provides a more realistic evaluation of query enhancement effectiveness, as improvements cannot be attributed to the retriever having memorized the evaluation queries.
+
+\subsubsection{BM25S}
+\label{sec:bm25s}
+
+BM25S \cite{bm25s_2024} is a Python-native implementation of the BM25 algorithm that eliminates the Java dependencies required by traditional implementations such as Pyserini. In this thesis, BM25S was used with default parameters ($k_1 = 1.5$, $b = 0.75$) over the MIRACL Arabic passage collection. BM25S was selected over Pyserini for its simpler deployment pipeline and faster iteration speed, achieving 96\% of the Pyserini BM25 baseline performance on the MIRACL Arabic evaluation set.
+
+\subsection{Model Comparison Summary}
+\label{sec:model_summary}
+
+Table~\ref{tab:model_comparison} presents a comparative summary of all language models used in the experiments. The models span a range of parameter counts from 2 billion to 20.9 billion, encompassing Arabic-specialized, multilingual, and experimental architectures.
+
+\begin{table}[htbp]
+\caption{Summary of language models used in the experiments.}
+\label{tab:model_comparison}
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}l l r l l l@{}}
+\toprule
+\textbf{Model} & \textbf{Developer} & \textbf{Params} & \textbf{Architecture} & \textbf{Arabic Focus} & \textbf{License} \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Arabic-Specialized}} \\
+Falcon-H1-3B & TII & 3.15B & Hybrid Mamba2-Trans. & Primary & Open \\
+Jais-2-8B & MBZUAI/Inception & 8.09B & Decoder-only Trans. & Primary & Apache 2.0 \\
+ALLaM-7B & SDAIA & 7.0B & LlamaForCausalLM & Primary & Apache 2.0 \\
+SILMA Kashif-2B & SILMA AI & 2.0B & Decoder-only Trans. & Primary & Open \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Multilingual}} \\
+Qwen 2.5 3B & Alibaba & 3.09B & Decoder-only Trans. & 29+ langs & Apache 2.0 \\
+Qwen 2.5 7B & Alibaba & 7.0B & Decoder-only Trans. & 29+ langs & Apache 2.0 \\
+Qwen3-4B & Alibaba & 4.0B & Decoder-only Trans. & 119 langs & Apache 2.0 \\
+Qwen3-8B & Alibaba & 8.0B & Decoder-only Trans. & 119 langs & Apache 2.0 \\
+Gemma 3 4B & Google DeepMind & 4.0B & Decoder-only Trans. & 140+ langs & Gemma TOU \\
+Aya Expanse 8B & Cohere Labs & 8.0B & Decoder-only Trans. & 101 langs & CC-BY-NC \\
+\midrule
+\multicolumn{6}{@{}l}{\textit{Experimental}} \\
+GPT-OSS-20B & OpenAI & 20.9B\textsuperscript{*} & MoE Transformer & English-dom. & Apache 2.0 \\
+\bottomrule
+\multicolumn{6}{@{}l}{\footnotesize \textsuperscript{*}3.61B active parameters per token due to MoE routing (32 experts, top-4).} \\
+\end{tabularx}
+\end{table}
+
+%======================================================================
+\section{Related Work}
+\label{sec:related_work}
+%======================================================================
+
+This section reviews the published literature on query enhancement for information retrieval and RAG systems, organized chronologically and thematically. The review progresses from foundational work on generative query expansion to modern approaches using smaller LLMs, and concludes with Arabic-specific information retrieval research.
+
+\subsection{Foundational Query Enhancement Research (2022--2023)}
+\label{sec:foundational_qe}
+
+The foundational work on LLM-based query enhancement was conducted using large proprietary models. Gao et al. \cite{gao_2022_precise} introduced HyDE, which demonstrated that an instruction-following LLM (InstructGPT, 175B parameters) could generate hypothetical documents for zero-shot dense retrieval, achieving performance comparable to supervised models without requiring any relevance labels. HyDE's key insight was that document-to-document similarity is more reliable than query-to-document similarity, and that even hallucinated documents capture useful relevance patterns when encoded through a dense bottleneck.
+
+Wang et al. \cite{wang_2023_query2doc} extended this concept with Query2Doc, which generates pseudo-documents and concatenates them with the original query rather than replacing it. Using \texttt{text-davinci-003} (175B parameters) with few-shot prompting, Query2Doc achieved 3--15\% improvement over BM25 and made sparse retrieval competitive with state-of-the-art dense methods. Critically, the authors tested smaller models (OPT-1.3B and OPT-6.7B) and found them insufficient for quality query expansion---a finding that has since been challenged by newer, more capable small models. For sparse retrieval, the paper introduced query repetition (repeating the original query 5 times before concatenation) to prevent term dilution.
+
+Mackie et al. \cite{mackie_2023_grf} proposed Generative Relevance Feedback (GRF), which uses GPT-3 to generate diverse content types (keywords, essays, facts, news articles) as feedback for query expansion. GRF achieved 5--19\% improvement in MAP and 17--24\% in NDCG@10 over BM25+RM3 baselines. In subsequent work \cite{mackie_2023_grf_dense}, the authors extended GRF to dense and learned sparse retrieval models, demonstrating approximately 9--10\% improvement in NDCG@20. A key finding was that GRF and traditional pseudo-relevance feedback are complementary: their fusion achieved the best Recall@1000 in 17 out of 18 experiments.
+
+Ma et al. \cite{ma_2023_query} introduced the Rewrite-Retrieve-Read framework, which employs a trainable T5-large model as a query rewriter optimized via reinforcement learning from the downstream reader's performance. This work demonstrated that small, trainable models can effectively improve the performance of large, frozen LLMs by operating at the query formulation stage.
+
+A common characteristic of all foundational work is the reliance on 175B-parameter models (the GPT-3 family) for query expansion, with smaller models either untested or found inadequate.
+
+\subsection{Modern LLM-Based Query Enhancement (2024--2025)}
+\label{sec:modern_qe}
+
+The period from 2024 to 2025 saw significant progress in demonstrating that moderately-sized open-source LLMs (7--8B parameters) can perform effective query expansion, overturning the assumption that 175B-scale models are necessary.
+
+Lei et al. \cite{lei_2024_csqe} proposed Corpus-Steered Query Expansion (CSQE), which uses the target corpus to guide LLM-generated expansions. Testing with Llama2-7B, 13B, and 70B, the authors found that even the 7B model achieved a 30\% improvement in mean Average Precision (mAP) over the BM25 baseline (39.1 vs.\ 30.1), with larger models providing diminishing returns. This was among the first demonstrations that modern 7B models could perform meaningful query expansion.
+
+Zhang et al. \cite{zhang_2024_mugi} introduced MUGI (Multi-Granularity Indexing), which combines LLM-generated query expansions with a small bi-encoder retriever. The approach achieved up to 18\% NDCG improvement with GPT-4-generated expansions, and demonstrated that even a 23-million-parameter bi-encoder can benefit from high-quality expansions.
+
+Several additional studies confirmed the viability of smaller models for query enhancement. Zhang et al. \cite{zhang_2025_pbr} demonstrated personalized query expansion with GPT-4o-mini (approximately 8B parameters), achieving 10.5\% Recall@5 improvement. Yoon et al. \cite{yoon_2025_llm_retrieval} tested Llama-3.1-8B and Mistral-7B for query expansion, finding that all tested LLMs improved retrieval performance and that 8B models approached GPT-4-level effectiveness. Xia et al. \cite{xia_2025_kar} proposed Knowledge-Augmented Retrieval (KAR), showing that structured knowledge from Llama-3.1-8B was sufficient to achieve 36 MRR points improvement over HyDE. Yang et al. \cite{yang_2025_aqe} demonstrated aligned query expansion with Mistral-7B, achieving 17.8\% accuracy improvement through alignment fine-tuning. Lei et al. \cite{lei_2025_thinkqe} proposed ThinkQE, which leverages chain-of-thought reasoning in a Qwen-14B model to surpass GPT-4-based expansion methods.
+
+Research on knowledge distillation further reduced the model size requirements. Young et al. \cite{young_2024_gaqr} proposed GaQR, which distills query rewriting capabilities from GPT-3.5 into Llama2-7B via a three-phase pipeline (generation, verification, distillation), achieving 4--9x faster inference than chain-of-thought methods. Chan et al. \cite{chan_2024_rqrag} introduced RQ-RAG, which trains Llama2-7B to autonomously refine queries through rewriting, decomposition, and disambiguation, achieving state-of-the-art performance for 7B-parameter models on multi-hop QA tasks. Louis and Bhusal \cite{louis_2024_query} further demonstrated that knowledge distillation from GPT-3.5 to Flan-T5-base (approximately 250M parameters) can produce effective query augmentation, suggesting a path toward extremely efficient deployment.
+
+Zhang et al. \cite{zhang_2025_qerag} addressed query robustness with QE-RAG, a benchmark specifically designed to evaluate RAG system performance under query entry errors (typos, misspellings, visual similarities). Their findings demonstrated that query enhancement techniques significantly improve retrieval robustness against noisy inputs---a characteristic analogous to the morphological and orthographic variations present in Arabic queries.
+
+Collectively, this body of work demonstrates that the model size requirement for effective query expansion has decreased dramatically: from 175B parameters in 2022--2023 to 7--8B parameters in 2024--2025, with further compression possible via knowledge distillation. However, a critical gap remains: \textit{none of these studies tested models smaller than 7B for zero-shot query expansion on Arabic text}.
+
+\subsection{Arabic Information Retrieval and RAG}
+\label{sec:arabic_ir}
+
+Research on Arabic-specific RAG systems has begun to establish baselines, though work on query enhancement for Arabic remains scarce.
+
+Zhang et al. \cite{zhang_2023_miracl} introduced MIRACL (Multilingual Information Retrieval Across a Continuum of Languages), a large-scale multilingual retrieval benchmark covering 18 languages including Arabic. The Arabic subset contains over 2.1 million Wikipedia passages with human-annotated relevance judgments for 2,896 development queries and 799 test queries, making it the primary evaluation resource for Arabic retrieval research.
+
+Alsubhi et al. \cite{alsubhi_2025_optimizing} conducted the first systematic analysis of RAG pipeline components for Arabic. Testing chunking strategies, embedding models, rerankers, and generators, they found that sentence-aware chunking outperformed fixed-size and semantic chunking for Arabic text, and that multilingual embedding models (BGE-M3, multilingual E5-large) outperformed Arabic-specific models for retrieval. They also identified Aya-8B as a superior generator for semantically dense Arabic content compared to StableLM-1.6B.
+
+El-Beltagy and Abdallah \cite{elbeltagysamhaar_2024_exploring} explored RAG applications for Arabic, benchmarking twelve embedding models and five LLMs. Their work revealed that E5 and BGE models exhibited remarkable robustness to Arabic dialectal variations in queries, and that open-source models (Llama 3, Mistral 7B) performed comparably to GPT-3.5 Turbo for Arabic text generation in RAG contexts.
+
+These studies establish that Arabic RAG systems can achieve reasonable performance with existing multilingual tools. However, they focus primarily on the retrieval and generation components of the pipeline. The query formulation stage---specifically, whether LLM-based query enhancement techniques developed for English transfer effectively to Arabic---remains uninvestigated.
+
+\subsection{Research Gap}
+\label{sec:research_gap}
+
+The literature review reveals a clear gap at the intersection of two well-studied areas:
+
 \begin{enumerate}
-    \item Group research studies according to common Denominators. Point out overall trends in what has been published
-    \item Summarize individual studies or articles with as much or as little detail as each merits. Build research citations on each other.
-    \item  Summarize major contributions of significant studies and articles to the body of knowledge under review.
-    \item Evaluate the current "state of the art" for the body of knowledge reviewed,
+    \item \textbf{LLM-based query enhancement} has been extensively studied for English, with recent work demonstrating that 7--8B parameter models are sufficient for effective query expansion (Section~\ref{sec:modern_qe}). However, none of these studies evaluate Arabic or other morphologically rich languages.
+    \item \textbf{Arabic RAG systems} have established retrieval and generation baselines (Section~\ref{sec:arabic_ir}), but query enhancement techniques---which operate upstream of both retrieval and generation---have not been investigated for Arabic.
 \end{enumerate}
+
+Specifically, the following questions remain unanswered:
+
+\begin{itemize}
+    \item Can modern open-source LLMs (2--8B parameters) perform effective zero-shot query expansion for Arabic information retrieval?
+    \item How do Arabic-specialized models compare against multilingual models for this task?
+    \item Does the Query2Doc technique, originally validated with 175B-parameter models on English text, transfer to Arabic with smaller models?
+    \item What model characteristics (parameter count, architecture, Arabic training data volume, vocabulary design) most influence query expansion quality for Arabic?
+\end{itemize}
+
+This thesis addresses these questions through a systematic evaluation of eleven open-source language models for Query2Doc-based query expansion on the MIRACL Arabic benchmark, as described in the following chapter.
+
+%======================================================================
+\section{Chapter Summary}
+\label{sec:chapter_summary}
+%======================================================================
+
+This chapter established the theoretical and empirical foundations for the research presented in this thesis. The key points are summarized as follows:
+
+\begin{itemize}
+    \item RAG systems address the hallucination and knowledge staleness limitations of LLMs by incorporating external knowledge retrieval (Section~\ref{sec:rag}), but their effectiveness is bounded by retrieval quality.
+    \item Information retrieval can be performed via sparse methods (BM25), dense methods (DPR), or their combination, each with distinct strengths (Section~\ref{sec:ir_methods}).
+    \item Query enhancement techniques---particularly LLM-based generative expansion---offer a modular approach to improving retrieval effectiveness without modifying the index or generator (Section~\ref{sec:qe_techniques}).
+    \item Arabic presents unique challenges for information retrieval due to morphological richness, diglossia, and orthographic variations (Section~\ref{sec:arabic_challenges}).
+    \item The mathematical models for BM25 scoring, cosine similarity, and the evaluation metrics Recall@$k$, NDCG@$k$, and MRR were formulated (Section~\ref{sec:math_models}).
+    \item Eleven language models spanning Arabic-specialized, multilingual, and experimental architectures were described for use in the comparative evaluation (Section~\ref{sec:models_used}).
+    \item Recent literature demonstrates that 7--8B parameter models are sufficient for English query expansion, but no study has evaluated this approach for Arabic (Section~\ref{sec:related_work}).
+    \item A clear research gap exists at the intersection of query enhancement techniques and Arabic information retrieval, which this thesis addresses through systematic model comparison on the MIRACL benchmark (Section~\ref{sec:research_gap}).
+\end{itemize}
+
+The following chapter presents the methodology employed to address this research gap, describing the experimental design, dataset, evaluation pipeline, and the specific configurations used for each model.
