@@ -1,7 +1,7 @@
 # 🧬 RESEARCH_CONTEXT_KERNEL.md
 **Project:** Improving Retrieval Recall in Arabic RAG Systems via Query Enhancement
-**Status:** Phase 3 - Thesis Writing & Phase 4 - Expanded Experiments
-**Last Updated:** 27/3/2026
+**Status:** Phase 3 - Thesis Writing & Phase 4 - Expanded Experiments (Lit Review & Planning Complete)
+**Last Updated:** 3/4/2026
 
 ---
 
@@ -30,11 +30,16 @@
 *   **Writing guide:** `research_decisions/thesis_writing_guide.md`
 *   **Deadline:** Mid-April 2026 (thesis draft + all practical work)
 
-### Phase 4 — Expanded Experiments: ⏳ PLANNING
-*   **Goal:** Build on Query2Doc with chunking-aware QE or other techniques
-*   **Constraint:** Must be consistent with existing work, not a new path
-*   **Research needed:** Literature review of chunking-aware QE, brainstorming, idea selection
+### Phase 4 — Expanded Experiments: 🔄 IN PROGRESS (Literature Review & Planning Complete)
+*   **Goal:** Build on Query2Doc with corpus-steered QE and hybrid retrieval
+*   **Literature review:** ✅ Complete (3 April 2026) — 50+ papers across 5 directions reviewed
+*   **Direction selected:** Corpus-Steered Query2Doc ("The Mufti Approach") as main contribution
+*   **Critical discovery:** MIRACL hybrid baseline (BM25+mDPR, α=0.5) = 0.673 nDCG@10 (VERIFIED from MIRACL paper Table 2) — exceeds our best QE result. Must implement hybrid baseline before final claims.
+*   **BM25 degradation root cause:** Missing query repetition (n=5) from original Query2Doc paper — 1-hour fix
+*   **Plan:** `research_decisions/phase4_experiment_plan.md` (3 directions, lean critical path)
+*   **Quick wins guide:** `research_decisions/phase4_quickwins_plan.md` (detailed implementation notes)
 *   **Publication:** Dr. Tahani encouraged publishing a paper (pre-print or journal)
+*   **Research docs:** See Task 6.1 outcomes in `TASKS.md` for full list
 
 ### What was done (chronological):
 *   Landscape analysis, dataset selection, baseline pipeline design (Jan 2026)
@@ -63,8 +68,8 @@
     - Decision: Use BM25S instead of Pyserini (no Java dependencies)
     - Results: 96% of MIRACL baseline, 2% difference acceptable
     - Status: Implementation complete, experiment documentation in progress
-*   **Hybrid:** Optional third comparison if time permits
-*   **Rationale:** Testing separately gives more insight into where improvements come from
+*   **Hybrid:** ⏳ Planned for Phase 4 — MIRACL paper reports BM25+mDPR hybrid = 0.673 nDCG@10 (VERIFIED). Must implement as Phase 4 baseline.
+*   **Rationale:** Testing separately gives more insight into where improvements come from. Hybrid fusion is now a key part of Phase 4 experiments.
 *   **Details:** See `meetings/6.1.2026_meeting_outcomes.md`, `meetings/23.1.2026.md`
 
 ### C. The Approach: **Technology-Oriented** ✅ Confirmed
@@ -161,13 +166,24 @@
 *   **Context:** Related to error analysis, important for iterative prompt optimization
 *   **Meeting:** `meetings/23.1.2026.md`
 
-### E. Hierarchical Structures / Chunking-Aware QE ⏳ Phase 4 (Mar 2026)
-**Status:** Planning — next research priority
+### E. Corpus-Steered Query2Doc ("The Mufti Approach") 🔄 Phase 4 (Apr 2026)
+**Status:** Literature Review ✅ Complete — Implementation Next
 *   *Context:* Mohamed Rashad suggested context injection; team wants to build on Query2Doc
-*   *Goal:* Use knowledge of knowledge base structure (chunks, hierarchy, metadata) to improve QE
-*   *Constraint:* Must be consistent extension of Query2Doc work, not a new path
-*   *Papers to review:* Rebarter and related chunking-aware approaches
-*   *Current Stance:* Active research track — Task 6.1 in TASKS.md
+*   *Analogy (from advisor):* A mufti (scholar) doesn't memorize everything — he knows WHERE to search. Similarly, if our QE system knows the corpus structure, it generates better-targeted expansions.
+*   *Goal:* Ground Query2Doc in actual corpus structure: article titles, passage positions, first-pass retrieved context
+*   *Constraint:* Must be consistent extension of Query2Doc work — same LLM, same retriever, just add corpus context to the prompt
+*   *Literature review:* 50+ papers reviewed across 5 directions (see `research_decisions/phase4_literature_review.md` and 3 companion docs)
+*   *Selected approach:* BM25 first-pass → extract metadata (article titles, passage positions) → feed context to LLM → corpus-grounded pseudo-document → dense retrieval
+*   *Key papers:* CSQE (Lei et al., EACL 2024), BMQExpander (2025), DAPR (Wang et al., ACL 2024)
+*   *Additional findings:*
+    - BM25 degradation fixable with query repetition (n=5) — original Query2Doc paper
+    - MIRACL hybrid baseline (0.673 nDCG@10) exceeds our best QE (0.616) — must implement
+    - HyDE vs Query2Doc comparison on Arabic doesn't exist — novel contribution
+*   *Documentation:*
+    - Master plan: `research_decisions/phase4_experiment_plan.md`
+    - Quick wins: `research_decisions/phase4_quickwins_plan.md`
+    - Literature: `research_decisions/phase4_literature_review.md` + 3 companion docs
+    - Tasks: `TASKS.md` Tasks 6.3a/b/c
 
 ### F. Embedding Model Selection ✅ RESOLVED (9/1/2026)
 **Status:** Decided - Pyserini Pre-built Indexes
@@ -368,11 +384,13 @@ When interacting with this codebase, the Agent should:
 - [ ] **Task 5.7:** Front matter & Appendices
 
 ### Upcoming (Phase 4: Expanded Experiments)
-- [ ] **Task 6.1:** Literature review — chunking-aware QE and other extensions
-- [ ] **Task 6.2:** Brainstorm & select approach (must build on Query2Doc logically)
-- [ ] **Task 6.3:** Implement expanded experiments
-- [ ] **Task 6.4:** Update thesis with new results
+- [x] **Task 6.1:** Literature review — 50+ papers across 5 directions ✅ (3 Apr 2026)
+- [x] **Task 6.2:** Select approach & plan experiments ✅ (3 Apr 2026) — 3 directions selected, lean critical path defined
+- [ ] **Task 6.3a:** Quick wins — BM25 fix, hybrid baseline, HyDE comparison, prompt variants
+- [ ] **Task 6.3b:** Corpus-Steered Query2Doc (main contribution) — context extraction, generation, ablation
+- [ ] **Task 6.3c:** Hybrid + QE fusion — 4-way fusion, retriever-specific prompts
+- [ ] **Task 6.4:** Update thesis with new results (Chapters 2, 3, 4, 5)
 - [ ] **Task 6.5:** Evaluate publication potential
 
-*Details:* See `TASKS.md`
+*Details:* See `TASKS.md`, `research_decisions/phase4_experiment_plan.md`
 

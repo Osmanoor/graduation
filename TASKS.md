@@ -1100,85 +1100,207 @@ NOTE: AI decisions documented in research_decisions/THESIS_DRAFT_AI_DECISIONS_RE
 
 ## Phase 4: Expanded Experiments & Research (March–April 2026)
 
-**Goal:** Build on Query2Doc results to make a stronger, publishable contribution. Explore chunking-aware query enhancement and other techniques that logically extend our current work.
-**Constraint:** Must be consistent with existing Query2Doc work — not a completely new path, but a logical addition.
+**Goal:** Build on Query2Doc results to make a stronger, publishable contribution.
+**Constraint:** Must be consistent with existing Query2Doc work — a logical extension, not a new path.
 **Deadline:** Mid-April 2026 (practical work must be done before May exams)
+**Primary Contribution:** Corpus-Steered Query2Doc ("The Mufti Approach") — grounding QE in corpus structure
+
+**Lean Critical Path:**
+```
+Phase A: Fix foundations (2 days)     → BM25 repetition fix + hybrid baseline
+Phase B: Mufti research (done)       → Literature review complete
+Phase C: Implementation (1.5-2 wks)  → Corpus-steered pipeline + quick wins
+Phase D: Combine & analyze (3-5 days)→ Full pipeline + thesis updates
+```
 
 ---
 
-### Task 6.1: Literature Review — Chunking-Aware Query Enhancement
+### Task 6.1: Literature Review — Query2Doc Extensions & Knowledge-Aware QE
 **Owner:** Both (Mohammed leads, with AI research assistance)
-**Status:** ⏳ Not Started
-**Depends On:** None (can start immediately, in parallel with thesis writing)
+**Status:** ✅ Done (3 April 2026)
+**Depends On:** None
 
-**Why:** We want to explore how knowledge of the knowledge base structure (chunks, hierarchy, metadata) can improve query enhancement. This could be our key research contribution beyond basic Query2Doc.
+**Why:** We wanted to map ALL directions that extend Query2Doc or relate to knowledge-aware QE, then select the most promising for our thesis contribution.
+
+**Context Files (created):**
+- `research_decisions/phase4_literature_review.md` — Knowledge-aware QE directions (A-I), 16 papers
+- `research_decisions/qe_techniques_comparison_research.md` — QE technique landscape (HyDE, GRF, MuGI, CoT, etc.), 20 papers
+- `research_decisions/bm25_sparse_qe_strategies.md` — BM25 term dilution fixes, 18 papers
+- `research_decisions/hybrid_retrieval_qe_literature_review.md` — Hybrid retrieval + QE, 17 papers
+
+**Outcomes:** *(Completed 3 April 2026)*
+```
+Reviewed 50+ papers across 5 research directions:
+1. Improving Query2Doc itself (HyDE, MuGI, CoT-QE, CSQE, etc.)
+2. Knowledge-base-aware QE ("mufti analogy" — corpus structure in prompts)
+3. Hybrid retrieval + QE (BM25+mDPR fusion, retriever-specific expansion)
+4. BM25-specific fixes (query repetition, rank fusion, controlled generation)
+5. Other QE techniques (GRF, RAG-Fusion, iterative approaches)
+
+KEY FINDINGS:
+- BM25 degradation (6/9 models) is caused by missing query repetition — KNOWN FIX
+- MIRACL hybrid baseline (BM25+mDPR, alpha=0.5) = 0.673 nDCG@10 (VERIFIED from
+  MIRACL paper Table 2) — exceeds our best QE result (0.616) by 9%
+- No paper does corpus-steered QE for Arabic — this is our novel contribution
+- HyDE vs Query2Doc comparison doesn't exist for Arabic — another gap we can fill
+- Knowledge leakage concern (Yoon et al.) makes our Arabic eval more rigorous
+- Macmillan-Scott et al. (2025) validates Aya Expanse for Arabic QE
+
+SELECTED 3 DIRECTIONS (prioritized):
+1. Quick Wins: BM25 fix, hybrid baseline, HyDE comparison, prompt variants
+2. Hybrid + QE Fusion: 4-way fusion, retriever-specific prompts
+3. Corpus-Steered Query2Doc ("Mufti Approach"): THE main thesis contribution
+```
+
+---
+
+### Task 6.2: Select Approach & Plan Experiments
+**Owner:** Both
+**Status:** ✅ Done (3 April 2026)
+**Depends On:** Task 6.1 ✅
+
+**Why:** Need concrete experiment plan before implementation.
 
 **Context Files:**
-- Previous papers on chunking-aware approaches (Rebarter, etc.) — referenced in earlier meetings
-- `papers/` — existing paper summaries
-- `research_decisions/llm_model_research.md` — context on current approach
+- `research_decisions/phase4_experiment_plan.md` — Master experiment plan (3 directions, timeline, dependencies)
+- `research_decisions/phase4_quickwins_plan.md` — Detailed implementation guide for Direction 1
 
-**Deliverables:**
-- [ ] Collect and review all papers on chunking-aware QE, knowledge-base-aware QE, hierarchical retrieval
-- [ ] Summarize each approach: what they did, what gap remains
-- [ ] Create `research_decisions/chunking_aware_qe_research.md` with findings
-- [ ] Identify ideas that can logically build on our Query2Doc pipeline
+**Outcomes:** *(Completed 3 April 2026)*
+```
+DECISION: 3 directions selected with lean critical path:
+
+Direction 1 (Quick Wins — 5-7 days):
+  1.1 BM25 query repetition fix (n=5) — 1 day, no new LLM calls
+  1.2 Hybrid baseline (BM25+mDPR CC fusion) — 0.5 days
+  1.3 HyDE vs Query2Doc comparison — 1 day (novel for Arabic)
+  1.4 Prompt variants (CoT, keywords, rewrite) — 2-3 days
+
+Direction 2 (Hybrid + QE Fusion — 4-6 days):
+  2.1 4-way fusion (BM25_orig + BM25_exp + mDPR_orig + mDPR_exp)
+  2.2 Retriever-specific prompts (keywords for BM25, paragraphs for mDPR)
+  2.3 Dual-list BM25 fusion (Exp4Fuse-style)
+
+Direction 3 (Corpus-Steered QE — 8-10 days, MAIN CONTRIBUTION):
+  3.1 First-pass context extraction + coverage analysis
+  3.2 Context-aware pseudo-document generation
+  3.3 Ablation study (title only / passage only / full context / K values)
+  3.4 Full pipeline (corpus-steered + hybrid)
+
+STRONGEST THESIS CONTRIBUTION: Direction 3 (Corpus-Steered Query2Doc)
+- Novel: no existing paper does this for Arabic
+- Implements the "mufti analogy" (knowing WHERE to search)
+- Clean thesis narrative: blind → corpus-grounded → expert search
+- Publication potential: clear standalone paper contribution
+
+LEAN CRITICAL PATH: Do foundations first (1.1, 1.2), then Direction 3,
+then combine. Directions 1.3, 1.4, 2.x are valuable but not prerequisites.
+```
 
 ---
 
-### Task 6.2: Brainstorm & Select Expanded Experiment Approach
-**Owner:** Both (with AI as research assistant)
+### Task 6.3a: Implement Quick Wins (Direction 1)
+**Owner:** Mohammed
 **Status:** ⏳ Not Started
-**Depends On:** Task 6.1
+**Depends On:** Task 6.2 ✅
 
-**Why:** Need to select the best approach that (a) builds logically on Query2Doc, (b) represents a true contribution, (c) is feasible within our timeline and resources.
+**Why:** Fix known pipeline weaknesses, establish strongest baselines, complete the empirical story.
 
-**Key Constraint (from Mohammed):** "We don't want to start a completely new path. We want consistency with all efforts done so far — the expanded work should be a logical addition to Query2Doc."
+**Required Reading Before Starting:**
+- `research_decisions/phase4_quickwins_plan.md` — **DETAILED implementation guide for each experiment**
+- `research_decisions/bm25_sparse_qe_strategies.md` — BM25 term dilution background (Strategy 1, Strategy 2)
+- `research_decisions/qe_techniques_comparison_research.md` — Section 1 (HyDE), Section 5 (CoT-QE)
+- `research_decisions/hybrid_retrieval_qe_literature_review.md` — Area 3 (MIRACL hybrid numbers), Area 5 (CC vs RRF)
 
 **Deliverables:**
-- [ ] List all candidate ideas from literature review
-- [ ] Evaluate each for: feasibility, contribution potential, consistency with Query2Doc
-- [ ] Select 1-2 approaches to implement
-- [ ] Document rationale in `research_decisions/expanded_experiments_plan.md`
+- [ ] **Exp 1.1:** BM25 repetition fix — test n={1,3,5,7,10} + MuGI adaptive, ALL 9 models
+- [ ] **Exp 1.2:** Hybrid baseline — CC fusion with α sweep, CC vs RRF comparison
+- [ ] **Exp 1.3:** HyDE vs Query2Doc — top 3 models (Aya, Jais-2, Qwen3-4B)
+- [ ] **Exp 1.4:** Prompt variants — 4 strategies × 2 retrievers, Aya 8B only
+- [ ] Experiment documentation in `docs/experiments/` for each
 
-**Candidate Ideas to Explore:**
-- Chunking-aware query enhancement (hierarchical structure / metadata injection)
-- Knowledge-base-aware prompting (inject KB structure into LLM prompt)
-- Query2Doc + re-ranking combination
-- Multi-stage query enhancement (iterative refinement)
-- Hybrid retrieval optimization (tuning RRF with QE)
-- Other approaches from Rebarter and related papers
+**Key Dependencies:**
+- 1.1, 1.2, 1.3 are INDEPENDENT — run in parallel
+- 1.4 needs optimal n from 1.1 for BM25 evaluation
 
 ---
 
-### Task 6.3: Implement Expanded Experiments
+### Task 6.3b: Implement Corpus-Steered Query2Doc (Direction 3 — Main Contribution)
 **Owner:** Both
 **Status:** ⏳ Not Started
-**Depends On:** Task 6.2
+**Depends On:** Task 6.3a (need baselines from 1.1, 1.2)
 
-**Why:** Run the selected expanded experiments to generate results for the thesis contribution.
+**Why:** This is our primary thesis contribution — grounding Query2Doc in corpus structure.
+
+**Required Reading Before Starting:**
+- `research_decisions/phase4_experiment_plan.md` — Direction 3 section (experiments 3.1–3.4)
+- `research_decisions/phase4_literature_review.md` — Directions A (CSQE), C (DAPR), G (BMQExpander)
+- `research_decisions/hybrid_retrieval_qe_literature_review.md` — Area 3 (MIRACL corpus structure, docid format)
 
 **Deliverables:**
-- [ ] Implementation notebook(s) in `experiments/`
-- [ ] Run on Dense + BM25 (same evaluation pipeline)
-- [ ] Compare against Query2Doc baselines
-- [ ] Document experiments in `docs/experiments/`
-- [ ] Sanity check first 5 queries before full run
+- [ ] **Exp 3.1:** Context extraction — build metadata extraction from MIRACL docids (article title, passage position)
+- [ ] **Exp 3.1b:** Coverage analysis — what % of gold articles found by BM25 first-pass at K=3,5,10
+- [ ] **Exp 3.2:** Context-aware generation — new prompt with corpus context, Aya 8B
+- [ ] **Exp 3.3:** Ablation — title only / passage only / full context / K values
+- [ ] **Exp 3.4:** Full pipeline — corpus-steered + hybrid fusion (combine with 1.2 and 2.1)
+- [ ] Experiment documentation in `docs/experiments/`
+
+**MIRACL Corpus Structure (for implementation):**
+- DocID format: `X#Y` where X = article number, Y = passage number within article
+- Each passage has a `title` field (article title) and `text` field
+- Passages from the same article share the same X value
+- Article titles are available directly in the corpus data
 
 ---
 
-### Task 6.4: Analyze Expanded Results & Update Thesis
-**Owner:** Both
+### Task 6.3c: Implement Hybrid + QE Fusion (Direction 2)
+**Owner:** Mohammed
 **Status:** ⏳ Not Started
-**Depends On:** Task 6.3
+**Depends On:** Task 6.3a (needs 1.1 and 1.2)
 
-**Why:** Integrate expanded experiment results into thesis Chapters 3, 4, and 5.
+**Why:** Combine QE gains with hybrid retrieval for best possible results. Also test retriever-specific strategies.
+
+**Required Reading Before Starting:**
+- `research_decisions/phase4_experiment_plan.md` — Direction 2 section
+- `research_decisions/hybrid_retrieval_qe_literature_review.md` — Areas 1-2 (Exp4Fuse, LevelRAG, MuGI)
 
 **Deliverables:**
-- [ ] Add methodology sections to Chapter 3
-- [ ] Add results sections to Chapter 4
-- [ ] Update Chapter 5 conclusions and recommendations
-- [ ] Update comparison tables and leaderboards
+- [ ] **Exp 2.1:** 4-way fusion (BM25_orig + BM25_exp + mDPR_orig + mDPR_exp), CC + RRF
+- [ ] **Exp 2.2:** Retriever-specific prompts (keywords for BM25, paragraphs for mDPR)
+- [ ] **Exp 2.3:** Dual-list BM25 fusion (Exp4Fuse-style), all 9 models
+- [ ] Experiment documentation
+
+---
+
+### Task 6.4: Analyze Results & Update Thesis
+**Owner:** Both
+**Status:** ⏳ Not Started
+**Depends On:** Tasks 6.3a, 6.3b, 6.3c
+
+**Why:** Integrate all expanded experiment results into thesis.
+
+**Expected New Thesis Content:**
+- **Chapter 2:** Add HyDE, hybrid retrieval, corpus-steered QE to literature review
+- **Chapter 3:** Add methodology for hybrid fusion, query repetition, corpus-steered pipeline, prompt variants
+- **Chapter 4:** ~8 new result tables, 2-3 new figures (α curve, ablation, progression table)
+- **Chapter 5:** BM25 degradation root cause + fix, dense-sparse complementarity analysis, "mufti" validation, ablation insights
+
+**Key thesis table (the progression narrative):**
+```
+Method                                    nDCG@10
+mDPR baseline                             0.499
+BM25 baseline                             0.462
+Hybrid baseline (no QE)                   ~0.64
+Blind Query2Doc (Aya, Dense)              0.616
+Blind Query2Doc + Hybrid                  ~0.68
+Corpus-Steered Query2Doc (Aya)            ???
+Corpus-Steered + Hybrid                   ???  ← headline result
+```
+
+**Deliverables:**
+- [ ] Updated Chapter 2 sections
+- [ ] Updated Chapter 3 sections
+- [ ] New Chapter 4 tables and figures
+- [ ] Updated Chapter 5 analysis and conclusions
 
 ---
 
@@ -1194,6 +1316,9 @@ NOTE: AI decisions documented in research_decisions/THESIS_DRAFT_AI_DECISIONS_RE
 2. Faculty of Engineering journal (University of Khartoum)
 3. Engineering Society journal
 4. Regional/International conference
+
+**Potential paper title (AI suggestion):**
+"From Blind Generation to Expert Search: Corpus-Steered Query Enhancement for Arabic Information Retrieval"
 
 **Deliverables:**
 - [ ] Assess if results constitute a publishable contribution
