@@ -173,8 +173,14 @@
 *   *Goal:* Ground Query2Doc in actual corpus structure: article titles, passage positions, first-pass retrieved context
 *   *Constraint:* Must be consistent extension of Query2Doc work — same LLM, same retriever, just add corpus context to the prompt
 *   *Literature review:* 50+ papers reviewed across 5 directions (see `research_decisions/phase4_literature_review.md` and 3 companion docs)
-*   *Selected approach:* BM25 first-pass → extract metadata (article titles, passage positions) → feed context to LLM → corpus-grounded pseudo-document → dense retrieval
+*   *Selected approach (preliminary):* BM25 first-pass → extract metadata (article titles, passage positions) → feed context to LLM → corpus-grounded pseudo-document → dense retrieval
 *   *Key papers:* CSQE (Lei et al., EACL 2024), BMQExpander (2025), DAPR (Wang et al., ACL 2024)
+*   **⚠️ DEEP RESEARCH STILL NEEDED (Task 6.3b-research):** The breadth-first mapping is done (50+ papers), but the Mufti approach requires focused depth research before implementation:
+    - Read CSQE, DAPR, BMQExpander FULL papers (not just summaries)
+    - Investigate what MIRACL metadata is actually extractable (section headings? categories?)
+    - Finalize prompt design and context extraction strategy
+    - Confirm exact novelty claim
+    - See `research_decisions/phase4_experiment_plan.md` → "RESEARCH PHASE" section for full list of open questions
 *   *Additional findings:*
     - BM25 degradation fixable with query repetition (n=5) — original Query2Doc paper
     - MIRACL hybrid baseline (0.673 nDCG@10) exceeds our best QE (0.616) — must implement
@@ -183,7 +189,7 @@
     - Master plan: `research_decisions/phase4_experiment_plan.md`
     - Quick wins: `research_decisions/phase4_quickwins_plan.md`
     - Literature: `research_decisions/phase4_literature_review.md` + 3 companion docs
-    - Tasks: `TASKS.md` Tasks 6.3a/b/c
+    - Tasks: `TASKS.md` Tasks 6.3a, 6.3b-research, 6.3b-implement, 6.3c
 
 ### F. Embedding Model Selection ✅ RESOLVED (9/1/2026)
 **Status:** Decided - Pyserini Pre-built Indexes
@@ -387,7 +393,8 @@ When interacting with this codebase, the Agent should:
 - [x] **Task 6.1:** Literature review — 50+ papers across 5 directions ✅ (3 Apr 2026)
 - [x] **Task 6.2:** Select approach & plan experiments ✅ (3 Apr 2026) — 3 directions selected, lean critical path defined
 - [ ] **Task 6.3a:** Quick wins — BM25 fix, hybrid baseline, HyDE comparison, prompt variants
-- [ ] **Task 6.3b:** Corpus-Steered Query2Doc (main contribution) — context extraction, generation, ablation
+- [ ] **Task 6.3b-research:** Deep research into corpus-steered / chunking-aware QE (BEFORE implementation)
+- [ ] **Task 6.3b-implement:** Corpus-Steered Query2Doc (main contribution) — context extraction, generation, ablation
 - [ ] **Task 6.3c:** Hybrid + QE fusion — 4-way fusion, retriever-specific prompts
 - [ ] **Task 6.4:** Update thesis with new results (Chapters 2, 3, 4, 5)
 - [ ] **Task 6.5:** Evaluate publication potential

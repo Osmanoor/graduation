@@ -8,11 +8,14 @@
 **Lean Critical Path (finalized 3 April 2026):**
 Directions 1 & 2 are NOT full prerequisites for Direction 3. The minimal path is:
 1. **Phase A (2 days):** BM25 repetition fix (Exp 1.1) + Hybrid baseline (Exp 1.2) — these numbers are needed in the final thesis table regardless
-2. **Phase B (1.5-2 weeks):** Corpus-Steered Query2Doc (Direction 3) — the main contribution. Can start as soon as Phase A gives us baseline numbers.
-3. **Phase C (3-5 days):** Combine Direction 3 with hybrid fusion + run remaining quick wins (HyDE, prompt variants) as supporting experiments
-4. The ablation study happens ONCE, inside Phase B — not duplicated.
+2. **Phase B-Research (3-5 days):** Deep-dive research into corpus-steered / chunking-aware QE — finalize the exact approach, prompt design, and context extraction strategy BEFORE coding
+3. **Phase B-Implement (1-1.5 weeks):** Corpus-Steered Query2Doc (Direction 3) — the main contribution
+4. **Phase C (3-5 days):** Combine Direction 3 with hybrid fusion + run remaining quick wins (HyDE, prompt variants) as supporting experiments
+5. The ablation study happens ONCE, inside Phase B-Implement — not duplicated.
 
 Experiments 1.3, 1.4, 2.2, 2.3 are optional supporting experiments that strengthen the thesis but are not prerequisites for the core contribution.
+
+**Important:** The breadth-first literature review (Task 6.1) is done — we mapped 50+ papers across all directions. But Direction 3 (Corpus-Steered QE) requires focused depth research before implementation. See "Direction 3 — Research Phase" below for what still needs investigation.
 
 ---
 
@@ -188,11 +191,79 @@ This plan outlines three experiment directions that build on our existing Query2
 
 ---
 
-## Direction 3: Corpus-Steered Query2Doc — "The Mufti Approach" (Est. 8-10 days)
+## Direction 3: Corpus-Steered Query2Doc — "The Mufti Approach" (Est. 12-15 days incl. research)
 
 *Goal: The novel thesis contribution — grounding Query2Doc in corpus structure*
 
-**Prerequisite:** Direction 1 (baselines), Direction 2.1 (hybrid ceiling)
+**Prerequisite:** Direction 1 baselines (1.1, 1.2) + Deep research phase below
+
+---
+
+### RESEARCH PHASE (Phase B-Research): Deep-Dive Before Implementation (3-5 days)
+
+**Status:** NOT YET DONE — breadth-first mapping is complete but depth research is needed
+
+**Why this matters:** Our breadth-first review (Task 6.1) identified corpus-steered QE as the most promising direction from 50+ papers. But we mapped many directions at a surface level. Before writing code, we need to go deep into the specific papers and techniques that directly inform our implementation. Otherwise we risk building something that misses key insights from the literature or duplicates existing work poorly.
+
+**What still needs investigation:**
+
+#### 1. Deep-dive into CSQE (Corpus-Steered Query Expansion)
+- Read the FULL CSQE paper (Lei et al., EACL 2024, arXiv:2402.18031), not just the summary
+- Understand exactly how they select "pivotal sentences" from retrieved documents
+- What retriever did they use for the first pass? How many documents? What prompt format?
+- Their results on different benchmarks — where does it work vs fail?
+- Read their code (https://github.com/Yibin-Lei/CSQE) to understand implementation details
+- **Key question:** How do they balance corpus-grounded content vs LLM-generated content?
+
+#### 2. Deep-dive into chunking-aware / structure-aware retrieval
+- Read DAPR (Wang et al., ACL 2024, arXiv:2305.13915) in full — the finding that 53.5% of retriever errors come from missing document context is central to our thesis argument
+- How exactly does prepending document titles help? What's the quantitative effect?
+- Heading-aware chunking (Pham et al., 2025) — how does heading hierarchy affect retrieval?
+- MIRACL-specific: What structural information is actually available in the MIRACL corpus? Just titles and passage positions, or is there more (section headings, categories)?
+- **Key question:** Can we extract Wikipedia section headings from the MIRACL data, or do we need the MediaWiki API?
+
+#### 3. Deep-dive into ontology/metadata-guided QE
+- Read BMQExpander (arXiv:2508.11784) in full — they serialize ontology subgraphs into prompts. How exactly?
+- What's the closest equivalent to a biomedical ontology for Arabic Wikipedia? (Categories? Article link structure? Wikidata?)
+- Multi-Meta-RAG (Poliakov et al., 2024) — how do they extract metadata from queries?
+- **Key question:** Is Wikipedia category information accessible for MIRACL passages without API calls? If not, is the article title + passage position enough?
+
+#### 4. Understand what's novel vs what exists
+- Does ANY paper do corpus-steered QE specifically for Arabic? (We believe no, but need to confirm exhaustively)
+- Does any paper combine first-pass BM25 context with Query2Doc-style generation? (CSQE is close but not identical)
+- What's the exact novelty claim we can make? Options:
+  a. "First corpus-steered QE for Arabic" (language novelty)
+  b. "First to use Wikipedia article structure in QE prompts" (method novelty)
+  c. "First to combine corpus-steered QE with hybrid retrieval" (combination novelty)
+  d. Some combination of the above
+
+#### 5. Finalize the prompt design
+- What goes in the context block? Options to investigate:
+  - Article titles only (lightest, most scalable)
+  - Article titles + first-N-tokens of passages
+  - Article titles + passage snippets + passage position info
+  - Article titles + Wikipedia categories (if accessible)
+  - Article titles + co-occurring passage titles from same article
+- How much context can we fit in the LLM's input? (Aya 8B context window = 8192 tokens)
+- Should the prompt instruct the LLM to focus on specific aspects of the context?
+- **Key question:** What's the optimal trade-off between context richness and prompt length for a 2-8B model?
+
+#### 6. Investigate the first-pass retriever question
+- Should the first pass be BM25 (fast, keyword-based) or mDPR (semantic)?
+- What if the first-pass retriever misses the relevant article entirely? (coverage analysis in Exp 3.1 will answer this, but we should have expectations from literature)
+- How many first-pass documents (K) do similar approaches use?
+- CSQE uses K=10, BMQExpander uses ontology (no first pass) — what works for our scale?
+
+#### Research Phase Deliverables
+- [ ] `research_decisions/mufti_approach_deep_research.md` — detailed findings from papers above
+- [ ] Finalized prompt template (or 2-3 candidates to A/B test)
+- [ ] Decision on context extraction strategy (what metadata, from where)
+- [ ] Confirmed novelty claim with evidence
+- [ ] Updated experiment plan with any changes from deep research
+
+---
+
+### IMPLEMENTATION PHASE (Phase B-Implement): Experiments 3.1–3.4
 
 ### Experiment 3.1: First-Pass Context Extraction
 

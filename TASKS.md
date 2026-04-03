@@ -1224,31 +1224,75 @@ then combine. Directions 1.3, 1.4, 2.x are valuable but not prerequisites.
 
 ---
 
-### Task 6.3b: Implement Corpus-Steered Query2Doc (Direction 3 — Main Contribution)
+### Task 6.3b-research: Deep Research — Corpus-Steered / Chunking-Aware QE
+**Owner:** Mohammed (with AI research assistance)
+**Status:** ⏳ Not Started
+**Depends On:** Task 6.2 ✅ (breadth-first mapping done, now go deep into selected direction)
+
+**Why:** The breadth-first literature review (Task 6.1) mapped 50+ papers and identified corpus-steered QE as the most promising direction. But that review covered many directions at surface level. Before implementing, we need to deeply understand:
+- Exactly how existing corpus-steered approaches work (CSQE, BMQExpander, DAPR)
+- What structural information is available in MIRACL and how to extract it
+- What our precise novelty claim is
+- The optimal prompt design and context extraction strategy
+
+**Without this research, we risk building something that:**
+- Misses key implementation details from existing papers
+- Duplicates existing work without realizing it
+- Uses a suboptimal context extraction strategy
+- Can't articulate a clear novelty claim in the thesis
+
+**Required Reading:**
+- `research_decisions/phase4_experiment_plan.md` — Direction 3 "RESEARCH PHASE" section (full list of open questions)
+- `research_decisions/phase4_literature_review.md` — Directions A (CSQE), C (DAPR), G (BMQExpander) — these are summaries; now read the FULL papers
+- CSQE code: https://github.com/Yibin-Lei/CSQE
+
+**Key Questions to Answer:**
+1. How does CSQE select "pivotal sentences" from retrieved docs? (read full paper + code)
+2. What structural metadata is actually available in MIRACL? (titles, positions — anything else?)
+3. Can we get Wikipedia section headings / categories without API calls?
+4. What's the optimal first-pass K and context format for 2-8B models?
+5. What exactly is novel about our approach vs CSQE, BMQExpander, etc.?
+6. What prompt template(s) should we test?
+
+**Deliverables:**
+- [ ] Read CSQE paper (arXiv:2402.18031) in full + review their code
+- [ ] Read DAPR paper (arXiv:2305.13915) in full — the 53.5% missing-context finding
+- [ ] Read BMQExpander paper (arXiv:2508.11784) in full — ontology serialization approach
+- [ ] Investigate MIRACL corpus structure: what metadata is extractable from the HuggingFace dataset?
+- [ ] Investigate Wikipedia structure access: categories, section headings, article links — feasibility
+- [ ] Create `research_decisions/mufti_approach_deep_research.md` with all findings
+- [ ] Finalized prompt template(s) — 2-3 candidates for A/B testing
+- [ ] Confirmed novelty claim with supporting evidence
+- [ ] Updated experiment plan if research changes the approach
+
+---
+
+### Task 6.3b-implement: Implement Corpus-Steered Query2Doc (Direction 3 — Main Contribution)
 **Owner:** Both
 **Status:** ⏳ Not Started
-**Depends On:** Task 6.3a (need baselines from 1.1, 1.2)
+**Depends On:** Task 6.3a (baselines from 1.1, 1.2) + Task 6.3b-research (finalized approach)
 
 **Why:** This is our primary thesis contribution — grounding Query2Doc in corpus structure.
 
 **Required Reading Before Starting:**
-- `research_decisions/phase4_experiment_plan.md` — Direction 3 section (experiments 3.1–3.4)
+- `research_decisions/mufti_approach_deep_research.md` — **MUST exist from 6.3b-research before starting**
+- `research_decisions/phase4_experiment_plan.md` — Direction 3 implementation section (experiments 3.1–3.4)
 - `research_decisions/phase4_literature_review.md` — Directions A (CSQE), C (DAPR), G (BMQExpander)
-- `research_decisions/hybrid_retrieval_qe_literature_review.md` — Area 3 (MIRACL corpus structure, docid format)
 
 **Deliverables:**
-- [ ] **Exp 3.1:** Context extraction — build metadata extraction from MIRACL docids (article title, passage position)
+- [ ] **Exp 3.1:** Context extraction — build metadata extraction from MIRACL docids (article title, passage position, etc.)
 - [ ] **Exp 3.1b:** Coverage analysis — what % of gold articles found by BM25 first-pass at K=3,5,10
-- [ ] **Exp 3.2:** Context-aware generation — new prompt with corpus context, Aya 8B
-- [ ] **Exp 3.3:** Ablation — title only / passage only / full context / K values
+- [ ] **Exp 3.2:** Context-aware generation — new prompt(s) with corpus context, Aya 8B
+- [ ] **Exp 3.3:** Ablation — title only / passage only / full context / K values (ONE ablation, done here)
 - [ ] **Exp 3.4:** Full pipeline — corpus-steered + hybrid fusion (combine with 1.2 and 2.1)
 - [ ] Experiment documentation in `docs/experiments/`
 
-**MIRACL Corpus Structure (for implementation):**
+**MIRACL Corpus Structure (known so far, may be updated by 6.3b-research):**
 - DocID format: `X#Y` where X = article number, Y = passage number within article
 - Each passage has a `title` field (article title) and `text` field
 - Passages from the same article share the same X value
 - Article titles are available directly in the corpus data
+- Section headings, categories — availability TBD (research needed in 6.3b-research)
 
 ---
 
