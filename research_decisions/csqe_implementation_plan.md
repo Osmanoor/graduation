@@ -19,8 +19,8 @@
 | Temperature | 1.0 |
 | Corpus samples (N1) | 2 |
 | Blind samples (N2) | 2 |
-| Query repetition (α) | 1 (no repetition in CSQE — differs from Query2Doc) |
-| Target nDCG@10 | ≥ 0.74 (min success: beat hybrid = 0.6267) |
+| Query repetition (α) | **4** (= N_total = num_corpus + num_blind, per paper) |
+| Target nDCG@10 | 0.65–0.72 realistic (min success: beat hybrid = 0.6267) |
 | Output pkl | `results/enhanced_queries/exp_013_csqe_aya_8b.pkl` |
 | Output TREC | `results/exp_013_csqe_bm25.txt` |
 
@@ -93,7 +93,11 @@ CONFIG = {
     "num_blind_samples": 2,      # N2 blind expansions (HyDE-style)
 
     # Query construction
-    "query_repetition": 1,       # α=1 (CSQE does NOT use query repetition)
+    # α = N_total = num_corpus_samples + num_blind_samples
+    # Paper (Section 3.1): "We repeat the initial query q a number of times
+    # equal to the number of expansions during concatenation."
+    # With 2+2=4 expansions, α=4. This aligns with our Exp 1.1 finding (n=5 best).
+    "query_repetition": 4,
 
     # Output
     "exp_id": "exp_013",
@@ -174,57 +178,74 @@ def truncate_to_tokens(text, max_tokens=128, tokenizer=None):
         return text[:512]
 ```
 
-### Cell 7 — CSQE Prompt Template
+### Cell 7 — CSQE Prompt Templates
 ```python
-# The CSQE one-shot prompt (Arabic)
-# DO NOT change the structure — this mirrors the CSQE paper exactly
+# SOURCE: Paper Table 1 (KEQE blind prompt) and Table 2 (CSQE corpus prompt)
+# The paper uses ENGLISH instructions throughout — no Arabic prompt in the paper.
+# We keep English instructions (proven to work with Aya 8B in our experiments)
+# and get Arabic output via "Respond in Arabic only." — same pattern as our existing notebooks.
 
-CSQE_SYSTEM = "أنت مساعد بحثي متخصص في استرجاع المعلومات باللغة العربية."
+# ── System prompts ──────────────────────────────────────────────────────────
 
-CSQE_ONE_SHOT_EXAMPLE = """
-الاستعلام: "كيف تكون بعض أسماك القرش ذات دم دافئ"
-المستندات المسترجعة:
-1. معظم أسماك القرش ذات دم بارد. البعض، مثل الماكو والقرش الأبيض الكبير، ذات دم دافئ جزئياً (هي كائنات ماصة للحرارة).
-2. هل أسماك القرش ذات دم بارد أم دافئ؟ لدى أسماك القرش سمعة بأنها ذات دم بارد.
-3. أسماك القرش البيضاء الكبيرة هي من بين أسماك القرش القليلة ذات الدم الدافئ.
+# For BLIND (KEQE-style) expansions — same system prompt as our working Aya notebook
+BLIND_SYSTEM = (
+    "You are asked to write a passage that answers the given query. "
+    "Do not ask the user for further clarification. "
+    "Respond in Arabic only."
+)
 
-ستبدأ بفحص المستندات المسترجعة وتحديد المستندات ذات الصلة، حتى لو كانت جزئياً، بالاستعلام. بمجرد تحديد المستندات ذات الصلة، ستستخرج الجمل الرئيسية من كل مستند التي تساهم في صلتها.
+# For CORPUS (CSQE-style) expansions — English instructions, Arabic documents/output
+CSQE_SYSTEM = (
+    "You are an information retrieval assistant. "
+    "You will examine retrieved documents and extract key sentences relevant to the query. "
+    "The documents are in Arabic. Respond in Arabic only."
+)
 
-بناءً على الاستعلام "كيف تكون بعض أسماك القرش ذات دم دافئ"، قمت بفحص المستندات المسترجعة أولاً. فيما يلي المستندات ذات الصلة والجمل الرئيسية المستخرجة من كل منها:
-
-المستند 1:
-"معظم أسماك القرش ذات دم بارد. البعض، مثل الماكو والقرش الأبيض الكبير، ذات دم دافئ جزئياً (هي كائنات ماصة للحرارة)."
-
-المستند 3:
-"أسماك القرش البيضاء الكبيرة هي من بين أسماك القرش القليلة ذات الدم الدافئ."
+# ── One-shot example for CSQE corpus prompt (from paper Table 2, English) ───
+# NOTE: the one-shot example uses English (sharks query) because that is what
+# the paper uses. Aya 8B is multilingual — it will generalise to Arabic queries.
+CSQE_ONE_SHOT = """Query: "how are some sharks warm blooded"
+Retrieved documents:
+1. Most sharks are cold-blooded. Some, like the Mako and the Great white shark, are partially warmblooded (they are endotherms)...
+2. Are sharks cold-blooded or warm-blooded? Sharks have a reputation as cold-blooded...
+3. Great white sharks are some of the only warm blooded sharks...
+You will begin by examining the initially retrieved documents and identifying the ones that are relevant, even partially, to the query. Once the relevant documents are identified, you will extract the key sentences from each document that contribute to their relevance.
+Based on the query "how are some sharks warm blooded", I have examined the initially retrieved documents. Here are the relevant documents and the key sentences extracted from each:
+Document 1:
+"Most sharks are cold-blooded. Some, like the Mako and the Great white shark, are partially warm-blooded (they are endotherms)."
+Document 3:
+"Great white sharks are some of the only warm-blooded sharks."
 """
+
+# ── Prompt builders ─────────────────────────────────────────────────────────
 
 def build_csqe_prompt(query, retrieved_docs_truncated):
     """
-    Build the CSQE corpus-grounded prompt.
-    retrieved_docs_truncated: list of truncated doc texts (up to 10)
+    CSQE corpus-grounded prompt (paper Table 2).
+    LLM should EXTRACT sentences from docs, not freely generate.
+    Output = selected/copied sentences from the retrieved Arabic docs.
     """
     docs_str = "\n".join(
         f"{i+1}. {doc}" for i, doc in enumerate(retrieved_docs_truncated)
     )
-    
-    instruction = (
-        "ستبدأ بفحص المستندات المسترجعة وتحديد المستندات ذات الصلة، "
-        "حتى لو كانت جزئياً، بالاستعلام. بمجرد تحديد المستندات ذات الصلة، "
-        "ستستخرج الجمل الرئيسية من كل مستند التي تساهم في صلتها."
+    prompt = (
+        f"{CSQE_ONE_SHOT}\n"
+        f"Query: \"{query}\"\n"
+        f"Retrieved documents:\n{docs_str}\n"
+        f"You will begin by examining the initially retrieved documents and identifying "
+        f"the ones that are relevant, even partially, to the query. Once the relevant "
+        f"documents are identified, you will extract the key sentences from each document "
+        f"that contribute to their relevance. Respond in Arabic only."
     )
-    
-    prompt = f"{CSQE_ONE_SHOT_EXAMPLE}\n\nالاستعلام: \"{query}\"\nالمستندات المسترجعة:\n{docs_str}\n\n{instruction}"
     return prompt
 
 def build_blind_prompt(query):
     """
-    Build the blind (HyDE-style) expansion prompt.
-    Standard Query2Doc prompt — generates without corpus context.
+    Blind (KEQE) prompt — paper Table 1.
+    LLM generates a hypothetical passage from parametric knowledge.
+    User message is just the query; system prompt handles the task description.
     """
-    return (
-        f"اكتب فقرة قصيرة تجيب على السؤال التالي باللغة العربية:\n\n{query}\n\nالإجابة:"
-    )
+    return query  # system prompt already says "write a passage that answers the query"
 ```
 
 ### Cell 8 — Load Aya Expanse 8B
@@ -266,30 +287,43 @@ class CSQEEnhancer:
             })
         return docs
     
-    def generate_sample(self, prompt, temperature=None):
-        """Generate a single sample from the model."""
+    def generate_sample(self, system_prompt, user_prompt, temperature=None):
+        """
+        Generate a single sample. Uses two-step approach (proven with Aya 8B):
+        Step 1: apply_chat_template → text string
+        Step 2: tokenizer(text) → tensors
+        This matches Query_generator_aya_8b.ipynb exactly.
+        """
         if temperature is None:
             temperature = self.config["temperature"]
-        
-        inputs = self.tokenizer.apply_chat_template(
-            [
-                {"role": "system", "content": CSQE_SYSTEM},
-                {"role": "user", "content": prompt}
-            ],
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user",   "content": user_prompt},
+        ]
+
+        # Step 1 — get text (no tensors yet)
+        text = self.tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
             add_generation_prompt=True,
-            return_tensors="pt"
-        ).to(self.model.device)
-        
+        )
+
+        # Step 2 — tokenize
+        inputs = self.tokenizer(text, return_tensors="pt").to(self.model.device)
+
         with torch.no_grad():
             outputs = self.model.generate(
-                inputs,
+                **inputs,
                 max_new_tokens=self.config["max_new_tokens"],
                 temperature=temperature,
                 top_p=self.config["top_p"],
                 do_sample=True,
+                pad_token_id=self.tokenizer.pad_token_id,
+                eos_token_id=self.tokenizer.eos_token_id,
             )
-        
-        generated = outputs[0][inputs.shape[1]:]
+
+        generated = outputs[0][inputs.input_ids.shape[1]:]
         return self.tokenizer.decode(generated, skip_special_tokens=True).strip()
     
     def enhance(self, query):
@@ -302,24 +336,31 @@ class CSQEEnhancer:
         doc_texts = [d["text"] for d in retrieved_docs]
         
         # Step 2: Generate N1=2 corpus-originated expansions
-        corpus_prompt = build_csqe_prompt(query, doc_texts)
+        # LLM role here: EXTRACT/SELECT sentences from docs (not freely generate)
+        # Good output: closely matches text from retrieved docs
+        # Bad output: freely generated text that ignores docs → debug prompt
+        corpus_user_prompt = build_csqe_prompt(query, doc_texts)
         corpus_expansions = []
         for _ in range(self.config["num_corpus_samples"]):
-            exp = self.generate_sample(corpus_prompt, temperature=1.0)
+            exp = self.generate_sample(CSQE_SYSTEM, corpus_user_prompt, temperature=1.0)
             corpus_expansions.append(exp)
-        
-        # Step 3: Generate N2=2 blind expansions (no corpus context)
-        blind_prompt = build_blind_prompt(query)
+
+        # Step 3: Generate N2=2 blind expansions (no corpus context, KEQE-style)
+        # LLM role here: generate hypothetical passage from parametric knowledge
+        blind_user_prompt = build_blind_prompt(query)
         blind_expansions = []
         for _ in range(self.config["num_blind_samples"]):
-            exp = self.generate_sample(blind_prompt, temperature=1.0)
+            exp = self.generate_sample(BLIND_SYSTEM, blind_user_prompt, temperature=1.0)
             blind_expansions.append(exp)
-        
-        # Step 4: Concatenate all expansions
-        # Format: original_query + corpus_expansions + blind_expansions
-        α = self.config["query_repetition"]
+
+        # Step 4: Concatenate — paper Section 3.1:
+        # "We repeat the initial query q a number of times equal to the number
+        #  of expansions during concatenation."
+        # N_total = num_corpus_samples + num_blind_samples = 2+2 = 4
+        # final = (q + " ") * 4 + corpus_exp1 + corpus_exp2 + blind_exp1 + blind_exp2
+        α = self.config["query_repetition"]  # = 4
         all_expansions = corpus_expansions + blind_expansions
-        
+
         final_query = (query + " ") * α + " ".join(all_expansions)
         
         return {
@@ -364,10 +405,24 @@ for qid in sample_qids:
     print(f"  {result['enhanced'][:300]}")
 
 # STOP HERE if any of the above looks wrong
-# Common issues:
-# - corpus expansion is empty → prompt translation issue
-# - corpus expansion ignores docs → prompt instruction not clear
-# - Arabic output has Latin chars → Aya generating in English
+# Common issues and fixes:
+# - Corpus expansion is mostly free-form text (not quoting docs)
+#     → LLM is not following the extraction instruction
+#     → Simplify user prompt or add stronger "Quote directly from the documents" instruction
+# - Corpus expansion is empty or very short
+#     → LLM found no relevant docs (paper notes this can happen — it's OK, fall back to blind only)
+# - Arabic output has Latin/English chars
+#     → Add "Respond in Arabic only." more explicitly in user prompt too
+# - Final query starts with Arabic text, not the original query repeated
+#     → Check the α=4 repetition logic
+
+# GROUNDING CHECK: For corpus expansions, verify they contain text from retrieved docs
+# Paper finding: 830/1000 GPT-3.5 extractions were IDENTICAL to sentences in retrieved docs
+# For Aya 8B expect ~60-70% overlap. If <30%, prompt is not working.
+for i, r in enumerate(sanity_results[:3]):
+    for j, corp_exp in enumerate(r['corpus_expansions']):
+        # Simple overlap check: does expansion share 5+ word sequences with any doc?
+        print(f"  Corpus exp {j+1} grounding: check manually that it quotes from docs above")
 ```
 
 ### Cell 11 — Full run with checkpointing
@@ -521,11 +576,13 @@ Run these only if baseline CSQE does not beat the hybrid (0.6267):
 
 | Exp | Change | Expected Effect |
 |-----|--------|----------------|
-| 013b | k=15 (more docs) | More context for LLM |
-| 013c | N=4+0 (all corpus, no blind) | Ablation: corpus-only |
-| 013d | N=0+4 (all blind, no corpus) | Ablation: blind-only |
-| 013e | α=2 (query repetition) | Combine with repetition fix |
-| 013f | Jais-2-8B instead of Aya | Arabic-specialized model |
+| 013b | k=15 (more docs in first-pass) | More context for LLM |
+| 013c | N=4+0 (all corpus, no blind) | Ablation: corpus sentences only |
+| 013d | N=0+4 (all blind, no corpus) | Ablation: blind only (= Query2Doc ×4) |
+| 013e | α=2 instead of α=4 | Test if less repetition is better |
+| 013f | Jais-2-8B instead of Aya | Arabic-specialized model (best Arabic in Phase 2) |
+
+**Note on 013c and 013d:** These ablations are required for the thesis. They prove corpus grounding adds value beyond just having more LLM generations. Run both regardless of whether 013 beats hybrid.
 
 **Run ablations in this order of priority.** If 013 beats hybrid, run 013c and 013d for the thesis ablation study (they're cheap, add analytical value).
 
@@ -545,9 +602,12 @@ Run these only if baseline CSQE does not beat the hybrid (0.6267):
 
 ## Things to Read Before Starting
 
-1. `research_decisions/mufti_approach_deep_research.md` — Section 8 (prompt templates) and Section 9 (risks)
+1. `papers/arxiv_downloads/2402.18031.md` — **The actual CSQE paper** (Tables 1, 2, Section 3.1 for params)
 2. `experiments/Query_generator_aya_8b.ipynb` — Copy setup cells (1-9) and model loading (12-13)
 3. `experiments/evaluate_enhanced_queries.ipynb` — Copy evaluation cells for BM25 scoring
+
+**Do NOT use `mufti_approach_deep_research.md` Section 8 for prompts** — those Arabic prompts
+were invented by the research subagent and are not from the paper. Use Cell 7 of this plan instead.
 
 ---
 
@@ -558,8 +618,13 @@ Run these only if baseline CSQE does not beat the hybrid (0.6267):
 | Failure | < 0.5855 | Worse than blind Query2Doc — debug prompts |
 | Partial success | 0.5855 – 0.6267 | Better than blind but not hybrid — tune hyperparams |
 | **Minimum success** | **> 0.6267** | **Beats hybrid baseline — main thesis result** |
-| Target success | > 0.74 | Expected from CSQE paper projection |
-| Stretch goal | > 0.80 | Exceptional — would match state-of-art |
+| Target success | 0.65 – 0.72 | Realistic for 8B model (Llama2-7B ≈ +18% on DL19) |
+| Stretch goal | > 0.72 | Exceptional for 8B — would exceed paper's 7B results |
+
+**Note on expectations:** The deep research doc cited +20-30% based on GPT-3.5-Turbo results.
+The paper's own Table 7 shows Llama2-7B (comparable to Aya 8B) achieves ~+18% over BM25 on DL19.
+Our BM25 baseline is 0.4621 → realistic target: **0.4621 × 1.18 ≈ 0.545** lower bound,
+but query repetition (α=4) and Arabic-specific corpus alignment may push higher.
 
 ---
 
@@ -581,12 +646,15 @@ Use this prompt when opening a new Claude Code session to start the implementati
 I'm continuing my Arabic RAG thesis project. I need to implement Experiment 013 (CSQE).
 
 Read these files in this order:
-1. research_decisions/csqe_implementation_plan.md  ← THIS FILE (full plan)
-2. research_decisions/mufti_approach_deep_research.md  ← Sections 7-9 (algorithm, prompts, risks)
-3. experiments/Query_generator_aya_8b.ipynb  ← Copy setup/model-loading cells
+1. research_decisions/csqe_implementation_plan.md  ← PRIMARY reference (full plan, verified against paper)
+2. papers/arxiv_downloads/2402.18031.md  ← Actual CSQE paper (Tables 1, 2, Section 3.1)
+3. experiments/Query_generator_aya_8b.ipynb  ← Copy setup/model-loading cells (cells 3-13)
 4. experiments/evaluate_enhanced_queries.ipynb  ← Copy evaluation cells
 
 Task: Create experiments/exp_013_csqe_aya_8b.ipynb following csqe_implementation_plan.md exactly.
+
+IMPORTANT: Do NOT use mufti_approach_deep_research.md Section 8 for prompts.
+Use Cell 7 of csqe_implementation_plan.md — those prompts were verified against the paper directly.
 
 Key decisions (already made, do not reconsider):
 - Algorithm: CSQE (BM25 first-pass k=10, 2 corpus + 2 blind expansions, temperature=1.0)
