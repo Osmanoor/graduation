@@ -1200,7 +1200,7 @@ then combine. Directions 1.3, 1.4, 2.x are valuable but not prerequisites.
 
 ### Task 6.3a: Implement Quick Wins (Direction 1)
 **Owner:** Mohammed
-**Status:** ⏳ Not Started
+**Status:** 🔄 In Progress (1.1 + 1.2 done, 1.3 + 1.4 remaining)
 **Depends On:** Task 6.2 ✅
 
 **Why:** Fix known pipeline weaknesses, establish strongest baselines, complete the empirical story.
@@ -1212,15 +1212,63 @@ then combine. Directions 1.3, 1.4, 2.x are valuable but not prerequisites.
 - `research_decisions/hybrid_retrieval_qe_literature_review.md` — Area 3 (MIRACL hybrid numbers), Area 5 (CC vs RRF)
 
 **Deliverables:**
-- [ ] **Exp 1.1:** BM25 repetition fix — test n={1,3,5,7,10} + MuGI adaptive, ALL 9 models
-- [ ] **Exp 1.2:** Hybrid baseline — CC fusion with α sweep, CC vs RRF comparison
+- [x] **Exp 1.1:** BM25 repetition fix — test n={1,3,5,7,10} + MuGI adaptive, ALL 9 models ✅ *(2026-04-04)*
+- [x] **Exp 1.2:** Hybrid baseline — CC fusion with α sweep, CC vs RRF comparison ✅ *(2026-04-04)*
 - [ ] **Exp 1.3:** HyDE vs Query2Doc — top 3 models (Aya, Jais-2, Qwen3-4B)
 - [ ] **Exp 1.4:** Prompt variants — 4 strategies × 2 retrievers, Aya 8B only
 - [ ] Experiment documentation in `docs/experiments/` for each
 
 **Key Dependencies:**
 - 1.1, 1.2, 1.3 are INDEPENDENT — run in parallel
-- 1.4 needs optimal n from 1.1 for BM25 evaluation
+- 1.4 needs optimal n from 1.1 for BM25 evaluation *(1.1 done → optimal configs: β=2 for best models, n=5-7 for smaller models)*
+
+**Outcomes (Exp 1.1 — 2026-04-04):**
+```
+BM25 Query Repetition Fix — ALL 9 models tested across 8 configs (72 BM25 runs, ~73 min)
+Notebook: experiments/phase4_quick_wins.ipynb
+Results: experiments/exp_11_bm25_repetition/
+
+Key finding: Repetition fixes ALL 6 degraded models.
+  - At n=1 (current): only 3/9 models above BM25 baseline (0.4621)
+  - At best config:   9/9 models above baseline (100% recovery)
+
+Best per model (nDCG@10):
+  Aya Expanse 8B:  0.5855 (β=2)    ← BEST OVERALL
+  Jais-2-8B:       0.5731 (β=2)
+  Qwen 2.5-7B:     0.5358 (n=5)
+  Qwen3-8B:        0.5328 (n=7)
+  Gemma 3 4B:      0.5277 (n=7)    ← biggest gain: +0.1831 from n=1
+  Qwen3-4B:        0.5244 (n=7)
+  Qwen 2.5-3B:     0.5185 (n=5)
+  Falcon-H1-3B:    0.5113 (n=10)
+  SILMA 2B:        0.4832 (n=5)
+
+Practical takeaway: MuGI adaptive β=2 works best for large models,
+fixed n=5-7 for smaller models. BM25 term dilution is now solved.
+```
+
+**Outcomes (Exp 1.2 — 2026-04-04):**
+```
+Hybrid Baseline (BM25 + mDPR) — CC α sweep + RRF
+Notebook: experiments/phase4_quick_wins.ipynb
+Results: experiments/exp_12_hybrid_baseline/
+
+Convex Combination (CC):  best α=0.5 → nDCG@10 = 0.6266
+Reciprocal Rank Fusion (RRF): best k=20 → nDCG@10 = 0.6267
+  → CC and RRF essentially tied (+0.0001 difference)
+
+Summary table:
+  BM25 alone:         0.4621 nDCG@10, 0.5964 R@10, 0.8577 R@100, 0.4836 MRR
+  mDPR alone:         0.4993 nDCG@10, 0.6156 R@10, 0.8407 R@100, 0.5328 MRR
+  Hybrid CC (α=0.5):  0.6266 nDCG@10, 0.7478 R@10, 0.9458 R@100, 0.6577 MRR
+  Hybrid RRF (k=20):  0.6267 nDCG@10, 0.7597 R@10, 0.9466 R@100, 0.6517 MRR
+
+NEW strongest non-QE baseline: 0.6267 nDCG@10 (hybrid RRF)
+  +0.1646 vs BM25 alone, +0.1274 vs mDPR alone
+  All QE experiments must beat this to demonstrate value.
+  
+TREC run files saved for best CC and RRF (for use in Task 6.3c).
+```
 
 ---
 

@@ -107,7 +107,7 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 - **GPT-OSS-20B (exp_009):** DROPPED. MoE architecture (32 experts) is 70x slower than dense models via BNB 4-bit. Harmony chat format requires forced-final-channel prefix to skip English reasoning. 3/5 sanity queries had severe factual hallucinations despite 100% Arabic output. English-dominant training = unreliable for Arabic QE.
 - **General:** Model-specific temperature settings matter. Don't assume temp=0.7 works for all models.
 
-### Reference Baselines
+### Reference Baselines — Dense Retrieval (mDPR + Query2Doc)
 | Model | NDCG@10 | Recall@10 | Recall@100 | MRR |
 |-------|---------|-----------|------------|-----|
 | mDPR (no QE) | 0.4993 | 0.6156 | 0.8407 | 0.5328 |
@@ -117,3 +117,27 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 | **Jais-2-8B (exp_006)** | **0.6018** | **0.7161** | **0.8981** | **0.6356** |
 | ~~ALLaM-7B (exp_008)~~ | ~~0.2550~~ | ~~0.3335~~ | ~~0.5465~~ | ~~0.2708~~ |
 | ~~GPT-OSS-20B (exp_009)~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ |
+
+### Reference Baselines — BM25 with Query Repetition (Exp 1.1, 2026-04-04)
+| Model | n=1 (current) | Best Config | Best nDCG@10 | Δ vs n=1 |
+|-------|--------------|-------------|-------------|----------|
+| BM25 baseline (no QE) | 0.4621 | — | 0.4621 | — |
+| **Aya Expanse 8B** | 0.5046 | **β=2** | **0.5855** | +0.0808 |
+| Jais-2-8B | 0.5122 | β=2 | 0.5731 | +0.0610 |
+| Qwen 2.5-7B | 0.4682 | n=5 | 0.5358 | +0.0675 |
+| Qwen3-8B | 0.4459 | n=7 | 0.5328 | +0.0868 |
+| Gemma 3 4B | 0.3447 | n=7 | 0.5277 | +0.1831 |
+| Qwen3-4B | 0.4145 | n=7 | 0.5244 | +0.1098 |
+| Qwen 2.5-3B | 0.4090 | n=5 | 0.5185 | +0.1095 |
+| Falcon-H1-3B | 0.4038 | n=10 | 0.5113 | +0.1074 |
+| SILMA 2B | 0.4194 | n=5 | 0.4832 | +0.0639 |
+
+### Reference Baselines — Hybrid Fusion (Exp 1.2, 2026-04-04)
+| Method | NDCG@10 | Recall@10 | Recall@100 | MRR |
+|--------|---------|-----------|------------|-----|
+| BM25 alone | 0.4621 | 0.5964 | 0.8577 | 0.4836 |
+| mDPR alone | 0.4993 | 0.6156 | 0.8407 | 0.5328 |
+| **Hybrid CC (α=0.5)** | **0.6266** | 0.7478 | 0.9458 | **0.6577** |
+| **Hybrid RRF (k=20)** | **0.6267** | **0.7597** | **0.9466** | 0.6517 |
+
+**Strongest non-QE baseline: 0.6267 nDCG@10 (Hybrid RRF).** All QE experiments must beat this.
