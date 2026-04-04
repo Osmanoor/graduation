@@ -1274,7 +1274,7 @@ TREC run files saved for best CC and RRF (for use in Task 6.3c).
 
 ### Task 6.3b-research: Deep Research — Corpus-Steered / Chunking-Aware QE
 **Owner:** Mohammed (with AI research assistance)
-**Status:** ⏳ Not Started
+**Status:** ✅ Done (2026-04-04)
 **Depends On:** Task 6.2 ✅ (breadth-first mapping done, now go deep into selected direction)
 
 **Why:** The breadth-first literature review (Task 6.1) mapped 50+ papers and identified corpus-steered QE as the most promising direction. But that review covered many directions at surface level. Before implementing, we need to deeply understand:
@@ -1303,44 +1303,100 @@ TREC run files saved for best CC and RRF (for use in Task 6.3c).
 6. What prompt template(s) should we test?
 
 **Deliverables:**
-- [ ] Read CSQE paper (arXiv:2402.18031) in full + review their code
-- [ ] Read DAPR paper (arXiv:2305.13915) in full — the 53.5% missing-context finding
-- [ ] Read BMQExpander paper (arXiv:2508.11784) in full — ontology serialization approach
-- [ ] Investigate MIRACL corpus structure: what metadata is extractable from the HuggingFace dataset?
-- [ ] Investigate Wikipedia structure access: categories, section headings, article links — feasibility
-- [ ] Create `research_decisions/mufti_approach_deep_research.md` with all findings
-- [ ] Finalized prompt template(s) — 2-3 candidates for A/B testing
-- [ ] Confirmed novelty claim with supporting evidence
-- [ ] Updated experiment plan if research changes the approach
+- [x] Read CSQE paper (arXiv:2402.18031) in full + review their code
+- [x] Read DAPR paper (arXiv:2305.13915) in full — the 53.5% missing-context finding
+- [x] Read BMQExpander paper (arXiv:2508.11784) in full — ontology serialization approach
+- [x] Investigate MIRACL corpus structure: what metadata is extractable from the HuggingFace dataset?
+- [x] Investigate Wikipedia structure access: categories, section headings, article links — feasibility
+- [x] Create `research_decisions/mufti_approach_deep_research.md` with all findings
+- [x] Finalized prompt template(s) — CSQE prompt with Arabic translation
+- [x] Confirmed novelty claim with supporting evidence
+- [x] Updated experiment plan if research changes the approach
+
+**Outcomes:** *(Completed 2026-04-04)*
+```
+COMPREHENSIVE DEEP RESEARCH COMPLETE — Three families investigated in parallel
+
+**Three Families Analyzed:**
+1. Family 1 (Query-Side): CSQE, BMQExpander, KAR — ✅ FEASIBLE
+2. Family 2 (Index-Side): Contextual Retrieval, RAPTOR, DAPR, Late Chunking — ❌ NOT FEASIBLE
+3. Family 3 (Retrieval-Time): Multi-Meta-RAG, HippoRAG, GraphRAG — ⚠️ PARTIALLY FEASIBLE
+
+**Key Findings:**
+- CSQE (Family 1) is the clear winner: +20-30% expected improvement, 3/10 complexity, $0 cost
+- Family 2 requires $23-$20,000 re-indexing — NOT feasible for our constraints
+- Family 3 lightweight alternatives (title filtering) feasible but lower impact (+6-15%)
+
+**MIRACL Metadata Map:**
+- Available: docid (X#Y format), title, text
+- NOT available: section headings, categories, links (would need MediaWiki API)
+- DocID structure: X=article, Y=passage position (0=intro)
+
+**Novelty Claim (CONFIRMED):**
+- First LLM-based corpus-aware QE for Arabic
+- First evaluation on MIRACL Arabic with corpus-steered methods
+- First comparison of blind vs. corpus-aware for Arabic RAG
+- Publishable at EACL/ACL/NAACL
+
+**RECOMMENDED APPROACH: CSQE (Corpus-Steered Query Expansion)**
+- Expected: 0.74-0.80 nDCG@10 (vs. current best 0.6267)
+- Implementation: 2-3 days
+- Prompt template: Provided with Arabic translation
+- Fallback plans: Documented for all risk scenarios
+
+**Documents Created:**
+- research_decisions/mufti_approach_deep_research.md (master synthesis)
+- research_decisions/family1_corpus_aware_query_expansion_analysis.md (10 sections, full details)
+- research_decisions/family2_index_metadata_enrichment_analysis.md (feasibility analysis)
+- research_decisions/family3_structure_guided_miracl_investigation.md (MIRACL structure investigation)
+
+**Next Step:** Task 6.3b-implement (CSQE implementation)
+```
 
 ---
 
 ### Task 6.3b-implement: Implement Corpus-Steered Query2Doc (Direction 3 — Main Contribution)
 **Owner:** Both
 **Status:** ⏳ Not Started
-**Depends On:** Task 6.3a (baselines from 1.1, 1.2) + Task 6.3b-research (finalized approach)
+**Depends On:** Task 6.3a ✅ + Task 6.3b-research ✅ — READY TO START
 
 **Why:** This is our primary thesis contribution — grounding Query2Doc in corpus structure.
 
+**FULL IMPLEMENTATION PLAN:** `research_decisions/csqe_implementation_plan.md`
+(Read this file in full before writing any code — contains notebook structure, all cells, prompts, and session prompt)
+
 **Required Reading Before Starting:**
-- `research_decisions/mufti_approach_deep_research.md` — **MUST exist from 6.3b-research before starting**
-- `research_decisions/phase4_experiment_plan.md` — Direction 3 implementation section (experiments 3.1–3.4)
-- `research_decisions/phase4_literature_review.md` — Directions A (CSQE), C (DAPR), G (BMQExpander)
+1. `research_decisions/csqe_implementation_plan.md` — **PRIMARY REFERENCE — full notebook plan, cell by cell**
+2. `research_decisions/mufti_approach_deep_research.md` — Sections 7-9 (algorithm details, prompts, risks)
+3. `experiments/Query_generator_aya_8b.ipynb` — Copy setup + model loading cells (cells 3-13)
+4. `experiments/evaluate_enhanced_queries.ipynb` — Copy BM25 evaluation cells
+
+**Algorithm (decided, do not reconsider):** CSQE
+- BM25 first-pass: k=10
+- Temperature: 1.0 (NOT 0.1 — needs diversity for sampling)
+- Expansions: N=2 corpus-originated + N=2 blind
+- Query repetition: α=1 (no repetition in base CSQE)
+- Doc truncation: 128 tokens
 
 **Deliverables:**
-- [ ] **Exp 3.1:** Context extraction — build metadata extraction from MIRACL docids (article title, passage position, etc.)
-- [ ] **Exp 3.1b:** Coverage analysis — what % of gold articles found by BM25 first-pass at K=3,5,10
-- [ ] **Exp 3.2:** Context-aware generation — new prompt(s) with corpus context, Aya 8B
-- [ ] **Exp 3.3:** Ablation — title only / passage only / full context / K values (ONE ablation, done here)
-- [ ] **Exp 3.4:** Full pipeline — corpus-steered + hybrid fusion (combine with 1.2 and 2.1)
-- [ ] Experiment documentation in `docs/experiments/`
+- [ ] **Exp 013:** `experiments/exp_013_csqe_aya_8b.ipynb` — Main CSQE run (Aya 8B)
+- [ ] **Exp 013c:** Ablation — corpus-only (N=4+0) — cheap, required for thesis
+- [ ] **Exp 013d:** Ablation — blind-only (N=0+4) — cheap, required for thesis
+- [ ] **Exp 013e (optional):** α=2 query repetition added to CSQE
+- [ ] **Exp 013f (optional):** Jais-2-8B instead of Aya (if Aya underperforms)
+- [ ] TREC run files saved to `results/`
+- [ ] Experiment log: `docs/experiments/exp_013_csqe_aya_8b.md`
 
-**MIRACL Corpus Structure (known so far, may be updated by 6.3b-research):**
+**MIRACL Corpus Structure (confirmed by 6.3b-research):**
 - DocID format: `X#Y` where X = article number, Y = passage number within article
 - Each passage has a `title` field (article title) and `text` field
 - Passages from the same article share the same X value
-- Article titles are available directly in the corpus data
-- Section headings, categories — availability TBD (research needed in 6.3b-research)
+- Section headings: NOT AVAILABLE (WikiExtractor strips `== Section ==` markup)
+- Categories: Available via MediaWiki API (55 min, free) — not needed for base CSQE
+
+**Success Criteria:**
+- Minimum: nDCG@10 > 0.6267 (beat hybrid RRF baseline)
+- Target: nDCG@10 > 0.74 (+18% over hybrid)
 
 ---
 
