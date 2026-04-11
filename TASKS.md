@@ -1350,14 +1350,29 @@ COMPREHENSIVE DEEP RESEARCH COMPLETE — Three families investigated in parallel
 - research_decisions/family2_index_metadata_enrichment_analysis.md (feasibility analysis)
 - research_decisions/family3_structure_guided_miracl_investigation.md (MIRACL structure investigation)
 
-**Next Step:** Task 6.3b-implement (CSQE implementation)
+**VALIDATION COMPLETE (2026-04-04):**
+All critical claims from deep research have been fact-checked and verified:
+- ✅ WikiExtractor strips section headers (empirically verified: 600 passages, 0% contain headers)
+- ✅ CSQE parameters verified (K=10, 2+2, 128 tokens, temp=1.0 from full paper)
+- ✅ Novelty claim confirmed (exhaustive literature search: zero prior Arabic work)
+- ✅ MIRACL metadata confirmed (3 fields only: docid, title, text)
+- ✅ Cost estimates verified (Family 2: $3k-$20k, Family 1: $0)
+
+**Validation Documents:**
+- research_decisions/VALIDATION_COMPLETE.md (summary)
+- research_decisions/empirical_validation_wikiextractor.md (WikiExtractor test)
+- research_decisions/csqe_parameter_verification.md (CSQE paper analysis)
+- research_decisions/validation_summary_action_required.md (updated)
+- research_decisions/validation_report_critical_claims.md (detailed findings)
+
+**Next Step:** Task 6.3b-implement (CSQE implementation) — ALL CRITICAL VALIDATIONS COMPLETE
 ```
 
 ---
 
 ### Task 6.3b-implement: Implement Corpus-Steered Query2Doc (Direction 3 — Main Contribution)
 **Owner:** Both
-**Status:** ⏳ Not Started
+**Status:** ✅ Complete (2026-04-10)
 **Depends On:** Task 6.3a ✅ + Task 6.3b-research ✅ — READY TO START
 
 **Why:** This is our primary thesis contribution — grounding Query2Doc in corpus structure.
@@ -1379,13 +1394,13 @@ COMPREHENSIVE DEEP RESEARCH COMPLETE — Three families investigated in parallel
 - Doc truncation: 128 tokens
 
 **Deliverables:**
-- [ ] **Exp 013:** `experiments/exp_013_csqe_aya_8b.ipynb` — Main CSQE run (Aya 8B)
+- [x] **Exp 013:** `experiments/exp_013_csqe_aya_8b.ipynb` — Main CSQE run (Aya 8B) — BM25: 0.6157, Dense: 0.5915
 - [ ] **Exp 013c:** Ablation — corpus-only (N=4+0) — cheap, required for thesis
 - [ ] **Exp 013d:** Ablation — blind-only (N=0+4) — cheap, required for thesis
 - [ ] **Exp 013e (optional):** α=2 query repetition added to CSQE
 - [ ] **Exp 013f (optional):** Jais-2-8B instead of Aya (if Aya underperforms)
-- [ ] TREC run files saved to `results/`
-- [ ] Experiment log: `docs/experiments/exp_013_csqe_aya_8b.md`
+- [x] PKL saved to `results/enhanced_queries/exp_013_csqe_aya_8b.pkl`
+- [x] Experiment log: `docs/experiments/exp_013_csqe_aya_8b.md`
 
 **MIRACL Corpus Structure (confirmed by 6.3b-research):**
 - DocID format: `X#Y` where X = article number, Y = passage number within article
@@ -1402,7 +1417,7 @@ COMPREHENSIVE DEEP RESEARCH COMPLETE — Three families investigated in parallel
 
 ### Task 6.3c: Implement Hybrid + QE Fusion (Direction 2)
 **Owner:** Mohammed
-**Status:** ⏳ Not Started
+**Status:** ✅ Exp 2.1 Complete (2026-04-10) — Exp 2.2/2.3 optional
 **Depends On:** Task 6.3a (needs 1.1 and 1.2)
 
 **Why:** Combine QE gains with hybrid retrieval for best possible results. Also test retriever-specific strategies.
@@ -1412,10 +1427,13 @@ COMPREHENSIVE DEEP RESEARCH COMPLETE — Three families investigated in parallel
 - `research_decisions/hybrid_retrieval_qe_literature_review.md` — Areas 1-2 (Exp4Fuse, LevelRAG, MuGI)
 
 **Deliverables:**
-- [ ] **Exp 2.1:** 4-way fusion (BM25_orig + BM25_exp + mDPR_orig + mDPR_exp), CC + RRF
-- [ ] **Exp 2.2:** Retriever-specific prompts (keywords for BM25, paragraphs for mDPR)
-- [ ] **Exp 2.3:** Dual-list BM25 fusion (Exp4Fuse-style), all 9 models
-- [ ] Experiment documentation
+- [x] **Exp 2.1:** CSQE + Hybrid Fusion — best: 0.7137 nDCG@10 (Config A: BM25+CSQE + Dense RRF)
+- [ ] **Exp 2.2:** Retriever-specific prompts (keywords for BM25, paragraphs for mDPR) — optional
+- [ ] **Exp 2.3:** Dual-list BM25 fusion (Exp4Fuse-style), all 9 models — optional
+- [x] Experiment documentation: `docs/experiments/exp_021_csqe_hybrid_fusion.md`
+
+**KEY FINDING (Exp 2.1):** Apply CSQE only to BM25, keep original short query for Dense.
+BM25 benefits from vocabulary expansion; Dense encoder degrades with long CSQE queries.
 
 ---
 
@@ -1432,16 +1450,26 @@ COMPREHENSIVE DEEP RESEARCH COMPLETE — Three families investigated in parallel
 - **Chapter 4:** ~8 new result tables, 2-3 new figures (α curve, ablation, progression table)
 - **Chapter 5:** BM25 degradation root cause + fix, dense-sparse complementarity analysis, "mufti" validation, ablation insights
 
-**Key thesis table (the progression narrative):**
+**Key thesis table (the progression narrative) — ALL NUMBERS CONFIRMED:**
 ```
-Method                                    nDCG@10
-mDPR baseline                             0.499
-BM25 baseline                             0.462
-Hybrid baseline (no QE)                   ~0.64
-Blind Query2Doc (Aya, Dense)              0.616
-Blind Query2Doc + Hybrid                  ~0.68
-Corpus-Steered Query2Doc (Aya)            ???
-Corpus-Steered + Hybrid                   ???  ← headline result
+Method                                         nDCG@10   Source
+─────────────────────────────────────────────────────────────────
+BM25 alone (no QE)                             0.4621    exp_002
+mDPR alone (no QE)                             0.4993    exp_001
+Blind QE + Dense: Qwen 2.5 3B                  0.5435    exp_003
+Blind QE + Dense: Qwen3-4B                     0.5691    exp_007
+Blind QE + BM25: Aya 8B best (β=2)             0.5855    exp_011
+Blind QE + Dense: Jais-2-8B (best blind Dense) 0.6018    exp_006
+CSQE + BM25 alone (Aya 8B)                     0.6157    exp_013
+CSQE + Dense alone (Aya 8B)                    0.5915    exp_013
+Hybrid RRF k=20 (no QE)                        0.6267    exp_012
+B: BM25 + Dense+CSQE CC (α=0.4)                0.6588    exp_021
+C: BM25+CSQE + Dense+CSQE CC (α=0.5)           0.6959    exp_021
+A: BM25+CSQE + Dense CC (α=0.6)                0.7088    exp_021
+A: BM25+CSQE + Dense RRF (k=20)  ← BEST       0.7137    exp_021
+─────────────────────────────────────────────────────────────────
+Note: Aya 8B blind QE + Dense was never measured (model comparison
+table has empty metrics for Aya Dense — only BM25 was evaluated).
 ```
 
 **Deliverables:**

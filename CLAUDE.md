@@ -115,6 +115,7 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 | Falcon-H1-3B (exp_005) | 0.5359 | 0.6484 | 0.8531 | 0.5681 |
 | **Qwen3-4B (exp_007)** | **0.5691** | **0.6824** | **0.8726** | **0.6015** |
 | **Jais-2-8B (exp_006)** | **0.6018** | **0.7161** | **0.8981** | **0.6356** |
+| **Aya 8B CSQE (exp_013)** | **0.5915** | **0.7073** | **0.8816** | **0.6225** |
 | ~~ALLaM-7B (exp_008)~~ | ~~0.2550~~ | ~~0.3335~~ | ~~0.5465~~ | ~~0.2708~~ |
 | ~~GPT-OSS-20B (exp_009)~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ |
 
@@ -141,3 +142,26 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 | **Hybrid RRF (k=20)** | **0.6267** | **0.7597** | **0.9466** | 0.6517 |
 
 **Strongest non-QE baseline: 0.6267 nDCG@10 (Hybrid RRF).** All QE experiments must beat this.
+
+### Reference Baselines — CSQE (Exp 013, 2026-04-10)
+| Method | NDCG@10 | Recall@10 | Recall@100 | MRR |
+|--------|---------|-----------|------------|-----|
+| BM25 alone | 0.4621 | 0.5964 | 0.8577 | 0.4836 |
+| Aya 8B blind QE, BM25, β=2 (exp_011) | 0.5855 | — | — | — |
+| **Aya 8B CSQE, BM25 (exp_013)** | **0.6157** | **0.7447** | **0.9422** | **0.6380** |
+| **Aya 8B CSQE, Dense (exp_013)** | **0.5915** | **0.7073** | **0.8816** | **0.6225** |
+| Hybrid RRF k=20 (exp_012) | 0.6267 | 0.7597 | 0.9466 | 0.6517 |
+
+CSQE config: k=5 first-pass, 2 corpus + 2 blind samples, α=4 query repetition, temp=1.0, 128 tokens/doc.
+
+### Reference Baselines — CSQE + Hybrid Fusion (Exp 2.1, 2026-04-10)
+| Method | nDCG@10 | Recall@10 | Recall@100 | MRR |
+|--------|---------|-----------|------------|-----|
+| Hybrid RRF k=20 (no QE) | 0.6267 | 0.7597 | 0.9466 | 0.6517 |
+| B: BM25 + Dense+CSQE CC (α=0.4) | 0.6588 | 0.7851 | 0.9569 | 0.6777 |
+| C: BM25+CSQE + Dense+CSQE CC (α=0.5) | 0.6959 | 0.8249 | 0.9647 | 0.7079 |
+| A: BM25+CSQE + Dense CC (α=0.6) | 0.7088 | 0.8302 | 0.9717 | 0.7268 |
+| **A: BM25+CSQE + Dense RRF (k=20)** | **0.7137** | **0.8363** | **0.9734** | **0.7362** |
+
+**Best system: 0.7137 nDCG@10** (+0.0870 over hybrid, +54.5% over BM25 alone).
+**Key insight:** Apply CSQE only to BM25 — Dense encoder degrades on long expanded queries.
