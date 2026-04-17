@@ -70,6 +70,20 @@ While dense retrieval captures semantic relationships that sparse methods miss, 
 
 Hybrid retrieval combines sparse and dense methods to leverage their complementary strengths. Sparse retrieval excels at exact matching and handles rare terms well, while dense retrieval captures semantic similarity and handles paraphrasing. Common fusion strategies include Reciprocal Rank Fusion (RRF), which combines ranked lists from both methods, and score-level interpolation, which computes a weighted sum of sparse and dense relevance scores.
 
+Reciprocal Rank Fusion (RRF) \cite{bruch_2023_rrf} combines ranked lists by summing inverse rank scores:
+\begin{equation}
+    s_{\text{RRF}}(d) = \sum_{r \in \mathcal{R}} \frac{1}{k + \text{rank}_r(d)}
+    \label{eq:rrf_ch2}
+\end{equation}
+where $\mathcal{R}$ is the set of ranked lists being fused and $k$ is a smoothing constant (typically $k = 20$) that reduces the impact of top-ranked documents. RRF is parameter-free in the sense that it does not require score normalisation, making it robust to score distribution differences between sparse and dense retrievers.
+
+Score-level interpolation (Convex Combination, CC) computes a weighted sum of normalised retriever scores:
+\begin{equation}
+    s_{\text{CC}}(d, q) = \alpha \cdot \hat{s}_{\text{Dense}}(d, q) + (1 - \alpha) \cdot \hat{s}_{\text{BM25}}(d, q)
+    \label{eq:hybrid_cc_ch2}
+\end{equation}
+where $\hat{s}$ denotes min-max normalised scores and $\alpha \in [0, 1]$ controls the relative contribution of the dense retriever. CC is sensitive to the normalisation strategy and score scale differences between the two systems.
+
 \subsection{Query Enhancement Techniques}
 \label{sec:qe_techniques}
 
@@ -364,7 +378,7 @@ A common characteristic of all foundational work is the reliance on 175B-paramet
 
 The period from 2024 to 2025 saw significant progress in demonstrating that moderately-sized open-source LLMs (7--8B parameters) can perform effective query expansion, overturning the assumption that 175B-scale models are necessary.
 
-Lei et al. \cite{lei_2024_csqe} proposed Corpus-Steered Query Expansion (CSQE), which uses the target corpus to guide LLM-generated expansions. Testing with Llama2-7B, 13B, and 70B, the authors found that even the 7B model achieved a 30\% improvement in mean Average Precision (mAP) over the BM25 baseline (39.1 vs.\ 30.1), with larger models providing diminishing returns. This was among the first demonstrations that modern 7B models could perform meaningful query expansion.
+Lei et al. \cite{lei_2024_csqe} proposed Corpus-Steered Query Expansion (CSQE), which uses the target corpus to guide LLM-generated expansions. The CSQE pipeline operates in two stages. First, a first-pass sparse retrieval step retrieves a small set of top-$k$ documents from the target corpus using the original query. These retrieved documents are then provided to the LLM alongside the query, instructing it to extract and synthesise topically relevant vocabulary and context grounded in the actual corpus content. This corpus-grounded expansion is combined with a blind expansion (standard Query2Doc) to produce the final enriched query. The key motivation is that corpus grounding anchors the LLM's output to attested Wikipedia vocabulary, preventing the hallucination of plausible but factually incorrect entities that characterises blind generation for niche or ambiguous queries. Lei et al. reported that even a 7B-parameter model achieves a 30\% improvement in mAP over BM25 on English benchmarks \cite{lei_2024_csqe}.
 
 Zhang et al. \cite{zhang_2024_mugi} introduced MUGI (Multi-Granularity Indexing), which combines LLM-generated query expansions with a small bi-encoder retriever. The approach achieved up to 18\% NDCG improvement with GPT-4-generated expansions, and demonstrated that even a 23-million-parameter bi-encoder can benefit from high-quality expansions.
 
@@ -407,6 +421,8 @@ Specifically, the following questions remain unanswered:
     \item Does the Query2Doc technique, originally validated with 175B-parameter models on English text, transfer to Arabic with smaller models?
     \item What model characteristics (parameter count, architecture, Arabic training data volume, vocabulary design) most influence query expansion quality for Arabic?
 \end{itemize}
+
+A further gap exists in the application of corpus-steered expansion to non-English retrieval. The original CSQE work \cite{lei_2024_csqe} was evaluated exclusively on English benchmarks using English-language models; whether corpus grounding provides the same benefits for Arabic---where BM25 homonym sensitivity may corrupt the first-pass retrieval and misdirect the expansion---has not been investigated. Additionally, the interaction between corpus-steered expansion and hybrid BM25--Dense fusion has not been studied: specifically, whether applying query expansion asymmetrically to only one retriever in a hybrid system can outperform applying it to both is an open question with practical implications for retrieval pipeline design.
 
 This thesis addresses these questions through a systematic evaluation of eleven open-source language models for Query2Doc-based query expansion on the MIRACL Arabic benchmark, as described in the following chapter.
 

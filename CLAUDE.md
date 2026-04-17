@@ -115,6 +115,7 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 | Falcon-H1-3B (exp_005) | 0.5359 | 0.6484 | 0.8531 | 0.5681 |
 | **Qwen3-4B (exp_007)** | **0.5691** | **0.6824** | **0.8726** | **0.6015** |
 | **Jais-2-8B (exp_006)** | **0.6018** | **0.7161** | **0.8981** | **0.6356** |
+| **Aya Expanse 8B blind QE (Osman)** | **0.6164** | **0.7256** | **0.9001** | **0.6493** |
 | **Aya 8B CSQE (exp_013)** | **0.5915** | **0.7073** | **0.8816** | **0.6225** |
 | ~~ALLaM-7B (exp_008)~~ | ~~0.2550~~ | ~~0.3335~~ | ~~0.5465~~ | ~~0.2708~~ |
 | ~~GPT-OSS-20B (exp_009)~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ | ~~DROPPED~~ |
@@ -153,6 +154,22 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 | Hybrid RRF k=20 (exp_012) | 0.6267 | 0.7597 | 0.9466 | 0.6517 |
 
 CSQE config: k=5 first-pass, 2 corpus + 2 blind samples, α=4 query repetition, temp=1.0, 128 tokens/doc.
+
+### Reference Baselines — CSQE Ablation (Exp 013c/013d, 2026-04-11)
+| Method | BM25 nDCG@10 | BM25 R@10 | BM25 R@100 | BM25 MRR | Config A RRF nDCG@10 |
+|--------|-------------|-----------|------------|---------|---------------------|
+| 013c: Corpus-only (4c+0b, α=4) | 0.5381 | 0.6457 | 0.8790 | 0.5651 | 0.6616 |
+| 013d: Blind-only (0c+4b, α=4) | 0.5752 | 0.7089 | 0.9201 | 0.6032 | 0.7082 |
+| 013: CSQE 2+2 (α=4) | 0.6157 | 0.7447 | 0.9422 | 0.6380 | 0.7137 |
+
+Alpha sweep (Config A RRF): α=1→0.7123, α=2→0.7121, α=3→0.7130, α=4→0.7137 (nearly flat).
+
+### Error Analysis Key Numbers (2026-04-11)
+- CSQE improves 56.8% of queries, regresses 16.6%, mean delta +0.1890 nDCG@10
+- 1st-pass IS relevant (1,061 queries, 36.6%): CSQE+Hybrid = **0.8877** nDCG@10
+- 1st-pass NOT relevant (1,835 queries): CSQE+Hybrid = 0.5814 nDCG@10
+- Short queries (< 5 words, n=865): Δ = +0.1990 | Long queries (≥10 words, n=131): Δ = +0.1053
+- Regressions (367): 52% Type A (strong BM25 hurt by expansion), 36% Type B (poisoned first-pass), 12% Type C
 
 ### Reference Baselines — CSQE + Hybrid Fusion (Exp 2.1, 2026-04-10)
 | Method | nDCG@10 | Recall@10 | Recall@100 | MRR |

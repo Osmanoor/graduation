@@ -126,6 +126,39 @@ Synthesis section (Chapter 4 only — no Chapter 3 counterpart).
 | `sec:res_finding_best` | 4.5.5 | Best model recommendations |
 | `sec:res_summary` | 4.5.6 | Full experiment summary |
 | `tab:full_summary` | 4.5.6 | Consolidated experiment table |
+| `sec:res_repetition` | 4.6 | BM25 repetition results |
+| `tab:bm25_repetition` | 4.6 | BM25 repetition table |
+| `tab:bm25_best_config` | 4.6 | BM25 best-config supplementary table |
+| `fig:repetition_heatmap` | 4.6 | Repetition heatmap figure |
+| `sec:res_hybrid` | 4.7 | Hybrid fusion results |
+| `tab:hybrid_results` | 4.7 | Hybrid fusion table |
+| `fig:hybrid_comparison` | 4.7 | Hybrid comparison figure |
+| `sec:res_csqe` | 4.8 | CSQE results |
+| `sec:res_csqe_main` | 4.8.1 | CSQE main results |
+| `tab:csqe_main` | 4.8.1 | CSQE main results table |
+| `sec:res_csqe_ablation` | 4.8.2 | CSQE component ablation |
+| `tab:csqe_ablation` | 4.8.2 | CSQE ablation table |
+| `tab:alpha_sweep` | 4.8.2 | Alpha sweep table |
+| `sec:res_csqe_hybrid` | 4.9 | CSQE + hybrid fusion results |
+| `sec:res_csqe_configs` | 4.9.1 | Config A/B/C comparison |
+| `tab:csqe_hybrid_configs` | 4.9.1 | Config comparison table |
+| `tab:config_a_ablation` | 4.9.1 | Config A ablation table |
+| `tab:config_a_alpha` | 4.9.1 | Config A alpha sweep table |
+| `tab:delta_analysis` | 4.9.1 | Delta analysis table |
+| `sec:res_progression` | 4.9.2 | System progression |
+| `tab:system_progression` | 4.9.2 | Progression table |
+| `sec:res_error_csqe` | 4.10 | Per-query error analysis |
+| `sec:res_win_loss` | 4.10.1 | Win/loss distribution |
+| `tab:error_distribution` | 4.10.1 | Win/loss table |
+| `fig:csqe_scatter` | 4.10.1 | CSQE scatter plot figure |
+| `sec:res_firstpass` | 4.10.2 | First-pass quality analysis |
+| `tab:error_patterns` | 4.10.2 | First-pass quality table |
+| `tab:query_length_split` | 4.10.2 | Query length split table |
+| `sec:res_bigwins` | 4.10.3 | Big wins / corpus grounding |
+| `tab:bigwin_examples` | 4.10.3 | Big-win examples table |
+| `sec:res_regressions` | 4.10.4 | Regression analysis |
+| `tab:regression_causes` | 4.10.4 | Regression causes table |
+| `fig:regression_pie` | 4.10.4 | Regression pie chart |
 
 ---
 

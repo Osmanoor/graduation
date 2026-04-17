@@ -1395,12 +1395,21 @@ All critical claims from deep research have been fact-checked and verified:
 
 **Deliverables:**
 - [x] **Exp 013:** `experiments/exp_013_csqe_aya_8b.ipynb` — Main CSQE run (Aya 8B) — BM25: 0.6157, Dense: 0.5915
-- [ ] **Exp 013c:** Ablation — corpus-only (N=4+0) — cheap, required for thesis
-- [ ] **Exp 013d:** Ablation — blind-only (N=0+4) — cheap, required for thesis
+- [x] **Exp 013c:** Ablation — corpus-only (N=4+0) — BM25: 0.5381, Config A RRF: 0.6616
+- [x] **Exp 013d:** Ablation — blind-only (N=0+4) — BM25: 0.5752, Config A RRF: 0.7082
 - [ ] **Exp 013e (optional):** α=2 query repetition added to CSQE
 - [ ] **Exp 013f (optional):** Jais-2-8B instead of Aya (if Aya underperforms)
 - [x] PKL saved to `results/enhanced_queries/exp_013_csqe_aya_8b.pkl`
 - [x] Experiment log: `docs/experiments/exp_013_csqe_aya_8b.md`
+- [x] Ablation log: `docs/experiments/exp_013cd_ablations.md`
+- [x] Error analysis: `docs/experiments/exp_error_analysis_csqe.md`
+
+**Ablation key findings (2026-04-11):**
+- blind-only > corpus-only for BM25 alone (0.5752 vs 0.5381) — surprising
+- 2+2 CSQE beats both significantly via synergy
+- α sweep is nearly flat (0.6095→0.6157 BM25, 0.7123→0.7137 Config A)
+- 1st-pass relevant queries: CSQE+Hybrid = 0.8877 (vs 0.6684 blind)
+- 52% of regressions = Type A (strong BM25 hurt); 36% = Type B (poisoned first-pass)
 
 **MIRACL Corpus Structure (confirmed by 6.3b-research):**
 - DocID format: `X#Y` where X = article number, Y = passage number within article
@@ -1459,7 +1468,8 @@ mDPR alone (no QE)                             0.4993    exp_001
 Blind QE + Dense: Qwen 2.5 3B                  0.5435    exp_003
 Blind QE + Dense: Qwen3-4B                     0.5691    exp_007
 Blind QE + BM25: Aya 8B best (β=2)             0.5855    exp_011
-Blind QE + Dense: Jais-2-8B (best blind Dense) 0.6018    exp_006
+Blind QE + Dense: Aya 8B (best blind Dense)    0.6164    Osman exp
+Blind QE + Dense: Jais-2-8B                   0.6018    exp_006
 CSQE + BM25 alone (Aya 8B)                     0.6157    exp_013
 CSQE + Dense alone (Aya 8B)                    0.5915    exp_013
 Hybrid RRF k=20 (no QE)                        0.6267    exp_012
@@ -1468,8 +1478,7 @@ C: BM25+CSQE + Dense+CSQE CC (α=0.5)           0.6959    exp_021
 A: BM25+CSQE + Dense CC (α=0.6)                0.7088    exp_021
 A: BM25+CSQE + Dense RRF (k=20)  ← BEST       0.7137    exp_021
 ─────────────────────────────────────────────────────────────────
-Note: Aya 8B blind QE + Dense was never measured (model comparison
-table has empty metrics for Aya Dense — only BM25 was evaluated).
+Note: Aya 8B blind Dense = 0.6164 (Osman's experiment, confirmed 2026-04-12).
 ```
 
 **Deliverables:**
