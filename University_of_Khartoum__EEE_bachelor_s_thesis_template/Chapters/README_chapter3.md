@@ -123,6 +123,16 @@ Query2Doc technique, modifications, and engineering.
 | `sec:meth_temperature` | 3.5.3 | Temperature selection |
 | `sec:meth_model_issues` | 3.5.4 | Technical issues |
 | `sec:meth_quantisation` | 3.5.5 | Quantisation strategy |
+| `sec:meth_repetition` | 3.6 | Query repetition methodology |
+| `eq:query_repetition` | 3.6 | Query repetition equation |
+| `eq:mugi_repetition` | 3.6 | MuGI adaptive repetition equation |
+| `sec:meth_hybrid` | 3.7 | Hybrid fusion methodology |
+| `sec:meth_csqe` | 3.8 | CSQE methodology |
+| `sec:meth_csqe_pipeline` | 3.8.1 | CSQE two-stage pipeline |
+| `eq:csqe_query` | 3.8.1 | CSQE query assembly equation |
+| `sec:meth_csqe_ablation` | 3.8.2 | CSQE ablation design |
+| `sec:meth_csqe_config` | 3.8.3 | Config A/B/C retriever assignment |
+| `sec:meth_error_csqe` | 3.9 | Per-query error analysis methodology |
 
 ---
 

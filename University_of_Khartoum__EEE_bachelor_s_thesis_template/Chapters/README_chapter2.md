@@ -134,6 +134,8 @@ Brief recap positioning our research within the identified gap.
 | `sec:mdpr` | 2.3.4.1 | mDPR |
 | `sec:bm25s` | 2.3.4.2 | BM25S |
 | `tab:model_comparison` | 2.3 | Model comparison table |
+| `eq:rrf_ch2` | 2.1.3.3 | RRF equation (hybrid retrieval) |
+| `eq:hybrid_cc_ch2` | 2.1.3.3 | Convex Combination equation (hybrid retrieval) |
 | `sec:related_work` | 2.4 | Related work section |
 | `sec:research_gap` | 2.4.4 | Research gap |
 
