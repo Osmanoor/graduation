@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic RAG Query Enhancement - Progress Report April 2026</title>
+    <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide title-slide">
+        <img src="Fig_logo.jpg" alt="University of Khartoum Logo" class="logo">
+        <h1>Arabic RAG Query Enhancement</h1>
+        <p class="subtitle">Thesis Writing Progress & Phase 4 Experiments</p>
+        <p class="authors">Mohammed Elhaj &amp; Osman Bashir</p>
+        <p class="institute">
+            Department of Electrical and Electronic Engineering<br>
+            Faculty of Engineering<br>
+            University of Khartoum
+        </p>
+        <p class="date">April 2026</p>
+    </div>
+
+    <!-- SLIDE 2: AGENDA -->
+    <div class="slide">
+        <span class="section-header">Overview</span>
+        <h2 class="slide-title">Meeting Agenda</h2>
+        <div class="content">
+            <ol class="agenda-list">
+                <li>Progress Since Last Meeting (March 17)</li>
+                <li>Phase 4 Experiments Overview</li>
+                <li>Key Findings from Phase 4</li>
+                <li>Thesis Writing Status</li>
+                <li>Questions & Clarifications Needed</li>
+                <li>Next Steps & Timeline</li>
+            </ol>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>2 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: RECAP OF LAST MEETING -->
+    <div class="slide">
+        <span class="section-header">Context</span>
+        <h2 class="slide-title">Recap: Where We Were (March 17)</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Completed Work:</strong>
+                    <ul>
+                        <li><span class="label green">✓</span> Phase 1: Baselines (BM25S + mDPR)</li>
+                        <li><span class="label green">✓</span> Phase 2: Query2Doc implementation</li>
+                        <li><span class="label green">✓</span> Phase 3: 10-model comparison</li>
+                        <li><span class="label green">✓</span> Thesis Chapter 2 (Literature Review)</li>
+                    </ul>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Best Results (March):</strong>
+                    <table style="font-size: 0.8rem;">
+                        <tr><td>Dense (Aya 8B)</td><td>0.6164 nDCG@10</td><td class="label green">+23.5%</td></tr>
+                        <tr><td>BM25 (Jais-2 8B)</td><td>0.5122 nDCG@10</td><td class="label green">+10.8%</td></tr>
+                    </table>
+                </div>
+                <div class="column">
+                    <strong>Identified Gaps:</strong>
+                    <div class="highlight-box warning">
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>BM25 degradation:</strong> 6/9 models hurt BM25 (term dilution)</li>
+                            <li><strong>No hybrid baseline:</strong> MIRACL paper reports 0.673 — exceeds our best</li>
+                            <li><strong>Corpus grounding:</strong> Advisor suggested "Mufti approach"</li>
+                        </ul>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Supervisor Guidance:</strong>
+                    <ul>
+                        <li>Write Chapters 3, 4 in zigzag way</li>
+                        <li>Then write Chapters 5 and 1</li>
+                        <li>Consider publication potential</li>
+                        <li>Expand experiments if time permits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>3 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: PHASE 4 OVERVIEW -->
+    <div class="slide">
+        <span class="section-header">Phase 4 Experiments</span>
+        <h2 class="slide-title">What We Accomplished</h2>
+        <div class="content">
+            <div class="highlight-box info">
+                <strong>Goal:</strong> Address identified gaps and build on Query2Doc with corpus-steered expansion
+            </div>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <strong>1. BM25 Query Repetition (Exp 1.1)</strong>
+                    <ul>
+                        <li>Fixed term dilution for all 9 models</li>
+                        <li>Tested fixed (n=1,3,5,7,10) and adaptive (β=2,4,6) repetition</li>
+                        <li><strong>Best:</strong> Aya 8B β=2 → 0.5855 (+26.7% over BM25)</li>
+                    </ul>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">2. Hybrid Retrieval Fusion (Exp 1.2)</strong>
+                    <ul>
+                        <li>Combined BM25 + Dense with RRF and CC fusion</li>
+                        <li>Tested α sweep (0.1–0.9) and k values (20, 60)</li>
+                        <li><strong>Best:</strong> RRF k=20 → 0.6267 (+35.6% over BM25)</li>
+                    </ul>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">3. Corpus-Steered QE (Exp 013)</strong>
+                    <ul>
+                        <li>Ground LLM expansions in first-pass retrieved docs</li>
+                        <li>Tested corpus-only, blind-only, and combined (2+2)</li>
+                        <li><strong>Best:</strong> BM25+CSQE → 0.6157 (+33.2% over BM25)</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>4. CSQE + Hybrid Fusion (Exp 2.1)</strong>
+                    <ul>
+                        <li>Three configs: A (BM25+CSQE + Dense), B (BM25 + Dense+CSQE), C (both+CSQE)</li>
+                        <li>Tested RRF and CC fusion for each config</li>
+                        <li><strong>Best:</strong> Config A RRF → 0.7137 (+54.5% over BM25)</li>
+                    </ul>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">5. Per-Query Error Analysis</strong>
+                    <ul>
+                        <li>Analyzed all 2,896 queries individually</li>
+                        <li>56.8% improved, 26.6% tie, 16.6% regressed</li>
+                        <li>Identified Type A (52%) and Type B (36%) regression causes</li>
+                    </ul>
+
+                    <div class="highlight-box mt-1" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
+                        <strong style="font-size: 1.1rem;">Final Best Result:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>0.7137 nDCG@10</strong></li>
+                            <li><span class="label green">+54.5%</span> over BM25 baseline</li>
+                            <li><span class="label green">+13.9%</span> over hybrid baseline</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>4 / 11</span>
+        </div>
+    </div>
+
+
+    <!-- SLIDE 5: SYSTEM PROGRESSION -->
+    <div class="slide">
+        <span class="section-header">Phase 4 Results</span>
+        <h2 class="slide-title">System Progression: Baseline → Final</h2>
+        <div class="content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Stage</th>
+                        <th>System</th>
+                        <th>nDCG@10</th>
+                        <th>Improvement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: #f8f9fa;">
+                        <td>Baseline</td>
+                        <td>BM25S alone</td>
+                        <td>0.4621</td>
+                        <td>—</td>
+                    </tr>
+                    <tr style="background: #f8f9fa;">
+                        <td>Baseline</td>
+                        <td>mDPR alone</td>
+                        <td>0.4993</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Blind QE</td>
+                        <td>Best Dense (Aya 8B, n=1)</td>
+                        <td>0.6164</td>
+                        <td><span class="label green">+23.5%</span> over mDPR</td>
+                    </tr>
+                    <tr>
+                        <td>Repetition</td>
+                        <td>Best BM25 (Aya 8B, β=2)</td>
+                        <td>0.5855</td>
+                        <td><span class="label green">+26.7%</span> over BM25</td>
+                    </tr>
+                    <tr class="highlight">
+                        <td>Hybrid</td>
+                        <td>BM25 + Dense (RRF k=20)</td>
+                        <td><strong>0.6267</strong></td>
+                        <td><span class="label green">+35.6%</span> over BM25</td>
+                    </tr>
+                    <tr>
+                        <td>CSQE alone</td>
+                        <td>BM25+CSQE</td>
+                        <td>0.6157</td>
+                        <td><span class="label green">+33.2%</span> over BM25</td>
+                    </tr>
+                    <tr class="highlight" style="background: #d4edda;">
+                        <td><strong>CSQE+Hybrid</strong></td>
+                        <td><strong>BM25+CSQE + Dense (RRF)</strong></td>
+                        <td><strong>0.7137</strong></td>
+                        <td><span class="label green"><strong>+54.5%</strong></span> over BM25</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight-box info mt-1">
+                <strong>Key Insight:</strong> Each stage builds on the previous. Query repetition fixes BM25 degradation (+26.7%), hybrid fusion establishes strong baseline (+35.6%), corpus-steered QE pushes it to +54.5%.
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>5 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: KEY FINDINGS -->
+    <div class="slide">
+        <span class="section-header">Key Findings</span>
+        <h2 class="slide-title">Phase 4: What We Learned</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <ol class="styled">
+                        <li><strong>Query Repetition Fixes BM25</strong>
+                            <ul>
+                                <li>All 9 models recovered with β=2 or n=5-7</li>
+                                <li>Aya 8B: 0.5855 (+26.7% over BM25)</li>
+                                <li>Simple fix, massive impact</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hybrid Fusion is Powerful</strong>
+                            <ul>
+                                <li>RRF k=20: 0.6267 (+35.6%)</li>
+                                <li>No QE needed for strong baseline</li>
+                                <li>BM25 + Dense are complementary</li>
+                            </ul>
+                        </li>
+                        <li><strong>Corpus Grounding Works</strong>
+                            <ul>
+                                <li>CSQE: 0.6157 on BM25 alone</li>
+                                <li>Prevents hallucinations (1,061 big wins)</li>
+                                <li>First-pass quality is key predictor</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <ol class="styled" style="counter-reset: item 3;">
+                        <li><strong>Asymmetric QE is Optimal</strong>
+                            <ul>
+                                <li>Apply CSQE to BM25 only</li>
+                                <li>Dense encoder degrades on long queries</li>
+                                <li>Config A (0.7137) > Config C (0.6936)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Error Analysis Insights</strong>
+                            <ul>
+                                <li>56.8% queries improved</li>
+                                <li>Short queries gain most (+0.1990)</li>
+                                <li>367 regressions: 52% Type A, 36% Type B</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <div class="highlight-box mt-1">
+                        <strong>Novel Contribution:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li>First corpus-steered QE for Arabic</li>
+                            <li>Retriever-specific QE strategy</li>
+                            <li>Comprehensive 10-model comparison</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>6 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: THESIS WRITING STATUS -->
+    <div class="slide">
+        <span class="section-header">Thesis Writing</span>
+        <h2 class="slide-title">Current Status & Progress</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Completed Chapters:</strong>
+                    <ul>
+                        <li><span class="label green">✓</span> Chapter 2: Literature Review (Mar 17)</li>
+                        <li><span class="label green">✓</span> Chapter 3: Methodology (zigzag with Ch 4)</li>
+                        <li><span class="label green">✓</span> Chapter 4: Results & Discussion (zigzag with Ch 3)</li>
+                        <li><span class="label green">✓</span> Chapter 5: Conclusions</li>
+                        <li><span class="label green">✓</span> Chapter 1: Introduction</li>
+                    </ul>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Current Work:</strong>
+                    <ul>
+                        <li><span class="label yellow">⏳</span> Rewriting Chapters 2, 3, 4 with Phase 4 results</li>
+                        <li><span class="label yellow">⏳</span> Updating Chapter 1 (3 new objectives)</li>
+                        <li><span class="label yellow">⏳</span> Updating Chapter 5 (4 new conclusions)</li>
+                        <li><span class="label yellow">⏳</span> Abstract (English + Arabic)</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Rewrite Scope (Phase 4 Integration):</strong>
+                    <div class="highlight-box">
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>Ch 1:</strong> 3 new objectives + thesis layout update</li>
+                            <li><strong>Ch 2:</strong> Hybrid fusion equations + CSQE pipeline + research gap</li>
+                            <li><strong>Ch 3:</strong> 4 new sections (3.6–3.9): repetition, hybrid, CSQE, error analysis</li>
+                            <li><strong>Ch 4:</strong> 5 new sections (4.6–4.10): all Phase 4 results</li>
+                            <li><strong>Ch 5:</strong> 4 new conclusions + updated recommendations</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box warning mt-1">
+                        <strong>Scope:</strong> ~100 pages total, adding ~40 pages of Phase 4 content
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkpoint-timeline mt-1">
+                <div class="checkpoint">
+                    <div class="checkpoint-circle active">✓</div>
+                    <div class="checkpoint-label">Chapters 1-5<br>First Draft</div>
+                </div>
+                <div class="checkpoint-connector"></div>
+                <div class="checkpoint">
+                    <div class="checkpoint-circle pending">⏳</div>
+                    <div class="checkpoint-label">Phase 4<br>Integration</div>
+                </div>
+                <div class="checkpoint-connector"></div>
+                <div class="checkpoint">
+                    <div class="checkpoint-circle future">○</div>
+                    <div class="checkpoint-label">Abstract<br>Update</div>
+                </div>
+                <div class="checkpoint-connector"></div>
+                <div class="checkpoint">
+                    <div class="checkpoint-circle future">○</div>
+                    <div class="checkpoint-label">Final<br>Review</div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>7 / 11</span>
+        </div>
+    </div>
+
+
+    <!-- SLIDE 8: QUESTIONS & CLARIFICATIONS -->
+    <div class="slide">
+        <span class="section-header">Discussion</span>
+        <h2 class="slide-title">Questions & Clarifications Needed</h2>
+        <div class="content">
+            <div class="highlight-box question">
+                <strong>Purpose:</strong> We have identified 6 areas where we need supervisor guidance to ensure thesis quality and scientific rigor.
+            </div>
+
+            <div class="columns mt-1">
+                <div class="column">
+                    <strong>Q1. Problem Statement Scope</strong>
+                    <div class="highlight-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <p style="font-size: 0.85rem; margin-bottom: 0.3rem;">Current draft frames problem around small LLMs (<7B) for Arabic QE, but experiments cover broader ground (corpus-steered QE, hybrid fusion, model comparison).</p>
+                        <p style="font-size: 0.85rem; margin-bottom: 0;"><strong>Question:</strong> Should problem statement be general ("How can QE improve Arabic RAG?") or specific to small models? General may dilute contribution; specific may not cover all work.</p>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.5rem;">Q2. Chapter Summaries</strong>
+                    <div class="highlight-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <p style="font-size: 0.85rem; margin-bottom: 0;">AI added bullet-point summaries at end of each chapter (e.g. Section 2.5). Should these be kept or removed?</p>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.5rem;">Q3. Cross-Referencing Labels</strong>
+                    <div class="highlight-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <p style="font-size: 0.85rem; margin-bottom: 0;">AI's note: "33 cross-references in Ch 2, 26 in Ch 3, 29 in Ch 4." Is heavy cross-referencing expected? Should unused LaTeX labels be cleaned up?</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <strong>Q4. Thesis Layout Phrasing</strong>
+                    <div class="highlight-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <p style="font-size: 0.85rem; margin-bottom: 0;">Current layout section: four paragraphs, no sub-headings ("Chapter 2 establishes…, Chapter 3 presents…"). Is this standard form, or should it be restructured?</p>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.5rem;">Q5. Abstract Length</strong>
+                    <div class="highlight-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <p style="font-size: 0.85rem; margin-bottom: 0.3rem;">Current draft: 334 words (within 250–350 range). You said "short and to the point."</p>
+                        <p style="font-size: 0.85rem; margin-bottom: 0;"><strong>Question:</strong> Maximum acceptable length? Half page, one page, or two? Is dual Arabic + English abstract required?</p>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.5rem;">Q6. Technology-Driven vs. Problem-Driven</strong>
+                    <div class="highlight-box" style="background: #fff3cd; border-left-color: #ffc107;">
+                        <p style="font-size: 0.85rem; margin-bottom: 0.3rem;">Our actual process: technology-driven (explored QE techniques to see what works). Chapter 1 currently: problem-driven narrative (Arabic IR challenges → QE solution).</p>
+                        <p style="font-size: 0.85rem; margin-bottom: 0;"><strong>Question:</strong> Should Ch 1 reflect what we did (technology-driven) or be reframed as problem-driven? Is technology-driven acceptable for engineering bachelor's thesis?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>8 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: NEXT STEPS -->
+    <div class="slide">
+        <span class="section-header">Next Steps</span>
+        <h2 class="slide-title">Immediate Priorities & Timeline</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <strong>Thesis Writing (Priority 1):</strong>
+                    <ol class="styled">
+                        <li><strong>Complete Phase 4 Integration</strong>
+                            <ul>
+                                <li>Chapters 2, 3, 4 rewrite</li>
+                                <li>~40 pages of new content</li>
+                                <li>Target: 2 weeks</li>
+                            </ul>
+                        </li>
+                        <li><strong>Update Remaining Chapters</strong>
+                            <ul>
+                                <li>Chapter 1: 3 new objectives</li>
+                                <li>Chapter 5: 4 new conclusions</li>
+                                <li>Abstract (English + Arabic)</li>
+                                <li>Target: 1 week</li>
+                            </ul>
+                        </li>
+                        <li><strong>Final Review & Polish</strong>
+                            <ul>
+                                <li>Consistency check</li>
+                                <li>Cross-references</li>
+                                <li>Figures & tables</li>
+                                <li>Target: 1 week</li>
+                            </ul>
+                        </li>
+                    </ol>
+                </div>
+                <div class="column">
+                    <strong>Optional Extensions (if time permits):</strong>
+                    <ul>
+                        <li>Test on stronger embedding model (BGE-M3)</li>
+                        <li>First-pass quality gate implementation</li>
+                        <li>Asymmetric expansion weighting</li>
+                    </ul>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Publication Potential:</strong>
+                    <div class="highlight-box info">
+                        <ul style="margin-bottom: 0;">
+                            <li>Novel: Corpus-steered QE for Arabic</li>
+                            <li>Novel: Retriever-specific QE strategy</li>
+                            <li>Strong results: +54.5% improvement</li>
+                            <li>Comprehensive: 10-model comparison</li>
+                        </ul>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Timeline:</strong>
+                    <table style="font-size: 0.85rem;">
+                        <tr><td>Thesis draft complete</td><td>Mid-April</td></tr>
+                        <tr><td>Exams period</td><td>May 2026</td></tr>
+                        <tr><td>Presentation recording</td><td>After exams</td></tr>
+                        <tr><td>Final submission</td><td>1 week after exams</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>9 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: SUMMARY -->
+    <div class="slide">
+        <span class="section-header">Summary</span>
+        <h2 class="slide-title">Progress Summary</h2>
+        <div class="content">
+            <div class="columns">
+                <div class="column">
+                    <div class="highlight-box" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
+                        <strong>What We Achieved:</strong>
+                        <ul style="margin-bottom: 0;">
+                            <li>✓ Fixed all identified gaps from March meeting</li>
+                            <li>✓ Completed 5 major Phase 4 experiments</li>
+                            <li>✓ Achieved 0.7137 nDCG@10 (+54.5%)</li>
+                            <li>✓ Validated corpus-steered approach</li>
+                            <li>✓ Discovered retriever-specific QE principle</li>
+                            <li>✓ Wrote all thesis chapters (1-5)</li>
+                        </ul>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">Research Contributions:</strong>
+                    <ul>
+                        <li>First corpus-steered QE for Arabic RAG</li>
+                        <li>Comprehensive 10-model comparison</li>
+                        <li>Asymmetric QE strategy for hybrid systems</li>
+                        <li>Per-query error analysis (2,896 queries)</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <strong>Current Status:</strong>
+                    <div class="highlight-box info">
+                        <ul style="margin-bottom: 0;">
+                            <li><strong>Experiments:</strong> Complete</li>
+                            <li><strong>Thesis:</strong> Rewriting in progress</li>
+                            <li><strong>Timeline:</strong> On track for mid-April</li>
+                            <li><strong>Publication:</strong> Strong potential</li>
+                        </ul>
+                    </div>
+
+                    <strong class="mt-1" style="display: block; margin-top: 0.8rem;">What We Need:</strong>
+                    <ul>
+                        <li>Guidance on 6 specific questions</li>
+                        <li>Feedback on thesis structure decisions</li>
+                        <li>Clarification on formatting requirements</li>
+                        <li>Advice on publication strategy</li>
+                    </ul>
+
+                    <div class="highlight-box question mt-1">
+                        <strong>Next Meeting:</strong> After thesis draft completion (mid-April) for final review
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slide-footer">
+            <span>Arabic RAG Query Enhancement</span>
+            <span>10 / 11</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: THANK YOU -->
+    <div class="slide thank-you">
+        <h2 style="font-size: 2.5rem; color: #1a5f7a; margin-bottom: 1rem;">Thank You!</h2>
+        <p style="font-size: 1.3rem; color: #2e8b57; margin-bottom: 2rem;">Questions & Discussion</p>
+        
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div class="highlight-box" style="text-align: left;">
+                <strong>Contact:</strong>
+                <ul style="margin-bottom: 0; font-size: 0.95rem;">
+                    <li>Mohammed Elhaj</li>
+                    <li>Osman Bashir</li>
+                    <li>Department of Electrical and Electronic Engineering</li>
+                    <li>University of Khartoum</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
