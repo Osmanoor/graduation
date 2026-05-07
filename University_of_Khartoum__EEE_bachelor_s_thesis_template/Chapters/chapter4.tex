@@ -578,7 +578,7 @@ Five key observations were drawn from the hybrid fusion results:
 
     \item RRF $k=20$ (0.6267) and CC $\alpha=0.5$ (0.6266) were numerically indistinguishable on nDCG@10. RRF had the edge on Recall@10 (+0.0119), while CC had the edge on MRR (+0.0060). Because RRF requires no hyperparameter tuning, it was adopted as the primary hybrid baseline for all subsequent experiments.
 
-    \item The CC sweep was smooth and unimodal, peaking at $\alpha=0.5$ and degrading symmetrically toward either extreme. At $\alpha=0.9$ (almost pure Dense), the result (0.4996) was essentially the mDPR-alone baseline (0.4993); at $\alpha=0.1$ (almost pure BM25), the result (0.5248) exceeded BM25 alone because the small Dense component still contributed to document reranking. This confirmed that the two retrievers contributed roughly equally.
+    \item The CC sweep was smooth and unimodal, peaking at $\alpha=0.5$ and degrading symmetrically toward either extreme. At $\alpha=0.9$ (almost pure Dense), the result (0.4996) was essentially the mDPR-alone baseline (0.4993); at $\alpha=0.1$ (almost pure BM25), the result (0.5248) exceeded BM25 alone; a possible explanation is that even a small Dense component contributed to document reranking. This confirmed that the two retrievers contributed roughly equally.
 
     \item RRF $k=20$ slightly outperformed $k=60$ (0.6267 vs. 0.6230 nDCG@10). The smaller $k$ gives more weight to top-ranked items, which benefits nDCG@10 but does not affect Recall@100 (both 0.9467).
 
@@ -627,7 +627,7 @@ Table~\ref{tab:csqe_main} compares the CSQE-enhanced retrieval results against t
     \end{tabular}
 \end{table}
 
-BM25+CSQE achieved 0.6157 nDCG@10, representing a +33.2\% improvement over BM25 alone and, notably, nearly matching the no-QE hybrid baseline (0.6267) using only a single retriever. Dense+CSQE improved over mDPR alone by +18.5\% but fell below BM25+CSQE. The long CSQE expansion ($\sim$1,500 characters) degraded Dense retrieval quality relative to vocabulary-based matching, consistent with mDPR performing best on short queries comparable to those in its training data. This observation motivated the retriever-specific application experiments in Section~\ref{sec:res_csqe_hybrid}.
+BM25+CSQE achieved 0.6157 nDCG@10, representing a +33.2\% improvement over BM25 alone and, notably, nearly matching the no-QE hybrid baseline (0.6267) using only a single retriever. Dense+CSQE improved over mDPR alone by +18.5\% but fell below BM25+CSQE. Dense+CSQE underperformed BM25+CSQE, indicating that the expanded query hurt rather than helped the Dense retriever in this configuration. This observation motivated the retriever-specific application experiments in Section~\ref{sec:res_csqe_hybrid}.
 
 \subsection{Component Ablation}
 \label{sec:res_csqe_ablation}
@@ -706,9 +706,7 @@ Table~\ref{tab:csqe_hybrid_configs} presents the results for all three CSQE appl
     \end{tabular}
 \end{table}
 
-BM25-expanded was the winning configuration despite giving the Dense retriever the weaker input (the original short query rather than the CSQE expansion). This result is explained by a retriever--query representation mismatch: BM25 uses exact term matching and directly benefits from CSQE's vocabulary-rich expansion; the mDPR encoder produced less discriminative embeddings when given a $\sim$1,500-character expansion than with the original short query. Applying query expansion asymmetrically---only to BM25---maximised the gains from each retriever's inherent strength.
-
-Both-expanded (both retrievers expanded) scored 0.6936, lower than BM25-expanded (0.7137), even though Dense+CSQE individually outperformed Dense alone (Section~\ref{sec:res_csqe_main}). This confirmed that the relative quality of the two ranked lists matters for RRF: a less discriminative Dense run reduced the fusion ceiling even when it improved individually. This finding illustrates a \textbf{retriever-specific query representation principle}: each retriever should receive the query format best suited to its scoring mechanism.
+BM25-expanded was the winning configuration despite giving the Dense retriever the original short query rather than the CSQE expansion. When CSQE is applied to both retrievers (Both-expanded, 0.6936), the two ranked lists become less divergent from each other---both are now based on expanded queries grounded in the same first-pass documents---which lowers the complementarity that RRF fusion relies upon. BM25-expanded preserves this complementarity: the BM25 run is enriched by CSQE vocabulary while the Dense run retains its independent semantic signal, making the two lists more complementary for fusion. This finding illustrates a \textbf{retriever-specific query representation principle}: each retriever should receive the query format that maximises its divergence from the other retriever's ranked list.
 
 Table~\ref{tab:config_a_ablation} presents the contribution of each CSQE component within BM25-expanded RRF.
 
