@@ -311,12 +311,14 @@ On the Arabic MMMLU benchmark, GPT-OSS-20B scored 76.3 (high reasoning effort), 
 \subsubsection{Multilingual Dense Passage Retriever (mDPR)}
 \label{sec:mdpr}
 
-The Multilingual Dense Passage Retriever (mDPR) \cite{karpukhin_2020_dense} is a bi-encoder dense retrieval model based on multilingual BERT. In this thesis, the pre-built mDPR index for MIRACL Arabic was used, which encodes the 2.1 million Arabic Wikipedia passages into dense vectors. mDPR was intentionally selected as the dense baseline because it was \textit{not} fine-tuned on MIRACL training data, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice provides a more realistic evaluation of query enhancement effectiveness, as improvements cannot be attributed to the retriever having memorized the evaluation queries.
+The Multilingual Dense Passage Retriever (mDPR) \cite{karpukhin_2020_dense} is a bi-encoder dense retrieval model based on multilingual BERT. In this thesis, the pre-built mDPR index for MIRACL Arabic was used, which encodes the 2.1 million Arabic Wikipedia passages into dense vectors. mDPR was selected as the dense baseline because it was \textit{not} fine-tuned on MIRACL training data, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice provides a more realistic evaluation of query enhancement effectiveness, as improvements cannot be attributed to the retriever having memorized the evaluation queries.
 
 \subsubsection{BM25S}
 \label{sec:bm25s}
 
-BM25S \cite{bm25s_2024} is a Python-native implementation of the BM25 algorithm that eliminates the Java dependencies required by traditional implementations such as Pyserini. In this thesis, BM25S was used with default parameters ($k_1 = 1.5$, $b = 0.75$) over the MIRACL Arabic passage collection. BM25S was selected over Pyserini for its simpler deployment pipeline and faster iteration speed, achieving 96\% of the Pyserini BM25 baseline performance on the MIRACL Arabic evaluation set.
+BM25S \cite{bm25s_2024} is a Python-native implementation of the BM25 algorithm that eliminates the Java dependencies required by traditional implementations such as Pyserini. In this thesis, BM25S was configured with $k_1 = 0.9$ and $b = 0.4$, matching the Pyserini default configuration used in the official MIRACL benchmark to ensure comparability. (The BM25S library defaults are $k_1 = 1.5$, $b = 0.75$.) BM25S was selected over Pyserini for its simpler deployment pipeline and faster iteration speed, achieving 96\% of the Pyserini BM25 baseline performance on the MIRACL Arabic evaluation set.
+
+\paragraph{Notation.} Throughout the remainder of this thesis, the term ``BM25'' refers to the BM25S implementation with the configuration above ($k_1 = 0.9$, $b = 0.4$), unless explicitly stated otherwise.
 
 \subsection{Model Comparison Summary}
 \label{sec:model_summary}

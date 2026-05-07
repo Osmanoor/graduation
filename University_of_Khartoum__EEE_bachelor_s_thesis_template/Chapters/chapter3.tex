@@ -72,7 +72,7 @@ Two retrieval baselines were established to provide reference performance levels
 
 The dense retrieval baseline employed Multilingual Dense Passage Retrieval (mDPR), described in Section~\ref{sec:mdpr}. The mDPR encoder (\texttt{castorini/mdpr-tied-pft-msmarco}) was loaded on GPU, and queries were encoded in batches of 64. The pre-built FAISS index for MIRACL Arabic (5.47\,GB, 768-dimensional embeddings) was accessed via Pyserini. For each query, the top-100 passages were retrieved using cosine similarity.
 
-The decision to use mDPR rather than stronger retrieval models such as BGE-M3 (described in Section~\ref{sec:dense_retrieval}) was deliberate. mDPR was pre-trained on MS~MARCO (English) and was \emph{not} fine-tuned on the MIRACL Arabic corpus. This intentionally ``weaker'' baseline was chosen to provide greater headroom for demonstrating the impact of query enhancement techniques. Stronger models that were trained directly on MIRACL would leave less room for measurable improvement.
+mDPR was pre-trained on MS~MARCO (English) and was \emph{not} fine-tuned on the MIRACL Arabic corpus, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice mirrors a realistic deployment scenario in which an off-the-shelf multilingual retriever is improved through query-side interventions rather than corpus-specific fine-tuning, and ensures that observed improvements reflect query enhancement rather than retriever memorisation of evaluation queries.
 
 \subsection{Sparse Retrieval Baseline (BM25S)}
 \label{sec:meth_bm25_baseline}
@@ -99,7 +99,7 @@ Dense and sparse retrieval were tested \emph{separately} rather than combined in
 \label{sec:meth_error}
 %======================================================================
 
-Before implementing query enhancement techniques, a systematic error analysis was conducted on the dense retrieval baseline (Experiment~001) to identify the primary failure patterns and guide technique selection.
+Before implementing query enhancement techniques, a systematic error analysis was conducted on the dense retrieval baseline to identify the primary failure patterns and guide technique selection.
 
 \subsection{Quantitative Analysis Framework}
 \label{sec:meth_error_quant}
@@ -183,7 +183,7 @@ The generation parameters were configured as follows:
 
 \begin{table}[htbp]
     \centering
-    \caption{LLM generation parameters for the initial Query2Doc experiment (Experiment~003).}
+    \caption{LLM generation parameters for the initial Query2Doc experiment.}
     \label{tab:q2d_params}
     \begin{tabular}{@{}ll@{}}
         \toprule
@@ -198,7 +198,7 @@ The generation parameters were configured as follows:
     \end{tabular}
 \end{table}
 
-The maximum generation length of 128 tokens ($\sim$100 Arabic words) was selected as a balance between expansion quality and inference speed. Initial testing with 256 tokens showed diminishing returns in retrieval improvement while doubling generation time.
+The maximum generation length was set to 128 tokens ($\sim$100 Arabic words), providing sufficient context for generating informative pseudo-documents while keeping per-query generation time practical.
 
 \subsection{Batch Processing Optimisation}
 \label{sec:meth_q2d_batch}
@@ -206,12 +206,12 @@ The maximum generation length of 128 tokens ($\sim$100 Arabic words) was selecte
 A critical engineering challenge was generation throughput. Na\"ive sequential processing ($\sim$10 seconds per query) would require approximately 8 hours for the full development set. Three optimisations were implemented to achieve practical runtimes:
 
 \begin{enumerate}
-    \item \textbf{Batch processing:} Multiple queries were tokenised with left-padding and processed simultaneously through the LLM, yielding an 8$\times$ speedup.
-    \item \textbf{Reduced token generation:} The maximum generation length was reduced from 256 to 128 tokens, yielding a 2$\times$ speedup with negligible quality loss.
+    \item \textbf{Batch processing:} Multiple queries were tokenised with left-padding and processed simultaneously through the LLM, substantially reducing per-query generation time.
+    \item \textbf{Reduced token generation:} The maximum generation length was set to 128 tokens, keeping generation time practical while retaining expansion quality.
     \item \textbf{Inference optimisations:} The model was set to evaluation mode (\texttt{model.eval()}), half-precision (\texttt{float16}) was used, and gradient computation was disabled (\texttt{torch.no\_grad()}).
 \end{enumerate}
 
-The combined effect was a 16$\times$ speedup, reducing the full-set generation time from $\sim$8 hours to $\sim$40 minutes on a T4 GPU. This enabled rapid iteration across multiple models and configurations.
+Together, these optimisations reduced full-set generation time to approximately 40 minutes per model on a T4 GPU, enabling practical iteration across multiple models and configurations.
 
 \subsection{Dense Retrieval with Query2Doc}
 \label{sec:meth_q2d_dense}
@@ -228,7 +228,7 @@ The enhanced query was then encoded by the mDPR encoder and used for FAISS simil
 \subsection{BM25 Retrieval with Query2Doc}
 \label{sec:meth_q2d_bm25}
 
-For sparse retrieval, the same enhanced queries were evaluated against the BM25S index. Notably, the initial BM25 experiment (Experiment~004) used simple concatenation identical to the dense configuration, \emph{without} implementing the query repetition strategy recommended by Wang et al. \cite{wang_2023_query2doc}. The original paper recommends:
+For sparse retrieval, the same enhanced queries were evaluated against the BM25S index. Notably, the initial BM25 experiment used simple concatenation identical to the dense configuration, \emph{without} implementing the query repetition strategy recommended by Wang et al. \cite{wang_2023_query2doc}. The original paper recommends:
 
 \begin{equation}
     q_{\text{enhanced}}^{\text{BM25}} = \underbrace{q \oplus q \oplus \cdots \oplus q}_{n \text{ times}} \oplus d_{\text{pseudo}}
@@ -367,8 +367,7 @@ Zhang et al. \cite{zhang_2024_mugi} proposed computing $n$ per-query from the ra
 The optimal number of repetitions depends on the length ratio between query and pseudo-document. A 3-word query paired with a 200-token pseudo-document requires more repetition than a 15-word query paired with a 100-token pseudo-document. The MuGI per-query adaptation removes this length sensitivity and, as reported in Section~\ref{sec:res_repetition}, produced the best results for the two largest models (Aya Expanse 8B and Jais-2 8B), where $\beta=2$ was the winning configuration.
 
 \paragraph{Sweep Design.}
-Nine models were evaluated across eight configurations ($n \in \{1, 3, 5, 7, 10\}$ and $\beta \in \{2, 4, 6\}$), yielding 72 BM25 evaluations. All pseudo-document expansions had been generated during the model comparison phase (Section~\ref{sec:meth_model_comparison}); no new LLM inference was required. The stored expansion files (serialised Python objects) were loaded and combined with varying repetition factors, then evaluated using \texttt{pytrec\_eval} on the full MIRACL Arabic development set (2,896 queries). The total sweep runtime was approximately 73 minutes on a Colab CPU instance.
-
+Nine models were evaluated across eight configurations ($n \in \{1, 3, 5, 7, 10\}$ and $\beta \in \{2, 4, 6\}$), yielding 72 BM25 evaluations. All pseudo-document expansions had been generated during the model comparison phase (Section~\ref{sec:meth_model_comparison}); no new LLM inference was required. The stored expansion files (serialised Python objects) were loaded and combined with varying repetition factors, then evaluated using \texttt{pytrec\_eval} on the full MIRACL Arabic development set (2,896 queries). 
 %======================================================================
 \section{Hybrid Retrieval Fusion}
 \label{sec:meth_hybrid}
@@ -409,7 +408,7 @@ The CSQE pipeline distinguishes itself from standard (blind) Query2Doc through a
     \label{eq:csqe_query}
 \end{equation}
 
-\noindent where $c_i$ denotes corpus-grounded expansion samples, $b_i$ denotes blind expansion samples, and $\alpha$ is the query repetition factor (Equation~\ref{eq:query_repetition}).
+\noindent where $c_i$ denotes corpus-grounded expansion samples, $b_i$ denotes blind expansion samples, $\alpha$ is the query repetition factor (Equation~\ref{eq:query_repetition}), and each expansion sample appears exactly once ($k=1$ in MuGI notation).
 
 The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU.
 
@@ -422,9 +421,9 @@ Corpus-grounded samples provide attested Arabic vocabulary anchored to the actua
 To isolate the individual contributions of corpus-grounded and blind expansion, three ablation variants were defined:
 
 \begin{itemize}
-    \item \textbf{Experiment 013c (Corpus-only):} \texttt{num\_corpus\_samples}~=~4, \texttt{num\_blind\_samples}~=~0. This variant isolates the contribution of first-pass grounding by using only corpus-grounded expansions.
-    \item \textbf{Experiment 013d (Blind-only):} \texttt{num\_corpus\_samples}~=~0, \texttt{num\_blind\_samples}~=~4. This variant isolates the contribution of blind generation, equivalent to a 4-sample Query2Doc with repetition.
-    \item \textbf{Experiment 013 (Full CSQE):} \texttt{num\_corpus\_samples}~=~2, \texttt{num\_blind\_samples}~=~2. The combined system as described above.
+    \item \textbf{Corpus-only ablation:} \texttt{num\_corpus\_samples}~=~4, \texttt{num\_blind\_samples}~=~0. This variant isolates the contribution of first-pass grounding by using only corpus-grounded expansions.
+    \item \textbf{Blind-only ablation:} \texttt{num\_corpus\_samples}~=~0, \texttt{num\_blind\_samples}~=~4. This variant isolates the contribution of blind generation, equivalent to a 4-sample Query2Doc with repetition.
+    \item \textbf{Full CSQE configuration:} \texttt{num\_corpus\_samples}~=~2, \texttt{num\_blind\_samples}~=~2. The combined system as described above.
 \end{itemize}
 
 All three variants used $\alpha=4$ and the same Aya Expanse 8B model. Additionally, a query repetition factor sweep ($\alpha \in \{1, 2, 3, 4\}$) was conducted on the full CSQE variant. This sweep was reconstructed from stored expansion files (serialised Python objects) without requiring new LLM inference---only the number of query prepends was varied before re-running BM25 evaluation.
@@ -432,12 +431,12 @@ All three variants used $\alpha=4$ and the same Aya Expanse 8B model. Additional
 \subsection{Retriever-Specific Application}
 \label{sec:meth_csqe_config}
 
-The CSQE-expanded query ($q_{\text{CSQE}}$) is substantially longer than the original query ($\sim$1,500 characters vs. $\sim$30 characters). Dense encoders such as mDPR (Section~\ref{sec:mdpr}) were trained on short natural-language queries, raising the hypothesis that long expanded queries may degrade embedding quality. To test this hypothesis, three fusion configurations were defined:
+The CSQE-expanded query ($q_{\text{CSQE}}$) is substantially longer than the original query. Three fusion configurations were tested to determine the optimal retriever--query assignment; whether expansion helps or hurts each retriever was left as an empirical question, with the causal interpretation reserved for the results discussion (Section~\ref{sec:res_csqe_configs}).
 
 \begin{itemize}
-    \item \textbf{Config A:} BM25 receives the CSQE-expanded query; Dense receives the original query. \emph{Hypothesis:} BM25 benefits from vocabulary breadth in the long expansion, while Dense performs best with the short query it was trained on.
-    \item \textbf{Config B:} BM25 receives the original query; Dense receives the CSQE-expanded query. \emph{Hypothesis:} the semantic signal in the CSQE expansion improves dense encoding.
-    \item \textbf{Config C:} Both BM25 and Dense receive the CSQE-expanded query. \emph{Hypothesis:} maximum expansion applied uniformly should yield the highest performance.
+    \item \textbf{BM25-expanded:} BM25 receives the CSQE-expanded query; Dense receives the original query.
+    \item \textbf{Dense-expanded:} BM25 receives the original query; Dense receives the CSQE-expanded query.
+    \item \textbf{Both-expanded:} Both BM25 and Dense receive the CSQE-expanded query.
 \end{itemize}
 
 For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \ldots, 0.9\}$) were evaluated. This design isolates the effect of retriever-specific query representation and determines whether asymmetric expansion outperforms symmetric application.
