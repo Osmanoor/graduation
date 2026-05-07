@@ -45,6 +45,7 @@ The natural next question: **what happens when we combine CSQE-enhanced queries 
 | Blind QE + Dense: Qwen3-4B | 0.5691 | 0.6824 | 0.8726 | 0.6015 | exp_007 |
 | Blind QE + BM25: Aya 8B best (β=2) | 0.5855 | — | — | — | exp_011 |
 | Blind QE + Dense: Jais-2-8B | 0.6018 | 0.7161 | 0.8981 | 0.6356 | exp_006 |
+| Blind QE + Dense: Aya 8B (Osman) | 0.6164 | 0.7256 | 0.9001 | 0.6493 | Osman exp |
 | BM25+CSQE alone | 0.6157 | 0.7447 | 0.9422 | 0.6380 | exp_013 |
 | Dense+CSQE alone | 0.5915 | 0.7073 | 0.8816 | 0.6225 | exp_013 |
 | Hybrid CC α=0.5 (no QE) | 0.6266 | 0.7478 | 0.9458 | 0.6577 | exp_012 |
@@ -74,7 +75,7 @@ The natural next question: **what happens when we combine CSQE-enhanced queries 
 | Best (A RRF) vs BM25 alone | +0.2516 | +54.5% |
 | Best (A RRF) vs mDPR alone | +0.2144 | +42.9% |
 | Best (A RRF) vs best blind BM25 QE (Aya β=2) | +0.1282 | +21.9% |
-| Best (A RRF) vs best blind Dense QE (Jais-2) | +0.1119 | +18.6% |
+| Best (A RRF) vs best blind Dense QE (Aya 8B, 0.6164) | +0.0973 | +15.8% |
 | Best (A RRF) vs Hybrid RRF (no QE) | +0.0870 | +13.9% |
 | Config C vs Config A | −0.0178 | Dense hurts with CSQE queries |
 | Config B vs Hybrid RRF | +0.0207 | Weakest config still beats no-QE hybrid |

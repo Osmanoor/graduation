@@ -209,4 +209,16 @@ gemini-mcp-server
 
 # Project-specific: Large data files
 arabic-rag-query-enhancement/data/processed/*.json
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.lof
+*.lot
+*.out
+*.toc
+*.fdb_latexmk
+*.fls
+*.synctex.gz
 arabic-rag-query-enhancement/arabic-rag-query-enhancement/data/processed/*.json
