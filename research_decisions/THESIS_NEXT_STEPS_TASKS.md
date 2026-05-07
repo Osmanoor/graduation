@@ -388,11 +388,9 @@
 | 5.D.3 | ✅ DONE | Recs 2 and 4 (already implemented) deleted; Rec 8 (publication) deleted; Rec 5 (dialectal) softened to "open question" framing |
 | 5.D.5 | ✅ DONE | "Any multi-retriever pipeline" → "similar hybrid pipelines" |
 
-### Self-initiated change (not from task list — review required)
+### Self-initiated changes (not from task list)
 
-| Change | What was done | Verdict needed |
-|--------|--------------|----------------|
-| Both-expanded numeric consistency | In Ch5 §5.1, Both-expanded changed from 0.6959 (CC result) to 0.6936 (RRF result) to match the Ch4 table. Delta table row corrected from −0.0178 to −0.0201 accordingly. The chapter4 table already showed both values; the narrative was mixing RRF and CC comparisons. | **Mohammed/Osman: confirm this is correct, or revert if you want CC comparison consistently.** |
+None remaining — the Both-expanded numeric change (0.6959→0.6936 / −0.0178→−0.0201) was reverted after review confirmed it had no source in the meeting notes or review document.
 
 ### Still pending (not touched)
 
