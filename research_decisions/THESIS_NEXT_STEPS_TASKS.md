@@ -134,27 +134,27 @@
 
 ## Workstream 4 — Verifications (small fact-checks)
 
-> Each is a single lookup or computation. Outcome may flip a decision.
+> ✅ **WORKSTREAM COMPLETE** — All findings documented in `VERIFICATION_REPORT.md` (2026-05-18).
 
-| Task | What to verify | Source |
-|------|---------------|--------|
-| 4.1 | "GPT-OSS English-dominant" claim — check official model card | item 2.5 |
-| 4.2 | Actual BM25S parameters used in experiments (k1=1.5/b=0.75 vs k1=0.9/b=0.4) | item 2.12 |
-| 4.3 | Actual SILMA temperatures tested (0.7? 0.8? — not 0.0) | item 3.11 |
-| 4.4 | Specify which Arabic NLP benchmark is being claimed in 4.7 (OALL? AraGen? AMMLU?) | item 4.7 |
-| 4.5 | Lei et al. 2024 "30% mAP improvement over BM25" exact claim and benchmark setting | P4.2.3 |
-| 4.6 | Top-100 vs top-1000 retrieval depth in exp_012 | P4.3.10 |
-| 4.7 | CSQE temp=1.0 in exp_013 notebook | P4.3.15 |
-| 4.8 | First-pass quality definition (qrel ≥ 1 vs ≥ 2) | P4.3.18 |
-| 4.9 | CSQE expansion length ≈1500 chars — compute from saved CSQE outputs | P4.4.11 |
-| 4.10 | mDPR trained on short queries — find a citable source | P4.4.11 |
-| 4.11 | 258 failure queries inspection — exhaustive or sampled? | P4.4.21 |
-| 4.12 | Three big-win example accuracy (الرباط المنصوري, John Dewey, Nicolas Boileau) — query, blind output, CSQE output | P4.4.23 |
-| 4.13 | "ما هو التطرف" actually retrieves dialect content (Type B example) | P4.4.25 |
-| 4.14 | 0.3 threshold rationale for "BM25 well handled" in regression analysis | P4.4.24 |
-| 4.15 | `zhang_2024_mugi` BibTeX entry — is the EMNLP Findings 2024 venue claim correct? | P4.X.6 |
-| 4.16 | Each cross-reference label (23 new in Ch.3 + Ch.4) is actually used | P4.X.7 |
-| 4.17 | Spot-check 5–10 numbers in the brief's Quick Reference block against original experiment docs | P4.X.8 |
+| Task | What to verify | Status | Source |
+|------|---------------|--------|--------|
+| 4.1 | "GPT-OSS English-dominant" claim — check official model card | ✅ DONE | item 2.5 |
+| 4.2 | Actual BM25S parameters used in experiments (k1=0.9/b=0.4) | ✅ DONE | item 2.12 |
+| 4.3 | Actual SILMA temperatures tested (0.1, 0.7) | ✅ DONE | item 3.11 |
+| 4.4 | Specify which Arabic NLP benchmark is being claimed (OALL) | ✅ DONE | item 4.7 |
+| 4.5 | Lei et al. 2024 "30% mAP improvement over BM25" | ✅ DONE | P4.2.3 |
+| 4.6 | Top-100 vs top-1000 retrieval depth in exp_012 | ✅ DONE | P4.3.10 |
+| 4.7 | CSQE temp=1.0 in exp_013 notebook | ✅ DONE | P4.3.15 |
+| 4.8 | First-pass quality definition (qrel ≥ 1) | ✅ DONE | P4.3.18 |
+| 4.9 | CSQE expansion length ≈1500 chars | ✅ DONE | P4.4.11 |
+| 4.10 | mDPR trained on short queries | ✅ DONE | P4.4.11 |
+| 4.11 | 258 failure queries inspection — exhaustive | ✅ DONE | P4.4.21 |
+| 4.12 | Three big-win example accuracy (Verified hallucinations) | ✅ DONE | P4.4.23 |
+| 4.13 | "ما هو التطرف" actually retrieves dialect content | ✅ DONE | P4.4.25 |
+| 4.14 | 0.3 threshold rationale for "BM25 well handled" | ✅ DONE | P4.4.24 |
+| 4.15 | `zhang_2024_mugi` BibTeX entry — EMNLP Findings 2024 | ✅ DONE | P4.X.6 |
+| 4.16 | Each cross-reference label is actually used (Audit complete) | ✅ DONE | P4.X.7 |
+| 4.17 | Spot-check numbers in the brief's Quick Reference block | ✅ DONE | P4.X.8 |
 
 ---
 
