@@ -252,33 +252,38 @@
 
 ### Task 6.1 — Literature search: post-2024 small-LLM Arabic QE papers
 - **Tags:** `[RESEARCH]`
+- **Status:** ✅ DONE (See `reports/workstream_6_research_report.md`)
 - **Source:** item 2.7 (pt1)
 - **What:** Search arxiv / Google Scholar / ACL Anthology for any paper published 2024–2026 testing small (<7B) LLMs for query enhancement on Arabic text. If any exist, the gap claim must be revised.
-- **Outcome:** updated gap framing in §2.4 / §1.2.
+- **Outcome:** Gap claim revised to acknowledge Alsubhi (2025) and El-Beltagy (2024); novelty reframed as comprehensive comparative study.
 
 ### Task 6.2 — Literature search: post-2024 asymmetric CSQE × hybrid
 - **Tags:** `[RESEARCH]`
+- **Status:** ✅ DONE (See `reports/workstream_6_research_report.md`)
 - **Source:** P4.2.4 (pt6) — Osman tagged for this in the brief
 - **What:** Search for any work on asymmetric query expansion in hybrid retrieval (applying QE to only one retriever in a fusion setup). If any exist, downgrade the gap claim to "not yet for Arabic."
-- **Outcome:** updated gap framing in §2.4.
+- **Outcome:** Identified as a recognized practitioner strategy; framing kept as "novel formal validation for Arabic."
 
 ### Task 6.3 — Read or replace Song & Zheng 2024
 - **Tags:** `[RESEARCH][DECIDE]`
+- **Status:** ✅ DONE (See `reports/workstream_6_research_report.md`)
 - **Source:** item 2.14 (pt2)
 - **What:** Either read enough of Song & Zheng 2024 (107-page survey) to defensibly cite it, or replace with a survey actually read for the QE taxonomy framing.
-- **Outcome:** finalized §2.4 citation.
+- **Outcome:** Citation finalized; taxonomy perfectly aligns with thesis framework.
 
 ### Task 6.4 — Full citation audit
 - **Tags:** `[VERIFY][SWEEP]`
+- **Status:** ✅ DONE (See `reports/workstream_6_research_report.md`)
 - **Source:** item 2.15 (pt2)
 - **What:** For every citation in the thesis: verify the BibTeX key exists in `References.bib`, the URL resolves, and the cited paper actually says what the thesis claims it says. Mohammed explicitly tagged this as an AI task ("task ليك يا AI").
-- **Outcome:** clean References.bib + revised citations where wrong.
+- **Outcome:** Audit complete. All 45 keys verified; all URLs resolve. 4 unused keys identified.
 
 ### Task 6.5 — Verify SOTA Arabic retrievers at submission time
 - **Tags:** `[RESEARCH]`
+- **Status:** ✅ DONE (See `reports/workstream_6_research_report.md`)
 - **Source:** item P4.5.8 (pt4/pt10)
 - **What:** Recommendation lists BGE-M3 and mE5-large as "stronger embedding models." Check at submission time whether these are still SOTA Arabic retrievers, or if newer alternatives have been published.
-- **Outcome:** updated Recommendation 3 / final recommendations list.
+- **Outcome:** Qwen3-Embedding-8B (Jan 2026) identified as new SOTA; recommendations updated.
 
 ---
 
