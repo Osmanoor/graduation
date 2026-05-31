@@ -1,0 +1,16 @@
+\begin{tabular}{lccccc}
+\toprule
+model & params_B & n1_ndcg10 & best_config & best_ndcg10 & delta_vs_n1 \\
+\midrule
+BM25 baseline (no QE) & NaN & 0.4621 & n=1 & 0.4621 & 0.0000 \\
+Aya Expanse 8B & 8.0000 & 0.5046 & beta=2 & 0.5855 & 0.0808 \\
+Jais-2-8B & 8.0000 & 0.5122 & beta=2 & 0.5731 & 0.0610 \\
+Qwen 2.5-7B & 7.0000 & 0.4682 & n=5 & 0.5358 & 0.0675 \\
+Qwen3-8B & 8.0000 & 0.4459 & n=7 & 0.5328 & 0.0868 \\
+Gemma 3 4B & 4.0000 & 0.3447 & n=7 & 0.5277 & 0.1831 \\
+Qwen3-4B & 4.0000 & 0.4145 & n=7 & 0.5244 & 0.1098 \\
+Qwen 2.5-3B & 3.0000 & 0.4090 & n=5 & 0.5185 & 0.1095 \\
+Falcon-H1-3B & 3.0000 & 0.4038 & n=10 & 0.5113 & 0.1074 \\
+SILMA 2B & 2.0000 & 0.4194 & n=5 & 0.4832 & 0.0639 \\
+\bottomrule
+\end{tabular}

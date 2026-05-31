@@ -1,0 +1,45 @@
+# Thesis figure style — Dr. Tahani's guidelines
+# 12pt body in thesis; figures embed at ~6in width, scale to roughly 10pt readable.
+# No titles inside figures (LaTeX \caption handles it).
+# Grayscale-safe palette for B&W printing.
+
+font.family: serif
+font.serif: Times New Roman, DejaVu Serif, serif
+font.size: 10
+
+axes.titlesize: 10
+axes.labelsize: 10
+axes.spines.top: False
+axes.spines.right: False
+axes.grid: True
+axes.axisbelow: True
+
+grid.alpha: 0.3
+grid.linestyle: --
+grid.linewidth: 0.5
+
+xtick.labelsize: 9
+ytick.labelsize: 9
+xtick.direction: out
+ytick.direction: out
+
+legend.fontsize: 9
+legend.frameon: False
+legend.borderaxespad: 0.5
+
+figure.figsize: 6.0, 4.0
+figure.dpi: 100
+
+# 300 DPI for PNG; vector for PDF (set in savefig per call)
+savefig.dpi: 300
+savefig.bbox: tight
+savefig.pad_inches: 0.05
+
+# Grayscale-safe ordering: dark to light, distinguishable when printed B&W
+axes.prop_cycle: cycler(color=["1f1f1f", "4d4d4d", "8c8c8c", "404040", "b3b3b3", "666666"])
+
+# Lines and bars
+lines.linewidth: 1.5
+lines.markersize: 5
+patch.linewidth: 0.5
+patch.edgecolor: black

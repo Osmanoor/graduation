@@ -355,6 +355,30 @@
 
 ## Progress Log
 
+### 2026-05-31 — Workstream 1 fully complete + figures pipeline rendered
+
+Full completion report: `research_decisions/STREAM_1_COMPLETION_REPORT.md`.
+
+| Task | Status | Notes |
+|------|--------|-------|
+| 1.1 | ✅ DONE | **Claim refuted.** Local corpus-membership check (`thesis_figures/notebooks/task_1_1_corpus_integrity.py`) over the full 2,061,414-doc MIRACL Arabic corpus: of 258 failures (Config A RRF nDCG@10 < 0.1), **0 irretrievable / 258 genuine retrieval failures**. 199 also miss on BM25 baseline; **58 are BM25-retrievable (43 with BM25 ≥ 0.3) but lost by the CSQE hybrid** = real regressions. Routing = "claim wrong → reframe §4.10, proceed" (NOT the indexing-bug STOP branch). Verdict CSV: `thesis_figures/data/computed/task_1_1_failure_corpus_check.csv`. Correction banner added to `exp_error_analysis_csqe.md`. |
+| 1.2 | ✅ DONE | Decision A: unify on **Short 1–3 / Medium 4–8 / Long 9+ words** (preserves §4.2 short-query motivation). KEEP absolute Failed/Mediocre/Successful thresholds. **+ §4.2 nDCG correctness fix discovered:** the original `exp_001_quantitative_analysis.json` was computed with non-standard nDCG and disagrees with the canonical headline values. Recomputed locally from `exp_001_baseline_dense.txt` with `pytrec_eval` → all four headline metrics reproduce exactly (0.4993/0.6156/0.8407/0.5328). Corrected §4.2 numbers: failure 39%→**34%**, successful 5%→**33%**, short bucket nDCG 0.240→**0.345**, length↔nDCG r 0.125→**≈0**, coverage@100 99.4%→**90.1%**. Reconciliation CSV: `thesis_figures/data/computed/sec4_2_reconciliation.csv`. |
+| 1.3 | ✅ DONE | Per-query export cell executed in Colab. `csqe_vs_blind_per_query.csv` produced (2,896 rows; in `thesis_figures/data/raw/`). All claimed aggregates reproduce: big wins 1,061, regressions 367, win/tie/loss 56.8/26.6/16.6%, mean Δ 0.1890, first-pass 0.8877/0.5814. First-pass definition resolved: BM25 top-1 with qrel≥1 (closes WS4 Task 4.8). |
+| 1.4 | ✅ DONE | Three orthogonal threshold systems catalogued (absolute §3.3, pairwise §3.9, hybrid regression-subtyping §3.9). Resolution: keep all three + one signpost paragraph at `chapter3.tex:109`. No data dependency. **Thesis text edit pending — Track A.** |
+
+#### Workstream 7.1 — Figure plan + implementation: Track B figures DONE
+All 44 figure PDFs + 32 PNG previews rendered into `thesis_figures/output/`. Inventory:
+- **12 system diagrams** (Ch 2 + 3) — all TikZ; xelatex-compiled. Excalidraw track abandoned in favour of TikZ.
+- **32 data-figure variations** (Ch 4) across 15 figures, rendered from canonical post-WS1 data via 5 matplotlib notebooks (`02_baseline_figures.ipynb` through `05_error_analysis.ipynb`).
+- **6 LaTeX table snippets** (Tables 4.1, 4.2 partial, 4.3, 4.4, 4.5, 4.7). Tables 2.1, 2.2, 3.1, 3.2, 4.6 + R@10/R@100/MRR columns for Osman's 5 models in Table 4.2 are hand-compile work.
+
+Joint review document: `thesis_figures/REVIEW.html` (open in browser; per-figure ratings + side-by-side variations + sign-off slots).
+
+Visual-quality feedback noted in `thesis_figures/README.md` "Visual feedback" section — current renders are mathematically correct and submission-eligible, but flagged for a future polish pass (color, icons, AI-illustration option for Ch 2 conceptual diagrams). Not blocking.
+
+#### Track A — Thesis text edits per `STREAM_1_COMPLETION_REPORT.md` §3
+**NOT STARTED.** Mohammed's next session. The data is settled; remaining work is pure LaTeX editing across `chapter3.tex`, `chapter4.tex`, plus syncing the supporting MD docs (`error_analysis_phase1_quantitative.md`, `exp_error_analysis_csqe.md`).
+
 > Updated 2026-05-07 after sessions on 2026-05-06 and 2026-05-07. All edits committed in `01ec759` (initial batch) and corrective follow-up commit.
 
 ### Completed tasks (verified against task descriptions)
@@ -394,14 +418,22 @@ None remaining — the Both-expanded numeric change (0.6959→0.6936 / −0.0178
 
 ### Still pending (not touched)
 
-All tasks not listed above remain pending as specified. Key blockers:
-- WS1 (1.1–1.4): require Colab notebook runs with MIRACL data
-- WS4 (4.3–4.17 most): require notebook lookups or external verification
-- WS5.C.2: requires computing Pearson/Spearman for Qwen family
-- WS5.C.17: big-win examples need verification (Task 4.12)
-- WS5.D.1: Mohammed's Ch.5 deep-dive recording was incomplete
-- WS3.1–3.3: require reading each chapter section carefully
-- WS5.A, 5.E, 5.F: blocked on supervisor Q2/Q3 (Ch.1/abstract rewrite)
+Updated 2026-05-31 evening — after WS1 completion + figures pipeline render:
+
+**Newly unblocked / ready to apply:**
+- **Track A — thesis text edits** per `STREAM_1_COMPLETION_REPORT.md` §3 (Mohammed, next session). Specifically §4.2.1/2/3 numeric corrections (failure rate, length table, coverage), §3.3 token→word relabel + 1.4 signpost paragraph, §4.10 rewrite (failure paragraph + length-bucket Medium fill + first-pass top-1 wording), supporting MD doc sync. **Estimated: ~3 hours focused writing.**
+- **WS5.C.20** (Medium length row `---`): now fillable from Mohammed's CSV (Scheme A Medium: blind 0.506 → CSQE 0.703).
+- **WS5.C.16** (demote meta-description failure mode): aligns with 1.1 outcome — "1 genuine failure = meta-description" framing is gone; replaced by 58 regressions.
+
+**Open tasks (status unchanged):**
+- **WS4 (Osman):** 4.3–4.17 — most still need verification (4.8 first-pass definition is now resolved by 1.3).
+- **WS5.C.2:** Pearson/Spearman for Qwen family — small computation, can do locally.
+- **WS5.C.17:** big-win example texts (الرباط المنصوري, John Dewey, Nicolas Boileau) need qualitative verification — not derivable from the CSV.
+- **WS5.D.1:** Mohammed's Ch.5 deep-dive recording was incomplete.
+- **WS3.1–3.3:** require reading each chapter section carefully.
+- **WS5.A, 5.E, 5.F:** blocked on supervisor Q2/Q3 (Ch.1/abstract rewrite).
+- **Hand-compile data:** Tables 2.1, 2.2, 3.1, 3.2, 4.6 + R@10/R@100/MRR for Osman's 5 models in Table 4.2.
+- **Visual upgrade of figures (optional):** see `thesis_figures/README.md` "Visual feedback" section. Not on the critical path.
 
 ---
 

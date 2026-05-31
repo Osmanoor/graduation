@@ -1,0 +1,43 @@
+% Fig 2.1 — Retrieval-Augmented Generation (RAG) architecture
+% Compile standalone:  xelatex fig_2_1_rag_arch.tex
+% Or paste the tikzpicture block into a Ch.2 figure environment.
+
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit, backgrounds}
+
+\begin{document}
+\begin{tikzpicture}[
+    >=Stealth,
+    node distance=12mm and 16mm,
+    box/.style={rectangle, draw, rounded corners=2pt,
+                minimum width=26mm, minimum height=10mm,
+                align=center, font=\small},
+    component/.style={box, fill=black!10},
+    data/.style={cylinder, shape border rotate=90, aspect=0.3, draw,
+                 minimum width=22mm, minimum height=11mm,
+                 align=center, font=\small, fill=black!5},
+    arrow/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  % Main horizontal flow
+  \node[box] (q) {User query};
+  \node[component, right=of q] (retriever) {Retriever};
+  \node[component, right=of retriever] (llm) {LLM};
+  \node[box, right=of llm] (ans) {Generated\\answer};
+
+  % Corpus, top
+  \node[data, above=of retriever] (corpus) {Corpus\\(passages)};
+
+  % Retrieved passages label between retriever and llm
+  \node[font=\footnotesize\itshape, below=1mm of retriever, yshift=-3mm] (rlabel) {top-$k$\\passages};
+
+  % Arrows
+  \draw[arrow] (q) -- (retriever);
+  \draw[arrow] (retriever) -- (llm);
+  \draw[arrow] (llm) -- (ans);
+  \draw[arrow] (corpus) -- (retriever);
+
+  % Augmentation note
+  \node[font=\footnotesize\itshape, above=1mm of llm] {context-augmented prompt};
+\end{tikzpicture}
+\end{document}

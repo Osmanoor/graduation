@@ -1,0 +1,6 @@
+Category,n,Aya blind BM25 nDCG@10,CSQE+Hybrid nDCG@10,Delta
+All queries,2896,0.5046,0.6936,0.1890
+Short queries (<5 words),865,0.4793,0.6783,0.1990
+Long queries (>=10 words),131,0.6003,0.7056,0.1053
+1st-pass doc IS relevant,1061,0.6684,0.8877,0.2193
+1st-pass doc NOT relevant,1835,0.4100,0.5814,0.1714
