@@ -136,6 +136,14 @@
 
 > Each is a single lookup or computation. Outcome may flip a decision.
 
+> **✅ COMPLETED 2026-05-30, team-reviewed 2026-05-31 — full results + meeting notes in `research_decisions/WS4_VERIFICATION_REPORT.md`.**
+> Headlines: 4.5 VERIFIED, keep as-is (30% is real on TREC DL19 **mAP**: BM25 30.1 → CSQE Llama2-7B 39.1, Table 7 — note it's mAP not nDCG);
+> 4.4 → **adopt OALL** as base benchmark + standardise generic "Arabic NLP benchmark" → OALL **thesis-wide [SWEEP]** (keep Ch.2 per-model scores & MIRACL-dataset mentions); 4.15 NEEDS EDIT (MuGI + `lei_2024_csqe` title/authors fabricated — papers were read, only metadata wrong → escalate 6.4);
+> 4.12 → keep الرباط المنصوري, **drop John Dewey** (blind was correct), **fix Boileau** description (businessman→computer scientist), find 3 better examples;
+> 4.13 → reframe to the **general Type B** "first-pass poisoning" mode (928 ماهو-homonym, 11371 name-homonym, 11739 wrong-entity); keep ماهو التطرف as one illustration; regression bucket tables fixed (A≥0.3 / B<0.1 / C 0.1–0.3, no double-listing);
+> 4.11 → **PARTIAL** (irretrievability pending WS1 integrity check); 4.16 → only **table/figure** labels need fixing (section labels harmless);
+> 4.17 → Config-A/C naming + Config-A error-analysis re-run assigned to **WS1.3**.
+
 | Task | What to verify | Source |
 |------|---------------|--------|
 | 4.1 | "GPT-OSS English-dominant" claim — check official model card | item 2.5 |
@@ -249,6 +257,13 @@
 ---
 
 ## Workstream 6 — Research / external lookups
+
+> **✅ COMPLETED 2026-05-30 — full results in `research_decisions/WS6_RESEARCH_REPORT.md`.**
+> Headlines: 6.1 NEEDS EDIT (a concurrent Nov-2025 paper uses Gemma-3-4B for Arabic QE but **cross-lingual**, not monolingual MIRACL → narrow the gap claim);
+> 6.2 NEEDS EDIT (**Exp4Fuse**, ACL 2025 Findings, is the nearest prior art but is **sparse-only**, not dense–sparse hybrid → cite it + downgrade novelty to "Arabic + heterogeneous hybrid");
+> 6.3 KEEP (Song & Zheng entry correct; four-operation taxonomy matches §2.4 exactly — use "disambiguation", not "rewriting", in 5.A.4);
+> 6.4 MAJOR (**10 wrong entries** incl. `aya_2024` URL→unrelated MRI paper and `yoon_2025` skeptical paper cited as supporting; corrected BibTeX provided; feeds WS3.1/WS3.2);
+> 6.5 NEEDS EDIT (BGE-M3 still SOTA-class, but mE5-large dated — Swan/ArabicMTEB beats it on Arabic; add Arctic-Embed 2.0 / Nomic-multilingual to Recommendation 3).
 
 ### Task 6.1 — Literature search: post-2024 small-LLM Arabic QE papers
 - **Tags:** `[RESEARCH]`

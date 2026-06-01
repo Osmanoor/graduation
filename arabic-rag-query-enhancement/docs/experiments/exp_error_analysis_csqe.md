@@ -94,21 +94,27 @@ The blind LLM hallucinates a plausible but wrong entity; CSQE's first-pass corpu
 | **B: Poisoned first-pass** | **131** | **36%** | BM25 baseline < 0.1; first-pass retrieves irrelevant docs → corpus expansion grounded on wrong content |
 | **C: Partial BM25** | **45** | **12%** | BM25 baseline 0.1–0.3; mixed retrieval quality |
 
-### Type A examples — CSQE hurts well-handled queries
+> **Corrected 2026-05-31 (WS4 Task 4.13).** The earlier example tables were mis-bucketed: qids 84 / 928 / 3164 (all BM25 = 0.000) had been listed under Type A even though Type A requires BM25 ≥ 0.3 — they are Type B. qid 928 was double-listed, and qid 3702 (BM25 = 0.356) had been mislabelled Type B. Tables below are repopulated from the verified per-query scores (regression-miner cell in `phase4_quick_wins_Ablation_erroranalysis.ipynb`).
 
-| QID | Query | BM25 | Blind | CSQE |
-|-----|-------|------|-------|------|
-| 84 | كم يوم يصوم المسلمون في رمضان؟ | 0.000 | 1.000 | 0.000 |
-| 928 | ماهو التطرف؟ | 0.000 | 1.000 | 0.000 |
-| 3164 | ما هي نظرية الانفجار العظيم؟ | 0.000 | 1.000 | 0.264 |
+### Type A examples — CSQE hurts well-handled queries (BM25 ≥ 0.3)
 
-### Type B examples — First-pass poisoning
+| QID | Query | BM25 | Blind | CSQE | Expansion drifted toward |
+|-----|-------|------|-------|------|--------------------------|
+| 5518 | في أي عام تم افتتاح متحف اللوفر؟ | 0.378 | 0.920 | 0.237 | متحف اللوفر **أبوظبي** (2017) بدلاً من لوفر باريس (1793) |
+| 5424 | ما هو الزفير؟ | 0.631 | 1.000 | 0.333 | **ضغط نهاية الزفير الإيجابي (PEEP)** — مفهوم تقني فرعي |
+| 3702 | هل يمكن توليد الطاقة بالكهرباء الساكنة؟ | 0.356 | 1.000 | 0.000 | توليد الكهرباء **بشكل عام** + الديناميكا الحرارية |
 
-| QID | Query | Top doc retrieved | Blind | CSQE |
-|-----|-------|------------------|-------|------|
-| 928 | ماهو التطرف؟ | لهجة جنوبية (ماهو = dialect phrase) | 1.000 | 0.000 |
-| 11739 | من هو مصمم موقع ويكيبيديا؟ | حظر ويكيبيديا في تركيا (Turkey ban article) | 1.000 | 0.000 |
-| 3702 | هل يمكن توليد الطاقة بالكهرباء الساكنة؟ | توليد الكهرباء (general, not static) | 1.000 | 0.000 |
+*Mechanism: BM25 already ranks the relevant doc well; the corpus expansion injects plausible but off-topic vocabulary (a related entity/sub-topic) that pushes the relevant doc below rank 10 in fusion.*
+
+### Type B examples — First-pass poisoning (BM25 < 0.1)
+
+| QID | Query | First-pass top doc (the poison) | Blind | CSQE |
+|-----|-------|---------------------------------|-------|------|
+| 928 | ماهو التطرف؟ | **لهجة جنوبية** (+ a song, an Iranian village, a novel) — **4 of 5** first-pass docs match the homonym **ماهو** | 1.000 | 0.000 |
+| 11371 | متى ولد نجيب محفوظ؟ | **نجيب باشا محفوظ** — a *different* person (a physician), not the novelist (name homonym) | 1.000 | 0.356 |
+| 11739 | من هو مصمم موقع ويكيبيديا؟ | حظر ويكيبيديا في تركيا (Turkey-ban article); CSQE then grounds on "Wapedia / Florian Amrhein" | 1.000 | 0.000 |
+
+*Mechanism: the query is short/ambiguous and the colloquial or homonymous surface form (e.g. **ماهو** written as one word; the name **نجيب محفوظ**) makes BM25's first pass retrieve the wrong entity, so the corpus grounding is poisoned regardless of generation quality. Blind QE, which ignores the first pass, answers correctly.*
 
 **Root cause of Type B:** BM25 first-pass is susceptible to Arabic homonyms and short/ambiguous queries. When the top-k docs are off-topic, the LLM grounding is poisoned regardless of generation quality.
 
