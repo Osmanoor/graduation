@@ -79,31 +79,31 @@ Several data figures have 2–3 plot variations. **All variations are rendered**
 
 ### Chapter 2 — Literature Review & Background
 
-All system diagrams are now **TikZ standalones**. PDFs already compiled and in `output/pdf/`.
+Per Osman's 2026-06-01 review ("clear concepts should not have diagrams"), 3 of the original 5 Ch 2/3 figures were **ARCHIVED** — sources kept under `archive/system_diagrams_dropped/` but removed from the registry/thesis.
 
 | ID | Title | Type | Source / Notebook | Output | Rec. | Status |
 |----|-------|------|-------------------|--------|------|--------|
-| Fig 2.1 | RAG system architecture | TikZ | `system_diagrams/fig_2_1_rag_arch.tex` | `fig_2_1_rag_arch.pdf` | only | ✅ rendered |
-| Fig 2.2 | Query Enhancement taxonomy | TikZ | `system_diagrams/fig_2_2_qe_taxonomy.tex` | `fig_2_2_qe_taxonomy.pdf` | only | ✅ rendered |
-| Fig 2.3 | Dense vs Sparse retrieval | TikZ | `system_diagrams/fig_2_3_dense_vs_sparse.tex` | `fig_2_3_dense_vs_sparse.pdf` | only | ✅ rendered |
-| Table 2.1 | Reviewed QE papers | LaTeX | hand-compile from `papers/` | `table_2_1.tex` | only | ⏳ TODO |
-| Table 2.2 | LLM models used | LaTeX | hand-compile from `research_decisions/llm_model_research.md` | `table_2_2.tex` | only | ⏳ TODO |
+| Fig 2.1 | RAG system architecture | TikZ | `system_diagrams/fig_2_1_rag_arch.tex` | `fig_2_1_rag_arch.pdf` | only | ✅ kept (per Osman's FIGURE_NOTES §1) — companion "QE-layer location" figure pending |
+| ~~Fig 2.2~~ | ~~Query Enhancement taxonomy~~ | — | — | — | — | 🗑 **ARCHIVED** — overlaps with Table 2.1 |
+| ~~Fig 2.3~~ | ~~Dense vs Sparse retrieval~~ | — | — | — | — | 🗑 **ARCHIVED** — standard IR primer |
+| Table 2.1 | Reviewed QE papers | LaTeX | `data/raw/table_2_1_papers.csv` | `table_2_1.tex` | only | ✅ compiled |
+| Table 2.2 | LLM models used | LaTeX | `data/raw/table_2_2_models.csv` | `table_2_2.tex` | only | ✅ compiled |
 
 ### Chapter 3 — Methodology
 
 | ID | Title | Type | Source / Notebook | Output | Rec. | Status |
 |----|-------|------|-------------------|--------|------|--------|
 | Fig 3.1 | End-to-end pipeline | TikZ | `system_diagrams/fig_3_1_pipeline.tex` | `fig_3_1_pipeline.pdf` | only | ✅ rendered |
-| Fig 3.2 | MIRACL dataset structure | TikZ | `system_diagrams/fig_3_2_miracl.tex` | `fig_3_2_miracl.pdf` | only | ✅ rendered |
+| ~~Fig 3.2~~ | ~~MIRACL dataset structure~~ | — | — | — | — | 🗑 **ARCHIVED** — 2 paragraphs of §3.2 prose cover this |
 | Fig 3.3 | BM25S indexing flow | TikZ | `system_diagrams/fig_3_3_bm25s.tex` | `fig_3_3_bm25s.pdf` | only | ✅ rendered |
 | Fig 3.4 | mDPR encoding flow | TikZ | `system_diagrams/fig_3_4_mdpr.tex` | `fig_3_4_mdpr.pdf` | only | ✅ rendered |
 | Fig 3.5 | Query2Doc generation | TikZ | `system_diagrams/fig_3_5_query2doc.tex` | `fig_3_5_query2doc.pdf` | only | ✅ rendered |
-| Fig 3.6 | BM25 query repetition | TikZ | `system_diagrams/fig_3_6_repetition.tex` | `fig_3_6_repetition.pdf` | only | ✅ rendered |
+| ~~Fig 3.6~~ | ~~BM25 query repetition~~ | — | — | — | — | 🗑 **ARCHIVED** — one equation in text + Fig 4.7 covers it |
 | Fig 3.7 | Hybrid fusion (CC + RRF) | TikZ | `system_diagrams/fig_3_7_hybrid.tex` | `fig_3_7_hybrid.pdf` | only | ✅ rendered |
 | Fig 3.8 | CSQE pipeline | TikZ | `system_diagrams/fig_3_8_csqe.tex` | `fig_3_8_csqe.pdf` | only | ✅ rendered |
 | Fig 3.9 | Best system (BM25-only-expanded) | TikZ | `system_diagrams/fig_3_9_best_system.tex` | `fig_3_9_best_system.pdf` | only | ✅ rendered |
-| Table 3.1 | Per-model hardware config | LaTeX | hand-compile from individual exp docs | `table_3_1.tex` | only | ⏳ TODO |
-| Table 3.2 | Per-model generation hyperparams | LaTeX | hand-compile from individual exp docs | `table_3_2.tex` | only | ⏳ TODO |
+| Table 3.1 | Per-model hardware config | LaTeX | `data/raw/table_3_1_hardware.csv` | `table_3_1.tex` | only | ✅ compiled |
+| Table 3.2 | Per-model generation hyperparams | LaTeX | `data/raw/table_3_2_gen_hyperparams.csv` | `table_3_2.tex` | only | ✅ compiled |
 
 ### Chapter 4 — Results & Discussion
 
@@ -162,7 +162,7 @@ All system diagrams are now **TikZ standalones**. PDFs already compiled and in `
 |----|-------|----------|--------|------|-------|
 | Table 4.5 | CSQE corpus / blind / 2+2 ablation | 04 | `table_4_5.tex` | only | |
 | Fig 4.10 v1 | α sweep | 04 | `fig_4_10_csqe_alpha_v1.pdf` | | **Recommend NOT including** — flat curve. Fold into one prose sentence: "varying α from 1 to 4 changed NDCG@10 by less than 0.002, so we fix α=4." |
-| Table 4.6 | CSQE vs blind QE (Aya) | hand-compile | `table_4_6.tex` | only | TODO; numbers in `exp_013_csqe_aya_8b.md`. |
+| Table 4.6 | CSQE vs blind QE (Aya) | LaTeX | `data/raw/table_4_6_csqe_vs_blind.csv` | `table_4_6.tex` | only | ✅ compiled |
 
 #### 4.7 Best System (CSQE + Hybrid)
 
@@ -222,6 +222,40 @@ First review (2026-05-31) flagged the figures as too utilitarian — pure graysc
 
 If the next pass needs even more polish: candidates are stylised illustrations for the 3 Ch 2 conceptuals (2.1, 2.2, 2.3) via DALL-E/SDXL. Ch 3 methodology figures should stay TikZ — they need precision over aesthetic.
 
+## Osman's full figure feedback — tracked checklist
+
+Source: `thesis_figures/FIGURE_NOTES_MOHAMMED.md` (filename is misleading; the content is Osman's review). Each item below maps to a section of that file with a status.
+
+### §1 — New figures / additions
+- [ ] **Fig 2.1 companion** — add a sibling figure (same style) showing where the **QE layer** fits inside the RAG pipeline. Fig 2.1 currently shows the generic flow; the companion marks the QE layer's position explicitly. **Pending.**
+- [x] **Fig 3.1 framing** — no new figure needed. Rename Fig 3.1 to frame it as the *baseline* pipeline; treat Fig 3.8 (CSQE) as the *final* end-to-end pipeline. **Captured here for the chapter `.tex` author** — implemented at `\caption` time, not in the diagram itself.
+
+### §2 — Edits to existing figures
+- [ ] **Fig 2.2 caption fix** — move the "built on in this thesis" annotation out of the image into the LaTeX `\caption`. *(Note: Fig 2.2 is currently archived. If kept after final discussion, apply this edit.)*
+- [ ] **Fig 3.8 redesign** — current layout is messy; main methodology figure deserves a cleaner pass. The colored-stages version landed 2026-06-01, but Osman flagged this before that upgrade; **re-review needed against the new color version**.
+- [x] **All-diagram styling pass** — done 2026-06-01: shared `_style.tex` with 7-color semantic palette + FontAwesome icons applied to all surviving TikZ files.
+
+### §3 — Discuss: "do we actually need this?"
+- [ ] **Fig 2.2** (QE taxonomy) — currently **archived** in this commit. Open for re-discussion before submission.
+- [ ] **Fig 3.2** (MIRACL dataset) — currently **archived**. Aligned with Osman's lean-to-cut.
+- [ ] **Fig 3.3** (BM25S indexing) — currently **kept**. Osman flagged for discussion; my judgment was that specific parameters (k₁=0.9, b=0.4 + PyStemmer + Arabic stopwords) justify the figure. Need joint decision.
+- [ ] **Fig 3.4** (mDPR encoding) — currently **kept**. Same reasoning: specific encoder name + FAISS index size warrants a figure. Need joint decision.
+- [ ] **Fig 3.6** (BM25 query repetition) — currently **archived**. Aligned with Osman's lean-to-cut.
+- [ ] **Fig 3.7** (Hybrid CC + RRF) — currently **kept**. Has equations for both fusion methods — those are awkward to embed in prose. Need joint decision.
+- [ ] **Fig 4.1 vs Fig 4.2 redundancy** — Osman thinks 4.2 may duplicate 4.1's CDF variant. Decide: cut Fig 4.1 v2 (CDF), or cut Fig 4.2 v1 (annotated CDF). **My recommendation:** keep Fig 4.1 v1 (histogram) for distribution shape + Fig 4.2 v1 (CDF) for the 34% number; they answer different questions. Cut Fig 4.1 v2 if a winner must be picked.
+
+### §4 — Variation preferences (override my ★★★ picks)
+- [ ] **Fig 4.3** — Osman: **v2 violin** preferred over my v1 boxplot. Both rendered; flip the ★★★ marker.
+- [ ] **Fig 4.5** — Osman: include **both v1 vertical AND v3 grouped** rather than picking one. Plan: cite Fig 4.5 (v1) for the leaderboard and Fig 4.5b (v3) for multi-metric breakdown.
+- [ ] **Fig 4.9** — Osman: **v2 all-4-metrics** preferred over my v1 NDCG-only. Flip the ★★★ marker.
+
+### §5 — Data / source check-ins
+- [x] **Fig 4.4** Recall@k data — confirmed present, plotted from canonical TREC runs via pytrec_eval.
+- [x] **Fig 4.5 / Table 4.2 Osman data** — addressed in this commit: full R@10/R@100/MRR for all 5 Osman models loaded from `OSMAN_MODEL_COMPARISON_RESULTS.md`. Fig 4.5 v3 grouped now populated.
+
+### §6 — Examiner-anticipation questions
+- [ ] **Fig 4.10 α = 1 vs α = 4 justification** — examiner may ask. Currently the §3.8 prose says "α=4 used throughout"; need to add a sentence explaining why α=4 over α=1 (likely: stability across query variants; bm25_csqe @ α=4 = 0.6157 vs α=1 = 0.6095 — small but non-zero). Add to §3.8 wording during Track A.
+
 ## Outstanding work (updated 2026-05-31)
 
 ### Done since the snapshot
@@ -238,10 +272,12 @@ If the next pass needs even more polish: candidates are stylised illustrations f
 - ✅ `REVIEW.html` produced for joint Mohammed+Osman review with all 44 figures grouped and rated.
 - ✅ `PROGRESS_SNAPSHOT.html` produced (status dashboard).
 
-### Remaining
-1. ~~**Visual upgrade** of the figures~~ ✅ **DONE 2026-06-01** — see "Visual feedback + upgrade applied" section above.
-2. **Hand-compile**: `model_comparison_dense.csv` — fill the blank `recall_10`, `recall_100`, `mrr` columns from Osman's experiment docs (currently only `ndcg_10` is populated for his 5 models).
-3. **Hand-compile**: Table 4.6 — CSQE vs blind QE on BM25 and Dense (numbers in `exp_013_csqe_aya_8b.md`).
-4. **Hand-compile**: Tables 2.1, 2.2, 3.1, 3.2 — pure literature/metadata, no plots.
-5. **Thesis text edits** for Workstream 1 outcomes — see `research_decisions/STREAM_1_COMPLETION_REPORT.md` section 3. **Track A in `THESIS_NEXT_STEPS_TASKS.md` Progress Log — not started yet.**
-6. **Embed figures into thesis chapters** — `\includegraphics{output/pdf/...}` + `\caption` + `\label` per figure, pick the ★★★ variation per the registry. Cross-reference all figures in body text.
+### Remaining (updated 2026-06-01)
+1. ~~Visual upgrade of figures~~ ✅ **DONE** — colored palette + FontAwesome icons.
+2. ~~Fill model_comparison_dense.csv from Osman's docs~~ ✅ **DONE** — all 5 Osman models now have R@10/R@100/MRR (from `OSMAN_MODEL_COMPARISON_RESULTS.md`); Fig 4.5 v3 grouped + Fig 4.6 size scatter re-rendered.
+3. ~~Compile Table 4.6~~ ✅ **DONE** — `output/pdf/table_4_6.tex`.
+4. ~~Compile Tables 2.1, 2.2, 3.1, 3.2~~ ✅ **DONE** — source CSVs in `data/raw/`, LaTeX snippets in `output/pdf/`.
+5. ~~Archive figures per Osman's "too many diagrams" feedback~~ ✅ **DONE** — 5 archived (2.1, 2.2, 2.3, 3.2, 3.6) under `archive/system_diagrams_dropped/`. Down from 12 system diagrams to 7.
+6. **Thesis text edits** for Workstream 1 outcomes — see `research_decisions/STREAM_1_COMPLETION_REPORT.md` section 3. Track A — not started yet (Mohammed's next session).
+7. **Embed figures into thesis chapters** — `\includegraphics{output/pdf/...}` + `\caption` + `\label` per figure, pick the ★★★ variation per the registry. Cross-reference all figures in body text.
+8. **WS6.4 citation fixes** — Osman's WS6 report identified 10 fabricated BibTeX entries (incl. headline `aya_2024`). Corrected entries in `research_decisions/WS6_RESEARCH_REPORT.md` Appendix.

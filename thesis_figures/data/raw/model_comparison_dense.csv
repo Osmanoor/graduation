@@ -1,13 +1,13 @@
 model,params_B,exp_id,ndcg_10,recall_10,recall_100,mrr,note
 mDPR (no QE),,exp_001,0.4993,0.6156,0.8407,0.5328,baseline
+SILMA Kashif-2B,2,osman_silma,0.5177,0.6289,0.8353,0.5508,temp 0.1 (chosen over 0.7)
 Qwen 2.5 3B,3,exp_003,0.5435,0.6608,0.8594,0.5742,
 Falcon-H1-3B,3,exp_005,0.5359,0.6484,0.8531,0.5681,
 Qwen3-4B,4,exp_007,0.5691,0.6824,0.8726,0.6015,
-Gemma 3 4B,4,osman_gemma,0.5435,,,,from CLAUDE.md kernel
-Qwen 2.5-7B,7,osman_qwen25_7b,0.5813,,,,from CLAUDE.md kernel
+Gemma 3 4B,4,osman_gemma,0.5391,0.6443,0.8477,0.5761,
+Qwen 2.5-7B,7,osman_qwen25_7b,0.5813,0.6952,0.8800,0.6134,
 ALLaM-7B,7,exp_008,0.2550,0.3335,0.5465,0.2708,DROPPED (tokenizer bug)
 Jais-2-8B,8,exp_006,0.6018,0.7161,0.8981,0.6356,
-Qwen3-8B,8,osman_qwen3_8b,0.5958,,,,from CLAUDE.md kernel
-Aya Expanse 8B,8,osman_aya,0.6164,0.7256,0.9001,0.6493,blind QE
-SILMA Kashif-2B,2,osman_silma,0.5178,,,,from CLAUDE.md kernel
+Qwen3-8B,8,osman_qwen3_8b,0.5958,0.7119,0.8877,0.6278,thinking tags stripped
+Aya Expanse 8B,8,osman_aya,0.6164,0.7256,0.9001,0.6493,blind QE (4-bit NF4); BEST OVERALL
 Aya 8B CSQE,8,exp_013,0.5915,0.7073,0.8816,0.6225,CSQE variant

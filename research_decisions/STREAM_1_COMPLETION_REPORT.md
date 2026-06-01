@@ -1,6 +1,8 @@
 # Workstream 1 — Completion Report
 
-**Date:** 2026-05-31 · **Owner:** Mohammed · **Status:** data done for 1.1–1.4; thesis text edits pending one decision.
+**Date:** 2026-05-31 · **Owner:** Mohammed (sole owner of 1.1–1.4) · **Status:** all data/analysis for 1.1–1.4 complete and verified; only Mohammed-owned thesis-text edits remain.
+
+> **Note for Osman:** nothing in this report is delegated to you. Every number is already researched and resolved (including the 0.364-vs-0.4993 item in §2 — that is *confirmed and closed*, not an open question). The remaining work is Mohammed editing the thesis text. The WS4/WS5 cross-references in §4 just record which of *your* existing items WS1 has now *answered for you* (so you can close them), not new tasks.
 
 This report covers: (1) task results 1.1–1.4, (2) the exact thesis changes needed, (3) a newly-surfaced nDCG-computation issue, (4) cross-workstream touchpoints, (5) thesis-figures impact, (6) artifacts produced, (7) the open decision.
 
@@ -40,6 +42,8 @@ Three orthogonal systems confirmed: **absolute** (`chapter3.tex:109-113`), **pai
 ---
 
 ## 2. CONFIRMED — the §4.2 baseline error-analysis file is buggy (READ FIRST)
+
+> **Status: RESOLVED in this WS1 session — no open question, nothing delegated.** Mohammed researched this and the analysis below proves it; the exact corrected numbers and edits are known (listed here + in §3). This is *not* a task for Osman or a WS4 verification. The only thing left is Mohammed applying the edits.
 
 **Finding:** the entire §4.2 / §3.3 baseline error analysis is sourced from `exp_001_quantitative_analysis.json`, whose custom analysis code computed **multiple metrics incorrectly**. It disagrees with the canonical mDPR run on nDCG, coverage, zero-count, **and** correlation.
 
@@ -102,7 +106,7 @@ Framing: CSQE improves **all** query lengths substantially (general method); the
 - **WS4 Task 4.11** (258 inspection exhaustive or sampled): **answered** → exhaustive (all 258); refutes "irretrievable".
 - **WS4 Task 4.12 / WS5.C.17** (big-win examples): the *count* (1061) is validated; the specific example *texts* (الرباط المنصوري, John Dewey, Nicolas Boileau) still need qualitative verification — not derivable from the CSV.
 - **WS4 Task 4.14 / WS5.C.18** (0.3 "BM25 well-handled" threshold): covered by 1.4 (keep + signpost); soften "first-pass is dominant predictor" → "largest modulator."
-- **NEW WS4-class verification:** the §2 nDCG discrepancy (§4.2 0.364 vs headline 0.4993) — recommend logging as a WS4 fact-check.
+- **§2 nDCG/coverage discrepancy — ALREADY RESOLVED, not a task for anyone.** This is *not* an open WS4 verification. It was fully investigated and proven in this WS1 session (the canonical run reproduces all four headline metrics); the corrected numbers are known and listed in §2. The only remaining action is Mohammed applying the §4.2/§3.3 edits — no further research or fact-check by Osman is needed.
 - **WS5.B.2:** §3.3/§3.9 edits = Tasks 1.2 + 1.4 (this report).
 - **WS5.C.15:** §4.10 redo = Tasks 1.1 + 1.3 (this report).
 - **WS5.C.16** (demote meta-description failure mode): aligns with 1.1 — the "1 genuine failure = meta-description" framing is gone; it's 58 regressions.

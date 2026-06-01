@@ -1,0 +1,15 @@
+\begin{tabular}{llllll}
+\toprule
+model & gpu & precision & batch_size & runtime_min & notes \\
+\midrule
+SILMA Kashif-2B & A100 40GB & FP16 & 16 & 15--20 & -- \\
+Qwen 2.5 3B & A100 40GB & FP16 & 8 & ~40 & -- \\
+Falcon-H1-3B & A100 40GB & BF16 & 1 & ~60 & hybrid Mamba; batching broken \\
+Qwen3-4B & A100 40GB & FP16 & 32 & ~25 & enable_thinking=False \\
+Gemma 3 4B & A100 40GB & FP16/BF16 & 16 & ~30 & numerical-stability fixes (BF16) \\
+Qwen 2.5-7B & A100 40GB & FP16 & 16 & ~35 & -- \\
+Jais-2-8B & A100 40GB & BF16 & 8 & ~50 & token_type_ids removed; BF16 mandatory (Squared-ReLU overflow in FP16) \\
+Qwen3-8B & A100 40GB & FP16 & 16 & ~40 & thinking tags stripped \\
+Aya Expanse 8B & A100 40GB & 4-bit NF4 & 8 & ~50 & -- \\
+\bottomrule
+\end{tabular}
