@@ -1,41 +1,27 @@
-% Fig 3.2 — MIRACL Arabic dataset structure + evaluation flow
-
+% Fig 3.2 — MIRACL Arabic dataset structure
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit, backgrounds}
+\input{_style.tex}
 
 \begin{document}
 \begin{tikzpicture}[
-    >=Stealth,
     node distance=10mm and 14mm,
-    box/.style={rectangle, draw, rounded corners=2pt,
-                minimum width=46mm, minimum height=14mm,
-                align=center, font=\small},
-    data/.style={cylinder, shape border rotate=90, aspect=0.3, draw,
-                 minimum width=44mm, minimum height=18mm,
-                 align=center, font=\small, fill=black!5},
-    arrow/.style={-{Stealth[length=2.5mm]}, thick},
-    label/.style={font=\footnotesize\itshape, color=black!60}
+    bigdata/.style={thData, minimum width=44mm, minimum height=18mm}
 ]
-  % Top: two data sources
-  \node[data] (corpus) {\textbf{MIRACL Corpus}\\2{,}061{,}414 passages\\656{,}982 Wikipedia articles\\fields: docid, title, text};
-  \node[data, right=22mm of corpus] (judg) {\textbf{Topics + Qrels (dev)}\\2{,}896 Arabic queries\\29{,}197 relevance judgments\\fields: qid, query, qrel};
+  \node[bigdata] (corpus) {\thIconCorpus~\textbf{MIRACL Corpus}\\2{,}061{,}414 passages\\656{,}982 Wikipedia articles\\fields: docid, title, text};
+  \node[bigdata, right=22mm of corpus] (judg) {\thIconStar~\textbf{Topics + Qrels (dev)}\\2{,}896 Arabic queries\\29{,}197 judgments\\fields: qid, query, qrel};
 
-  % Middle: retrieval
-  \node[box, fill=black!10, below=of corpus, xshift=29mm] (retr)
-    {Retrieval\\(BM25S / mDPR / Hybrid)\\returns top-100 per query};
+  \node[thRet, minimum width=58mm, minimum height=14mm, below=of corpus, xshift=29mm] (retr)
+    {\thIconRet~Retrieval\\(BM25S / mDPR / Hybrid) — top-100 per query};
 
-  % TREC format note
-  \node[label, below=1mm of retr]
+  \node[thLabel, below=1mm of retr]
     {TREC run: \texttt{qid Q0 docid rank score tag}};
 
-  % Bottom: evaluation
-  \node[box, fill=black!15, below=12mm of retr] (eval)
-    {Evaluation (\texttt{pytrec\_eval})\\nDCG@10 $\cdot$ Recall@\{10,100\} $\cdot$ MRR};
+  \node[thBase, fill=thOutF, draw=thOutS, line width=0.8pt, minimum width=58mm, minimum height=14mm, below=12mm of retr] (eval)
+    {\thIconEval~Evaluation (\texttt{pytrec\_eval})\\NDCG@10 $\cdot$ R@\{10,100\} $\cdot$ MRR};
 
-  % Arrows
-  \draw[arrow] (corpus.south) -- ++(0, -4mm) -| (retr.north);
-  \draw[arrow] (judg.south)   -- ++(0, -4mm) -| (eval.north);
-  \draw[arrow] (retr) -- (eval);
+  \draw[thArrow] (corpus.south) -- ++(0, -4mm) -| (retr.north);
+  \draw[thArrow] (judg.south)   -- ++(0, -4mm) -| (eval.north);
+  \draw[thArrow] (retr) -- (eval);
 \end{tikzpicture}
 \end{document}

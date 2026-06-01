@@ -1,49 +1,39 @@
 % Fig 2.3 — Dense vs Sparse retrieval, side-by-side
-% Two-column comparison showing each retriever's pipeline for the same query.
-
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz}
-\usetikzlibrary{positioning, arrows.meta, fit, backgrounds}
+\input{_style.tex}
 
 \begin{document}
 \begin{tikzpicture}[
-    >=Stealth,
-    box/.style={rectangle, draw, rounded corners=2pt,
-                minimum width=34mm, minimum height=9mm,
-                align=center, font=\small},
-    header/.style={font=\bfseries\small},
-    arrow/.style={-{Stealth[length=2.5mm]}, thick},
-    note/.style={font=\footnotesize\itshape, color=black!60}
+    header/.style={font=\bfseries\small}
 ]
-  % --- Sparse column (left) ---
-  \node[header] (sparseH) at (-26mm, 5mm) {Sparse (BM25)};
-  \node[box, fill=black!5, below=2mm of sparseH] (sq) {Query terms};
-  \node[box, fill=black!10, below=of sq] (stok) {Tokenise + stem};
-  \node[box, fill=black!10, below=of stok] (sscore) {Term-frequency\\scoring};
-  \node[box, fill=black!10, below=of sscore] (sidx) {Inverted index\\lookup};
-  \node[box, fill=black!5, below=of sidx] (sout) {Top-$k$ passages};
+  % --- Sparse column ---
+  \node[header, color=thFusionS] (sparseH) at (-28mm, 5mm) {\thIconCog~Sparse (BM25)};
+  \node[thQuery, minimum width=34mm, below=2mm of sparseH] (sq) {Query terms};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of sq] (stok) {Tokenise + stem};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of stok] (sscore) {Term-frequency\\scoring};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of sscore] (sidx) {Inverted index};
+  \node[thOut, minimum width=34mm, below=of sidx] (sout) {Top-$k$ passages};
 
-  \draw[arrow] (sq) -- (stok);
-  \draw[arrow] (stok) -- (sscore);
-  \draw[arrow] (sscore) -- (sidx);
-  \draw[arrow] (sidx) -- (sout);
+  \draw[thArrow] (sq) -- (stok);
+  \draw[thArrow] (stok) -- (sscore);
+  \draw[thArrow] (sscore) -- (sidx);
+  \draw[thArrow] (sidx) -- (sout);
 
-  % --- Dense column (right) ---
-  \node[header] (denseH) at (40mm, 5mm) {Dense (mDPR)};
-  \node[box, fill=black!5, below=2mm of denseH] (dq) {Query text};
-  \node[box, fill=black!10, below=of dq] (denc) {Encoder \\$\rightarrow$ 768-d vector};
-  \node[box, fill=black!10, below=of denc] (dscore) {Inner-product\\with passage vectors};
-  \node[box, fill=black!10, below=of dscore] (didx) {FAISS index\\(approx.\ NN)};
-  \node[box, fill=black!5, below=of didx] (dout) {Top-$k$ passages};
+  % --- Dense column ---
+  \node[header, color=thRetS] (denseH) at (38mm, 5mm) {\thIconLLM~Dense (mDPR)};
+  \node[thQuery, minimum width=34mm, below=2mm of denseH] (dq) {Query text};
+  \node[thRet, minimum width=34mm, below=of dq] (denc) {Encoder\\$\to$ 768-d vector};
+  \node[thRet, minimum width=34mm, below=of denc] (dscore) {Inner-product\\with passages};
+  \node[thRet, minimum width=34mm, below=of dscore] (didx) {FAISS index};
+  \node[thOut, minimum width=34mm, below=of didx] (dout) {Top-$k$ passages};
 
-  \draw[arrow] (dq) -- (denc);
-  \draw[arrow] (denc) -- (dscore);
-  \draw[arrow] (dscore) -- (didx);
-  \draw[arrow] (didx) -- (dout);
+  \draw[thArrow] (dq) -- (denc);
+  \draw[thArrow] (denc) -- (dscore);
+  \draw[thArrow] (dscore) -- (didx);
+  \draw[thArrow] (didx) -- (dout);
 
-  % Centre note
-  \node[note, align=center] at (7mm, -50mm)
+  \node[thLabel, align=center] at (5mm, -52mm)
     {complementary strengths:\\BM25 high recall, mDPR high precision};
-
 \end{tikzpicture}
 \end{document}

@@ -201,23 +201,26 @@ All system diagrams are now **TikZ standalones**. PDFs already compiled and in `
 - After picking variation winners, you can drop the losers from `output/` — the registry above tracks which ones the thesis references.
 - The notebook scripts are deterministic: re-running produces identical PDF bytes (no random seeds involved). Safe to regenerate before submission.
 
-## Visual feedback (Mohammed, 2026-05-31)
+## Visual feedback + upgrade applied (2026-06-01)
 
-First-look review of `REVIEW.html` flagged that the current renders feel **too utilitarian**:
-- **Black-and-white grayscale palette is too plain** — needs color (or at least a more deliberate accent).
-- **TikZ system diagrams feel basic** — boxes-and-arrows reads as a generated artefact rather than a designed figure. Likely want helper icons, illustrative imagery, or richer visual metaphors.
-- **Open question:** consider AI image generators for the conceptual diagrams (Ch 2 RAG architecture, QE taxonomy, Dense vs Sparse) — they're conceptual, not data-driven, so a stylised illustration might communicate better than mechanical TikZ.
+First review (2026-05-31) flagged the figures as too utilitarian — pure grayscale, plain TikZ boxes. Upgrade applied in this iteration:
 
-This is not blocking the commit. Current renders are mathematically correct and submission-eligible if needed in a pinch. Visual upgrade is a separate iteration.
+**TikZ system diagrams (all 12):**
+- New shared style file at `system_diagrams/_style.tex` defines a 7-color semantic palette: query (blue), LLM (purple), retriever (green), data/corpus (gray), fusion (orange), output (teal), highlight/contribution (deep teal).
+- FontAwesome 5 icons inside boxes: `\faUser`, `\faBrain`, `\faDatabase`, `\faNetworkWired`, `\faCodeBranch`, `\faStar`, etc. Each box now identifies its role at a glance.
+- Each `fig_*.tex` simplified to `\input{_style.tex}` plus the diagram body — no more per-file color/library setup.
 
-### Direction for the next figure-polish pass (not started)
-1. Pick an accent color (one), add to `styles/thesis_style.mplstyle`. Suggest a single muted color (avoid bright primaries — keep examiner-friendly).
-2. Decide which Ch 2/3 diagrams to upgrade visually. Candidates ranked by visual return:
-   - Fig 2.1 RAG architecture — strongest candidate for icon-based redesign.
-   - Fig 3.5 Query2Doc generation — natural fit for a stylised illustration of prompt → LLM → pseudo-doc.
-   - Fig 3.8 CSQE pipeline — would benefit from icons distinguishing the 3 stages.
-3. Evaluate AI image generators (DALL-E, SDXL) for the highest-conceptual diagrams (2.1, 2.2, 2.3). For methodology diagrams (3.3, 3.4, 3.6, 3.7), keep TikZ — they need precision over aesthetic.
-4. Data figures (4.1–4.15): smaller upgrade — accent color on the primary data series + secondary tone for comparisons. Don't overhaul; just enrich the existing palette.
+**Matplotlib data figures (all 15):**
+- New mplstyle prop_cycle: teal (`#1f6f8a`) is the primary accent; grayscale falls back for secondary series.
+- Primary series (e.g., Fig 4.11 best-system bar, Fig 4.13 CSQE bars, Fig 4.14 CSQE bars) now teal — comparisons stay gray.
+- Fig 4.15 regression-types donut now uses teal/purple/gray palette matching system-diagram colors.
+- Still B&W-safe: lightness differences preserve information under grayscale printing.
+
+**What did NOT change:**
+- Data values, table contents, figure layouts.
+- AI image generators — not used. The color + icon pass closed enough of the visual gap that a separate generated-illustration track wasn't needed.
+
+If the next pass needs even more polish: candidates are stylised illustrations for the 3 Ch 2 conceptuals (2.1, 2.2, 2.3) via DALL-E/SDXL. Ch 3 methodology figures should stay TikZ — they need precision over aesthetic.
 
 ## Outstanding work (updated 2026-05-31)
 
@@ -236,8 +239,9 @@ This is not blocking the commit. Current renders are mathematically correct and 
 - ✅ `PROGRESS_SNAPSHOT.html` produced (status dashboard).
 
 ### Remaining
-1. **Visual upgrade** of the figures (see "Visual feedback" section above) — not blocking submission but desired for polish.
+1. ~~**Visual upgrade** of the figures~~ ✅ **DONE 2026-06-01** — see "Visual feedback + upgrade applied" section above.
 2. **Hand-compile**: `model_comparison_dense.csv` — fill the blank `recall_10`, `recall_100`, `mrr` columns from Osman's experiment docs (currently only `ndcg_10` is populated for his 5 models).
 3. **Hand-compile**: Table 4.6 — CSQE vs blind QE on BM25 and Dense (numbers in `exp_013_csqe_aya_8b.md`).
 4. **Hand-compile**: Tables 2.1, 2.2, 3.1, 3.2 — pure literature/metadata, no plots.
 5. **Thesis text edits** for Workstream 1 outcomes — see `research_decisions/STREAM_1_COMPLETION_REPORT.md` section 3. **Track A in `THESIS_NEXT_STEPS_TASKS.md` Progress Log — not started yet.**
+6. **Embed figures into thesis chapters** — `\includegraphics{output/pdf/...}` + `\caption` + `\label` per figure, pick the ★★★ variation per the registry. Cross-reference all figures in body text.
