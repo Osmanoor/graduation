@@ -1,0 +1,15 @@
+\begin{tabular}{lcccc}
+\toprule
+System & nDCG@10 & Recall@10 & Recall@100 & MRR \\
+\midrule
+BM25 alone (no QE) & 0.462 & 0.596 & 0.858 & 0.484 \\
+Hybrid RRF k=20 (no QE) & 0.627 & 0.760 & 0.947 & 0.652 \\
+Config A RRF best (Exp 2.1) & 0.714 & 0.836 & 0.973 & 0.736 \\
+013d: Blind-only BM25 (0c+4b alpha=4) & 0.575 & 0.709 & 0.920 & 0.603 \\
+013c: Corpus-only BM25 (4c+0b alpha=4) & 0.538 & 0.646 & 0.879 & 0.565 \\
+013: CSQE BM25 (2c+2b alpha=4) & 0.616 & 0.745 & 0.942 & 0.638 \\
+013d + Dense RRF (Config A) & 0.708 & 0.829 & 0.961 & 0.732 \\
+013c + Dense RRF (Config A) & 0.662 & 0.790 & 0.951 & 0.681 \\
+013 + Dense RRF (Config A) & 0.714 & 0.836 & 0.973 & 0.736 \\
+\bottomrule
+\end{tabular}

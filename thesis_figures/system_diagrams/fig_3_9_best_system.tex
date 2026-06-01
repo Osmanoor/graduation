@@ -1,0 +1,40 @@
+% Fig 3.9 — Best system: Config A (BM25+CSQE + Dense original via RRF k=20)
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc}
+\begin{document}
+\begin{tikzpicture}[
+    >=Stealth, node distance=10mm and 12mm,
+    box/.style={rectangle, draw, rounded corners=2pt,
+                minimum width=28mm, minimum height=9mm,
+                align=center, font=\small},
+    csqe/.style={box, fill=black!10},
+    plain/.style={box, fill=black!5},
+    fuse/.style={box, double, double distance=0.5pt, minimum width=32mm},
+    arrow/.style={-{Stealth[length=2.5mm]}, thick}
+]
+  \node[box] (q) {User query};
+
+  % Top path: BM25 with CSQE expansion
+  \node[csqe, above right=2mm and of q] (csqeq) {Query + CSQE\\corpus-grounded pdoc};
+  \node[csqe, right=of csqeq] (bm) {BM25 retrieval};
+
+  % Bottom path: mDPR with original short query
+  \node[plain, below right=2mm and of q] (origq) {Original short query};
+  \node[plain, right=of origq] (dn) {mDPR retrieval};
+
+  % Fusion
+  \node[fuse, right=14mm of $(bm.east)!0.5!(dn.east)$] (rrf) {RRF fusion\\$k = 20$};
+  \node[box, right=of rrf] (top) {Top-100\\final};
+
+  \draw[arrow] (q) -| (csqeq);
+  \draw[arrow] (q) -| (origq);
+  \draw[arrow] (csqeq) -- (bm);
+  \draw[arrow] (origq) -- (dn);
+  \draw[arrow] (bm.east) -| (rrf.north);
+  \draw[arrow] (dn.east) -| (rrf.south);
+  \draw[arrow] (rrf) -- (top);
+
+  \node[font=\footnotesize\itshape, below=8mm of top] {NDCG@10 = 0.7137};
+\end{tikzpicture}
+\end{document}

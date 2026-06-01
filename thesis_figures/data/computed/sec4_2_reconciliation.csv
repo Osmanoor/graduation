@@ -1,0 +1,15 @@
+§4.2/§3.3 quantity,source in thesis,OLD (buggy file),CORRECTED (canonical run),affects
+mDPR mean nDCG@10,headline (already correct),0.364 (in analysis file),0.4993,sanity only
+Short 1-3 words nDCG@10,§4.2.2 table,0.240,0.345,table+gap prose
+Medium 4-8 words nDCG@10,§4.2.2 table,0.367,0.511,table
+Long 9+ words nDCG@10,§4.2.2 table,0.406,0.476,table (now non-monotonic: Med>Long)
+short-vs-long gap,§4.2.2 prose,41% (59% of long),28% (72% of long),prose
+length~nDCG correlation r,§4.2.2 prose,+0.125 (p<0.001),-0.01 (no relationship),prose - drop 'positive trend'
+Failed (<0.3),§4.2.1 / perf seg,39.0% (1130),33.9% (982),"failure-rate prose, Fig 4.2"
+Mediocre (0.3-0.7),§4.2.1 / perf seg,55.9% (1618),33.2% (962),prose
+Successful (>=0.7),§4.2.1 / perf seg,5.1% (148),32.9% (952),prose (big reversal)
+Coverage @10,§4.2.3 table,93.4%,74.6%,coverage table+prose
+Coverage @20,§4.2.3 table,96.7%,80.8%,coverage table
+Coverage @50,§4.2.3 table,98.8%,86.9%,coverage table
+Coverage @100,§4.2.3 table,99.4%,90.1%,coverage table+prose
+nDCG@10==0 queries,§3.3 'failed' inspection,192,736,inspection framing (20 worst still valid)

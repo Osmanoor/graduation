@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Thesis Figures — Progress Snapshot</title>
+<style>
+:root {
+  --bg: #fafaf8;
+  --card: #ffffff;
+  --ink: #1a1a1a;
+  --muted: #6a6a6a;
+  --line: #e3e3e0;
+  --accent: #2a4d3a;
+  --warn: #b87333;
+  --block: #a13030;
+  --done: #2d7d3f;
+  --info: #3a5d8a;
+  --mono: "SF Mono", "Consolas", "Menlo", monospace;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.55;
+  margin: 0;
+  padding: 0;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 32px 28px 80px; }
+
+/* Header */
+header { border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 28px; }
+header h1 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.01em; }
+header .sub { color: var(--muted); margin-top: 6px; font-size: 14px; }
+header .stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-top: 22px;
+}
+.stat {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 6px; padding: 14px 16px;
+}
+.stat .num { font-size: 26px; font-weight: 600; color: var(--accent); font-family: var(--mono); }
+.stat .lab { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+/* Section */
+section { margin: 36px 0; }
+section > h2 {
+  font-size: 18px; font-weight: 600; margin: 0 0 14px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line); padding-bottom: 8px;
+}
+
+/* Cards & layouts */
+.tl-dr {
+  background: var(--card); border-left: 3px solid var(--accent);
+  padding: 16px 20px; border-radius: 4px; border-top: 1px solid var(--line);
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.tl-dr ul { margin: 6px 0 0; padding-left: 22px; }
+.tl-dr li { margin: 4px 0; }
+.tl-dr strong { color: var(--accent); }
+
+/* Three-column status overview */
+.cols-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.bucket {
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px 16px;
+}
+.bucket h3 {
+  margin: 0 0 10px; font-size: 13px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.bucket.done h3 { color: var(--done); }
+.bucket.prog h3 { color: var(--warn); }
+.bucket.block h3 { color: var(--block); }
+.bucket ul { margin: 0; padding-left: 18px; font-size: 14px; }
+.bucket li { margin: 4px 0; }
+
+/* Timeline */
+.timeline { list-style: none; padding: 0; margin: 0; }
+.timeline li {
+  border-left: 2px solid var(--line);
+  padding: 4px 0 16px 18px;
+  position: relative;
+  font-size: 14px;
+}
+.timeline li::before {
+  content: ""; position: absolute; left: -6px; top: 8px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg);
+}
+.timeline .step-num {
+  font-family: var(--mono); color: var(--muted); font-size: 12px;
+  display: inline-block; margin-right: 6px;
+}
+
+/* Figure grid */
+.fig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.fig-card {
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 12px; font-size: 13px;
+  display: flex; flex-direction: column;
+}
+.fig-card .head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px;
+}
+.fig-card .id {
+  font-family: var(--mono); font-weight: 600; color: var(--accent);
+  font-size: 12px;
+}
+.fig-card .title { font-weight: 500; margin: 4px 0 8px; }
+.fig-card .preview {
+  background: #f6f4f0; border-radius: 4px; padding: 8px;
+  margin-bottom: 8px; min-height: 88px;
+  display: flex; align-items: center; justify-content: center;
+}
+.fig-card .meta { font-size: 11px; color: var(--muted); }
+.fig-card .meta strong { color: var(--ink); }
+
+/* Pills */
+.pill {
+  display: inline-block; padding: 1px 8px; border-radius: 10px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
+  font-family: var(--mono);
+}
+.pill.done { background: #e8f3ea; color: var(--done); }
+.pill.prog { background: #fbf1e3; color: var(--warn); }
+.pill.block { background: #f6e6e6; color: var(--block); }
+.pill.info { background: #eaf0f7; color: var(--info); }
+.pill.star { background: #f3eddf; color: var(--accent); }
+
+/* Task table */
+table.tasks {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  overflow: hidden;
+}
+.tasks th {
+  background: #f0eeea; padding: 8px 12px; text-align: left;
+  font-weight: 600; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+.tasks td { padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.tasks tr:last-child td { border-bottom: 0; }
+.tasks td.fixed { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+
+/* Decision boxes */
+.decision {
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px 16px; margin: 10px 0;
+}
+.decision .q { font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+.decision .ctx { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.decision .rec {
+  background: #f3eddf; padding: 6px 10px; border-radius: 4px;
+  font-size: 13px; border-left: 3px solid var(--accent);
+}
+
+/* Approach options */
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+.option {
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px 16px;
+}
+.option.recommended { border-color: var(--accent); border-width: 2px; }
+.option h4 { margin: 0 0 8px; font-size: 14px; }
+.option .ribbon {
+  display: inline-block; padding: 1px 8px; background: var(--accent);
+  color: white; font-size: 10px; border-radius: 3px; margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+.option ul { font-size: 13px; margin: 6px 0; padding-left: 18px; }
+.option .pros { color: var(--done); font-size: 12px; }
+.option .cons { color: var(--block); font-size: 12px; }
+
+/* File tree */
+.tree {
+  font-family: var(--mono); font-size: 12.5px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 14px 18px; line-height: 1.55; color: var(--ink);
+  white-space: pre; overflow-x: auto;
+}
+.tree .dir { color: var(--accent); font-weight: 600; }
+.tree .note { color: var(--muted); }
+
+/* SVG plot mini-previews */
+svg.mini { width: 100%; height: 80px; }
+
+/* Small text */
+.fineprint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+.kbd {
+  font-family: var(--mono); background: #f0eeea;
+  padding: 1px 6px; border-radius: 3px; font-size: 12px; border: 1px solid var(--line);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .cols-3, .options, .fig-grid { grid-template-columns: 1fr; }
+  header .stats { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Thesis Figures — Progress Snapshot</h1>
+  <div class="sub">Status as of resume point · Single-file dashboard · Open in any browser</div>
+  <div class="stats">
+    <div class="stat"><div class="num">15</div><div class="lab">Figures planned</div></div>
+    <div class="stat"><div class="num">7</div><div class="lab">Tables planned</div></div>
+    <div class="stat"><div class="num">~30</div><div class="lab">Plot variations</div></div>
+    <div class="stat"><div class="num">1</div><div class="lab">Hard blocker</div></div>
+  </div>
+</header>
+
+<!-- ─────────────── TL;DR ─────────────── -->
+<section>
+  <h2>TL;DR</h2>
+  <div class="tl-dr">
+    <ul>
+      <li>Built <strong>thesis_figures/</strong> — a self-contained folder with five plotting notebooks, a shared helpers module, all small data committed, large data manifest-tracked, and a master figure registry. <span class="pill done">scaffold done</span></li>
+      <li>All numbers traced to canonical experiment outputs. <strong>One real blocker:</strong> Fig 4.12 (per-query Δ histogram) needs a 5-line export patch added to <code>phase4_quick_wins_Ablation_erroranalysis.ipynb</code> and re-run in Colab. <span class="pill block">1 blocker</span></li>
+      <li>Several thesis-side tasks (Workstream 1 in <code>THESIS_NEXT_STEPS_TASKS.md</code>) will change bucket schemes and naming — <strong>don't lock final renders until they land.</strong></li>
+      <li>Recommended next move: do two quick wins now (verify Drive CSVs, add HANDOFF section), push so Osman can see; then a single solid render pass after Workstream 1 + the Colab patch.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─────────────── Status overview ─────────────── -->
+<section>
+  <h2>Status overview</h2>
+  <div class="cols-3">
+    <div class="bucket done">
+      <h3>✓ Done</h3>
+      <ul>
+        <li>Folder skeleton + configs (.gitignore, mplstyle, manifest)</li>
+        <li>14 input CSVs/JSONs in <code>data/raw/</code></li>
+        <li>5 plotting notebooks (02–05) + 2 utility notebooks (00, 01)</li>
+        <li>Shared helpers module (<code>_helpers.py</code>)</li>
+        <li>7 ready-to-compile TikZ standalones (Ch 3)</li>
+        <li>1 Excalidraw template + 4 spec.md files (Ch 2)</li>
+        <li>Master figure registry in README</li>
+      </ul>
+    </div>
+    <div class="bucket prog">
+      <h3>⏳ Pending</h3>
+      <ul>
+        <li>Compile TikZ → PDF (one xelatex per file)</li>
+        <li>Render Excalidraw diagrams to PDF/PNG</li>
+        <li>Install Jupyter, execute notebooks 02–05</li>
+        <li>Hand-fill Osman's 5 models — R@10, R@100, MRR currently blank</li>
+        <li>Verify Drive-sourced CSVs against source (transcription check)</li>
+        <li>HANDOFF section for Osman</li>
+      </ul>
+    </div>
+    <div class="bucket block">
+      <h3>⚠ Blocked / needs decision</h3>
+      <ul>
+        <li><strong>Fig 4.12</strong> — needs Colab patch (5 lines) re-run on Drive notebook</li>
+        <li><strong>Length bin scheme</strong> — my 5-bin vs thesis Task 1.2 3-bin (Short/Med/Long)</li>
+        <li><strong>Threshold system</strong> — Task 1.4 reconciles ±0.1 paired vs &lt;0.3 absolute</li>
+        <li><strong>Config A/B/C labels</strong> — thesis renamed to BM25-only-expanded etc.; notebook 04 still uses A/B/C</li>
+        <li><strong>Numeric consistency</strong> — mDPR 0.4993→0.499; R@100 0.9466→0.9467</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── What we did ─────────────── -->
+<section>
+  <h2>What we did — chronological</h2>
+  <ul class="timeline">
+    <li><span class="step-num">01</span> Read project source-of-truth (CLAUDE.md, RESEARCH_CONTEXT_KERNEL, TASKS.md, thesis_writing_guide.md) and the current thesis chapters.</li>
+    <li><span class="step-num">02</span> Chose <strong>claim-driven</strong> figure planning approach — walk chapter outline, derive minimum figure per claim. Rejected data-driven (over-includes).</li>
+    <li><span class="step-num">03</span> Drafted <strong>15 figures + 7 tables</strong> mapped to chapter sections, claims, data sources, and plot types.</li>
+    <li><span class="step-num">04</span> Verified data availability locally — 7 directly ready, 4 computable, <strong>9 trapped in Colab notebooks</strong>.</li>
+    <li><span class="step-num">05</span> Connected Google Drive MCP, explored <code>colab_data/results_phase4/</code> — <strong>found all 9 "trapped" outputs already produced</strong>, just not pulled locally.</li>
+    <li><span class="step-num">06</span> Built <code>thesis_figures/</code> folder: skeleton, configs, 14 small CSVs/JSONs seeded into <code>data/raw/</code>.</li>
+    <li><span class="step-num">07</span> Wrote 6 Python/notebook files: <code>_helpers.py</code> + notebooks 00–05. Each produces all variations of its assigned figures.</li>
+    <li><span class="step-num">08</span> Wrote 7 TikZ standalones for orthogonal Ch 3 flowcharts, 1 Excalidraw template + 4 spec.md files for Ch 2 conceptual diagrams.</li>
+    <li><span class="step-num">09</span> Verified data lineage — every aggregate metric traces to a real experiment output. Hand-compiled model_comparison CSVs flagged as having gaps (Osman's R/MRR blanks).</li>
+    <li><span class="step-num">10</span> Cross-referenced figure plan with <code>THESIS_NEXT_STEPS_TASKS.md</code>, identified which tasks will change figure inputs (Workstream 1) vs labels (Workstream 2).</li>
+  </ul>
+</section>
+
+<!-- ─────────────── Figure registry ─────────────── -->
+<section>
+  <h2>Figure registry — mini previews</h2>
+  <p class="fineprint">SVG sketches show the chart <em>shape</em> only — not real data. ★ marks recommended variation.</p>
+
+  <div class="fig-grid">
+
+    <!-- Fig 4.1 — histogram -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.1 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">NDCG@10 distribution<br>(mDPR vs BM25)</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g fill="#4d4d4d" opacity="0.7">
+            <rect x="10" y="48" width="14" height="24"/>
+            <rect x="26" y="38" width="14" height="34"/>
+            <rect x="42" y="22" width="14" height="50"/>
+            <rect x="58" y="30" width="14" height="42"/>
+            <rect x="74" y="48" width="14" height="24"/>
+            <rect x="90" y="55" width="14" height="17"/>
+            <rect x="106" y="60" width="14" height="12"/>
+            <rect x="122" y="64" width="14" height="8"/>
+            <rect x="138" y="66" width="14" height="6"/>
+            <rect x="154" y="68" width="14" height="4"/>
+          </g>
+          <g fill="#1f1f1f" opacity="0.5">
+            <rect x="10" y="56" width="14" height="16"/>
+            <rect x="26" y="44" width="14" height="28"/>
+            <rect x="42" y="28" width="14" height="44"/>
+            <rect x="58" y="32" width="14" height="40"/>
+            <rect x="74" y="50" width="14" height="22"/>
+            <rect x="90" y="58" width="14" height="14"/>
+            <rect x="106" y="62" width="14" height="10"/>
+            <rect x="122" y="66" width="14" height="6"/>
+            <rect x="138" y="68" width="14" height="4"/>
+            <rect x="154" y="70" width="14" height="2"/>
+          </g>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">overlaid histogram · per-query · 2 variations (hist/CDF)</div>
+    </div>
+
+    <!-- Fig 4.2 — failure cliff -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.2 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">Failure cliff: 39% below NDCG@10 &lt; 0.3</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <path d="M 10 70 L 50 65 L 80 50 L 100 35 L 130 20 L 170 12 L 190 10" fill="none" stroke="#1f1f1f" stroke-width="1.5"/>
+          <line x1="78" y1="0" x2="78" y2="72" stroke="#888" stroke-dasharray="2,2" stroke-width="0.5"/>
+          <line x1="0" y1="50" x2="200" y2="50" stroke="#888" stroke-dasharray="2,2" stroke-width="0.5"/>
+          <text x="84" y="46" font-family="monospace" font-size="8" fill="#444">39%</text>
+        </svg>
+      </div>
+      <div class="meta">CDF with annotation · 2 variations</div>
+    </div>
+
+    <!-- Fig 4.3 — boxplot by length -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.3 ★</span>
+        <span class="pill prog">bin scheme TBD</span>
+      </div>
+      <div class="title">NDCG@10 by query length</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g stroke="#1f1f1f" stroke-width="0.8" fill="#b3b3b3">
+            <rect x="20" y="40" width="20" height="20"/>
+            <line x1="30" y1="32" x2="30" y2="40"/>
+            <line x1="30" y1="60" x2="30" y2="68"/>
+            <rect x="55" y="34" width="20" height="22"/>
+            <line x1="65" y1="26" x2="65" y2="34"/>
+            <line x1="65" y1="56" x2="65" y2="64"/>
+            <rect x="90" y="28" width="20" height="24"/>
+            <line x1="100" y1="20" x2="100" y2="28"/>
+            <line x1="100" y1="52" x2="100" y2="60"/>
+            <rect x="125" y="22" width="20" height="26"/>
+            <line x1="135" y1="14" x2="135" y2="22"/>
+            <line x1="135" y1="48" x2="135" y2="56"/>
+            <rect x="160" y="18" width="20" height="22"/>
+            <line x1="170" y1="10" x2="170" y2="18"/>
+            <line x1="170" y1="40" x2="170" y2="48"/>
+          </g>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">box/violin/scatter · 3 variations · waits on Task 1.2</div>
+    </div>
+
+    <!-- Fig 4.4 — recall curve -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.4</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">Recall@k curve k=1…100</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <path d="M 10 60 Q 50 55 80 45 Q 120 35 160 25 L 190 18" fill="none" stroke="#1f1f1f" stroke-width="1.5"/>
+          <path d="M 10 65 Q 50 58 80 48 Q 120 36 160 24 L 190 16" fill="none" stroke="#888" stroke-width="1.2" stroke-dasharray="3,2"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">log-x line plot · mDPR + BM25 overlaid · 1 variation</div>
+    </div>
+
+    <!-- Fig 4.5 — sorted bar -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.5 ★</span>
+        <span class="pill prog">Osman data needed</span>
+      </div>
+      <div class="title">NDCG@10 across 10 models</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g fill="#4d4d4d" stroke="#000" stroke-width="0.5">
+            <rect x="10" y="22" width="14" height="50"/>
+            <rect x="28" y="28" width="14" height="44"/>
+            <rect x="46" y="30" width="14" height="42"/>
+            <rect x="64" y="34" width="14" height="38"/>
+            <rect x="82" y="36" width="14" height="36"/>
+            <rect x="100" y="38" width="14" height="34"/>
+            <rect x="118" y="40" width="14" height="32"/>
+            <rect x="136" y="42" width="14" height="30"/>
+            <rect x="154" y="44" width="14" height="28"/>
+            <rect x="172" y="46" width="14" height="26"/>
+          </g>
+          <line x1="0" y1="58" x2="200" y2="58" stroke="#1f1f1f" stroke-dasharray="3,2" stroke-width="0.7"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">vertical/horizontal/grouped · 3 variations</div>
+    </div>
+
+    <!-- Fig 4.6 — scatter size vs gain -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.6 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">Model size vs Δ NDCG@10</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <circle cx="30" cy="55" r="4" fill="#1f1f1f"/>
+          <circle cx="50" cy="50" r="4" fill="#1f1f1f"/>
+          <circle cx="70" cy="42" r="4" fill="#1f1f1f"/>
+          <circle cx="100" cy="38" r="4" fill="#1f1f1f"/>
+          <circle cx="120" cy="32" r="4" fill="#1f1f1f"/>
+          <circle cx="150" cy="25" r="4" fill="#1f1f1f"/>
+          <circle cx="170" cy="20" r="4" fill="#1f1f1f"/>
+          <path d="M 20 60 L 180 18" fill="none" stroke="#888" stroke-width="0.7" stroke-dasharray="3,2"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">labelled scatter + trendline · 2 variations</div>
+    </div>
+
+    <!-- Fig 4.7 — repetition sweep -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.7 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">BM25 repetition sweep · 9 models</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <path d="M 10 65 L 50 35 L 90 28 L 130 25 L 170 27" fill="none" stroke="#1f1f1f" stroke-width="1.3"/>
+          <path d="M 10 60 L 50 38 L 90 32 L 130 30 L 170 32" fill="none" stroke="#4d4d4d" stroke-width="1.2"/>
+          <path d="M 10 68 L 50 50 L 90 40 L 130 36 L 170 38" fill="none" stroke="#6a6a6a" stroke-width="1.1"/>
+          <path d="M 10 70 L 50 55 L 90 44 L 130 40 L 170 42" fill="none" stroke="#888" stroke-width="1.1"/>
+          <path d="M 10 66 L 50 60 L 90 50 L 130 46 L 170 48" fill="none" stroke="#aaa" stroke-width="1.1"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">multi-line / line+β / heatmap · 3 variations</div>
+    </div>
+
+    <!-- Fig 4.8 — Dense vs BM25 gain scatter -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.8 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">Dense gain vs BM25 gain</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <line x1="0" y1="40" x2="200" y2="40" stroke="#aaa" stroke-width="0.5"/>
+          <line x1="100" y1="0" x2="100" y2="80" stroke="#aaa" stroke-width="0.5"/>
+          <circle cx="140" cy="22" r="4" fill="#1f1f1f"/>
+          <circle cx="130" cy="28" r="4" fill="#1f1f1f"/>
+          <circle cx="120" cy="52" r="4" fill="#1f1f1f"/>
+          <circle cx="110" cy="55" r="4" fill="#1f1f1f"/>
+          <circle cx="115" cy="58" r="4" fill="#1f1f1f"/>
+          <circle cx="105" cy="60" r="4" fill="#1f1f1f"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">scatter/slope · 2 variations · labelled per model</div>
+    </div>
+
+    <!-- Fig 4.9 — alpha sweep -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.9 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">Hybrid CC α sweep (no QE)</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <path d="M 10 60 Q 50 28 100 20 Q 150 28 190 50" fill="none" stroke="#1f1f1f" stroke-width="1.5"/>
+          <circle cx="10" cy="60" r="3" fill="#1f1f1f"/>
+          <circle cx="40" cy="36" r="3" fill="#1f1f1f"/>
+          <circle cx="70" cy="24" r="3" fill="#1f1f1f"/>
+          <circle cx="100" cy="20" r="3" fill="#1f1f1f"/>
+          <circle cx="130" cy="24" r="3" fill="#1f1f1f"/>
+          <circle cx="160" cy="36" r="3" fill="#1f1f1f"/>
+          <circle cx="190" cy="50" r="3" fill="#1f1f1f"/>
+          <line x1="100" y1="0" x2="100" y2="80" stroke="#888" stroke-dasharray="2,2" stroke-width="0.5"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">single-metric / all-4-metrics · 2 variations</div>
+    </div>
+
+    <!-- Fig 4.10 — CSQE alpha (recommended cut) -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.10</span>
+        <span class="pill info">recommend cut</span>
+      </div>
+      <div class="title">CSQE α sweep (4 points, near-flat)</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <path d="M 30 28 L 80 27 L 130 26 L 180 25" fill="none" stroke="#1f1f1f" stroke-width="1.5"/>
+          <circle cx="30" cy="28" r="3" fill="#1f1f1f"/>
+          <circle cx="80" cy="27" r="3" fill="#1f1f1f"/>
+          <circle cx="130" cy="26" r="3" fill="#1f1f1f"/>
+          <circle cx="180" cy="25" r="3" fill="#1f1f1f"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+          <text x="80" y="60" font-family="monospace" font-size="7" fill="#999">ΔnDCG ≈ 0.002</text>
+        </svg>
+      </div>
+      <div class="meta">curve is so flat it should be one sentence in text</div>
+    </div>
+
+    <!-- Fig 4.11 — headline progression -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.11 ★ HEADLINE</span>
+        <span class="pill prog">naming TBD</span>
+      </div>
+      <div class="title">System progression: BM25 → … → Best (0.7137)</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g stroke="#000" stroke-width="0.5">
+            <rect x="14" y="50" width="22" height="22" fill="#b3b3b3"/>
+            <rect x="42" y="46" width="22" height="26" fill="#b3b3b3"/>
+            <rect x="70" y="32" width="22" height="40" fill="#b3b3b3"/>
+            <rect x="98" y="30" width="22" height="42" fill="#b3b3b3"/>
+            <rect x="126" y="32" width="22" height="40" fill="#b3b3b3"/>
+            <rect x="154" y="14" width="22" height="58" fill="#1f1f1f"/>
+          </g>
+          <text x="155" y="11" font-family="monospace" font-size="8" font-weight="bold" fill="#1f1f1f">0.71</text>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">plain / Δ-annotated / grouped · 3 variations · v2 is ★</div>
+    </div>
+
+    <!-- Fig 4.12 — per-query delta histogram (BLOCKED) -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.12 ★</span>
+        <span class="pill block">Colab patch needed</span>
+      </div>
+      <div class="title">Per-query Δ NDCG (CSQE − blind)</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <rect x="0" y="0" width="50" height="72" fill="#1f1f1f" opacity="0.05"/>
+          <rect x="130" y="0" width="70" height="72" fill="#1f1f1f" opacity="0.08"/>
+          <g fill="#4d4d4d" stroke="#fff" stroke-width="0.4">
+            <rect x="22" y="64" width="8" height="8"/>
+            <rect x="32" y="58" width="8" height="14"/>
+            <rect x="42" y="50" width="8" height="22"/>
+            <rect x="52" y="42" width="8" height="30"/>
+            <rect x="62" y="34" width="8" height="38"/>
+            <rect x="72" y="22" width="8" height="50"/>
+            <rect x="82" y="14" width="8" height="58"/>
+            <rect x="92" y="20" width="8" height="52"/>
+            <rect x="102" y="32" width="8" height="40"/>
+            <rect x="112" y="46" width="8" height="26"/>
+            <rect x="122" y="56" width="8" height="16"/>
+            <rect x="132" y="62" width="8" height="10"/>
+            <rect x="142" y="66" width="8" height="6"/>
+            <rect x="152" y="68" width="8" height="4"/>
+          </g>
+          <line x1="100" y1="0" x2="100" y2="72" stroke="#1f1f1f" stroke-width="0.8"/>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">histogram/KDE · 2 variations · waits on patch + Task 1.3</div>
+    </div>
+
+    <!-- Fig 4.13 -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.13 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">NDCG by 1st-pass relevance</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g stroke="#000" stroke-width="0.5">
+            <rect x="30" y="36" width="24" height="36" fill="#8c8c8c"/>
+            <rect x="56" y="14" width="24" height="58" fill="#1f1f1f"/>
+            <rect x="110" y="48" width="24" height="24" fill="#8c8c8c"/>
+            <rect x="136" y="40" width="24" height="32" fill="#1f1f1f"/>
+          </g>
+          <text x="44" y="9" font-family="monospace" font-size="7" fill="#1f1f1f">0.89</text>
+          <text x="124" y="34" font-family="monospace" font-size="7" fill="#1f1f1f">0.58</text>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">grouped bar · plain/annotated · 2 variations</div>
+    </div>
+
+    <!-- Fig 4.14 -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.14 ★</span>
+        <span class="pill prog">bin scheme TBD</span>
+      </div>
+      <div class="title">Δ NDCG@10 by query length</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g stroke="#000" stroke-width="0.5">
+            <rect x="40" y="22" width="40" height="50" fill="#1f1f1f"/>
+            <rect x="120" y="38" width="40" height="34" fill="#1f1f1f"/>
+          </g>
+          <text x="50" y="17" font-family="monospace" font-size="8" font-weight="bold" fill="#1f1f1f">+0.20</text>
+          <text x="130" y="33" font-family="monospace" font-size="8" font-weight="bold" fill="#1f1f1f">+0.11</text>
+          <line x1="0" y1="72" x2="200" y2="72" stroke="#000" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="meta">Δ-only / grouped · 2 variations · waits on Task 1.2</div>
+    </div>
+
+    <!-- Fig 4.15 -->
+    <div class="fig-card">
+      <div class="head">
+        <span class="id">Fig 4.15 ★</span>
+        <span class="pill done">data ready</span>
+      </div>
+      <div class="title">Regression-type breakdown</div>
+      <div class="preview">
+        <svg class="mini" viewBox="0 0 200 80">
+          <g transform="translate(100, 40)">
+            <circle r="24" fill="none" stroke="#1f1f1f" stroke-width="14" stroke-dasharray="78 72"/>
+            <circle r="24" fill="none" stroke="#4d4d4d" stroke-width="14" stroke-dasharray="54 96" stroke-dashoffset="-78"/>
+            <circle r="24" fill="none" stroke="#8c8c8c" stroke-width="14" stroke-dasharray="18 132" stroke-dashoffset="-132"/>
+          </g>
+          <text x="70" y="46" font-family="monospace" font-size="7" fill="#fff">52</text>
+          <text x="115" y="34" font-family="monospace" font-size="7" fill="#fff">36</text>
+          <text x="120" y="56" font-family="monospace" font-size="7" fill="#fff">12</text>
+        </svg>
+      </div>
+      <div class="meta">stacked bar / donut · 2 variations · v2 is ★</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────── Tables ─────────────── -->
+<section>
+  <h2>Tables (7)</h2>
+  <table class="tasks">
+    <thead><tr><th>ID</th><th>Title</th><th>Source</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="fixed">Table 4.1</td><td>mDPR vs BM25 baselines</td><td>exp_001/002 metrics</td><td><span class="pill done">ready</span></td></tr>
+      <tr><td class="fixed">Table 4.2</td><td>10 models — Dense Query2Doc</td><td>model_comparison_dense.csv</td><td><span class="pill prog">Osman blanks</span></td></tr>
+      <tr><td class="fixed">Table 4.3</td><td>9 models — BM25 best configs</td><td>exp11_ndcg10.csv</td><td><span class="pill done">ready</span></td></tr>
+      <tr><td class="fixed">Table 4.4</td><td>Hybrid baselines</td><td>exp12_summary.csv</td><td><span class="pill done">ready</span></td></tr>
+      <tr><td class="fixed">Table 4.5</td><td>CSQE ablation</td><td>csqe_ablation_table.csv</td><td><span class="pill done">ready</span></td></tr>
+      <tr><td class="fixed">Table 4.6</td><td>CSQE vs blind QE (Aya)</td><td>hand-compile</td><td><span class="pill prog">TODO</span></td></tr>
+      <tr><td class="fixed">Table 4.7</td><td>Configs A/B/C metrics</td><td>exp21_summary.csv</td><td><span class="pill prog">naming TBD</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─────────────── Decisions needed ─────────────── -->
+<section>
+  <h2>Decisions needed</h2>
+
+  <div class="decision">
+    <div class="q">D1 · Length bin scheme</div>
+    <div class="ctx">My notebook 02 uses 5 bins (1-2 / 3-4 / 5-6 / 7-9 / 10+). Thesis text uses 2 bins (Short&lt;5, Long≥10). Task 1.2 proposes 3 bins (Short&lt;5, Medium 5–9, Long≥10). The choice affects Fig 4.3 and Fig 4.14.</div>
+    <div class="rec"><strong>Recommended:</strong> align with Task 1.2 → Short/Medium/Long (3 bins). Single source of truth, matches the post-revision thesis.</div>
+  </div>
+
+  <div class="decision">
+    <div class="q">D2 · Threshold system reconciliation (Task 1.4)</div>
+    <div class="ctx">Two systems coexist: §3.3 absolute (Failed &lt; 0.3 / Mediocre / Successful) and §3.9 paired (Failure &lt; 0.1 / Big Win &gt; 0.3 / Regression). My Fig 4.12 shaded bands use ±0.1 and +0.3.</div>
+    <div class="rec"><strong>Recommended:</strong> keep both but signpost they answer different questions (absolute success rating vs pairwise magnitude). My current bands map to the pairwise system. No change to Fig 4.12 layout — just caption text.</div>
+  </div>
+
+  <div class="decision">
+    <div class="q">D3 · Naming consistency</div>
+    <div class="ctx">Thesis renamed Config A/B/C → BM25-only-expanded / Dense-only-expanded / Both-expanded (Task 2.4, ✅ DONE in thesis). Notebook 04 still uses Config A/B/C in axis labels and Table 4.7.</div>
+    <div class="rec"><strong>Recommended:</strong> mechanical update to notebook 04 — sed-style rename in the data labels and table column header. Quick, no data impact.</div>
+  </div>
+
+  <div class="decision">
+    <div class="q">D4 · Numeric consistency (Task 2.5)</div>
+    <div class="ctx">mDPR baseline: thesis picks 0.499 (matches published paper rounding); my Table 4.1 shows 0.4993. Hybrid Recall@100: thesis picks 0.9467; my Tables show 0.9466.</div>
+    <div class="rec"><strong>Recommended:</strong> apply at table-render time — one-line format change in notebooks 02 and 04. No data change.</div>
+  </div>
+
+  <div class="decision">
+    <div class="q">D5 · Fig 4.10 (CSQE α sweep) — include or cut?</div>
+    <div class="ctx">The α=1→4 sweep moves NDCG@10 from 0.7123 to 0.7137 (Δ ≈ 0.002 across 4 points). Visually flat, says little.</div>
+    <div class="rec"><strong>Recommended:</strong> cut from figures, fold into one prose sentence: "Varying α from 1 to 4 changed NDCG@10 by less than 0.002; α=4 was used throughout."</div>
+  </div>
+
+  <div class="decision">
+    <div class="q">D6 · Render strategy</div>
+    <div class="ctx">Two paths: (a) quick wins now, push for Osman; or (b) wait for Workstream 1 to land before any final renders.</div>
+    <div class="rec"><strong>Recommended:</strong> hybrid. Do clear wins NOW (verify Drive CSVs, HANDOFF section, push). Then ONE solid render pass after Workstream 1 + Colab patch lands. See approach section below.</div>
+  </div>
+</section>
+
+<!-- ─────────────── Approach options ─────────────── -->
+<section>
+  <h2>Approach — what to do next</h2>
+
+  <div class="options">
+    <div class="option recommended">
+      <div class="ribbon">RECOMMENDED</div>
+      <h4>Hybrid: quick wins now, solid pass later</h4>
+      <p class="pros"><strong>Now (today, ~30 min):</strong></p>
+      <ul>
+        <li>Re-fetch the 4 Drive CSVs and diff vs committed copies (transcription check)</li>
+        <li>Add HANDOFF section to <code>thesis_figures/README.md</code> with what Osman should look at and what's blocking</li>
+        <li>Commit + push so Osman sees the scaffold</li>
+        <li>Send Osman the Colab-patch snippet (5 lines, added to one existing notebook cell)</li>
+      </ul>
+      <p class="pros"><strong>After Workstream 1 finishes + Colab patch produces the per-query CSV (~1–2 days):</strong></p>
+      <ul>
+        <li>Mechanical alignment edits (Config naming, numerics, length-bin scheme) — all done in one batch</li>
+        <li>Install Jupyter, execute notebooks 02–05 to render every figure variation</li>
+        <li>Compile 7 TikZ standalones with <code>xelatex</code></li>
+        <li>Polish 5 Excalidraw conceptual diagrams (manual at excalidraw.com)</li>
+        <li>Mohammed + Osman pick the ★ winner per figure, prune losers</li>
+      </ul>
+      <p class="pros">+ Osman has visibility immediately</p>
+      <p class="pros">+ No double work — alignment edits done after schemes are final</p>
+      <p class="cons">− Two sessions instead of one</p>
+    </div>
+
+    <div class="option">
+      <h4>Aggressive: clear wins inline</h4>
+      <ul>
+        <li>Apply naming/numeric/length-bin edits now</li>
+        <li>Install Jupyter and render everything immediately</li>
+        <li>Push complete state including PDF outputs</li>
+      </ul>
+      <p class="cons">− Workstream 1 will likely change the length-bin scheme → re-render</p>
+      <p class="cons">− Fig 4.12 still blocked on Colab patch regardless</p>
+      <p class="cons">− Risk of pushing stale figures Osman might cite by mistake</p>
+      <p class="pros">+ Maximally finished snapshot in one session</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── Clear wins block ─────────────── -->
+<section>
+  <h2>Clear wins — exact steps if we go with recommended</h2>
+
+  <ol style="font-size: 14px; line-height: 1.8;">
+    <li>
+      <strong>Verify 4 Drive CSVs.</strong>
+      Re-pull <code>exp21_summary.csv</code>, <code>csqe_ablation_table.csv</code>, <code>csqe_alpha_ablation.csv</code>, <code>csqe_error_patterns.csv</code> from Drive (IDs are in <code>data_manifest.yaml</code>). Diff against committed copies. If clean, no change.
+      <span class="pill star">5 min</span>
+    </li>
+    <li>
+      <strong>Add HANDOFF section</strong> at the top of <code>thesis_figures/README.md</code>. Contents: where to look, what's blocking, two things Osman can do in parallel (fill model_comparison blanks; add Colab patch), pointer to Task 7.1 in <code>THESIS_NEXT_STEPS_TASKS.md</code>.
+      <span class="pill star">10 min</span>
+    </li>
+    <li>
+      <strong>Send Osman the Colab patch snippet</strong> — 5 lines to add to <code>phase4_quick_wins_Ablation_erroranalysis.ipynb</code> right after the <code>deltas = {...}</code> dict (around line 11732). Saves <code>csqe_vs_blind_per_query.csv</code> with columns qid, csqe_ndcg, blind_ndcg, delta. He runs that one cell, downloads CSV, drops it in <code>data/raw/</code>.
+      <span class="pill star">5 min</span>
+    </li>
+    <li>
+      <strong>Commit + push.</strong> One commit summarising the scaffold. Git status should show ~44 new files under <code>thesis_figures/</code>.
+      <span class="pill star">5 min</span>
+    </li>
+  </ol>
+
+  <p class="fineprint">Estimated total: ~25 minutes. After this, the ball is in Workstream-1's court; we return for the solid render pass once that finishes.</p>
+</section>
+
+<!-- ─────────────── File map ─────────────── -->
+<section>
+  <h2>What lives where</h2>
+<div class="tree"><span class="dir">thesis_figures/</span>
+├── <strong>README.md</strong>                       <span class="note">master figure registry · star ★ marks recommended variation</span>
+├── data_manifest.yaml             <span class="note">Drive IDs + local paths for every input</span>
+├── .gitignore
+├── <span class="dir">data/</span>
+│   ├── README.md
+│   ├── <span class="dir">raw/</span>                        <span class="note">14 input files: small CSVs + JSONs committed; .pkl/.txt gitignored</span>
+│   │   ├── exp21_summary.csv                  <span class="note">Configs A/B/C metrics</span>
+│   │   ├── exp21_all_metrics.json             <span class="note">full α sweep</span>
+│   │   ├── csqe_ablation_table.csv
+│   │   ├── csqe_alpha_ablation.csv
+│   │   ├── csqe_error_patterns.csv
+│   │   ├── exp11_ndcg10.csv                   <span class="note">BM25 repetition sweep, 9 models</span>
+│   │   ├── exp11_recall10.csv
+│   │   ├── exp12_cc_sweep.csv                 <span class="note">hybrid α sweep</span>
+│   │   ├── exp12_summary.csv
+│   │   ├── baseline_dense_metrics.json
+│   │   ├── baseline_dense_per_query.json
+│   │   ├── baseline_bm25_metrics.json
+│   │   ├── miracl_qrels_dev.json
+│   │   ├── miracl_topics_dev.json
+│   │   ├── model_comparison_dense.csv         <span class="note">hand-compiled · Osman blanks</span>
+│   │   └── model_comparison_bm25.csv          <span class="note">hand-compiled</span>
+│   └── <span class="dir">computed/</span>                   <span class="note">populated by notebook 01</span>
+├── <span class="dir">notebooks/</span>
+│   ├── _helpers.py                <span class="note">style, paths, TREC loader, pytrec_eval wrapper</span>
+│   ├── 00_pull_drive_data.ipynb   <span class="note">fetch large files from Drive</span>
+│   ├── 01_compute_per_query.ipynb <span class="note">TREC + qrels → per-query CSVs</span>
+│   ├── 02_baseline_figures.ipynb  <span class="note">Figs 4.1 · 4.2 · 4.3 · 4.4 + Table 4.1</span>
+│   ├── 03_model_comparison.ipynb  <span class="note">Figs 4.5 · 4.6 · 4.7 · 4.8 + Tables 4.2 · 4.3</span>
+│   ├── 04_csqe_figures.ipynb      <span class="note">Figs 4.9 · 4.10 · 4.11 + Tables 4.4 · 4.5 · 4.7</span>
+│   └── 05_error_analysis.ipynb    <span class="note">Figs 4.12 · 4.13 · 4.14 · 4.15</span>
+├── <span class="dir">system_diagrams/</span>
+│   ├── README.md
+│   ├── fig_2_1_rag_arch.excalidraw           <span class="note">template — polish at excalidraw.com</span>
+│   ├── fig_2_2_qe_taxonomy.spec.md            <span class="note">spec — manual build</span>
+│   ├── fig_2_3_dense_vs_sparse.spec.md
+│   ├── fig_3_1_pipeline.tex                   <span class="note">TikZ · ready for xelatex</span>
+│   ├── fig_3_2_miracl.spec.md
+│   ├── fig_3_3_bm25s.tex
+│   ├── fig_3_4_mdpr.tex
+│   ├── fig_3_5_query2doc.spec.md
+│   ├── fig_3_6_repetition.tex
+│   ├── fig_3_7_hybrid.tex
+│   ├── fig_3_8_csqe.tex
+│   └── fig_3_9_best_system.tex
+├── <span class="dir">styles/</span>
+│   └── thesis_style.mplstyle      <span class="note">Times New Roman, grayscale-safe, no titles</span>
+└── <span class="dir">output/</span>
+    ├── pdf/                       <span class="note">target for thesis \includegraphics — empty until render</span>
+    └── png/                       <span class="note">target for review — empty until render</span></div>
+</section>
+
+<!-- ─────────────── Cross-reference with thesis tasks ─────────────── -->
+<section>
+  <h2>Cross-reference with <code>THESIS_NEXT_STEPS_TASKS.md</code></h2>
+  <table class="tasks">
+    <thead>
+      <tr><th>Task in thesis doc</th><th>What it affects in figures</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="fixed">7.1</td>
+        <td><strong>This entire folder IS the deliverable.</strong> Plan + implementation in one.</td>
+        <td>Update Task 7.1 to point at <code>thesis_figures/README.md</code></td>
+      </tr>
+      <tr>
+        <td class="fixed">1.1</td>
+        <td>Dataset integrity — if 258 failures aren't actually irretrievable, the §4.10 narrative changes and Figs 4.12–4.15 captions change.</td>
+        <td>Wait for outcome before locking error-analysis figure captions</td>
+      </tr>
+      <tr>
+        <td class="fixed">1.2</td>
+        <td>Length bin scheme — Short/Medium/Long. Affects Fig 4.3 (bins) and Fig 4.14 (needs Medium row).</td>
+        <td>Update <code>_helpers.py</code> <code>length_bin()</code> to 3-bin once confirmed</td>
+      </tr>
+      <tr>
+        <td class="fixed">1.3</td>
+        <td>Per-query Config A analysis. <strong>Same Colab patch.</strong> Numbers in §4.10 (56.8% recovery, 0.8877 vs 0.5814) all flow into Figs 4.12, 4.13, 4.14.</td>
+        <td>Apply patch in Colab, download CSV, drop in <code>data/raw/</code></td>
+      </tr>
+      <tr>
+        <td class="fixed">1.4</td>
+        <td>Threshold reconciliation. Affects Fig 4.12 shaded bands.</td>
+        <td>Likely no layout change; caption wording only</td>
+      </tr>
+      <tr>
+        <td class="fixed">2.4</td>
+        <td>Config A/B/C → BM25-only-expanded / Dense-only-expanded / Both-expanded. Affects Fig 4.11 labels + Table 4.7.</td>
+        <td>Mechanical rename in notebook 04 (already DONE in thesis text)</td>
+      </tr>
+      <tr>
+        <td class="fixed">2.5</td>
+        <td>mDPR 0.4993 → 0.499; Recall@100 0.9466 → 0.9467. Affects Tables 4.1, 4.4, 4.7.</td>
+        <td>Format change in notebooks 02 + 04</td>
+      </tr>
+      <tr>
+        <td class="fixed">5.C.5</td>
+        <td>Audit Ch 4 tables; move tabular data to figures where better. Couples directly with this registry.</td>
+        <td>Cross-reference each ★ figure with corresponding thesis table</td>
+      </tr>
+      <tr>
+        <td class="fixed">5.C.6</td>
+        <td>BM25 repetition recovery — 6 of 9 below baseline at n=1, all 9 recover. Fig 4.7 is exactly this.</td>
+        <td>Already covered; verify caption matches the corrected claim</td>
+      </tr>
+      <tr>
+        <td class="fixed">5.C.7</td>
+        <td>Drop size-based interpretation of optimal repetition. Affects Fig 4.7 caption (not data).</td>
+        <td>Caption-only edit</td>
+      </tr>
+      <tr>
+        <td class="fixed">5.C.20</td>
+        <td>Drop the Medium row with "—" OR populate. If 3-bin scheme adopted, Fig 4.14 must show Medium.</td>
+        <td>Couples with 1.2 outcome</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ─────────────── How to resume ─────────────── -->
+<section>
+  <h2>How to resume in next chat</h2>
+  <p style="font-size: 14px;">If you're picking this up in a fresh session, the agent should:</p>
+  <ol style="font-size: 14px; line-height: 1.7;">
+    <li>Read <code>thesis_figures/README.md</code> first — that's the master registry.</li>
+    <li>Read <code>research_decisions/THESIS_NEXT_STEPS_TASKS.md</code> Workstream 1 — those are the blockers.</li>
+    <li>Read this file (<code>PROGRESS_SNAPSHOT.html</code>) for the decisions and approach already settled.</li>
+    <li>Ask user: "did Osman run the Colab patch? did Workstream 1 land?" Both answers shape what to do next.</li>
+  </ol>
+  <p class="fineprint">If both are yes → do the solid render pass. If neither → do the quick wins (Drive verify + HANDOFF + push). If one of two → render what's unblocked, hold the rest.</p>
+</section>
+
+<footer style="border-top: 1px solid var(--line); padding-top: 14px; margin-top: 36px; font-size: 12px; color: var(--muted); text-align: center;">
+  thesis_figures/PROGRESS_SNAPSHOT.html · self-contained · single HTML file · open in any browser
+</footer>
+
+</div>
+</body>
+</html>

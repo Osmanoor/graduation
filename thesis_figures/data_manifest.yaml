@@ -1,0 +1,174 @@
+# Data manifest — single source of truth for every file the figures need.
+# Each entry maps a Drive ID or local repo path to a local target under data/.
+# Re-running 00_pull_drive_data.ipynb fetches anything missing or stale.
+#
+# Fields:
+#   name:          slug used in notebooks (data["name"])
+#   source:        drive | local
+#   drive_id:      Google Drive file ID (if source == drive)
+#   local_source:  path relative to repo root (if source == local)
+#   local_path:    target under thesis_figures/data/
+#   size_bytes:    expected size for integrity check
+#   consumed_by:   list of figure/table IDs that read this file
+
+datasets:
+  # ---------- Drive: small CSV/JSON (committed) ----------
+  - name: exp21_summary
+    source: drive
+    drive_id: 1HvOHWsty3an2XJtEOUzj7w3s1lP31o2l
+    local_path: data/raw/exp21_summary.csv
+    size_bytes: 1023
+    consumed_by: [table_4_7, fig_4_11]
+
+  - name: exp21_all_metrics
+    source: drive
+    drive_id: 1dqyxmnV3cQyBAeNdPwZsfxZUFm_UM9zd
+    local_path: data/raw/exp21_all_metrics.json
+    size_bytes: 6535
+    consumed_by: [fig_4_11_alt]
+
+  - name: csqe_ablation_table
+    source: drive
+    drive_id: 1tgrTzvMd_G71z6-zL3yqUfNhhEFDGs87
+    local_path: data/raw/csqe_ablation_table.csv
+    size_bytes: 618
+    consumed_by: [table_4_5]
+
+  - name: csqe_alpha_ablation
+    source: drive
+    drive_id: 1NqXvaE2jrMHQb1eFt6I4Rp0owqpppzFG
+    local_path: data/raw/csqe_alpha_ablation.csv
+    size_bytes: 99
+    consumed_by: [fig_4_10]
+
+  - name: csqe_error_patterns
+    source: drive
+    drive_id: 1hcxpfnAmJE_JypVbcqnrMTFg2MoHcQ3J
+    local_path: data/raw/csqe_error_patterns.csv
+    size_bytes: 409
+    consumed_by: [fig_4_13, fig_4_14]
+
+  # ---------- Drive: large files (gitignored) ----------
+  - name: bm25_csqe_run
+    source: drive
+    drive_id: 11BxX36yLS6Pw7zSoFxNmRdG0x-f6FqMp
+    local_path: data/raw/bm25_csqe_run.txt
+    size_bytes: 12035123
+    consumed_by: [fig_4_12]
+    note: TREC run file. Used with qrels to compute per-query NDCG for CSQE error analysis.
+
+  - name: dense_csqe_run
+    source: drive
+    drive_id: 1GYP0Axie4quzmYVH7BSDm2na13xpIzFe
+    local_path: data/raw/dense_csqe_run.txt
+    size_bytes: 11818371
+    consumed_by: [fig_4_12]
+
+  - name: hybrid_csqe_rrf
+    source: drive
+    drive_id: 1y1ceNTgvdespuduqwomLigHwsTe-ZI3d
+    local_path: data/raw/hybrid_csqe_rrf_k20.txt
+    size_bytes: 12378948
+    consumed_by: [fig_4_12]
+
+  - name: csqe_per_query_pkl
+    source: drive
+    drive_id: 1wkxPeVTEs5OQVJkQcKQ76_i1K6QzLgUK
+    local_path: data/raw/exp_013_csqe_aya_8b_results.pkl
+    size_bytes: 10615215
+    consumed_by: [fig_4_12, fig_4_13, fig_4_14]
+    note: Pickle of full CSQE results object. Use 01_compute_per_query.ipynb to extract per-query CSV.
+
+  # ---------- Local repo: already on disk ----------
+  - name: baseline_dense_per_query
+    source: local
+    local_source: arabic-rag-query-enhancement/results/baseline_dense/exp_001_quantitative_analysis.json
+    local_path: data/raw/baseline_dense_per_query.json
+    size_bytes: ~
+    consumed_by: [fig_4_1, fig_4_2, fig_4_3, fig_4_4]
+
+  - name: baseline_dense_run
+    source: local
+    local_source: arabic-rag-query-enhancement/results/baseline_dense/exp_001_baseline_dense.txt
+    local_path: data/raw/baseline_dense_run.txt
+    size_bytes: ~
+    consumed_by: [fig_4_1_alt, fig_4_4]
+    note: TREC run for computing Recall@k curve and per-query BM25 metrics.
+
+  - name: baseline_bm25_run
+    source: local
+    local_source: arabic-rag-query-enhancement/results/baseline_bm25/exp_002_baseline_bm25.txt
+    local_path: data/raw/baseline_bm25_run.txt
+    size_bytes: ~
+    consumed_by: [fig_4_1, fig_4_4]
+
+  - name: baseline_dense_metrics
+    source: local
+    local_source: arabic-rag-query-enhancement/results/baseline_dense/exp_001_metrics.json
+    local_path: data/raw/baseline_dense_metrics.json
+    size_bytes: ~
+    consumed_by: [table_4_1]
+
+  - name: baseline_bm25_metrics
+    source: local
+    local_source: arabic-rag-query-enhancement/results/baseline_bm25/exp_002_metrics.json
+    local_path: data/raw/baseline_bm25_metrics.json
+    size_bytes: ~
+    consumed_by: [table_4_1]
+
+  - name: exp11_ndcg10
+    source: local
+    local_source: arabic-rag-query-enhancement/experiments/exp_11_bm25_repetition/exp11_ndcg10.csv
+    local_path: data/raw/exp11_ndcg10.csv
+    size_bytes: ~
+    consumed_by: [fig_4_7, table_4_3]
+
+  - name: exp11_recall10
+    source: local
+    local_source: arabic-rag-query-enhancement/experiments/exp_11_bm25_repetition/exp11_recall10.csv
+    local_path: data/raw/exp11_recall10.csv
+    size_bytes: ~
+    consumed_by: [fig_4_7_alt]
+
+  - name: exp12_cc_sweep
+    source: local
+    local_source: arabic-rag-query-enhancement/experiments/exp_12_hybrid_baseline/exp12_cc_sweep.csv
+    local_path: data/raw/exp12_cc_sweep.csv
+    size_bytes: ~
+    consumed_by: [fig_4_9]
+
+  - name: exp12_summary
+    source: local
+    local_source: arabic-rag-query-enhancement/experiments/exp_12_hybrid_baseline/exp12_summary.csv
+    local_path: data/raw/exp12_summary.csv
+    size_bytes: ~
+    consumed_by: [table_4_4]
+
+  - name: miracl_qrels_dev
+    source: local
+    local_source: arabic-rag-query-enhancement/data/processed/exp001_qrels.json
+    local_path: data/raw/miracl_qrels_dev.json
+    size_bytes: ~
+    consumed_by: [fig_4_4, fig_4_12]
+    note: MIRACL Arabic dev qrels for computing per-query NDCG against TREC runs.
+
+  - name: miracl_topics_dev
+    source: local
+    local_source: arabic-rag-query-enhancement/data/processed/exp001_topics.json
+    local_path: data/raw/miracl_topics_dev.json
+    size_bytes: ~
+    consumed_by: [fig_4_3, fig_4_14]
+    note: MIRACL Arabic dev topics — used to compute query length per qid.
+
+  # ---------- Hand-compiled (lives in repo, no upstream source) ----------
+  - name: model_comparison_dense
+    source: hand_compiled
+    local_path: data/raw/model_comparison_dense.csv
+    consumed_by: [fig_4_5, fig_4_6, fig_4_8, table_4_2]
+    note: Aggregated 10-model Dense Query2Doc results. Compiled from CLAUDE.md baseline table + individual experiment docs.
+
+  - name: model_comparison_bm25
+    source: hand_compiled
+    local_path: data/raw/model_comparison_bm25.csv
+    consumed_by: [fig_4_8, table_4_3]
+    note: Aggregated 9-model BM25 results (n=1 column from exp11_ndcg10 plus per-model best config).

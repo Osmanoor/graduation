@@ -1,0 +1,41 @@
+% Fig 3.7 — Hybrid fusion: CC and RRF side-by-side
+\documentclass[border=4pt]{standalone}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, calc, fit, backgrounds}
+\begin{document}
+\begin{tikzpicture}[
+    >=Stealth, node distance=8mm and 10mm,
+    box/.style={rectangle, draw, rounded corners=2pt,
+                minimum width=22mm, minimum height=7mm,
+                align=center, font=\footnotesize},
+    eq/.style={font=\small},
+    arrow/.style={-{Stealth[length=2mm]}, thick}
+]
+  % --- CC half ---
+  \node[box, fill=black!10] (bm1) {BM25 score};
+  \node[box, fill=black!5, right=of bm1] (dn1) {mDPR score};
+  \node[eq, below=8mm of $(bm1.south)!0.5!(dn1.south)$] (cc) {%
+      $s_{\text{CC}} = \alpha \cdot \tilde{s}_{\text{Dense}} + (1-\alpha)\cdot\tilde{s}_{\text{BM25}}$};
+  \node[box, below=of cc] (rcc) {Final ranking};
+
+  \draw[arrow] (bm1) -- ($(cc.north west)+(0,2mm)$);
+  \draw[arrow] (dn1) -- ($(cc.north east)+(0,2mm)$);
+  \draw[arrow] (cc) -- (rcc);
+  \node[font=\bfseries, above=2mm of bm1, xshift=12mm] {Convex Combination};
+
+  % --- RRF half (to the right) ---
+  \begin{scope}[xshift=72mm]
+    \node[box, fill=black!10] (bm2) {BM25 rank $r_b$};
+    \node[box, fill=black!5, right=of bm2] (dn2) {mDPR rank $r_d$};
+    \node[eq, below=8mm of $(bm2.south)!0.5!(dn2.south)$] (rrf) {%
+        $s_{\text{RRF}} = \dfrac{1}{k + r_b} + \dfrac{1}{k + r_d}$};
+    \node[box, below=of rrf] (rrr) {Final ranking};
+
+    \draw[arrow] (bm2) -- ($(rrf.north west)+(0,2mm)$);
+    \draw[arrow] (dn2) -- ($(rrf.north east)+(0,2mm)$);
+    \draw[arrow] (rrf) -- (rrr);
+    \node[font=\bfseries, above=2mm of bm2, xshift=12mm] {Reciprocal Rank Fusion};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

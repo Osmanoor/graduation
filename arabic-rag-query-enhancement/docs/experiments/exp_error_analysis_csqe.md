@@ -55,13 +55,27 @@
 
 ## Failure Analysis (258 queries, Config A nDCG@10 < 0.1)
 
-**257/258 failures are universally irretrievable** — CSQE, blind QE, and BM25 baseline all score 0.000. These are MIRACL queries whose positive passage is not present in the Wikipedia corpus dump used for indexing (a known dataset limitation). They are not CSQE failures.
+> ⚠️ **CORRECTION (2026-05-31, Workstream 1 Task 1.1).** The "irretrievable" claim
+> below is **FALSE** and is retained only for the record. A direct corpus-membership
+> check (`thesis_figures/notebooks/task_1_1_corpus_integrity.py`; verdict CSV at
+> `thesis_figures/data/computed/task_1_1_failure_corpus_check.csv`) found that **all
+> 258 failure queries have ≥1 relevant qrel document present in the indexed corpus**
+> (corpus = 2,061,414 docs = canonical MIRACL Arabic size). **0 are irretrievable;
+> 258 are genuine retrieval failures.** Of the 258: 199 also score 0 on the BM25
+> baseline (present but un-retrieved by every method), and **58 have BM25 baseline
+> ≥ 0.1 (43 ≥ 0.3) — BM25 alone ranked the doc in the top 10 but the CSQE hybrid lost
+> it** (genuine regressions). qid 1060 is one of those 58, not a unique case. The
+> original claim inferred "all methods score 0 ⇒ doc absent" without a membership
+> check; that inference does not hold. §4.10 must be reframed accordingly (Task 1.3):
+> these are NOT a dataset ceiling. No reindex needed — the corpus is complete.
 
-**1 genuine CSQE failure** (qid=1060, "ما هو أكبر القصور الموجودة في العراق؟"):
+**[SUPERSEDED] 257/258 failures are universally irretrievable** — CSQE, blind QE, and BM25 baseline all score 0.000. These are MIRACL queries whose positive passage is not present in the Wikipedia corpus dump used for indexing (a known dataset limitation). They are not CSQE failures.
+
+**[SUPERSEDED] 1 genuine CSQE failure** (qid=1060, "ما هو أكبر القصور الموجودة في العراق؟"):
 - BM25 baseline = 0.387, blind QE = 0.387, but Config A RRF = 0.000
 - The corpus expansion was a meta-description rather than vocabulary-rich content, causing the CSQE BM25 run to push the relevant document below rank 10 in RRF fusion.
 
-**Conclusion:** 258 "failures" are a ~8.9% ceiling imposed by the dataset, not a system limitation.
+**[SUPERSEDED] Conclusion:** 258 "failures" are a ~8.9% ceiling imposed by the dataset, not a system limitation.
 
 ---
 

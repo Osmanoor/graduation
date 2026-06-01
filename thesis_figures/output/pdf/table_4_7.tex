@@ -1,0 +1,17 @@
+\begin{tabular}{lcccc}
+\toprule
+Method & nDCG@10 & Recall@10 & Recall@100 & MRR \\
+\midrule
+BM25 alone & 0.462 & 0.596 & 0.858 & 0.484 \\
+mDPR alone & 0.499 & 0.616 & 0.841 & 0.533 \\
+Hybrid RRF k=20 (Exp 1.2) & 0.627 & 0.760 & 0.947 & 0.652 \\
+BM25+CSQE (Exp 013) & 0.616 & 0.745 & 0.942 & 0.638 \\
+Dense+CSQE (Exp 013) & 0.592 & 0.707 & 0.882 & 0.623 \\
+BM25-only-expanded CC (alpha=0.6) & 0.709 & 0.830 & 0.972 & 0.727 \\
+BM25-only-expanded RRF (k=20) & 0.714 & 0.836 & 0.973 & 0.736 \\
+Dense-only-expanded CC (alpha=0.4) & 0.659 & 0.785 & 0.957 & 0.678 \\
+Dense-only-expanded RRF (k=20) & 0.647 & 0.793 & 0.957 & 0.658 \\
+Both-expanded CC (alpha=0.5) & 0.696 & 0.825 & 0.965 & 0.708 \\
+Both-expanded RRF (k=20) & 0.694 & 0.829 & 0.966 & 0.704 \\
+\bottomrule
+\end{tabular}
