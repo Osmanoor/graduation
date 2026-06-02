@@ -440,6 +440,21 @@ Updated 2026-05-31 evening — after WS1 completion + figures pipeline render:
 - **WS5.C.20** (Medium length row `---`): now fillable from Mohammed's CSV (Scheme A Medium: blind 0.506 → CSQE 0.703).
 - **WS5.C.16** (demote meta-description failure mode): aligns with 1.1 outcome — "1 genuine failure = meta-description" framing is gone; replaced by 58 regressions.
 
+### 2026-06-01 — figures session 2 (color upgrade + Osman feedback consolidation)
+
+| Action | Status | Notes |
+|--------|--------|-------|
+| Color palette + FontAwesome icons in TikZ | ✅ DONE | New shared `system_diagrams/_style.tex` (7-color semantic palette + icon helpers); all 12 TikZ diagrams upgraded; mplstyle prop_cycle now teal-first. Fig 4.11 best-system bar pops in deep teal. |
+| Fill Osman's 5 models in `model_comparison_dense.csv` | ✅ DONE | Source: `arabic-rag-query-enhancement/docs/OSMAN_MODEL_COMPARISON_RESULTS.md`. All 5 now have full R@10/R@100/MRR. Notebook 03 re-executed; Table 4.2 + Fig 4.5/4.6 refreshed. |
+| Compile remaining tables (2.1, 2.2, 3.1, 3.2, 4.6) | ✅ DONE | Source CSVs in `thesis_figures/data/raw/`; LaTeX snippets in `thesis_figures/output/pdf/`. 5 tables × ~10 rows each. |
+| Archive 5 figures per Osman ("clear concepts ≠ diagrams") | ✅ DONE | Archived: Fig 2.1 (RAG arch), 2.2 (QE taxonomy), 2.3 (Dense vs Sparse), 3.2 (MIRACL dataset), 3.6 (BM25 repetition). Sources kept in `thesis_figures/archive/system_diagrams_dropped/` with rationale README. Down from 12 system diagrams to 7. |
+| Update REVIEW.html + master README | ✅ DONE | Reflects archived figures, compiled tables, color upgrade. |
+
+#### Figures-track status summary (2026-06-01 evening)
+- **10 figures × ~28 variations** (Fig 4.1–4.15) + **7 system diagrams** (Fig 3.1, 3.3, 3.4, 3.5, 3.7, 3.8, 3.9) = **all rendered**, all in canonical post-WS1 data, all colorised.
+- **12 of 12 thesis tables** have either source CSV + LaTeX snippet ready, or are produced by a notebook (Tables 4.1, 4.4, 4.5, 4.7 from notebooks; Tables 2.1, 2.2, 3.1, 3.2, 4.6 from hand-compiled CSVs).
+- Only critical-path items left for the figures track: **embedding into chapter .tex** with `\includegraphics{}` + `\caption` + `\label` (Mohammed) and Track A text edits.
+
 **Open tasks (status unchanged):**
 - **WS4 (Osman):** 4.3–4.17 — most still need verification (4.8 first-pass definition is now resolved by 1.3).
 - **WS5.C.2:** Pearson/Spearman for Qwen family — small computation, can do locally.

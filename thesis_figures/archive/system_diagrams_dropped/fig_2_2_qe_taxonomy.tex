@@ -1,0 +1,40 @@
+% Fig 2.2 — Query Enhancement taxonomy
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\input{_style.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+    root/.style={thBase, draw=thHiS, fill=thHiF, minimum width=44mm, line width=0.9pt},
+    branch/.style={thBase, fill=thDataF, draw=thDataS, minimum width=34mm},
+    leaf/.style={thBase, minimum width=23mm, font=\footnotesize},
+    thesis/.style={thBase, draw=thHiS, fill=thHiF, minimum width=23mm, font=\footnotesize, line width=0.8pt}
+]
+  \node[root] (root) at (0, 0) {\thIconStar~Query Enhancement};
+
+  \node[branch] (lex) at (-50mm, -16mm) {\thIconCog~Lexical / statistical};
+  \node[branch] (gen) at (50mm, -16mm) {\thIconLLM~LLM-based generative};
+
+  \node[leaf] (prf) at (-72mm, -32mm) {PRF};
+  \node[leaf] (rm3) at (-50mm, -32mm) {RM3};
+  \node[leaf] (bm25exp) at (-22mm, -32mm) {BM25 query\\expansion};
+
+  \node[thesis] (q2d) at (22mm, -32mm) {Query2Doc\\(Wang '23)};
+  \node[leaf] (hyde) at (50mm, -32mm) {HyDE\\(Gao '22)};
+  \node[thesis] (csqe) at (78mm, -32mm) {CSQE\\(Lei '24)};
+
+  \draw[thArrow] (root) -- (lex);
+  \draw[thArrow] (root) -- (gen);
+  \draw[thArrow] (lex) -- (prf);
+  \draw[thArrow] (lex) -- (rm3);
+  \draw[thArrow] (lex) -- (bm25exp);
+  \draw[thArrow] (gen) -- (q2d);
+  \draw[thArrow] (gen) -- (hyde);
+  \draw[thArrow] (gen) -- (csqe);
+
+  \begin{scope}[on background layer]
+    \node[draw=thHiS, dashed, rounded corners=3pt, fit=(q2d) (csqe), inner sep=4pt, line width=0.8pt] (thesisbox) {};
+  \end{scope}
+  \node[thLabel, above=1mm of thesisbox] {built on in this thesis};
+\end{tikzpicture}
+\end{document}

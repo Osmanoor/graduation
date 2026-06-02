@@ -105,6 +105,43 @@ def length_bin(n_words: int) -> str:
 LENGTH_BIN_ORDER = ["Short (1-3)", "Medium (4-8)", "Long (9+)"]
 
 
+# Stable model → color mapping used across model-comparison figures
+# (e.g., Fig 4.5 bar chart and Fig 4.7 repetition lines).
+# Best-performing model (Aya 8B) gets the thesis primary teal accent.
+# Other colors are muted hues chosen for grayscale-safe printing while
+# remaining mutually distinguishable in colour.
+MODEL_COLORS = {
+    "Aya Expanse 8B": "#1f6f8a",   # primary teal (best, headline)
+    "Jais-2-8B":      "#6d4a8f",   # purple
+    "Qwen3-8B":       "#3d7a4f",   # green
+    "Qwen 2.5-7B":    "#a05a30",   # rust / brown-orange
+    "ALLaM-7B":       "#8c4040",   # muted red (dropped)
+    "Qwen3-4B":       "#4a6fa5",   # slate blue
+    "Gemma 3 4B":     "#c8983a",   # gold
+    "Qwen 2.5-3B":    "#5c7a8a",   # blue-grey
+    "Falcon-H1-3B":   "#7a5a8a",   # lavender
+    "SILMA 2B":       "#8a7a5a",   # taupe
+}
+
+
+def _slug(s: str) -> str:
+    """Loose normalisation for matching model names across CSVs."""
+    import re
+    return re.sub(r"[^a-z0-9]", "", str(s).lower())
+
+
+# Pre-compute slug → color so Fig 4.5 / Fig 4.7 can look up by either form.
+_SLUG_COLORS = {_slug(k): v for k, v in MODEL_COLORS.items()}
+# Common alternates: "SILMA Kashif-2B" / "Qwen 2.5 3B" (space variant)
+_SLUG_COLORS[_slug("SILMA Kashif-2B")] = MODEL_COLORS["SILMA 2B"]
+_SLUG_COLORS[_slug("Qwen 2.5 3B")]      = MODEL_COLORS["Qwen 2.5-3B"]
+
+
+def color_for_model(name: str, fallback: str = "#6a6a6a") -> str:
+    """Return the thesis-stable color for a model name. Falls back to muted grey."""
+    return _SLUG_COLORS.get(_slug(name), fallback)
+
+
 def annotate_bars(ax, fmt: str = "{:.3f}", offset: float = 0.005) -> None:
     """Add value labels above each bar in a bar plot."""
     for p in ax.patches:

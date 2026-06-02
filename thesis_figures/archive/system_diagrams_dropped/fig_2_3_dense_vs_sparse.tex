@@ -1,0 +1,39 @@
+% Fig 2.3 — Dense vs Sparse retrieval, side-by-side
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\input{_style.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+    header/.style={font=\bfseries\small}
+]
+  % --- Sparse column ---
+  \node[header, color=thFusionS] (sparseH) at (-28mm, 5mm) {\thIconCog~Sparse (BM25)};
+  \node[thQuery, minimum width=34mm, below=2mm of sparseH] (sq) {Query terms};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of sq] (stok) {Tokenise + stem};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of stok] (sscore) {Term-frequency\\scoring};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of sscore] (sidx) {Inverted index};
+  \node[thOut, minimum width=34mm, below=of sidx] (sout) {Top-$k$ passages};
+
+  \draw[thArrow] (sq) -- (stok);
+  \draw[thArrow] (stok) -- (sscore);
+  \draw[thArrow] (sscore) -- (sidx);
+  \draw[thArrow] (sidx) -- (sout);
+
+  % --- Dense column ---
+  \node[header, color=thRetS] (denseH) at (38mm, 5mm) {\thIconLLM~Dense (mDPR)};
+  \node[thQuery, minimum width=34mm, below=2mm of denseH] (dq) {Query text};
+  \node[thRet, minimum width=34mm, below=of dq] (denc) {Encoder\\$\to$ 768-d vector};
+  \node[thRet, minimum width=34mm, below=of denc] (dscore) {Inner-product\\with passages};
+  \node[thRet, minimum width=34mm, below=of dscore] (didx) {FAISS index};
+  \node[thOut, minimum width=34mm, below=of didx] (dout) {Top-$k$ passages};
+
+  \draw[thArrow] (dq) -- (denc);
+  \draw[thArrow] (denc) -- (dscore);
+  \draw[thArrow] (dscore) -- (didx);
+  \draw[thArrow] (didx) -- (dout);
+
+  \node[thLabel, align=center] at (5mm, -52mm)
+    {complementary strengths:\\BM25 high recall, mDPR high precision};
+\end{tikzpicture}
+\end{document}

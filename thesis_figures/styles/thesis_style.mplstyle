@@ -35,8 +35,10 @@ savefig.dpi: 300
 savefig.bbox: tight
 savefig.pad_inches: 0.05
 
-# Grayscale-safe ordering: dark to light, distinguishable when printed B&W
-axes.prop_cycle: cycler(color=["1f1f1f", "4d4d4d", "8c8c8c", "404040", "b3b3b3", "666666"])
+# Muted accent palette — examiner-friendly, prints reasonably in B&W.
+# Order: highlight (teal, "ours/best"), comparison (purple), neutral (gray),
+# then a tertiary (orange-brown for fusion), and grayscale fallbacks.
+axes.prop_cycle: cycler(color=["1f6f8a", "6d4a8f", "5c5c5c", "a05a30", "8c8c8c", "b3b3b3"])
 
 # Lines and bars
 lines.linewidth: 1.5

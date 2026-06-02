@@ -1,0 +1,4 @@
+Variant,BM25 nDCG@10,Dense nDCG@10
+No QE (baseline),0.4621,0.4993
+Aya 8B blind QE,0.5855,0.6164
+Aya 8B CSQE,0.6157,0.5915

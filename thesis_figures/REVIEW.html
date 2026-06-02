@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Thesis Figures — Review &amp; Sign-Off</title>
+<title>Thesis Figures — Review &amp; Sign-Off (updated 2026-06-01)</title>
 <style>
 :root {
   --bg: #fafaf8;
@@ -22,56 +22,47 @@ body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
        background: var(--bg); color: var(--ink); line-height: 1.5;
        margin: 0; padding: 0; }
 .wrap { max-width: 1280px; margin: 0 auto; padding: 28px 24px 80px; }
-
 header { border-bottom: 1px solid var(--line); padding-bottom: 18px; margin-bottom: 28px; }
 header h1 { margin: 0; font-size: 26px; font-weight: 600; }
 header .sub { color: var(--muted); margin-top: 6px; font-size: 14px; }
-
 nav { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--line);
       padding: 8px 0; margin-bottom: 24px; z-index: 10; }
 nav a { display: inline-block; margin-right: 14px; padding: 4px 8px; font-size: 12px;
         color: var(--accent); text-decoration: none; border-radius: 3px; font-family: var(--mono); }
 nav a:hover { background: var(--line); }
-
 section { margin: 36px 0; scroll-margin-top: 60px; }
 section > h2 { font-size: 18px; font-weight: 600; margin: 0 0 14px;
                text-transform: uppercase; letter-spacing: 0.06em;
                color: var(--muted); border-bottom: 1px solid var(--line); padding-bottom: 8px; }
-
-.fig {
-  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
-  padding: 16px 18px; margin-bottom: 18px;
-}
+.banner { background: #fff5e8; padding: 10px 14px; border-left: 3px solid var(--alt);
+          border-radius: 4px; margin: 10px 0; font-size: 13px; color: var(--ink); }
+.banner strong { color: var(--alt); }
+.fig { background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+       padding: 16px 18px; margin-bottom: 18px; }
 .fig-head { display: flex; justify-content: space-between; align-items: baseline;
             border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px; }
 .fig-head .id { font-family: var(--mono); font-weight: 600; color: var(--accent); font-size: 13px; }
-.fig-head .title { font-weight: 600; font-size: 16px; margin-left: 8px; flex: 1; }
+.fig-head .title { font-weight: 600; font-size: 16px; margin-left: 8px; }
 .fig-head .place { color: var(--muted); font-size: 12px; font-family: var(--mono); }
-
 .fig .desc { font-size: 14px; margin: 8px 0; color: var(--ink); }
 .fig .desc strong { color: var(--accent); }
 .fig .reco { background: #f3eddf; padding: 8px 12px; border-radius: 4px;
              border-left: 3px solid var(--accent); margin: 10px 0; font-size: 14px; }
 .fig .reco strong { color: var(--accent); }
-
 .variations { display: grid; gap: 12px; margin-top: 10px; }
 .variations.cols-1 { grid-template-columns: 1fr; }
 .variations.cols-2 { grid-template-columns: 1fr 1fr; }
 .variations.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
 @media (max-width: 980px) { .variations.cols-3, .variations.cols-2 { grid-template-columns: 1fr; } }
-
 .var { background: #fbfaf8; border: 1px solid var(--line); border-radius: 4px; padding: 8px; }
 .var.primary { border-color: var(--rec); border-width: 2px; }
 .var-head { display: flex; justify-content: space-between; align-items: baseline;
             margin-bottom: 6px; font-size: 12px; }
 .var-head .name { font-family: var(--mono); font-weight: 600; }
-.var-head .rating .star { color: var(--alt); }
-.var-head .rating .star.on { color: var(--rec); }
 .var img { width: 100%; height: auto; display: block; border: 1px solid var(--line);
            background: white; border-radius: 3px; }
 .var .why { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
 .var .why strong { color: var(--ink); }
-
 .pill { display: inline-block; padding: 1px 8px; border-radius: 10px;
         font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;
         font-family: var(--mono); }
@@ -80,19 +71,13 @@ section > h2 { font-size: 18px; font-weight: 600; margin: 0 0 14px;
 .pill.skip { background: #f6e6e6; color: var(--skip); }
 .pill.info { background: #eaf0f7; color: var(--info); }
 .pill.headline { background: #1f1f1f; color: white; }
-
 .tbl { background: var(--card); border: 1px solid var(--line); border-radius: 4px;
        padding: 10px 14px; margin: 10px 0; font-size: 13px; }
 .tbl .name { font-family: var(--mono); font-weight: 600; color: var(--accent); }
 .tbl .place { color: var(--muted); font-size: 12px; }
 .tbl .src { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
 footer { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 40px;
          font-size: 13px; color: var(--muted); }
-.signoff { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
-.signoff div { background: var(--card); border: 1px solid var(--line); border-radius: 4px;
-               padding: 12px; }
-.signoff h4 { margin: 0 0 4px; font-size: 14px; }
 .fineprint { color: var(--muted); font-size: 12px; }
 </style>
 </head>
@@ -100,331 +85,276 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 40px;
 <div class="wrap">
 
 <header>
-  <h1>Thesis Figures — Review &amp; Sign-Off</h1>
-  <div class="sub">15 figures · ~32 variations · 7 tables · 12 system diagrams · all rendered post-WS1.<br>
-  Open in Chrome locally. Scroll through; ★★★ marks the variation I recommend for each figure.</div>
+  <h1>Thesis Figures — Review &amp; Sign-Off <span style="color:var(--muted); font-size:14px; font-weight:400;">(updated 2026-06-01)</span></h1>
+  <div class="sub"><strong>10 figures · ~28 variations · 12 tables · 7 system diagrams.</strong> Five Ch 2/3 diagrams archived per Osman's review.<br>
+  Open in Chrome. ★★★ marks the variation I recommend for each figure.</div>
 </header>
 
 <nav>
-  <a href="#ch2">Ch 2 (Lit Review)</a>
-  <a href="#ch3">Ch 3 (Methodology)</a>
+  <a href="#ch2">Ch 2</a>
+  <a href="#ch3">Ch 3</a>
   <a href="#ch4_1">4.1 Baselines</a>
   <a href="#ch4_2">4.2 Error Analysis</a>
-  <a href="#ch4_3">4.3 Models — Dense</a>
-  <a href="#ch4_4">4.4 Models — BM25</a>
+  <a href="#ch4_3">4.3 Models Dense</a>
+  <a href="#ch4_4">4.4 Models BM25</a>
   <a href="#ch4_5">4.5 Hybrid</a>
   <a href="#ch4_6">4.6 CSQE</a>
   <a href="#ch4_7">4.7 Best system</a>
   <a href="#ch4_8">4.8 Error analysis CSQE</a>
-  <a href="#signoff">Sign-off</a>
 </nav>
 
-<!-- ──────────────────────────────────────── Ch 2 ──────────────────────────────────────── -->
 <section id="ch2">
   <h2>Chapter 2 — Literature Review &amp; Background</h2>
+  <div class="banner"><strong>Archived per Osman 2026-06-01:</strong> Fig 2.2 (QE taxonomy), Fig 2.3 (Dense vs Sparse) — well-known concepts; prose suffices. Sources kept in <code>archive/system_diagrams_dropped/</code>.<br><em>Fig 2.1 retained per Osman's FIGURE_NOTES §1 — wants to keep + add companion showing QE-layer position in RAG.</em></div>
 
   <div class="fig">
-    <div class="fig-head"><span><span class="id">Fig 2.1</span><span class="title">RAG system architecture</span></span><span class="place">§2.1 (intro to RAG)</span></div>
-    <div class="desc">Conceptual diagram of a Retrieval-Augmented Generation pipeline: query → retriever → LLM → answer, with the corpus feeding the retriever. Establishes the framework the thesis works within.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_2_1_rag_arch.png" alt="Fig 2.1"><div class="why">Clean four-box flow. Embedding-quality vector PDF.</div></div></div>
+    <div class="fig-head"><span><span class="id">Fig 2.1</span><span class="title">RAG system architecture</span></span><span class="place">§2.1</span></div>
+    <div class="desc">Query → Retriever (← Corpus) → LLM → Answer. Reader's introduction to the RAG framework.</div>
+    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_2_1_rag_arch.png" alt="Fig 2.1"><div class="why">Mohammed FIGURE_NOTES §1: keep + add a companion diagram showing where the QE layer sits.</div></div></div>
   </div>
 
-  <div class="fig">
-    <div class="fig-head"><span><span class="id">Fig 2.2</span><span class="title">Query Enhancement taxonomy</span></span><span class="place">§2.4 (QE techniques)</span></div>
-    <div class="desc">Tree splits QE into lexical (PRF, RM3, BM25 expansion) vs LLM-based generative (Query2Doc, HyDE, CSQE). Dashed box around Query2Doc + CSQE marks the techniques this thesis builds on.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_2_2_qe_taxonomy.png" alt="Fig 2.2"><div class="why">Positions the contribution within the literature.</div></div></div>
-  </div>
-
-  <div class="fig">
-    <div class="fig-head"><span><span class="id">Fig 2.3</span><span class="title">Dense vs Sparse retrieval, side-by-side</span></span><span class="place">§2.3 (retrieval families)</span></div>
-    <div class="desc">Two-column comparison showing how each family handles the same query. Closes with a note on complementary strengths — motivates the hybrid retrieval direction in Ch 4.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_2_3_dense_vs_sparse.png" alt="Fig 2.3"><div class="why">Sets up the hybrid argument early.</div></div></div>
-  </div>
-
-  <div class="tbl"><span class="name">Table 2.1</span> &mdash; Reviewed QE papers. <span class="place">§2.4</span> · <span class="pill skip">hand-compile TODO</span> · Source: <span class="src">papers/</span></div>
-  <div class="tbl"><span class="name">Table 2.2</span> &mdash; LLM models used. <span class="place">§2.5</span> · <span class="pill skip">hand-compile TODO</span> · Source: <span class="src">research_decisions/llm_model_research.md</span></div>
+  <div class="tbl"><span class="name">Table 2.1</span> &mdash; Reviewed QE papers (13 entries). <span class="place">§2.4</span> · <span class="pill rec">compiled</span> · Source: <span class="src">data/raw/table_2_1_papers.csv</span></div>
+  <div class="tbl"><span class="name">Table 2.2</span> &mdash; LLM models used (11 entries). <span class="place">§2.5</span> · <span class="pill rec">compiled</span> · Source: <span class="src">data/raw/table_2_2_models.csv</span></div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 3 ──────────────────────────────────────── -->
 <section id="ch3">
   <h2>Chapter 3 — Methodology</h2>
+  <div class="banner"><strong>Archived per Osman 2026-06-01:</strong> Fig 3.2 (MIRACL dataset) — §3.2 prose covers this. Fig 3.6 (BM25 query repetition) — one equation + Fig 4.7 sweep already shows the effect.</div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.1</span><span class="title">End-to-end thesis pipeline</span></span><span class="place">§3.1 (overview)</span></div>
-    <div class="desc">Query → QE layer → BM25 + mDPR (parallel) → fusion (CC/RRF) → Top-k → evaluation against MIRACL qrels. The reader's map for what follows in Ch 3.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.1</span><span class="title">End-to-end thesis pipeline</span></span><span class="place">§3.1</span></div>
+    <div class="desc">Query → QE layer → BM25 + mDPR (parallel) → fusion (CC/RRF) → Top-k → evaluation.</div>
     <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_1_pipeline.png" alt="Fig 3.1"></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.2</span><span class="title">MIRACL dataset structure</span></span><span class="place">§3.2 (dataset)</span></div>
-    <div class="desc">Corpus (2.06M passages) + topics/qrels (2,896 dev queries) feeding retrieval → TREC run → pytrec_eval. Documents both the inputs and the eval contract.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_2_miracl.png" alt="Fig 3.2"></div></div>
-  </div>
-
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.3</span><span class="title">BM25S indexing flow</span></span><span class="place">§3.4 (sparse retrieval)</span></div>
-    <div class="desc">Corpus → Arabic tokenizer + PyStemmer → stopword removal → BM25S index (k₁=0.9, b=0.4). 5 GB inverted index.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.3</span><span class="title">BM25S indexing flow</span></span><span class="place">§3.4</span></div>
+    <div class="desc">Corpus → Arabic tokenizer + PyStemmer → stopword removal → BM25S index (k₁=0.9, b=0.4).</div>
     <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_3_bm25s.png" alt="Fig 3.3"></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.4</span><span class="title">mDPR encoding flow</span></span><span class="place">§3.5 (dense retrieval)</span></div>
-    <div class="desc">Query batch → mDPR encoder on GPU (FP16) → 768-d vectors → FAISS index inner-product search → ranked passages.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.4</span><span class="title">mDPR encoding flow</span></span><span class="place">§3.5</span></div>
+    <div class="desc">Query batch → mDPR encoder (FP16, GPU) → 768-d vectors → FAISS inner-product search → ranked passages.</div>
     <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_4_mdpr.png" alt="Fig 3.4"></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.5</span><span class="title">Query2Doc generation</span></span><span class="place">§3.6 (Query2Doc)</span></div>
-    <div class="desc">Query → prompt template → LLM (zero-shot, ≈128 tokens) → pseudo-document → concatenate with original query → retrieve. Mirrors how §3.5 of the Wang 2023 paper formalises Q2D.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.5</span><span class="title">Query2Doc generation</span></span><span class="place">§3.6</span></div>
+    <div class="desc">Query → prompt template → LLM (zero-shot, ~128 tokens) → pseudo-document → concatenate → retrieve.</div>
     <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_5_query2doc.png" alt="Fig 3.5"></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.6</span><span class="title">BM25 query repetition mechanism</span></span><span class="place">§3.6 (BM25 repetition)</span></div>
-    <div class="desc">Original query repeated n times, then ⊕ pseudo-doc → BM25 retrieval. Visualises the term-dilution remedy from the original Q2D paper.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_6_repetition.png" alt="Fig 3.6"></div></div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.7</span><span class="title">Hybrid fusion: CC and RRF</span></span><span class="place">§3.7</span></div>
+    <div class="desc">Side-by-side fusion methods with equations. CC: α-weighted sum of normalised scores. RRF: reciprocal-rank sum.</div>
+    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_7_hybrid.png" alt="Fig 3.7"></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.7</span><span class="title">Hybrid fusion: CC and RRF</span></span><span class="place">§3.7 (hybrid)</span></div>
-    <div class="desc">Side-by-side fusion methods. CC: α-weighted sum of normalised scores. RRF: reciprocal-rank sum. Both produce one final ranking from two retriever outputs.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_7_hybrid.png" alt="Fig 3.7"><div class="why">Equations alongside boxes — the only place the thesis shows both fusion definitions visually.</div></div></div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.8</span><span class="title">CSQE pipeline (three-stage)</span></span><span class="place">§3.8</span></div>
+    <div class="desc">Stage 1: BM25 first-pass top-5. Stage 2: corpus context → Aya LLM → corpus-grounded pseudo-doc. Stage 3: q^α ⊕ pdoc → BM25 second-pass.</div>
+    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_8_csqe.png" alt="Fig 3.8"><div class="why">The main methodology diagram. Color-coded stages.</div></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.8</span><span class="title">CSQE pipeline (three-stage)</span></span><span class="place">§3.8 (CSQE)</span></div>
-    <div class="desc">Stage 1: BM25 first-pass retrieves top-5. Stage 2: extract corpus context → Aya LLM → corpus-grounded pseudo-doc. Stage 3: q^α ⊕ pdoc → BM25 second-pass → final top-100.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_8_csqe.png" alt="Fig 3.8"><div class="why">The methodology figure with the most informational density. Worth a careful read by the examiner.</div></div></div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 3.9</span><span class="title">Best system architecture (BM25-only-expanded RRF k=20)</span></span><span class="place">§3.8.3 / §4.7</span></div>
+    <div class="desc">CSQE-expanded query → BM25; original query → mDPR; RRF fuses both. NDCG@10 = 0.714.</div>
+    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_9_best_system.png" alt="Fig 3.9"></div></div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 3.9</span><span class="title">Best system: BM25-only-expanded (Config A) RRF k=20</span></span><span class="place">§3.8.3 / §4.7</span></div>
-    <div class="desc">Architectural view of the headline system. CSQE-expanded query feeds BM25; original query feeds mDPR; RRF fuses both. NDCG@10 = 0.714.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">TikZ</span><span class="pill rec">use as-is</span></div><img src="output/png/fig_3_9_best_system.png" alt="Fig 3.9"><div class="why">Pair with Fig 4.11 in §4.7 — methodology + result together.</div></div></div>
-  </div>
-
-  <div class="tbl"><span class="name">Table 3.1</span> &mdash; Per-model hardware config. <span class="place">§3.6</span> · <span class="pill skip">hand-compile TODO</span></div>
-  <div class="tbl"><span class="name">Table 3.2</span> &mdash; Per-model generation hyperparams. <span class="place">§3.6</span> · <span class="pill skip">hand-compile TODO</span></div>
+  <div class="tbl"><span class="name">Table 3.1</span> &mdash; Per-model hardware config (9 rows). <span class="place">§3.6</span> · <span class="pill rec">compiled</span> · Source: <span class="src">data/raw/table_3_1_hardware.csv</span></div>
+  <div class="tbl"><span class="name">Table 3.2</span> &mdash; Per-model generation hyperparams (9 rows). <span class="place">§3.6</span> · <span class="pill rec">compiled</span> · Source: <span class="src">data/raw/table_3_2_gen_hyperparams.csv</span></div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.1 ──────────────────────────────────────── -->
 <section id="ch4_1">
   <h2>Chapter 4.1 — Baselines (mDPR vs BM25)</h2>
+  <div class="tbl"><span class="name">Table 4.1</span> &mdash; mDPR vs BM25 baselines. <span class="place">§4.1</span> · <span class="pill rec">ready</span></div>
 
-  <div class="tbl"><span class="name">Table 4.1</span> &mdash; mDPR vs BM25 baselines. <span class="place">§4.1</span> · <span class="pill rec">ready</span> · Source: <span class="src">output/pdf/table_4_1.tex</span> · Values rounded to 3 dp per Decision D4 (mDPR 0.499, BM25 0.462).</div>
-
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.1</span><span class="title">Per-query NDCG@10 distribution, mDPR vs BM25</span></span><span class="place">§4.1 (intro to per-query)</span></div>
-    <div class="desc">Shows the two baselines' per-query distributions overlaid. Both are bimodal — many queries land near 0, many land near 1, few in between. Motivates the error-analysis split in §4.2.</div>
-    <div class="reco"><strong>Recommended:</strong> v1 histogram. Easier to spot the bimodality and the failure mass at zero.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.1</span><span class="title">Per-query NDCG@10 distribution</span></span><span class="place">§4.1</span></div>
+    <div class="desc">Both baselines overlaid; both bimodal — many queries near 0, many near 1.</div>
+    <div class="reco"><strong>Recommended:</strong> v1 histogram.</div>
     <div class="variations cols-2">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — histogram</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_1_ndcg_hist_v1.png"><div class="why">Best for the bimodal-shape claim; bars cluster at extremes.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — CDF</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_1_ndcg_cdf_v2.png"><div class="why">Better if you want to cite the 34% failure number off the chart directly.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 hist</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_1_ndcg_hist_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 CDF</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_1_ndcg_cdf_v2.png"></div>
     </div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.2 ──────────────────────────────────────── -->
 <section id="ch4_2">
   <h2>Chapter 4.2 — Error Analysis (baseline)</h2>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.2</span><span class="title">Failure cliff — 34% of queries score NDCG@10 &lt; 0.3</span></span><span class="place">§4.2.1</span></div>
-    <div class="desc">The headline error-analysis figure. Now uses <strong>canonical</strong> per-query data (WS1 §2 reconciliation): 33.9% failure rate, not the 39% the buggy file reported. v1 annotates the cliff on the CDF; v2 shows the same data as bucket bars.</div>
-    <div class="reco"><strong>Recommended:</strong> v1. The annotation makes the 34% number readable at a glance.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.2</span><span class="title">Failure cliff — 34% of queries score NDCG@10 &lt; 0.3</span></span><span class="place">§4.2.1</span></div>
+    <div class="desc">Canonical post-WS1 data: 33.9% failure rate (not the buggy 39%).</div>
+    <div class="reco"><strong>Recommended:</strong> v1 annotated CDF.</div>
     <div class="variations cols-2">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — annotated CDF</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_2_failure_cliff_v1.png"><div class="why">Single-glance story. 34% / 0.3 marker pair is the takeaway.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — bucket histogram</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_2_failure_buckets_v2.png"><div class="why">More detail but less story; consider only if v1 doesn't suit Dr. Tahani's preferences.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 CDF</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_2_failure_cliff_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 buckets</span><span class="pill alt">★</span></div><img src="output/png/fig_4_2_failure_buckets_v2.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.3</span><span class="title">NDCG@10 by query length (Scheme A: 1–3 / 4–8 / 9+ words)</span></span><span class="place">§4.2.2</span></div>
-    <div class="desc">After WS1: the linear length↔NDCG trend is gone (r≈0); Medium (4–8) outperforms Long (9+). Short queries (1–3) still clearly underperform — preserves the QE motivation. Values: 0.345 / 0.511 / 0.476.</div>
-    <div class="reco"><strong>Recommended:</strong> v1 boxplot. Clean, examiner-friendly. v3 scatter shows the per-length variance but is busier.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.3</span><span class="title">NDCG@10 by query length (Scheme A: 1–3 / 4–8 / 9+ words)</span></span><span class="place">§4.2.2</span></div>
+    <div class="desc">Linear length↔NDCG trend gone (r≈0); Medium outperforms Long. Short queries still weakest (0.345 / 0.511 / 0.476).</div>
+    <div class="reco"><strong>Recommended:</strong> v1 boxplot.</div>
     <div class="variations cols-3">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — boxplot</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_3_length_box_v1.png"><div class="why">Standard IR-paper choice; medians and IQRs visible.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — violin</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_3_length_violin_v2.png"><div class="why">Shows density shape; slightly more "research-y".</div></div>
-      <div class="var"><div class="var-head"><span class="name">v3 — scatter with per-length mean line</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_3_length_scatter_v3.png"><div class="why">Most granular but noisy at long lengths.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 box</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_3_length_box_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 violin</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_3_length_violin_v2.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v3 scatter</span><span class="pill alt">★</span></div><img src="output/png/fig_4_3_length_scatter_v3.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.4</span><span class="title">Recall@k curve, k=1…100</span></span><span class="place">§4.2.3 (coverage)</span></div>
-    <div class="desc">mDPR vs BM25 mean recall as k grows. After WS1 §2 correction, the curve reveals the ~10% recall ceiling even at depth 100 — a stronger motivation for hybrid + CSQE than the original "ranking-only" framing.</div>
-    <div class="reco"><strong>Recommended:</strong> use as-is. One variation only.</div>
-    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">recall curve (log-x)</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_4_recall_curve.png"><div class="why">Log-x makes the early-rank gap legible.</div></div></div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.4</span><span class="title">Recall@k curve, k=1…100</span></span><span class="place">§4.2.3</span></div>
+    <div class="desc">~10% recall ceiling even at depth 100 — stronger motivation for hybrid/CSQE than ranking-only framing.</div>
+    <div class="variations cols-1"><div class="var primary"><div class="var-head"><span class="name">log-x line</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_4_recall_curve.png"></div></div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.3 ──────────────────────────────────────── -->
 <section id="ch4_3">
   <h2>Chapter 4.3 — Model Comparison (Dense)</h2>
+  <div class="tbl"><span class="name">Table 4.2</span> &mdash; 10 models, Dense Query2Doc. <span class="place">§4.3</span> · <span class="pill rec">complete</span> · Osman's 5 models now have full R@10/R@100/MRR (from OSMAN_MODEL_COMPARISON_RESULTS.md).</div>
 
-  <div class="tbl"><span class="name">Table 4.2</span> &mdash; 10 models, Dense Query2Doc. <span class="place">§4.3</span> · <span class="pill alt">partial</span> · 4 models have full metrics; Osman's 5 have NDCG only (need R@10, R@100, MRR fill-in).</div>
-
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.5</span><span class="title">Sorted NDCG@10 across 10 LLMs</span></span><span class="place">§4.3 (model leaderboard)</span></div>
-    <div class="desc">All 10 Q2D models on a single bar chart. Aya 8B is top (0.616) on Dense; mDPR baseline (0.499) shown as a dashed reference line. v3 grouped variant adds R@10 and MRR — only useful if §4.3 needs to discuss those metrics in one chart.</div>
-    <div class="reco"><strong>Recommended:</strong> v1 (vertical). Use v2 if model names overflow at thesis text width; skip v3 unless multi-metric discussion is needed.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.5</span><span class="title">Sorted NDCG@10 across 10 LLMs</span></span><span class="place">§4.3</span></div>
+    <div class="desc">All 10 Q2D models; Aya 8B top (0.616) on Dense. v3 grouped variant now populated with Osman's R@10 + MRR.</div>
+    <div class="reco"><strong>Recommended:</strong> v1 (vertical).</div>
     <div class="variations cols-3">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — vertical sorted bar</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_5_models_bar_v1.png"><div class="why">Standard leaderboard layout, baseline line included.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — horizontal sorted bar</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_5_models_bar_v2_h.png"><div class="why">Easier to read long model names. Same data.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v3 — grouped (NDCG / R@10 / MRR)</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_5_models_grouped_v3.png"><div class="why">Blocked by missing R@10/MRR for Osman's 5 models. Use only after table 4.2 is filled.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 vert</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_5_models_bar_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 horiz</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_5_models_bar_v2_h.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v3 grouped</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_5_models_grouped_v3.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.6</span><span class="title">Model size (B params) vs Δ NDCG@10 over baseline</span></span><span class="place">§4.3 (size effect)</span></div>
-    <div class="desc">Tests whether bigger LLMs produce better pseudo-docs. v1 is plain scatter; v2 adds labels + linear fit. Note: WS1 task 5.C.2 also asks for a Qwen-family Pearson coefficient — that's a separate text statistic, not a figure.</div>
-    <div class="reco"><strong>Recommended:</strong> v2 (labelled). Without labels the scatter doesn't tell the story; the trendline visualises the size effect.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.6</span><span class="title">Model size (B params) vs Δ NDCG@10</span></span><span class="place">§4.3</span></div>
+    <div class="desc">Tests whether bigger LLMs produce better pseudo-docs.</div>
+    <div class="reco"><strong>Recommended:</strong> v2 labelled + trendline.</div>
     <div class="variations cols-2">
-      <div class="var"><div class="var-head"><span class="name">v1 — plain scatter</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_6_size_v1.png"><div class="why">Loses the reader without labels.</div></div>
-      <div class="var primary"><div class="var-head"><span class="name">v2 — labelled + trendline</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_6_size_v2_labelled.png"><div class="why">Slope visible, individual models identified.</div></div>
+      <div class="var"><div class="var-head"><span class="name">v1 scatter</span><span class="pill alt">★</span></div><img src="output/png/fig_4_6_size_v1.png"></div>
+      <div class="var primary"><div class="var-head"><span class="name">v2 labelled</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_6_size_v2_labelled.png"></div>
     </div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.4 ──────────────────────────────────────── -->
 <section id="ch4_4">
   <h2>Chapter 4.4 — Model Comparison (BM25 + Repetition)</h2>
-
   <div class="tbl"><span class="name">Table 4.3</span> &mdash; 9 models BM25 best configs. <span class="place">§4.4 / §4.6</span> · <span class="pill rec">ready</span></div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.7</span><span class="title">BM25 query-repetition sweep across 9 models</span></span><span class="place">§4.6 (BM25 repetition)</span></div>
-    <div class="desc">For each model, NDCG@10 vs n (1, 3, 5, 7, 10) with optional β markers. The thesis claim (5.C.6 corrected): 6 of 9 models were below baseline at n=1; all 9 recover at some n. v3 heatmap shows every cell at a glance.</div>
-    <div class="reco"><strong>Recommended:</strong> v1 line plot. v3 heatmap is good for appendix or as a reviewer-only sanity check.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.7</span><span class="title">BM25 query-repetition sweep across 9 models</span></span><span class="place">§4.6</span></div>
+    <div class="desc">Each model's NDCG@10 vs n. 6 of 9 below baseline at n=1; all 9 recover at appropriate n.</div>
+    <div class="reco"><strong>Recommended:</strong> v1 line plot.</div>
     <div class="variations cols-3">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — multi-line</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_7_repetition_v1.png"><div class="why">Each model's recovery trajectory is visible; baseline reference line included.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — line + β markers</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_7_repetition_v2.png"><div class="why">Includes β=2/4/6 but x-axis becomes awkward.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v3 — heatmap (model × config)</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_7_repetition_v3_heat.png"><div class="why">Browse-all-values view; consider for appendix.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 multi-line</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_7_repetition_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 + β</span><span class="pill alt">★</span></div><img src="output/png/fig_4_7_repetition_v2.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v3 heatmap</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_7_repetition_v3_heat.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.8</span><span class="title">Dense gain vs BM25 gain per model</span></span><span class="place">§4.4 / §4.6 (asymmetry)</span></div>
-    <div class="desc">Scatter plot answering "which models help BOTH retrievers?" Aya and Jais-2 sit in the top-right (improve both); most others only help Dense. Motivates the asymmetric application argument used in §4.9.</div>
-    <div class="reco"><strong>Recommended:</strong> v1 labelled scatter. v2 slope is the same data but less compact.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.8</span><span class="title">Dense gain vs BM25 gain per model</span></span><span class="place">§4.6</span></div>
+    <div class="desc">Only Aya + Jais-2 help BOTH retrievers; most others only help Dense.</div>
+    <div class="reco"><strong>Recommended:</strong> v1 labelled scatter.</div>
     <div class="variations cols-2">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — scatter (Dense Δ vs BM25 n=1 Δ)</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_8_gains_v1.png"><div class="why">Quadrant story: only Aya/Jais-2 sit in the both-positive quadrant.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — slope chart</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_8_gains_v2_slope.png"><div class="why">Same information, less compact.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 scatter</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_8_gains_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 slope</span><span class="pill alt">★</span></div><img src="output/png/fig_4_8_gains_v2_slope.png"></div>
     </div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.5 ──────────────────────────────────────── -->
 <section id="ch4_5">
   <h2>Chapter 4.5 — Hybrid (no QE)</h2>
-
   <div class="tbl"><span class="name">Table 4.4</span> &mdash; BM25 / mDPR / Hybrid CC / Hybrid RRF. <span class="place">§4.7</span> · <span class="pill rec">ready</span></div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.9</span><span class="title">Hybrid CC α sweep (no QE)</span></span><span class="place">§4.7 (hybrid)</span></div>
-    <div class="desc">Convex-combination weight α from 0.1 → 0.9. NDCG@10 peaks symmetrically around α=0.5 (0.627). Justifies α=0.5 as the no-QE hybrid baseline.</div>
-    <div class="reco"><strong>Recommended:</strong> v1 single-metric. v2 (all 4 metrics) is informative but harder to read.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.9</span><span class="title">Hybrid CC α sweep (no QE)</span></span><span class="place">§4.7</span></div>
+    <div class="desc">α swept 0.1→0.9, NDCG@10 peaks around α=0.5.</div>
+    <div class="reco"><strong>Recommended:</strong> v1 single-metric.</div>
     <div class="variations cols-2">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — NDCG only</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_9_alpha_sweep_v1.png"><div class="why">Clear unimodal curve, best-α annotation.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — all 4 metrics</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_9_alpha_sweep_v2_all.png"><div class="why">Use if §4.7 also discusses Recall@10/Recall@100/MRR shapes.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 NDCG</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_9_alpha_sweep_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 all-4</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_9_alpha_sweep_v2_all.png"></div>
     </div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.6 ──────────────────────────────────────── -->
 <section id="ch4_6">
-  <h2>Chapter 4.6 — CSQE (corpus-steered)</h2>
+  <h2>Chapter 4.6 — CSQE</h2>
+  <div class="tbl"><span class="name">Table 4.5</span> &mdash; CSQE ablation. <span class="place">§4.8</span> · <span class="pill rec">ready</span></div>
+  <div class="tbl"><span class="name">Table 4.6</span> &mdash; CSQE vs blind QE on BM25 + Dense. <span class="place">§4.8</span> · <span class="pill rec">ready</span> · Source: <span class="src">data/raw/table_4_6_csqe_vs_blind.csv</span></div>
 
-  <div class="tbl"><span class="name">Table 4.5</span> &mdash; CSQE ablation (corpus-only / blind-only / 2+2). <span class="place">§4.8</span> · <span class="pill rec">ready</span></div>
-  <div class="tbl"><span class="name">Table 4.6</span> &mdash; CSQE vs blind QE on BM25 + Dense. <span class="place">§4.8</span> · <span class="pill skip">hand-compile TODO</span></div>
-
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.10</span><span class="title">CSQE α (query repetition) sweep — 4 points</span></span><span class="place">§4.8 (CSQE robustness)</span></div>
-    <div class="desc">α=1→4 moves NDCG@10 by less than 0.002 across both BM25-only and the best system. The curve is essentially flat.</div>
-    <div class="reco"><strong>Recommended:</strong> CUT from the thesis. Replace with one sentence: "Varying α from 1 to 4 changed NDCG@10 by less than 0.002; α=4 was used throughout." The figure shown here is provided for completeness.</div>
-    <div class="variations cols-1">
-      <div class="var"><div class="var-head"><span class="name">v1 — flat α curve</span><span class="pill skip">★ cut from thesis</span></div><img src="output/png/fig_4_10_csqe_alpha_v1.png"><div class="why">Visually under-informative. Keep file as a registry artefact, drop from the chapter.</div></div>
-    </div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.10</span><span class="title">CSQE α (query repetition) sweep — 4 points</span></span><span class="place">§4.8</span></div>
+    <div class="desc">α=1→4 moves NDCG@10 by less than 0.002. Curve is essentially flat.</div>
+    <div class="reco"><strong>Recommended:</strong> CUT from thesis. Replace with one sentence.</div>
+    <div class="variations cols-1"><div class="var"><div class="var-head"><span class="name">v1 flat</span><span class="pill skip">★ cut</span></div><img src="output/png/fig_4_10_csqe_alpha_v1.png"></div></div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.7 ──────────────────────────────────────── -->
 <section id="ch4_7">
   <h2>Chapter 4.7 — Best System (CSQE + Hybrid)</h2>
+  <div class="tbl"><span class="name">Table 4.7</span> &mdash; Configs (BM25-only-expanded / Dense-only-expanded / Both-expanded). <span class="place">§4.9</span> · <span class="pill rec">ready</span></div>
 
-  <div class="tbl"><span class="name">Table 4.7</span> &mdash; Configs (BM25-only-expanded / Dense-only-expanded / Both-expanded) × CC + RRF. <span class="place">§4.9</span> · <span class="pill rec">ready</span> · Labels renamed per Decision D3.</div>
-
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.11</span><span class="title">System progression — BM25 → … → Best system (0.714) <span class="pill headline">HEADLINE</span></span></span><span class="place">§4.9 (main result)</span></div>
-    <div class="desc">The thesis headline figure. Six bars: BM25 (0.462) → mDPR (0.499) → best blind Dense Q2D Aya (0.616) → Hybrid RRF no-QE (0.627) → BM25+CSQE (0.616) → <strong>Best system BM25-only-expanded RRF k=20 (0.714)</strong>. v2 annotates Δ over best-so-far; v3 is a grouped bar across NDCG@10, R@10, R@100, MRR.</div>
-    <div class="reco"><strong>Recommended:</strong> v2 (with Δ annotations). The +0.087 over the no-QE hybrid baseline is the key claim — annotations make it self-evident. v1 as backup if §4.9 wants minimalism; v3 only if Dr. Tahani requests multi-metric in one figure.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.11</span><span class="title">System progression — BM25 → … → Best (0.714) <span class="pill headline">HEADLINE</span></span></span><span class="place">§4.9</span></div>
+    <div class="desc">Six bars culminating in BM25-only-expanded RRF (0.714). +0.087 over hybrid no-QE = key claim.</div>
+    <div class="reco"><strong>Recommended:</strong> v2 (with Δ annotations).</div>
     <div class="variations cols-3">
-      <div class="var"><div class="var-head"><span class="name">v1 — plain bars</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_11_progression_v1.png"><div class="why">Clean fallback. Loses the +0.087 callout.</div></div>
-      <div class="var primary"><div class="var-head"><span class="name">v2 — with Δ annotations</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_11_progression_v2_annot.png"><div class="why">Best storytelling: every bar gains over best-so-far; final +0.087 is the headline.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v3 — grouped multi-metric</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_11_progression_v3_grouped.png"><div class="why">Information-dense but harder to read at thesis text width.</div></div>
+      <div class="var"><div class="var-head"><span class="name">v1 plain</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_11_progression_v1.png"></div>
+      <div class="var primary"><div class="var-head"><span class="name">v2 with Δ</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_11_progression_v2_annot.png"><div class="why">Best-system bar in teal accent; Δ annotations make +0.087 self-evident.</div></div>
+      <div class="var"><div class="var-head"><span class="name">v3 grouped</span><span class="pill alt">★</span></div><img src="output/png/fig_4_11_progression_v3_grouped.png"></div>
     </div>
   </div>
 </section>
 
-<!-- ──────────────────────────────────────── Ch 4.8 ──────────────────────────────────────── -->
 <section id="ch4_8">
   <h2>Chapter 4.8 — Error Analysis (CSQE)</h2>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.12</span><span class="title">Per-query Δ NDCG@10 — CSQE+Hybrid vs Aya-blind</span></span><span class="place">§4.10 (per-query)</span></div>
-    <div class="desc">Distribution of pairwise improvements. Mass shifts right of zero (56.8% improve, mean +0.189). Shaded bands mark Big Win (Δ &gt; 0.3) and Regression (Δ &lt; −0.1). Powered by the validated <code>csqe_vs_blind_per_query.csv</code> (the figure that was blocked before WS1).</div>
-    <div class="reco"><strong>Recommended:</strong> v1 histogram. The shaded bands + annotated counts tell the full story; KDE is smoother but readers lose the count axis.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.12</span><span class="title">Per-query Δ NDCG@10 — CSQE+Hybrid vs Aya-blind</span></span><span class="place">§4.10</span></div>
+    <div class="desc">56.8% improve, 16.6% regress, mean +0.189.</div>
+    <div class="reco"><strong>Recommended:</strong> v1 histogram with bands.</div>
     <div class="variations cols-2">
-      <div class="var primary"><div class="var-head"><span class="name">v1 — histogram with bands</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_12_delta_hist_v1.png"><div class="why">Counts + band annotations + zero-line: the strongest single image in §4.10.</div></div>
-      <div class="var"><div class="var-head"><span class="name">v2 — KDE with mean</span><span class="pill alt">★ low</span></div><img src="output/png/fig_4_12_delta_kde_v2.png"><div class="why">Smooth, but the "1,646 improvements" message is harder to convey from density alone.</div></div>
+      <div class="var primary"><div class="var-head"><span class="name">v1 hist</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_12_delta_hist_v1.png"></div>
+      <div class="var"><div class="var-head"><span class="name">v2 KDE</span><span class="pill alt">★</span></div><img src="output/png/fig_4_12_delta_kde_v2.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.13</span><span class="title">NDCG@10 by 1st-pass relevance (BM25 top-1, qrel ≥ 1)</span></span><span class="place">§4.10 (first-pass dependence)</span></div>
-    <div class="desc">Splits the 2,896 queries by whether BM25's top-1 hit is a relevant doc. When yes (n=1,061): CSQE+Hybrid reaches 0.888. When no (n=1,835): 0.581. The strongest predictor of CSQE behaviour. Note: WS1 confirmed top-1 (not top-5) as the right definition.</div>
-    <div class="reco"><strong>Recommended:</strong> v2. The sample-size annotations (1,061 vs 1,835) are essential context the v1 caption alone can't carry.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.13</span><span class="title">NDCG@10 by 1st-pass relevance (BM25 top-1, qrel ≥ 1)</span></span><span class="place">§4.10</span></div>
+    <div class="desc">1st-pass relevant n=1,061: 0.888. Not-relevant n=1,835: 0.581.</div>
+    <div class="reco"><strong>Recommended:</strong> v2 with sample-size annotations.</div>
     <div class="variations cols-2">
-      <div class="var"><div class="var-head"><span class="name">v1 — plain grouped bar</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_13_firstpass_v1.png"><div class="why">Clean but missing sample sizes.</div></div>
-      <div class="var primary"><div class="var-head"><span class="name">v2 — with sample-size annotations</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_13_firstpass_v2_annot.png"><div class="why">n labels make the asymmetry (1,061 vs 1,835) immediately visible.</div></div>
+      <div class="var"><div class="var-head"><span class="name">v1 plain</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_13_firstpass_v1.png"></div>
+      <div class="var primary"><div class="var-head"><span class="name">v2 annot</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_13_firstpass_v2_annot.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.14</span><span class="title">Δ NDCG@10 by query length (Scheme A: 1–3 / 4–8 / 9+ words)</span></span><span class="place">§4.10 (length analysis)</span></div>
-    <div class="desc">CSQE+Hybrid lifts every length bucket. Short queries gain the most proportionally (+43.6%), Medium absolute (+0.197), Long least (+0.132). Matches Mohammed's Scheme-A CSV from WS1.</div>
-    <div class="reco"><strong>Recommended:</strong> v2 grouped bars. v1 only shows Δ; v2 shows both blind and CSQE values, anchoring the gain visually.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.14</span><span class="title">Δ NDCG@10 by query length</span></span><span class="place">§4.10</span></div>
+    <div class="desc">CSQE+Hybrid lifts every length bucket; Short most proportionally (+43.6%), Medium most absolutely (+0.197).</div>
+    <div class="reco"><strong>Recommended:</strong> v2 grouped bars.</div>
     <div class="variations cols-2">
-      <div class="var"><div class="var-head"><span class="name">v1 — Δ-only bars</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_14_lengthgain_v1.png"><div class="why">Compact, shows the headline +43.6% relative gain.</div></div>
-      <div class="var primary"><div class="var-head"><span class="name">v2 — grouped blind vs CSQE</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_14_lengthgain_v2_grouped.png"><div class="why">Side-by-side blind vs CSQE values + sample sizes; reader sees both the starting point and the lift.</div></div>
+      <div class="var"><div class="var-head"><span class="name">v1 Δ-only</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_14_lengthgain_v1.png"></div>
+      <div class="var primary"><div class="var-head"><span class="name">v2 grouped</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_14_lengthgain_v2_grouped.png"></div>
     </div>
   </div>
 
-  <div class="fig"><div class="fig-head"><span><span class="id">Fig 4.15</span><span class="title">Regression types breakdown (n=367)</span></span><span class="place">§4.10 (regression analysis)</span></div>
-    <div class="desc">Of the 367 queries CSQE regressed by Δ &lt; −0.1: Type A (strong BM25 hurt by expansion) 52%, Type B (poisoned first-pass) 36%, Type C (other) 12%. Categorisation defined in §3.9.</div>
-    <div class="reco"><strong>Recommended:</strong> v2 donut. Pie/donut is the conventional choice for a 3-way categorical breakdown.</div>
+  <div class="fig">
+    <div class="fig-head"><span><span class="id">Fig 4.15</span><span class="title">Regression types breakdown (n=367)</span></span><span class="place">§4.10</span></div>
+    <div class="desc">Type A 52% / B 36% / C 12%. Teal/purple/gray palette.</div>
+    <div class="reco"><strong>Recommended:</strong> v2 donut.</div>
     <div class="variations cols-2">
-      <div class="var"><div class="var-head"><span class="name">v1 — stacked horizontal bar</span><span class="pill alt">★★ alt</span></div><img src="output/png/fig_4_15_regtype_v1.png"><div class="why">Compact, works well inline in narrow figure environments.</div></div>
-      <div class="var primary"><div class="var-head"><span class="name">v2 — donut</span><span class="pill rec">★★★ primary</span></div><img src="output/png/fig_4_15_regtype_v2_donut.png"><div class="why">Examiner-conventional choice for type breakdowns.</div></div>
+      <div class="var"><div class="var-head"><span class="name">v1 stacked</span><span class="pill alt">★★</span></div><img src="output/png/fig_4_15_regtype_v1.png"></div>
+      <div class="var primary"><div class="var-head"><span class="name">v2 donut</span><span class="pill rec">★★★</span></div><img src="output/png/fig_4_15_regtype_v2_donut.png"></div>
     </div>
   </div>
-</section>
-
-<!-- ──────────────────────────────────────── Sign-off ──────────────────────────────────────── -->
-<section id="signoff">
-  <h2>Sign-off &amp; Wrap-up</h2>
-
-  <div class="fineprint" style="font-size:14px; color: var(--ink); margin-bottom: 12px;">
-    Procedure for closing this out:
-    <ol>
-      <li>Scroll through the variations above. For any figure where you'd override my ★★★ pick, note it (mention to me in the chat or just edit <code>thesis_figures/README.md</code> directly).</li>
-      <li>The four <span class="pill skip">hand-compile TODO</span> tables (2.1, 2.2, 3.1, 3.2, 4.6) need data entry from existing sources — none requires re-running experiments.</li>
-      <li>Once happy, we commit the changes: many new figures + 5 new TikZ + 5 notebook updates + this REVIEW.html + PROGRESS_SNAPSHOT.html.</li>
-    </ol>
-  </div>
-
-  <div class="signoff">
-    <div>
-      <h4>Mohammed</h4>
-      <p class="fineprint">Override list (which ★★★ to swap, if any):</p>
-      <p>_______________________________________</p>
-      <p>_______________________________________</p>
-      <p class="fineprint">Date / OK to commit:</p>
-      <p>_______________________________________</p>
-    </div>
-    <div>
-      <h4>Osman</h4>
-      <p class="fineprint">Override list (which ★★★ to swap, if any):</p>
-      <p>_______________________________________</p>
-      <p>_______________________________________</p>
-      <p class="fineprint">Date / OK to commit:</p>
-      <p>_______________________________________</p>
-    </div>
-  </div>
-
-  <p class="fineprint" style="margin-top: 18px;">
-    All figures rendered with canonical post-WS1 data: failure rate 33.9%, mDPR mean nDCG 0.4993, Scheme-A buckets 0.345 / 0.511 / 0.476, Config A renamed to BM25-only-expanded. Tables rounded to 3 dp.
-  </p>
 </section>
 
 <footer>
-  <strong>thesis_figures/REVIEW.html</strong> · single self-contained HTML · 51 PNG previews · rendered from <code>output/png/</code> · open in any browser.
+  <strong>thesis_figures/REVIEW.html</strong> · regenerated 2026-06-01 · 39 PNG previews · 5 figures archived.
 </footer>
 
 </div>

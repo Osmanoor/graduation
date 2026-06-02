@@ -1,8 +1,12 @@
-# Figure Review Notes — Mohammed → Elhaj
+# Figure Review Notes — Osman → Mohammed
 
-These are my notes from going through `thesis_figures/REVIEW.html`. Grouped by the
-type of change so we can quickly decide per item: **edit**, **drop**, **add**, or
-**discuss**. Nothing here is final — flag anything you disagree with.
+> **Authorship note (filename misleading):** this document was written by **Osman**
+> reviewing `thesis_figures/REVIEW.html` and addressed to Mohammed. Filename retained
+> for git history continuity. Mohammed's own override/concur list lives separately.
+
+These are Osman's notes from going through `thesis_figures/REVIEW.html`. Grouped by
+the type of change so we can quickly decide per item: **edit**, **drop**, **add**,
+or **discuss**. Nothing here is final — flag anything you disagree with.
 
 ---
 

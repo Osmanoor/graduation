@@ -1,0 +1,14 @@
+paper,year,family,method,dataset,key_result,cite_key
+Query2Doc (Wang et al.),2023,generation,LLM pseudo-document concatenation,MS MARCO + BEIR,+8 nDCG@10 on MS MARCO with GPT-3,wang_2023_query2doc
+HyDE (Gao et al.),2022,generation,LLM hypothetical document,TREC-DL / BEIR,strong zero-shot improvements,gao_2022_hyde
+GAR (Mao et al.),2021,generation,LLM generates answer/context for query rewriting,open-domain QA,competitive with supervised reranking,mao_2021_gar
+GRF (Mackie et al.),2023,generation,Generative Relevance Feedback for dense,TREC-DL,~+10 mAP; fusion best,mackie_2023_grf_dense
+CSQE (Lei et al.),2024,generation,Corpus-Steered Query2Doc,TREC-DL,+30% mAP over BM25,lei_2024_csqe
+MuGI (Zhang et al.),2024,generation,Multi-Text Generation Integration,BEIR,Best QE practices study,zhang_2024_mugi
+ThinkQE (Lei et al.),2025,generation,Iterative chain-of-thought expansion,TREC-DL,SOTA on multi-step queries,lei_2025_thinkqe
+Exp4Fuse (Liu et al.),2025,fusion,Original + expanded query via modified RRF,multiple,nearest prior art to thesis,liu_2025_exp4fuse
+DAPR (Wang et al.),2024,generation,Dense Approach via Pre-trained Retrievers,academic IR,context-rich expansion,wang_2024_dapr
+AQE (Yang et al.),2025,generation,Aligned Query Expansion via LLM alignment,academic IR,efficient at scale,yang_2025_aqe
+KAR (Xia et al.),2025,generation,Knowledge-Aware Query Expansion,textual + relational retrieval,strong on relational,xia_2025_kar
+Song & Zheng (survey),2024,survey,Query optimisation taxonomy (4 ops),--,defines expansion/decomposition/disambiguation/abstraction,song_2024_a
+QE survey (arXiv 2509.07794),2025,survey,Comprehensive QE survey in LLM era,--,recent QE families,survey_2025_qe
