@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workstream 6 — Research &amp; External Lookups</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2733; --muted:#5b6675; --line:#e3e7ec;
+    --accent:#2b5cab; --accent-soft:#eaf0fb;
+    --ok:#1f8a4c; --ok-bg:#e7f5ec; --warn:#b5790a; --warn-bg:#fdf4e0;
+    --bad:#c0392b; --bad-bg:#fbe9e7; --part:#5d6d7e; --part-bg:#eceff1;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px; margin:0 auto; padding:40px 24px 80px}
+  header.page{
+    background:linear-gradient(135deg,#2b5cab,#3b78d8); color:#fff;
+    border-radius:16px; padding:32px 34px; margin-bottom:28px;
+    box-shadow:0 6px 24px rgba(43,92,171,.18);
+  }
+  header.page h1{margin:0 0 6px; font-size:28px; letter-spacing:-.3px}
+  header.page p{margin:4px 0; opacity:.92; font-size:14.5px}
+  header.page .meta{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px}
+  header.page .meta span{background:rgba(255,255,255,.16); padding:4px 11px; border-radius:20px; font-size:12.5px}
+
+  h2{font-size:21px; margin:38px 0 14px; padding-bottom:8px; border-bottom:2px solid var(--line)}
+  h2 .num{color:var(--accent); font-weight:800; margin-right:8px}
+  h3{font-size:15px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin:18px 0 8px}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:18px; box-shadow:0 1px 3px rgba(20,30,50,.04)}
+  .task-def{background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:8px; padding:14px 18px; margin:0 0 18px; font-size:14.5px}
+  .task-def b{color:var(--accent)}
+
+  .badge{display:inline-block; font-size:12px; font-weight:700; padding:3px 11px; border-radius:20px; vertical-align:middle; white-space:nowrap}
+  .b-ok{color:var(--ok); background:var(--ok-bg)}
+  .b-warn{color:var(--warn); background:var(--warn-bg)}
+  .b-bad{color:var(--bad); background:var(--bad-bg)}
+  .b-part{color:var(--part); background:var(--part-bg)}
+
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:14px}
+  th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{background:#f0f3f7; font-size:12.5px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted)}
+  tbody tr:hover{background:#fafbfc}
+  td code,p code,li code{background:#eef1f4; padding:1px 6px; border-radius:5px; font-size:12.5px; font-family:"SF Mono",Consolas,Menlo,monospace; color:#324}
+
+  ul{margin:8px 0 8px 2px; padding-left:20px}
+  li{margin:5px 0}
+  .key{font-family:"SF Mono",Consolas,Menlo,monospace; font-size:13px; color:#7a3; font-weight:600}
+  .arrow{color:var(--muted)}
+  .callout{border-radius:10px; padding:14px 18px; margin:14px 0; font-size:14.5px}
+  .callout.bad{background:var(--bad-bg); border:1px solid #f0c5be}
+  .callout.warn{background:var(--warn-bg); border:1px solid #f0dca6}
+  .callout.ok{background:var(--ok-bg); border:1px solid #bfe3cc}
+  .callout b{display:inline}
+
+  pre{background:#1c2530; color:#e6edf3; border-radius:12px; padding:18px 20px; overflow-x:auto; font-size:12.5px; line-height:1.55; font-family:"SF Mono",Consolas,Menlo,monospace}
+  pre .c{color:#7d8aa0}
+
+  .verdict-row{display:flex; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap}
+  .verdict-row h2{margin:0; border:0; flex:1 1 auto}
+
+  details{margin:10px 0; border:1px solid var(--line); border-radius:10px; overflow:hidden}
+  summary{cursor:pointer; padding:12px 16px; background:#f0f3f7; font-weight:600; font-size:14px}
+  details[open] summary{border-bottom:1px solid var(--line)}
+  details .inner{padding:8px 18px 16px}
+
+  footer{margin-top:40px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:12.5px}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12.5px; margin-top:10px}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .dot{width:10px; height:10px; border-radius:50%}
+  a{color:var(--accent)}
+  .small{font-size:13px; color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <h1>Workstream 6 — Research &amp; External Lookups</h1>
+    <p>Literature gap-validation, full citation audit, and SOTA-retriever verification for the Arabic RAG Query Enhancement thesis.</p>
+    <div class="meta">
+      <span>📅 Completed 2026-05-30</span>
+      <span>📁 5 tasks (6.1–6.5)</span>
+      <span>🔬 Method: thesis LaTeX + repo docs + web-fetched primary sources</span>
+    </div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--ok)"></span> Verified / Keep</span>
+      <span><span class="dot" style="background:var(--warn)"></span> Needs edit / qualify</span>
+      <span><span class="dot" style="background:var(--bad)"></span> Wrong / fabricated</span>
+      <span><span class="dot" style="background:var(--part)"></span> Partial</span>
+    </div>
+  </header>
+
+  <!-- ===================== EXECUTIVE SUMMARY ===================== -->
+  <div class="card">
+    <h3 style="margin-top:0">At a glance</h3>
+    <table>
+      <thead><tr><th style="width:48px">#</th><th>Task</th><th style="width:130px">Verdict</th><th>One-line outcome</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>6.1</b></td><td>Small-LLM (&lt;7B) Arabic QE papers</td>
+          <td><span class="badge b-warn">Needs edit</span></td>
+          <td>One concurrent Nov-2025 paper uses <b>Gemma&nbsp;3&nbsp;4B</b> for QE incl. Arabic — but <b>cross-lingual, not monolingual MIRACL</b>. Gap survives only if narrowed to monolingual MSA.</td>
+        </tr>
+        <tr>
+          <td><b>6.2</b></td><td>Asymmetric CSQE × hybrid fusion</td>
+          <td><span class="badge b-warn">Needs edit</span></td>
+          <td><b>Exp4Fuse (ACL 2025 Findings)</b> is the nearest prior art but is <b>sparse-only</b>, not dense–sparse hybrid. Cite it &amp; downgrade novelty to “Arabic + heterogeneous hybrid.”</td>
+        </tr>
+        <tr>
+          <td><b>6.3</b></td><td>Read or replace Song &amp; Zheng 2024</td>
+          <td><span class="badge b-ok">Keep</span></td>
+          <td>Bib entry correct; taxonomy matches §2.4 <b>exactly</b>. Defensibly citable.</td>
+        </tr>
+        <tr>
+          <td><b>6.4</b></td><td>Full citation audit</td>
+          <td><span class="badge b-bad">Major</span></td>
+          <td><b>10 entries wrong</b> (fabricated authors/titles or broken URLs), incl. <code>aya_2024</code> (URL → unrelated MRI paper) &amp; <code>yoon_2025</code> (skeptical paper cited as supporting). 11 entries orphaned.</td>
+        </tr>
+        <tr>
+          <td><b>6.5</b></td><td>SOTA Arabic retrievers at submission</td>
+          <td><span class="badge b-warn">Needs edit</span></td>
+          <td>BGE-M3 still defensible; <b>mE5-large now dated</b>. Add <b>Qwen3-Embedding-8B</b> (open multilingual leader) &amp; <b>Swan</b> (Arabic-centric) to Recommendation 3.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="callout bad" style="margin-bottom:0">
+      <b>Bottom line.</b> The gap claims (6.1, 6.2) are <b>not invalidated but must be qualified</b> and cite new concurrent work — which strengthens credibility. The highest-impact result is <b>6.4</b>: a systematic AI-fabrication problem affects <b>every recent query-expansion citation the §2.4 narrative rests on</b>, plus a broken URL for the best-performing model. These must be fixed before submission.
+    </div>
+  </div>
+
+  <!-- ===================== TASK 6.1 ===================== -->
+  <div class="verdict-row">
+    <h2><span class="num">6.1</span>Post-2024 Small-LLM Arabic Query Enhancement</h2>
+    <span class="badge b-warn">Needs edit</span>
+  </div>
+  <div class="card">
+    <div class="task-def">
+      <b>Task definition.</b> Search arXiv / Google Scholar / ACL Anthology for any paper (2024–2026) testing <b>small (&lt;7B) LLMs</b> for query enhancement on <b>Arabic</b> text. If any exist, the gap claim must be revised. <span class="small">(Source: item 2.7, pt1 — feeds §2.4 / §1.2 gap framing.)</span>
+    </div>
+
+    <h3>Thesis claims under test</h3>
+    <ul>
+      <li>§2.4: <i>“none of these studies tested models smaller than 7B for zero-shot query expansion on Arabic text.”</i></li>
+      <li>§1.2 (resource gap): <i>“Whether small open-source models with 2–8B parameters … can generate useful Arabic query expansions remains an open question.”</i></li>
+    </ul>
+
+    <h3>Finding — one concurrent counter-example</h3>
+    <div class="callout warn">
+      <b>Macmillan-Scott, Goworek &amp; Özyiğit (2025)</b> — <i>“Generative Query Expansion with Multilingual LLMs for Cross-Lingual Information Retrieval”</i> (arXiv:2511.19325, 24 Nov 2025).
+      <ul style="margin-bottom:0">
+        <li>QE across <b>8 languages incl. Arabic</b> on CLIRMatrix + mMARCO, using <b>Aya Expanse 8B, Gemma 3 4B, Gemma 3 12B</b> — so it <b>does</b> use a sub-7B model (Gemma 3 4B) on Arabic, with overlapping model choices to this thesis.</li>
+        <li>Convergent findings: zero-shot best for short queries; CoT/RaR <b>meta-text pollutes BM25</b>; cross-lingual QE helps weakest-baseline languages most.</li>
+      </ul>
+    </div>
+
+    <h3>Why the gap survives (with narrowing)</h3>
+    <ul>
+      <li><b>Task mismatch:</b> that paper is <b>cross-lingual</b> IR (query &amp; docs in different languages); this thesis is <b>monolingual MSA Arabic on MIRACL</b>.</li>
+      <li><b>Concurrency:</b> dated Nov 2025 — legitimate concurrent work, not pre-emptive prior art.</li>
+      <li>No monolingual Arabic small-LLM QE study on MIRACL exists.</li>
+    </ul>
+
+    <h3>Recommendation</h3>
+    <p>Reword §2.4 to <i>“no prior study has evaluated sub-7B models for zero-shot query expansion in <b>monolingual Arabic retrieval</b>; the closest concurrent work applies sub-7B models to <b>cross-lingual</b> Arabic IR.”</i> Cite Macmillan-Scott et al. as independent corroboration; bound §1.2 to “monolingual Arabic.”</p>
+  </div>
+
+  <!-- ===================== TASK 6.2 ===================== -->
+  <div class="verdict-row">
+    <h2><span class="num">6.2</span>Asymmetric Query Expansion in Hybrid Retrieval</h2>
+    <span class="badge b-warn">Needs edit</span>
+  </div>
+  <div class="card">
+    <div class="task-def">
+      <b>Task definition.</b> Search for any work on <b>asymmetric query expansion in hybrid retrieval</b> — applying QE to <b>only one retriever</b> in a fusion setup. If any exist, downgrade the gap claim to “not yet for Arabic.” <span class="small">(Source: P4.2.4, pt6 — feeds §2.4.)</span>
+    </div>
+
+    <h3>Thesis claim under test</h3>
+    <p style="margin-top:4px">§2.4: <i>“whether applying query expansion asymmetrically to only one retriever in a hybrid system can outperform applying it to both is an open question.”</i></p>
+
+    <h3>Finding — closest prior art</h3>
+    <div class="callout warn">
+      <b>Liu et al. (2025)</b> — <i>“Exp4Fuse: A Rank Fusion Framework for Enhanced Sparse Retrieval using LLM-based Query Expansion”</i> (ACL 2025 <b>Findings</b>; arXiv:2506.04760).
+      Runs two routes through the <b>same sparse retriever</b> — raw query &amp; LLM-expanded query — and fuses them with a modified RRF; beats using the expansion alone, reaching SOTA on several benchmarks.
+    </div>
+
+    <h3>Why the thesis claim is <i>partially</i> (not fully) novel</h3>
+    <ul>
+      <li>Exp4Fuse = <b>single-retriever query-variant fusion</b>: fuse {sparse(q), sparse(q+exp)}.</li>
+      <li>This thesis = <b>retriever-<i>type</i> asymmetry in a dense–sparse hybrid</b>: fuse {<b>BM25</b>(q+CSQE), <b>Dense</b>(q<sub>raw</sub>)}.</li>
+      <li>Related but distinct — Exp4Fuse never varies <i>which retriever type</i> gets the expansion in a heterogeneous fusion. It validates the weaker sub-claim (“expansion helps the sparse side”).</li>
+    </ul>
+
+    <h3>Recommendation</h3>
+    <p>Cite Exp4Fuse and reframe: <i>“the asymmetric assignment of expansion across retriever <b>types</b> in a dense–sparse hybrid — and its behaviour for <b>Arabic</b> — has not been studied.”</i> This is <b>stronger</b>: the novelty now has a named, citable nearest neighbour rather than an unsupported “no one has done this.”</p>
+  </div>
+
+  <!-- ===================== TASK 6.3 ===================== -->
+  <div class="verdict-row">
+    <h2><span class="num">6.3</span>Evaluation of the Song &amp; Zheng (2024) Survey</h2>
+    <span class="badge b-ok">Keep</span>
+  </div>
+  <div class="card">
+    <div class="task-def">
+      <b>Task definition.</b> Either read enough of Song &amp; Zheng 2024 to defensibly cite it, or replace it with a survey actually read for the QE taxonomy framing. <span class="small">(Source: item 2.14, pt2 — finalizes §2.4 citation.)</span>
+    </div>
+
+    <h3>Finding</h3>
+    <p style="margin-top:4px"><b>Song, Mingyang &amp; Zheng, Mao (2024)</b>, <i>“A Survey of Query Optimization in Large Language Models”</i> (arXiv:2412.17558; last revised Mar 2026).</p>
+    <ul>
+      <li><b>Bib entry is correct</b> — authors, title, URL, year all match. No fix needed for <code>song_2024_a</code>.</li>
+      <li><b>Taxonomy faithfully represented:</b> the survey defines exactly four atomic operations — <b>Expansion, Decomposition, Disambiguation, Abstraction</b> — an exact match to the thesis (§2.4 / chapter2.tex&nbsp;l.90).</li>
+    </ul>
+    <div class="callout ok">
+      <b>Decision: KEEP and cite.</b> Item 2.14 resolved — the taxonomy claim is accurate.
+      <span class="small">Note for §2.4 expansion (5.A.4): the source term is <b>“disambiguation,”</b> not “rewriting” as the task list paraphrases. Optionally supplement with the dedicated QE survey arXiv:2509.07794.</span>
+    </div>
+  </div>
+
+  <!-- ===================== TASK 6.4 ===================== -->
+  <div class="verdict-row">
+    <h2><span class="num">6.4</span>Full Citation Audit</h2>
+    <span class="badge b-bad">Major — systematic fabrication</span>
+  </div>
+  <div class="card">
+    <div class="task-def">
+      <b>Task definition.</b> For every citation: verify the BibTeX key exists in <code>References.bib</code>, the URL resolves, <b>and the cited paper actually says what the thesis claims</b>. <span class="small">(Source: item 2.15, pt2 — explicitly tagged an AI task. 49 bib entries; 38 cited in the compiled thesis.)</span>
+    </div>
+
+    <div class="callout bad">
+      <b>Why a “links resolve” check is not enough.</b> Checking that a URL opens a valid repository does <b>not</b> confirm it points to the <i>correct</i> paper or that author/title fields are real. Example: <code>aya_2024</code>’s URL (arXiv 2501.01482) opens fine — to <b>“An unsupervised method for MRI recovery,”</b> not Aya Expanse. Field-level comparison against each source (done here) is required.
+    </div>
+
+    <h3>① Confirmed WRONG — fix before submission</h3>
+    <table>
+      <thead><tr><th style="width:210px">Key</th><th>Problem</th><th>Correct data (verified)</th></tr></thead>
+      <tbody>
+        <tr><td><span class="key">aya_2024</span><br><span class="badge b-bad">URL+title+authors</span></td>
+          <td><b>URL points to an unrelated MRI paper</b>; title wrong; co-authors partly invented. <b>Highest priority — the thesis’s best model.</b></td>
+          <td>“Aya Expanse: Combining Research Breakthroughs for a New Multilingual Frontier”; arXiv <b>2412.04261</b>; Dang, Singh, D’souza, Ahmadian, et al. (Cohere For AI).</td></tr>
+        <tr><td><span class="key">yoon_2025_llm_retrieval</span><br><span class="badge b-bad">+ misrepresented</span></td>
+          <td>Title+authors fabricated <b>and finding reversed</b> — cited as showing “all LLMs improve retrieval,” but the real paper is <b>skeptical</b> (gains = benchmark contamination / “knowledge leakage”).</td>
+          <td>“Hypothetical Documents or Knowledge Leakage? Rethinking LLM-based Query Expansion”; Yejun Yoon, Jaeyoon Jung, Seunghyun Yoon, Kunwoo Park; arXiv 2504.14175.</td></tr>
+        <tr><td><span class="key">zhang_2024_mugi</span></td>
+          <td>Title+authors fabricated. MuGI = <b>Multi-Text Generation Integration</b>, not “Multi-Granularity” (thesis prose also wrong).</td>
+          <td>“Exploring the Best Practices of Query Expansion with LLMs”; Le Zhang, Yihong Wu, Qian Yang, Jian-Yun Nie; Findings EMNLP 2024.</td></tr>
+        <tr><td><span class="key">lei_2024_csqe</span></td>
+          <td>Authors fabricated; venue should be EACL 2024 short.</td>
+          <td>Yibin Lei, Yu Cao, Tianyi Zhou, Tao Shen, Andrew Yates; EACL 2024 (2024.eacl-short.34).</td></tr>
+        <tr><td><span class="key">lei_2025_thinkqe</span></td>
+          <td>Title+authors fabricated (same fake “Lei, Xiao” as CSQE); “Qwen-14B / CoT” unverified.</td>
+          <td>“ThinkQE: Query Expansion via an Evolving Thinking Process”; Yibin Lei, Tao Shen, Andrew Yates; Findings EMNLP 2025.</td></tr>
+        <tr><td><span class="key">yang_2025_aqe</span></td>
+          <td>Title+authors fabricated.</td>
+          <td>“Aligned Query Expansion …through LLM Alignment”; Adam Yang, Gustavo Penha, Enrico Palumbo, Hugues Bouchard; arXiv 2507.11042.</td></tr>
+        <tr><td><span class="key">zhang_2025_pbr</span></td>
+          <td>Title+authors fabricated; “GPT-4o-mini ≈8B” is a guess; it’s <b>personalized</b> QE (tangential).</td>
+          <td>“Personalize Before Retrieve …User-Centric Retrieval”; Yingyi Zhang, Pengyue Jia, Derong Xu, … Xiangyu Zhao; arXiv 2510.08935.</td></tr>
+        <tr><td><span class="key">xia_2025_kar</span></td>
+          <td>Title+authors fabricated; “36 MRR over HyDE” unverified; scope is textual <i>and relational</i>.</td>
+          <td>“Knowledge-Aware Query Expansion …for Textual and Relational Retrieval”; Yu Xia, Junda Wu, Sungchul Kim, Tong Yu, Ryan A. Rossi, Haoliang Wang, Julian McAuley; NAACL 2025.</td></tr>
+        <tr><td><span class="key">young_2024_gaqr</span><br><span class="badge b-warn">minor</span></td>
+          <td>First author first name wrong (<b>Orion → Oliver</b>); rest OK.</td>
+          <td>Oliver Young, Yixing Fan, Ruqing Zhang, Jiafeng Guo, Maarten de Rijke, Xueqi Cheng; CIKM ’24.</td></tr>
+        <tr><td><span class="key">louis_2024_query</span></td>
+          <td>Author “Louis, Louis” invented; it’s a <b>single-author master’s thesis by Anish Bhusal</b>. Thesis prose “Louis and Bhusal” → “Bhusal.” Weak (unrefereed) source.</td>
+          <td>Anish Bhusal; M.Sc. thesis, Univ. of Alabama in Huntsville, 2024; louis.uah.edu/uah-theses/663.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>② Spot-checked &amp; VERIFIED correct</h3>
+    <p style="margin-top:4px">
+      <span class="key">song_2024_a</span> ·
+      <span class="key">chan_2024_rqrag</span> ·
+      <span class="key">elbeltagysamhaar_2024_exploring</span> ·
+      <span class="key">alsubhi_2025_optimizing</span> ·
+      <span class="key">mackie_2023_grf_dense</span> ·
+      <span class="key">qwen3_2025</span> ·
+      <span class="key">gemma3_2025</span> ·
+      <span class="key">falcon_h1_2025</span>
+      &nbsp;<span class="badge b-ok">8 correct</span>
+    </p>
+    <p class="small">Famous foundational entries (HyDE, Query2Doc, DPR, RAG, Attention, BM25, MIRACL, Mamba, Pyserini, QLoRA, RRF) were field-inspected and look standard, but a final line-by-line web pass on those is recommended for completeness.</p>
+
+    <h3>③ Orphaned entries (defined, never cited anywhere — 11)</h3>
+    <p style="margin-top:4px" class="small"><code>asai_2024_selfrag</code>, <code>chen_2024_dense</code>, <code>dong_2025_leveraging</code>, <code>guo_2024_lightrag</code>, <code>han_2024_retrievalaugmented</code>, <code>idanpogrebinsky_2025_enhancing</code>, <code>perin_2025_investigating</code>, <code>sarthi_2024_raptor</code>, <code>singhania_2024_recall</code>, <code>wang_2025_levelrag</code>, <code>zheng_2023_take</code>. — Delete, or cite where relevant (note <code>zheng_2023_take</code> = “Take a Step Back,” the canonical <b>abstraction</b> QE paper, fits §2.4’s expansion).</p>
+
+    <div class="callout warn">
+      <b>Build-file hazard.</b> <code>chapter2_generated.tex</code> sits beside the compiled <code>chapter2.tex</code> with overlapping citations and a different intro; the earlier <code>missing_references_review.md</code> audited the <b>non-compiled</b> file. Ensure citation reviews target <code>chapter2.tex</code>, the file actually <code>\include</code>d by <code>1-main.tex</code>.
+    </div>
+    <div class="callout bad" style="margin-bottom:0">
+      <b>Pattern.</b> AI-added recent QE entries keep a correct URL but carry a <b>fabricated title + author list</b> (often right surname, wrong first name + invented co-authors); several also <b>misstate the paper’s findings</b>. This is not just a <code>.bib</code> cleanup — it intersects WS3.1 (decorative-citation) &amp; WS3.2 (fabricated-rationale): each affected §2.4 sentence must be re-checked against the <i>real</i> paper.
+    </div>
+  </div>
+
+  <!-- ===================== TASK 6.5 ===================== -->
+  <div class="verdict-row">
+    <h2><span class="num">6.5</span>SOTA Arabic Retrievers at Submission Time</h2>
+    <span class="badge b-warn">Needs edit</span>
+  </div>
+  <div class="card">
+    <div class="task-def">
+      <b>Task definition.</b> Recommendation 3 lists BGE-M3 and mE5-large as “stronger embedding models.” Check whether these are still SOTA Arabic retrievers at submission time, or whether newer alternatives exist. <span class="small">(Source: P4.5.8, pt4/pt10 — feeds final Recommendation 3.)</span>
+    </div>
+
+    <h3>Findings (as of mid-2026)</h3>
+    <ul>
+      <li><b>BGE-M3 — still defensible.</b> Leads/ties on MIRACL (M3-dense ≈ 67.8 nDCG@10 vs mE5-large ≈ 65.4); the thesis’s own cited <b>Alsubhi 2025</b> paper independently names BGE-M3 &amp; mE5-large as “the most effective” for Arabic — so the recommendation is grounded.</li>
+      <li><b>mE5-large — now dated.</b> Beaten on Arabic by Arabic-centric <b>Swan / ArabicMTEB</b> (Alwajih et al., 2024, arXiv:2411.01192): Swan-Large surpasses mE5-large on most Arabic tasks.</li>
+      <li><b>Strongest open-weight multilingual:</b> <b>Qwen3-Embedding-8B</b> — #1 on the MTEB multilingual leaderboard (<b>score 70.58, released June 2025</b>; arXiv:2506.05176); also Arctic-Embed 2.0, Nomic-Embed-multilingual, Voyage-3.</li>
+    </ul>
+
+    <h3>Recommendation (→ §5.3 Recommendation 3)</h3>
+    <ul>
+      <li>Keep <b>BGE-M3</b> as a primary recommendation.</li>
+      <li>Replace bare “multilingual-E5-large” with (a) <b>Qwen3-Embedding-8B</b> (open-weight multilingual leader) and (b) Arabic-centric <b>Swan-Large</b>.</li>
+      <li>Caveat: most scores are MTEB/MMTEB or Arabic STS, not MIRACL retrieval specifically — a small validation run is advisable before adopting.</li>
+    </ul>
+  </div>
+
+  <!-- ===================== RECONCILIATION ===================== -->
+  <h2>Reconciliation with the parallel WS6 report (Jules, 2026-05-22)</h2>
+  <div class="card">
+    <p style="margin-top:0">A second agent produced an independent WS6 report. The two <b>agree on 6.3</b> and on the <i>direction</i> of 6.1/6.2/6.5, but <b>diverge sharply on 6.4</b>.</p>
+    <table>
+      <thead><tr><th style="width:60px">Task</th><th>Divergence</th><th>Settled position</th></tr></thead>
+      <tbody>
+        <tr><td><b>6.3</b></td><td>Full agreement (keep; taxonomy matches).</td><td><span class="badge b-ok">Confirmed</span> Two independent agents → high confidence.</td></tr>
+        <tr><td><b>6.1</b></td><td>Jules cites Alsubhi / El-Beltagy / ALLaM — but those are Arabic-RAG <i>component/model</i> papers; none test small LLMs for <i>query expansion</i>. Jules missed the cross-lingual Gemma-3-4B paper.</td><td>My evidence is the correct basis. Narrowing should hinge on <b>cross-lingual vs monolingual</b>, not RAG-component papers.</td></tr>
+        <tr><td><b>6.2</b></td><td>Jules cites a <b>Medium blog</b> + LevelRAG. I found <b>Exp4Fuse</b> (peer-reviewed, ACL 2025).</td><td>Cite Exp4Fuse, not a blog. Jules’s “avoid dense dilution” intuition is right but the citable anchor is Exp4Fuse.</td></tr>
+        <tr><td><b>6.4</b></td><td><b>Direct contradiction.</b> Jules: “URLs 100% resolve, integrity passes, 4 unused.” Me: <b>10 wrong, 11 unused.</b></td><td><b>My finding stands &amp; is verifiable.</b> Jules tested URL <i>resolvability</i>, not <i>correctness</i> / field accuracy. Proof: <code>aya_2024</code> &amp; <code>yoon_2025</code> URLs resolve but to the wrong papers; WS4 independently flagged <code>mugi</code> + <code>csqe</code>. The 7 extra orphans are cited 0× anywhere (grep-verified).</td></tr>
+        <tr><td><b>6.5</b></td><td>Jules adds <b>Qwen3-Embedding-8B</b> (I missed it); I add <b>Swan</b> (Jules missed it).</td><td>Both belong — folded Qwen3-Embedding-8B in above (correcting Jules’s date: <b>June 2025</b>, not “Jan 2026”).</td></tr>
+      </tbody>
+    </table>
+    <div class="callout bad" style="margin-bottom:0"><b>Net.</b> Jules is useful corroboration on 6.3 and contributes Qwen3-Embedding-8B for 6.5, but its <b>6.4 “clean bill of health” is incorrect and must not be relied on</b> — the citation base has a systematic fabrication problem, independently confirmed by WS4.</div>
+  </div>
+
+  <!-- ===================== APPENDIX ===================== -->
+  <h2>Appendix — Corrected BibTeX for the 10 wrong entries</h2>
+  <div class="card">
+<pre><span class="c">% Highest priority — wrong URL pointed to an unrelated MRI paper</span>
+@misc{aya_2024,
+  author = {Dang, John and Singh, Shivalika and D'souza, Daniel and Ahmadian, Arash and others},
+  title  = {Aya Expanse: Combining Research Breakthroughs for a New Multilingual Frontier},
+  url    = {https://arxiv.org/abs/2412.04261},
+  year   = {2024}, organization = {arXiv.org}
+}
+
+@misc{yoon_2025_llm_retrieval,
+  author = {Yoon, Yejun and Jung, Jaeyoon and Yoon, Seunghyun and Park, Kunwoo},
+  title  = {Hypothetical Documents or Knowledge Leakage? Rethinking {LLM}-based Query Expansion},
+  url    = {https://arxiv.org/abs/2504.14175}, year = {2025}, organization = {arXiv.org}
+}
+
+@inproceedings{zhang_2024_mugi,
+  author = {Zhang, Le and Wu, Yihong and Yang, Qian and Nie, Jian-Yun},
+  title  = {Exploring the Best Practices of Query Expansion with Large Language Models},
+  booktitle = {Findings of the ACL: EMNLP 2024}, year = {2024},
+  url    = {https://aclanthology.org/2024.findings-emnlp.103}
+}
+
+@inproceedings{lei_2024_csqe,
+  author = {Lei, Yibin and Cao, Yu and Zhou, Tianyi and Shen, Tao and Yates, Andrew},
+  title  = {Corpus-Steered Query Expansion with Large Language Models},
+  booktitle = {Proc. 18th Conf. EACL: Short Papers}, year = {2024},
+  url    = {https://aclanthology.org/2024.eacl-short.34}, note = {arXiv:2402.18031}
+}
+
+@inproceedings{lei_2025_thinkqe,
+  author = {Lei, Yibin and Shen, Tao and Yates, Andrew},
+  title  = {{ThinkQE}: Query Expansion via an Evolving Thinking Process},
+  booktitle = {Findings of the ACL: EMNLP 2025}, year = {2025},
+  url    = {https://aclanthology.org/2025.findings-emnlp.965}
+}
+
+@misc{yang_2025_aqe,
+  author = {Yang, Adam and Penha, Gustavo and Palumbo, Enrico and Bouchard, Hugues},
+  title  = {Aligned Query Expansion: Efficient Query Expansion for Information Retrieval through {LLM} Alignment},
+  url    = {https://arxiv.org/abs/2507.11042}, year = {2025}, organization = {arXiv.org}
+}
+
+@misc{zhang_2025_pbr,
+  author = {Zhang, Yingyi and Jia, Pengyue and Xu, Derong and Wen, Yi and Li, Xianneng and Wang, Yichao
+            and Zhang, Wenlin and Li, Xiaopeng and Gan, Weinan and Guo, Huifeng and Liu, Yong and Zhao, Xiangyu},
+  title  = {Personalize Before Retrieve: {LLM}-based Personalized Query Expansion for User-Centric Retrieval},
+  url    = {https://arxiv.org/abs/2510.08935}, year = {2025}, organization = {arXiv.org}
+}
+
+@inproceedings{xia_2025_kar,
+  author = {Xia, Yu and Wu, Junda and Kim, Sungchul and Yu, Tong and Rossi, Ryan A. and Wang, Haoliang and McAuley, Julian},
+  title  = {Knowledge-Aware Query Expansion with Large Language Models for Textual and Relational Retrieval},
+  booktitle = {Proc. 2025 Conf. NAACL: Long Papers}, year = {2025},
+  url    = {https://aclanthology.org/2025.naacl-long.216}
+}
+
+@inproceedings{young_2024_gaqr,
+  author = {Young, Oliver and Fan, Yixing and Zhang, Ruqing and Guo, Jiafeng and de Rijke, Maarten and Cheng, Xueqi},
+  title  = {{GaQR}: An Efficient Generation-augmented Question Rewriter},
+  booktitle = {Proc. 33rd ACM CIKM '24}, pages = {4228--4232}, year = {2024},
+  doi = {10.1145/3627673.3679930}
+}
+
+@mastersthesis{louis_2024_query,
+  author = {Bhusal, Anish},
+  title  = {Query augmentation for information retrieval (IR) using large language model (LLM)},
+  school = {University of Alabama in Huntsville}, year = {2024},
+  url    = {https://louis.uah.edu/uah-theses/663/}
+}</pre>
+    <p class="small"><code>aya_2024</code> uses <code>and others</code> to avoid a 40-name list; expand if the citation style requires it. Verify final author ordering against each source before committing.</p>
+  </div>
+
+  <footer>
+    <p><b>Sources consulted —</b> Thesis: <code>chapter1.tex</code>, <code>chapter2.tex</code>, <code>References.bib</code>, <code>1-main.tex</code>. Repo: <code>hybrid_retrieval_qe_literature_review.md</code>, <code>llm_model_research.md</code>, <code>WS4_VERIFICATION_REPORT.md</code>. Web (mid-2026): arXiv 2511.19325, 2412.17558, 2506.04760, 2504.14175, 2507.11042, 2510.08935, 2402.18031, 2401.06311, 2025.naacl-long.216, 2025.findings-emnlp.965, 2305.07477, 2412.04261, 2505.09388, 2503.19786, 2507.22448, 2411.01192, 2506.06339, 2408.07425, 2506.05176; CIKM’24 GaQR (10.1145/3627673.3679930); UAH thesis 663.</p>
+    <p>Full Markdown version: <code>research_decisions/WS6_RESEARCH_REPORT.md</code> · Generated for the Arabic RAG Query Enhancement thesis · Workstream 6.</p>
+  </footer>
+
+</div>
+</body>
+</html>
