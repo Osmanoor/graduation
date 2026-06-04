@@ -10,11 +10,12 @@
   \node[thFusion, minimum width=22mm] (bm1) {BM25 score};
   \node[thRet, minimum width=22mm, right=of bm1] (dn1) {mDPR score};
   \node[font=\small, below=8mm of $(bm1.south)!0.5!(dn1.south)$] (cc) {%
-      $s_{\text{CC}} = \alpha \cdot \tilde{s}_{\text{Dense}} + (1-\alpha)\cdot\tilde{s}_{\text{BM25}}$};
+      $s_{\text{CC}} = (1-\alpha)\cdot\tilde{s}_{\text{BM25}} + \alpha\cdot\tilde{s}_{\text{Dense}}$};
   \node[thOut, minimum width=24mm, below=of cc] (rcc) {Final ranking};
 
-  \draw[thArrow] (bm1) -- ($(cc.north west)+(0,2mm)$);
-  \draw[thArrow] (dn1) -- ($(cc.north east)+(0,2mm)$);
+  % Arrows hit the term they feed (BM25 on left, Dense on right of equation)
+  \draw[thArrow] (bm1.south) -- ($(cc.north) + (-15mm, 2mm)$);
+  \draw[thArrow] (dn1.south) -- ($(cc.north) + (15mm, 2mm)$);
   \draw[thArrow] (cc) -- (rcc);
   \node[font=\bfseries, color=thFusionS, above=2mm of bm1, xshift=12mm] {\thIconFusion~Convex Combination};
 
@@ -26,8 +27,9 @@
         $s_{\text{RRF}} = \dfrac{1}{k + r_b} + \dfrac{1}{k + r_d}$};
     \node[thOut, minimum width=24mm, below=of rrf] (rrr) {Final ranking};
 
-    \draw[thArrow] (bm2) -- ($(rrf.north west)+(0,2mm)$);
-    \draw[thArrow] (dn2) -- ($(rrf.north east)+(0,2mm)$);
+    % Arrows hit each rank term (r_b on left, r_d on right of equation)
+    \draw[thArrow] (bm2.south) -- ($(rrf.north) + (-16mm, 2mm)$);
+    \draw[thArrow] (dn2.south) -- ($(rrf.north) + (16mm, 2mm)$);
     \draw[thArrow] (rrf) -- (rrr);
     \node[font=\bfseries, color=thFusionS, above=2mm of bm2, xshift=12mm] {\thIconFusion~Reciprocal Rank Fusion};
   \end{scope}

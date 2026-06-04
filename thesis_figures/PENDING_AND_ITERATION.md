@@ -64,6 +64,31 @@ My recommendation: **(a)** — show him the new version first.
 
 If Mohammed wants the thesis to look "more designed" than functional, the highest-return target is Fig 2.1 (RAG architecture) and the new companion. AI image generators (DALL-E / SDXL) could produce stylised illustrations matching the thesis colour palette. **Skip unless Dr. Tahani specifically requests** — the current TikZ versions are submission-ready and read clean.
 
+### Iteration 6 — Evaluate **PaperBanana** as a figure-generation upgrade (research task)
+
+Repo: https://github.com/llmsresearch/paperbanana
+
+**What it is:** a multi-agent Python pipeline (Python 3.10+, OpenAI / Gemini APIs) that generates publication-quality academic diagrams and statistical plots from text descriptions. Has a Gradio Studio UI and an **MCP server** for IDE integration. Uses 7 specialised agents (input optimisation → diagram routing → image generation → review) with 13 curated NeurIPS-style reference examples for the retrieval-style aesthetics agent.
+
+**Why it's interesting for our thesis:** the figures Osman is most likely to flag as "needs more polish" are the **conceptual diagrams** (Fig 2.1 RAG architecture, the planned Fig 2.1 companion showing the QE-layer position, possibly the redesigned Fig 3.8 CSQE). These are exactly the figure class PaperBanana targets — high-concept, illustrative, where TikZ produces functional-but-plain output and a stylised render would feel more "designed."
+
+**Risks / unknowns to assess in the evaluation:**
+- **API cost** — needs GPT-5.2 or Gemini 2.0-flash; cost per generated figure unknown.
+- **Consistency** — can it produce a colour-palette-matched set of conceptual figures, or does each run drift visually?
+- **Reproducibility** — published thesis figures should be reproducible from a committed source. A LLM-generated PNG is harder to defend than a TikZ source. Mitigation: keep TikZ sources as fallback; publish the prompt + seed used for any AI-generated final.
+- **MCP integration** — if it Just Works inside Claude Code, the iteration loop becomes fast. Otherwise it's a separate Gradio session.
+
+**Proposed evaluation (~1 hour total):**
+1. Install PaperBanana locally (or in a Colab notebook); confirm it runs with a free Gemini key.
+2. Generate one Fig 2.1 RAG-architecture variant. Compare side-by-side with our current TikZ version.
+3. Generate one redesign attempt for Fig 3.8 CSQE pipeline. Compare.
+4. **Go / no-go criteria:**
+   - Visual quality clearly above TikZ on at least one of the two? Continue.
+   - Costs > $5 / generation OR each run produces wildly different style? Stop.
+5. If go: identify the 3–4 highest-return conceptual figures, generate finals, commit alongside TikZ sources as `*_aigen.png` with a note documenting prompt + model + seed.
+
+**Owner:** Mohammed when there's a spare evaluation slot; not on the critical path. Treat as a Sprint after the supervisor meeting unblocks Ch.1 / Ch.2 rewrites.
+
 ---
 
 ## Pending tasks across the whole thesis (not just figures)
