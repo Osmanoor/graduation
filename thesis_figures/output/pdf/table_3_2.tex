@@ -1,14 +1,14 @@
 \begin{tabular}{lllll}
 \toprule
-model & temperature & top_p & max_new_tokens & special \\
+Model & Temp. & Top-p & Max tokens & Special \\
 \midrule
-SILMA Kashif-2B & 0.1000 & 0.9000 & 128 & temp 0.1 chosen empirically over 0.7 (+2.5%) \\
+SILMA Kashif-2B & 0.1000 & 0.9000 & 128 & temp 0.1 chosen empirically over 0.7 (+2.5\%) \\
 Qwen 2.5 3B & 0.7000 & 0.9000 & 128 & original Query2Doc default \\
 Falcon-H1-3B & 0.1000 & 0.9000 & 128 & model-recommended (>0.1 drops performance) \\
-Qwen3-4B & 0.7000 & 0.9000 & 128 & enable_thinking=False; do_sample=True (greedy gives infinite repetitions) \\
+Qwen3-4B & 0.7000 & 0.9000 & 128 & enable\_thinking=False; do\_sample=True (greedy gives infinite repetitions) \\
 Gemma 3 4B & 0.1000 & 0.9000 & 128 & -- \\
 Qwen 2.5-7B & 0.1000 & 0.9000 & 128 & -- \\
-Jais-2-8B & 0.7000 & 0.9000 & 128 & token_type_ids not passed \\
+Jais-2-8B & 0.7000 & 0.9000 & 128 & token\_type\_ids not passed \\
 Qwen3-8B & 0.1000 & 0.9000 & 128 & thinking tags stripped at decode time \\
 Aya Expanse 8B & 0.1000 & 0.9000 & 128 & -- \\
 \bottomrule
