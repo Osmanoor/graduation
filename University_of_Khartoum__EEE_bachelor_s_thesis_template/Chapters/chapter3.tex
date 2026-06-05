@@ -47,14 +47,10 @@ Additionally, Recall@100 was computed to assess overall retrieval coverage. All 
 
 The experimental pipeline follows a two-phase architecture, as illustrated in Figure~\ref{fig:pipeline_overview}. In the first phase (query enhancement), each query from the MIRACL development set is processed by a query enhancement module, which may leave the query unchanged (baseline) or augment it using an LLM-generated pseudo-document. In the second phase (retrieval and evaluation), the enhanced query is passed to a retrieval system, and the top-100 results are evaluated against the MIRACL relevance judgements.
 
-% TODO: Add actual figure
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{2em}
-    \textbf{[Figure placeholder: Experimental Pipeline Flowchart]}\\[0.5em]
-    \small User Query $\rightarrow$ Query Enhancement Module $\rightarrow$ Enhanced Query $\rightarrow$ Retriever (Dense / BM25) $\rightarrow$ Top-100 Results $\rightarrow$ Evaluation Metrics
-    \vspace{2em}}}
-    \caption{Overview of the experimental pipeline. The query enhancement module is the variable component across experiments; the retrieval and evaluation components remain fixed.}
+    \includegraphics[width=0.95\textwidth]{fig_3_1_pipeline.pdf}
+    \caption[Experimental pipeline overview]{Overview of the experimental pipeline. A user query passes through the query enhancement layer; BM25S and mDPR retrieve independently; their ranked lists are fused (CC or RRF) and the top-$k$ passages are scored against the MIRACL Arabic dev qrels. The query enhancement module is the variable component across experiments; the retrieval and evaluation components remain fixed.}
     \label{fig:pipeline_overview}
 \end{figure}
 
@@ -72,7 +68,14 @@ Two retrieval baselines were established to provide reference performance levels
 
 The dense retrieval baseline employed Multilingual Dense Passage Retrieval (mDPR), described in Section~\ref{sec:mdpr}. The mDPR encoder (\texttt{castorini/mdpr-tied-pft-msmarco}) was loaded on GPU, and queries were encoded in batches of 64. The pre-built FAISS index for MIRACL Arabic (5.47\,GB, 768-dimensional embeddings) was accessed via Pyserini. For each query, the top-100 passages were retrieved using cosine similarity.
 
-mDPR was pre-trained on MS~MARCO (English) and was \emph{not} fine-tuned on the MIRACL Arabic corpus, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice mirrors a realistic deployment scenario in which an off-the-shelf multilingual retriever is improved through query-side interventions rather than corpus-specific fine-tuning, and ensures that observed improvements reflect query enhancement rather than retriever memorisation of evaluation queries.
+mDPR was pre-trained on MS~MARCO (English) and was \emph{not} fine-tuned on the MIRACL Arabic corpus, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice mirrors a realistic deployment scenario in which an off-the-shelf multilingual retriever is improved through query-side interventions rather than corpus-specific fine-tuning, and ensures that observed improvements reflect query enhancement rather than retriever memorisation of evaluation queries. Figure~\ref{fig:mdpr_encoding} illustrates the mDPR query-encoding pipeline.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{fig_3_4_mdpr.pdf}
+  \caption[mDPR encoding flow]{Dense retrieval pipeline using multilingual DPR. Queries are encoded in batches on a single A100 GPU under FP16; the resulting 768-dimensional vectors are searched against a pre-built FAISS index of the corpus.}
+  \label{fig:mdpr_encoding}
+\end{figure}
 
 \subsection{Sparse Retrieval Baseline (BM25S)}
 \label{sec:meth_bm25_baseline}
@@ -87,7 +90,14 @@ The BM25S index was built from the MIRACL Arabic corpus with the following confi
     \item \textbf{Index storage:} Google Drive ($\sim$0.5\,GB), loaded via symbolic links in Colab.
 \end{itemize}
 
-This configuration achieved 96\% of the official MIRACL Pyserini baseline performance, with the 4\% difference deemed acceptable given the benefits of a pure-Python pipeline that integrates directly with the query enhancement modules.
+This configuration achieved 96\% of the official MIRACL Pyserini baseline performance, with the 4\% difference deemed acceptable given the benefits of a pure-Python pipeline that integrates directly with the query enhancement modules. Figure~\ref{fig:bm25s_indexing} summarises the BM25S indexing pipeline.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_3_3_bm25s.pdf}
+  \caption[BM25S indexing flow]{BM25S indexing pipeline applied to the MIRACL Arabic corpus. Passages are tokenised with PyStemmer, stopword-removed using 245 Arabic stopwords, then indexed under BM25S with $k_1 = 0.9$ and $b = 0.4$.}
+  \label{fig:bm25s_indexing}
+\end{figure}
 
 \subsection{Baseline Comparison Rationale}
 \label{sec:meth_baseline_rationale}
@@ -153,7 +163,14 @@ Based on the error analysis findings (presented in Section~\ref{sec:res_error}),
 
 Query2Doc, introduced by Wang et al. \cite{wang_2023_query2doc}, uses an LLM to generate a pseudo-document---a short passage that attempts to answer the query. This pseudo-document is then concatenated with the original query to form an enhanced query. The rationale is that the pseudo-document introduces additional vocabulary, context, and semantic information that bridges the gap between the query and relevant passages.
 
-As described in Section~\ref{sec:qe_techniques}, Query2Doc falls within the category of LLM-based generative query enhancement techniques. It differs from Hypothetical Document Embeddings (HyDE) \cite{gao_2022_precise} in a critical way: while HyDE uses the generated document \emph{alone} as the retrieval query, Query2Doc \emph{concatenates} the generated document with the original query, preserving the original query terms.
+As described in Section~\ref{sec:qe_techniques}, Query2Doc falls within the category of LLM-based generative query enhancement techniques. It differs from Hypothetical Document Embeddings (HyDE) \cite{gao_2022_precise} in a critical way: while HyDE uses the generated document \emph{alone} as the retrieval query, Query2Doc \emph{concatenates} the generated document with the original query, preserving the original query terms. The Query2Doc generation pipeline used in this thesis is illustrated in Figure~\ref{fig:query2doc}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_3_5_query2doc.pdf}
+  \caption[Query2Doc generation]{Query2Doc generation pipeline: the original query is wrapped in a fixed prompt template; an open-source LLM generates a short pseudo-document; the pseudo-document is concatenated with the query before being passed to the retriever.}
+  \label{fig:query2doc}
+\end{figure}
 
 \subsection{Modifications from the Original Paper}
 \label{sec:meth_q2d_modifications}
@@ -382,7 +399,14 @@ RRF (Equation~\ref{eq:rrf_ch2}) combines ranked lists by summing inverse rank sc
 CC (Equation~\ref{eq:hybrid_cc_ch2}) computes a weighted sum of normalised retriever scores, where $\alpha$ controls the relative contribution of the dense retriever. Before combination, the scores from each retriever were min-max normalised to $[0, 1]$ on a per-query basis to account for the different score scales of BM25 and mDPR. The weight $\alpha$ was swept over $\{0.1, 0.2, \ldots, 0.9\}$.
 
 \paragraph{Setup.}
-Both BM25S and mDPR retrieved the top-100 candidates independently using the original (unenhanced) queries. Fusion and re-ranking were performed in Python without additional GPU inference. The resulting hybrid baseline establishes the performance ceiling that all subsequent query enhancement methods must surpass.
+Both BM25S and mDPR retrieved the top-100 candidates independently using the original (unenhanced) queries. Fusion and re-ranking were performed in Python without additional GPU inference. The resulting hybrid baseline establishes the performance ceiling that all subsequent query enhancement methods must surpass. The two fusion methods are illustrated side by side in Figure~\ref{fig:hybrid_fusion}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_3_7_hybrid.pdf}
+  \caption[Hybrid fusion: CC and RRF]{Two retriever-fusion methods evaluated in this thesis. Convex Combination (left) computes a weighted sum of normalised retrieval scores; Reciprocal Rank Fusion (right) sums the reciprocal of each retriever's rank for every document.}
+  \label{fig:hybrid_fusion}
+\end{figure}
 
 %======================================================================
 \section{Corpus-Steered Query Expansion (CSQE)}
@@ -410,7 +434,14 @@ The CSQE pipeline distinguishes itself from standard (blind) Query2Doc through a
 
 \noindent where $c_i$ denotes corpus-grounded expansion samples, $b_i$ denotes blind expansion samples, $\alpha$ is the query repetition factor (Equation~\ref{eq:query_repetition}), and each expansion sample appears exactly once ($k=1$ in MuGI notation).
 
-The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU.
+The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU. Figure~\ref{fig:csqe_pipeline} illustrates the three-stage CSQE pipeline alongside a worked example.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_3_8_csqe.pdf}
+  \caption[CSQE pipeline]{Corpus-Steered Query Expansion (CSQE) pipeline. Stage 1: BM25 retrieves a first-pass top-$k_1$ context. Stage 2: corpus context plus the original query are fed to the Aya LLM, which generates a corpus-grounded pseudo-document. Stage 3: the query (repeated $\alpha$ times) is concatenated with the pseudo-document and fed to a BM25 second pass.}
+  \label{fig:csqe_pipeline}
+\end{figure}
 
 \paragraph{Rationale for Combining Corpus and Blind Samples.}
 Corpus-grounded samples provide attested Arabic vocabulary anchored to the actual Wikipedia passages retrieved in the first pass. Blind samples provide diverse answer-space vocabulary unconstrained by the corpus. The two sources are hypothesised to be complementary: corpus samples prevent hallucination of incorrect entities, while blind samples expand vocabulary coverage beyond the retrieved passages. This hypothesis is validated through the ablation study presented in Section~\ref{sec:res_csqe_ablation}.
@@ -439,7 +470,14 @@ The CSQE-expanded query ($q_{\text{CSQE}}$) is substantially longer than the ori
     \item \textbf{Both-expanded:} Both BM25 and Dense receive the CSQE-expanded query.
 \end{itemize}
 
-For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \ldots, 0.9\}$) were evaluated. This design isolates the effect of retriever-specific query representation and determines whether asymmetric expansion outperforms symmetric application.
+For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \ldots, 0.9\}$) were evaluated. This design isolates the effect of retriever-specific query representation and determines whether asymmetric expansion outperforms symmetric application. The best-performing configuration, identified empirically in Chapter~4, is illustrated in Figure~\ref{fig:best_system}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_3_9_best_system.pdf}
+  \caption[Best system architecture]{Architecture of the thesis's best-performing system. CSQE-expanded queries are fed to BM25 while the original short queries are fed to mDPR; the two ranked lists are fused with Reciprocal Rank Fusion ($k=20$), yielding the headline nDCG@10 of 0.714.}
+  \label{fig:best_system}
+\end{figure}
 
 %======================================================================
 \section{Per-Query Error Analysis}

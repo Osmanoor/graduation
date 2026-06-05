@@ -42,7 +42,14 @@ The standard RAG architecture consists of two primary components:
 
 The RAG pipeline operates sequentially: (1) the user submits a query $q$; (2) the retriever identifies the top-$k$ relevant passages from the knowledge base; (3) the generator produces an answer conditioned on the query and retrieved passages; and (4) the system returns the generated answer, optionally with source citations. This architecture effectively separates knowledge storage (in the external corpus) from language generation (in the LLM), allowing the knowledge base to be updated independently without retraining the model.
 
-The quality of the final generated answer is fundamentally bounded by the quality of the retrieved passages. If the retriever fails to surface relevant documents, the generator cannot compensate for this deficiency regardless of its capabilities. This \textit{retrieval bottleneck} motivates the investigation of techniques to improve retrieval effectiveness, which is the central focus of this thesis.
+The quality of the final generated answer is fundamentally bounded by the quality of the retrieved passages. If the retriever fails to surface relevant documents, the generator cannot compensate for this deficiency regardless of its capabilities. This \textit{retrieval bottleneck} motivates the investigation of techniques to improve retrieval effectiveness, which is the central focus of this thesis. Figure~\ref{fig:rag_arch} illustrates the architecture of the standard RAG framework described above.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{fig_2_1_rag_arch.pdf}
+  \caption[RAG system architecture]{High-level architecture of a Retrieval-Augmented Generation (RAG) system. A user query is sent to a retriever that consults the corpus and returns the top-$k$ passages, which are passed alongside the query to an LLM to produce a context-augmented answer.}
+  \label{fig:rag_arch}
+\end{figure}
 
 \subsection{Information Retrieval Methods}
 \label{sec:ir_methods}
@@ -99,7 +106,15 @@ Query enhancement refers to a family of techniques that modify the user's query 
 
 \textbf{Query Rewriting} transforms the original query into a more effective form without necessarily adding new terms. The Rewrite-Retrieve-Read framework \cite{ma_2023_query} employs a trainable language model to reformulate queries before retrieval, optimizing the rewriter using reinforcement learning signals from the downstream reader model.
 
-These query enhancement techniques operate as modular layers that can be added to existing RAG systems without modifying the retriever index or the generator, making them particularly attractive for practical deployment.
+These query enhancement techniques operate as modular layers that can be added to existing RAG systems without modifying the retriever index or the generator, making them particularly attractive for practical deployment. Table~\ref{tab:reviewed_qe} summarises the query-enhancement literature reviewed for this thesis, organised by method family.
+
+\begin{table}[H]
+  \centering
+  \caption{Query-enhancement papers reviewed for this thesis, with method family, evaluation dataset, and headline result.}
+  \label{tab:reviewed_qe}
+  \scriptsize
+  \input{../thesis_figures/output/pdf/table_2_1.tex}
+\end{table}
 
 \subsection{Arabic Language Processing Challenges}
 \label{sec:arabic_challenges}
@@ -211,7 +226,15 @@ Mean Reciprocal Rank measures the average of the reciprocal ranks of the first r
 \label{sec:models_used}
 %======================================================================
 
-This section describes all language models employed in the experimental work of this thesis. The models were selected based on three primary criteria: (1) strong Arabic language support, either through specialized Arabic training or robust multilingual coverage; (2) compatibility with consumer-grade GPU hardware, specifically the NVIDIA T4 (15\,GB VRAM) available through Google Colab and the NVIDIA A100 (40\,GB VRAM); and (3) open-source availability with permissive licensing to ensure reproducibility \cite{song_2024_a}. Models are organized into Arabic-specialized, multilingual, and experimental categories. Additionally, the retrieval models used for passage ranking are described.
+This section describes all language models employed in the experimental work of this thesis. The models were selected based on three primary criteria: (1) strong Arabic language support, either through specialized Arabic training or robust multilingual coverage; (2) compatibility with consumer-grade GPU hardware, specifically the NVIDIA T4 (15\,GB VRAM) available through Google Colab and the NVIDIA A100 (40\,GB VRAM); and (3) open-source availability with permissive licensing to ensure reproducibility \cite{song_2024_a}. Models are organized into Arabic-specialized, multilingual, and experimental categories. Table~\ref{tab:models_used} summarises the eleven LLMs evaluated; the remainder of this section describes each in detail.
+
+\begin{table}[H]
+  \centering
+  \caption{Open-source LLMs evaluated for Arabic query enhancement in this thesis, ordered by parameter count.}
+  \label{tab:models_used}
+  \footnotesize
+  \input{../thesis_figures/output/pdf/table_2_2.tex}
+\end{table}
 
 \subsection{Arabic-Specialized Models}
 \label{sec:arabic_models}
