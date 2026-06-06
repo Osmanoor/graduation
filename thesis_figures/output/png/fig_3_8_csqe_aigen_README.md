@@ -31,7 +31,7 @@ Set this before calling `paperbanana.core.config.Settings()` — the field uses 
       "type": "stdio",
       "command": "uvx",
       "args": ["--from", "paperbanana[mcp]", "paperbanana-mcp"],
-      "env": { "GOOGLE_API_KEY": "<your-key>" }
+      "env": { "GOOGLE_API_KEY": "YOUR_KEY_HERE" }
     }
   }
 }

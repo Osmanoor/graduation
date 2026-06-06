@@ -5,7 +5,11 @@ import shutil
 import sys
 from pathlib import Path
 
-os.environ.setdefault("GOOGLE_API_KEY", "AIzaSyBEleYdOfIkr6aJ_Pjlxaxkz1GOkzY2NJE")
+# Set GOOGLE_API_KEY in your environment before running, e.g.:
+#   export GOOGLE_API_KEY=<your-key>   (Linux/macOS)
+#   $env:GOOGLE_API_KEY="<your-key>"   (PowerShell)
+if not os.environ.get("GOOGLE_API_KEY"):
+    raise EnvironmentError("GOOGLE_API_KEY env var not set")
 
 from paperbanana import PaperBananaPipeline, GenerationInput, DiagramType
 from paperbanana.core.config import Settings
