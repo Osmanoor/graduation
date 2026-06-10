@@ -1,41 +1,102 @@
-% Fig 3.8 — CSQE (Corpus-Steered Query2Doc) pipeline
+% Fig 3.8 — CSQE pipeline with worked-example panels per stage
 \documentclass[border=4pt]{standalone}
+\usepackage{amsmath}
 \usepackage{tikz}
 \input{_style.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=10mm and 14mm]
-  \node[thQuery] (q) {\thIconUser~User query};
+\begin{tikzpicture}[
+    node distance=8mm and 16mm,
+    % Larger semantic boxes for this figure
+    stageBox/.style={thBase, minimum width=55mm, minimum height=10mm, align=center, font=\small},
+    stageLLM/.style={stageBox, fill=thLLMF, draw=thLLMS},
+    stageRet/.style={stageBox, fill=thRetF, draw=thRetS},
+    stageFus/.style={stageBox, fill=thFusionF, draw=thFusionS},
+    stageOut/.style={stageBox, fill=thOutF, draw=thOutS},
+    % Worked-example panel
+    exBox/.style={rectangle, draw=thDataS, dashed, rounded corners=2pt,
+                  minimum width=68mm, minimum height=18mm,
+                  align=left, fill=thDataF!50, font=\footnotesize,
+                  text width=64mm, inner sep=4pt},
+    stageLabel/.style={font=\bfseries\footnotesize, color=thHiS},
+    % Big down-arrows between stages
+    bigArrow/.style={-{Stealth[length=3mm, width=3mm]}, line width=1pt, draw=thHiS}
+]
 
-  % Stage 1
-  \node[thRet, right=of q] (bm1) {\thIconCog~BM25\\first-pass};
-  \node[thData, right=of bm1] (k5) {Top-$k_1$\\($k_1{=}5$)};
+  % ═══════════════════════════════════════════════════════════════════
+  % STAGE 1 — first-pass grounding
+  % ═══════════════════════════════════════════════════════════════════
+  \node[stageLabel] (s1lab) at (-30mm, 4mm) {Stage 1 — First-pass grounding};
 
-  % Stage 2
-  \node[thFusion, below=of bm1] (extract) {Extract corpus\\context};
-  \node[thLLM, right=of extract] (gen) {\thIconLLM~Aya LLM\\generate};
-  \node[thData, right=of gen] (pdoc) {\thIconOut~Corpus-grounded\\pseudo-doc};
+  % Pipeline column (left)
+  \node[thQuery, minimum width=55mm, below=2mm of s1lab.west, anchor=north west] (q1)
+    {\thIconUser~User query $q$};
+  \node[stageRet, below=of q1] (bm1) {\thIconCog~BM25 first-pass};
+  \node[thData, minimum width=55mm, below=of bm1] (top5)
+    {Top-$k_1{=}5$ grounding passages\\$D_1, D_2, \ldots, D_5$};
 
-  % Stage 3
-  \node[thFusion, below=of extract] (concat) {Concat: $q^{\alpha} \oplus$ pdoc};
-  \node[thRet, right=of concat] (bm2) {\thIconCog~BM25\\second-pass};
-  \node[thOut, right=of bm2] (final) {\thIconStar~Final top-100};
+  \draw[thArrow] (q1) -- (bm1);
+  \draw[thArrow] (bm1) -- (top5);
 
-  \draw[thArrow] (q) -- (bm1);
-  \draw[thArrow] (bm1) -- (k5);
-  \draw[thArrow] (k5.south) |- ($(extract.east) + (5mm,2mm)$);
-  \draw[thArrow] (q.south) |- (extract.west);
-  \draw[thArrow] (extract) -- (gen);
-  \draw[thArrow] (gen) -- (pdoc);
-  \draw[thArrow] (pdoc.south) |- (concat.east);
-  \draw[thArrow] (q.south) |- (concat.west);
+  % Example panel (right)
+  \node[exBox, right=of bm1] (ex1)
+    {\textbf{Example.}\\
+     $q = $ ``what are the five nouns in Arabic grammar?''\\
+     $\Rightarrow D_1, \ldots, D_5$: Wikipedia passages on Arabic grammar};
+
+  % ═══════════════════════════════════════════════════════════════════
+  % Big arrow down between stages
+  \draw[bigArrow] (top5.south) -- ++(0, -6mm) -- ++(0, 0mm);
+
+  % ═══════════════════════════════════════════════════════════════════
+  % STAGE 2 — LLM expansion grounded in retrieved context
+  % ═══════════════════════════════════════════════════════════════════
+  \node[stageLabel, below=14mm of top5.west, anchor=north west, xshift=2mm] (s2lab)
+    {Stage 2 — Corpus-grounded LLM expansion};
+
+  \node[stageFus, below=2mm of s2lab.west, anchor=north west] (combine)
+    {Combine: $q$ + $D_1\ldots D_5$};
+  \node[stageLLM, below=of combine] (llm)
+    {\thIconLLM~Aya 8B LLM};
+  \node[thData, minimum width=55mm, below=of llm] (pdoc)
+    {\thIconOut~Corpus-grounded\\pseudo-document $\hat{d}$};
+
+  \draw[thArrow] (combine) -- (llm);
+  \draw[thArrow] (llm) -- (pdoc);
+
+  % Example panel (right)
+  \node[exBox, right=of llm] (ex2)
+    {\textbf{Example.} Prompt: ``Given the query and passages, write a passage
+     that answers the query in Arabic.''\\
+     $\Rightarrow \hat{d} = $ ``The five nouns in Arabic are
+     {\fontfamily{lmr}\selectfont \(\bar{a}\)b\(\bar{u}\), \(\bar{a}\)kh\(\bar{u}\), \(h\)am\(\bar{u}\), \(f\bar{u}\), \(dh\bar{u}\)} (transliterated)\ldots''};
+
+  % ═══════════════════════════════════════════════════════════════════
+  % Big arrow down between stages
+  \draw[bigArrow] (pdoc.south) -- ++(0, -6mm) -- ++(0, 0mm);
+
+  % ═══════════════════════════════════════════════════════════════════
+  % STAGE 3 — second-pass retrieval with expanded query
+  % ═══════════════════════════════════════════════════════════════════
+  \node[stageLabel, below=14mm of pdoc.west, anchor=north west, xshift=2mm] (s3lab)
+    {Stage 3 — Second-pass retrieval};
+
+  \node[stageFus, below=2mm of s3lab.west, anchor=north west] (concat)
+    {Concat: $q^{\alpha} \oplus \hat{d}$ \quad ($\alpha{=}4$)};
+  \node[stageRet, below=of concat] (bm2)
+    {\thIconCog~BM25 second-pass};
+  \node[stageOut, below=of bm2] (final)
+    {\thIconStar~Final top-100 ranking};
+
   \draw[thArrow] (concat) -- (bm2);
   \draw[thArrow] (bm2) -- (final);
 
-  \begin{scope}[on background layer]
-    \node[thStage, above=1mm of bm1.north east] {Stage 1};
-    \node[thStage, above=1mm of gen.north] {Stage 2};
-    \node[thStage, above=1mm of bm2.north] {Stage 3};
-  \end{scope}
+  % Example panel (right)
+  \node[exBox, right=of bm2] (ex3)
+    {\textbf{Example.} BM25 input becomes
+     $\underbrace{q\ q\ q\ q}_{\alpha=4\text{ repeats}} \oplus \hat{d}$,
+     where $\alpha$ counters term dilution.\\
+     $\Rightarrow$ Final nDCG@10 on this query: \textbf{1.000} (perfect)};
+
 \end{tikzpicture}
 \end{document}

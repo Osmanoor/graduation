@@ -1,15 +1,23 @@
-% Fig 3.3 — BM25S indexing flow
+% Fig 3.3 — BM25S indexing flow (compact horizontal layout)
 \documentclass[border=4pt]{standalone}
 \usepackage{tikz}
 \input{_style.tex}
 
 \begin{document}
-\begin{tikzpicture}[node distance=10mm]
-  \node[thData, minimum width=44mm] (corpus) {\thIconCorpus~MIRACL corpus\\2.1M passages};
-  \node[thBase, fill=thFusionF, draw=thFusionS, minimum width=44mm, below=of corpus] (tok) {Arabic tokenizer\\(PyStemmer)};
-  \node[thBase, fill=thFusionF, draw=thFusionS, minimum width=44mm, below=of tok] (stop) {Stopword removal\\(NLTK Arabic, 245 words)};
-  \node[thBase, fill=thFusionF, draw=thFusionS, minimum width=44mm, below=of stop] (idx) {BM25S index build\\$k_1{=}0.9,\ b{=}0.4$};
-  \node[thData, minimum width=44mm, below=of idx] (index) {\thIconCog~Inverted index\\(\textasciitilde 5\,GB)};
+\begin{tikzpicture}[
+    node distance=8mm,
+    smallBox/.style={thBase, minimum width=24mm, minimum height=12mm, font=\footnotesize, align=center, inner sep=3pt},
+    smallData/.style={thData, minimum width=24mm, minimum height=12mm, font=\footnotesize, align=center, aspect=0.4}
+]
+  \node[smallData] (corpus) {\thIconCorpus~MIRACL\\corpus\\2.1M passages};
+  \node[smallBox, fill=thFusionF, draw=thFusionS, right=of corpus] (tok)
+    {Arabic\\tokenizer\\(PyStemmer)};
+  \node[smallBox, fill=thFusionF, draw=thFusionS, right=of tok] (stop)
+    {Stopword\\removal\\(NLTK 245)};
+  \node[smallBox, fill=thFusionF, draw=thFusionS, right=of stop] (idx)
+    {BM25S\\index build\\$k_1{=}0.9,\ b{=}0.4$};
+  \node[smallData, right=of idx] (index)
+    {\thIconCog~Inverted\\index\\\textasciitilde 5\,GB};
 
   \draw[thArrow] (corpus) -- (tok);
   \draw[thArrow] (tok) -- (stop);
