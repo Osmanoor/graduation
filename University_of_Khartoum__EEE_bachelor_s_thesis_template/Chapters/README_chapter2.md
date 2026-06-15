@@ -42,14 +42,14 @@ ALL models described here so Chapter 3 only references by section number.
 | — 2.3.1.1 Falcon-H1-Arabic-3B | TII, hybrid Mamba2-Transformer, 3.15B params, 128K context, OALL ~62% | `research_decisions/falcon_h1_research.md` |
 | — 2.3.1.2 Jais-2-8B | MBZUAI/Inception/Cerebras, standard Transformer, 8.09B, custom 150K Arabic vocab, 2.6T training tokens | `research_decisions/jais_2_research.md` |
 | — 2.3.1.3 ALLaM-7B | SDAIA, LlamaForCausalLM, 7B, 5.2T training tokens (540B Arabic), ICLR 2025, preview status | `research_decisions/allam_7b_research.md` |
-| — 2.3.1.4 SILMA Kashif-2B | SILMA AI, 2B, Arabic RAG-specific, RAGQA 0.3575 | `research_decisions/llm_model_research.md` |
+| — 2.3.1.4 SILMA Kashif-2B | SILMA AI, 2B, Arabic RAG-specific, RAGQA 0.3478 | `research_decisions/llm_model_research.md` |
 | 2.3.2 Multilingual Models | | |
-| — 2.3.2.1 Qwen 2.5 3B | Alibaba, 3B, 29+ languages, 18T training tokens, Apache 2.0 | `research_decisions/llm_model_research.md` |
+| — 2.3.2.1 Qwen 2.5 3B | Alibaba, 3B, 29+ languages, 18T training tokens, Qwen Research License | `research_decisions/llm_model_research.md` |
 | — 2.3.2.2 Qwen 2.5 7B | Alibaba, 7B, same family, requires 4-bit on T4 | `research_decisions/llm_model_research.md`, `OSMAN_MODEL_COMPARISON_RESULTS.md` |
 | — 2.3.2.3 Qwen3-4B | Alibaba, 4B, 119 languages, 36T training tokens, thinking mode | `research_decisions/qwen3_4b_research.md` |
 | — 2.3.2.4 Qwen3-8B | Alibaba, 8B, same generation as Qwen3-4B | `OSMAN_MODEL_COMPARISON_RESULTS.md` |
 | — 2.3.2.5 Gemma 3 4B-IT | Google DeepMind, 4B, 140+ languages, 128K context | `research_decisions/llm_model_research.md`, `OSMAN_MODEL_COMPARISON_RESULTS.md` |
-| — 2.3.2.6 Aya Expanse 8B | Cohere Labs, 8B, 101 languages, Arabic explicitly optimized | `OSMAN_MODEL_COMPARISON_RESULTS.md` |
+| — 2.3.2.6 Aya Expanse 8B | Cohere Labs, 8B, 23 languages, Arabic explicitly optimized | `OSMAN_MODEL_COMPARISON_RESULTS.md` |
 | 2.3.3 Experimental Models | | |
 | — 2.3.3.1 GPT-OSS-20B | OpenAI, 20.9B total / 3.6B active, MoE (32 experts, top-4), English-dominant | `research_decisions/gpt_oss_20b_research.md` |
 | 2.3.4 Retrieval Models | | |

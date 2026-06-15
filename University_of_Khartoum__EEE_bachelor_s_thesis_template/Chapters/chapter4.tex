@@ -1,3 +1,4 @@
+% !TEX root = ../1-main.tex
 \chapter{Results and Discussion}
 \label{chap:results}
 
@@ -12,7 +13,7 @@ The two retrieval baselines described in Section~\ref{sec:meth_baseline} were ev
 
 \begin{table}[htbp]
     \centering
-    \caption{Baseline retrieval results on MIRACL Arabic dev set (2,896 queries). Bold values indicate the higher score for each metric.}
+    \caption{Baseline retrieval results on MIRACL Arabic dev set (2,896 queries). Bold marks the higher score between the two single-retriever baselines; the no-QE hybrid fusion result is included as the strongest non-enhancement reference (detailed in Section~\ref{sec:res_hybrid}).}
     \label{tab:baseline_results}
     \begin{tabular}{@{}lcccc@{}}
         \toprule
@@ -20,6 +21,8 @@ The two retrieval baselines described in Section~\ref{sec:meth_baseline} were ev
         \midrule
         mDPR (Dense) & \textbf{0.4993} & \textbf{0.6156} & 0.8407 & \textbf{0.5328} \\
         BM25S (Sparse) & 0.4621 & 0.5964 & \textbf{0.8577} & 0.4836 \\
+        \midrule
+        Hybrid RRF ($k=20$, no QE) & 0.6267 & 0.7597 & 0.9466 & 0.6517 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -31,7 +34,7 @@ The mDPR dense baseline reproduced the official MIRACL result exactly: this work
 
 The two baselines exhibited complementary performance characteristics. mDPR achieved higher NDCG@10 (+8.1\%) and MRR (+10.2\%), indicating superior ranking quality---relevant passages were placed higher in the result list. BM25S achieved higher Recall@100 (+2.0\%), indicating broader retrieval coverage---more relevant passages were retrieved overall, though ranked less effectively.
 
-This complementary behaviour aligns with the theoretical properties of dense and sparse retrieval discussed in Section~\ref{sec:ir_methods}: dense retrieval captures semantic similarity and ranks well, while sparse retrieval excels at broad lexical matching. This finding confirmed the decision to test query enhancement techniques on both retrievers independently. The per-query NDCG@10 distribution for both baselines is shown in Figure~\ref{fig:per_query_dist}.
+This complementary behaviour aligns with the theoretical properties of dense and sparse retrieval discussed in Section~\ref{sec:ir_methods}: dense retrieval captures semantic similarity and ranks well, while sparse retrieval excels at broad lexical matching. This finding confirmed the decision to test query enhancement techniques on both retrievers independently. It also motivates a third reference point: fusing the two retrievers without any query enhancement (Reciprocal Rank Fusion, $k=20$) already raises NDCG@10 to 0.6267 (Table~\ref{tab:baseline_results}). This no-QE hybrid is reported here, alongside the single-retriever baselines, as the strongest non-enhancement reference; it is analysed in detail in Section~\ref{sec:res_hybrid}, where it serves as the ceiling that all query enhancement methods must surpass. The per-query NDCG@10 distribution for both single-retriever baselines is shown in Figure~\ref{fig:per_query_dist}.
 
 \begin{figure}[H]
   \centering
@@ -60,14 +63,14 @@ Table~\ref{tab:error_segmentation} presents the performance segmentation of all 
         \toprule
         \textbf{Category} & \textbf{Count} & \textbf{\% of Total} & \textbf{Avg NDCG@10} \\
         \midrule
-        Failed (NDCG@10 $< 0.3$) & 1,130 & 39.0\% & 0.158 \\
-        Mediocre ($0.3 \leq$ NDCG@10 $< 0.7$) & 1,618 & 55.9\% & 0.472 \\
-        Successful (NDCG@10 $\geq 0.7$) & 148 & 5.1\% & 0.762 \\
+        Failed (NDCG@10 $< 0.3$) & 982 & 33.9\% & 0.053 \\
+        Mediocre ($0.3 \leq$ NDCG@10 $< 0.7$) & 962 & 33.2\% & 0.511 \\
+        Successful (NDCG@10 $\geq 0.7$) & 952 & 32.9\% & 0.948 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-A striking finding was that 39\% of queries (1,130 out of 2,896) were classified as failed, with 192 queries achieving zero recall in the top-10 (no relevant passages retrieved). Only 5.1\% of queries were classified as highly successful. This high failure rate established a clear opportunity for query enhancement to make a measurable impact. Figure~\ref{fig:failure_cliff} visualises this failure cliff on the cumulative distribution of per-query NDCG@10.
+A notable finding was that 34\% of queries (982 out of 2,896) were classified as failed, of which 736 retrieved no relevant passage at all within the top-10. The remaining queries split almost evenly between the mediocre (33\%) and successful (33\%) bands. While the substantial failed and mediocre fractions establish a clear opportunity for query enhancement, the analysis also shows that roughly a third of queries were already well served by the dense baseline. Figure~\ref{fig:failure_cliff} visualises this distribution on the cumulative per-query NDCG@10 curve.
 
 \begin{figure}[H]
   \centering
@@ -89,14 +92,14 @@ The analysis of retrieval performance by query length revealed a significant per
         \toprule
         \textbf{Length Bucket} & \textbf{Avg NDCG@10} & \textbf{Count} & \textbf{\% of Total} \\
         \midrule
-        Short (1--3 tokens) & 0.240 & 147 & 5.1\% \\
-        Medium (4--8 tokens) & 0.367 & 2,495 & 86.2\% \\
-        Long (9+ tokens) & 0.406 & 254 & 8.8\% \\
+        Short (1--3 words) & 0.345 & 147 & 5.1\% \\
+        Medium (4--8 words) & 0.511 & 2,495 & 86.2\% \\
+        Long (9+ words) & 0.476 & 254 & 8.8\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Short queries achieved only 59\% of the performance of long queries (NDCG@10 = 0.240 vs. 0.406), representing a 41\% performance gap. The Pearson correlation between query length and NDCG@10 was $r = 0.125$ ($p < 0.001$), indicating a weak but statistically significant positive relationship. This finding directly motivated the selection of query expansion as the first enhancement technique: by generating pseudo-documents that add vocabulary and context, the effective information content of short queries would be increased. The per-bucket distribution is shown in Figure~\ref{fig:length_dist}.
+Short queries achieved only 72\% of the performance of long queries (NDCG@10 = 0.345 vs. 0.476), a 28\% gap. Performance did not, however, rise monotonically with length: medium-length queries (0.511) outscored long queries, and the Pearson correlation between query length and NDCG@10 was negligible ($r \approx -0.01$), indicating no linear length--performance trend. The salient pattern is therefore not that longer queries are better, but that the \emph{shortest} queries specifically underperform---consistent with information poverty in queries of only one to three words. This motivated the selection of query expansion as the first enhancement technique: by generating pseudo-documents that add vocabulary and context, the effective information content of short queries is increased. The per-bucket distribution is shown in Figure~\ref{fig:length_dist}.
 
 \begin{figure}[H]
   \centering
@@ -118,15 +121,15 @@ The coverage analysis revealed an important distinction between retrieval and ra
         \toprule
         \textbf{Retrieval Depth} & \textbf{Coverage} \\
         \midrule
-        Top-10 & 93.4\% \\
-        Top-20 & 96.7\% \\
-        Top-50 & 98.8\% \\
-        Top-100 & 99.4\% \\
+        Top-10 & 74.6\% \\
+        Top-20 & 80.8\% \\
+        Top-50 & 86.9\% \\
+        Top-100 & 90.1\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Retrieval coverage was excellent at depth 100 (99.4\%), but dropped to 93.4\% at depth 10. This 6.0 percentage point gap indicated that the retriever was \emph{finding} relevant passages but not \emph{ranking} them highly enough. Query enhancement could address this by enriching the query representation to produce better-calibrated similarity scores. The full Recall@$k$ curve for both baselines is plotted in Figure~\ref{fig:recall_curve}.
+Even at depth 100, the dense retriever failed to surface any relevant passage for roughly 10\% of queries (coverage 90.1\%), and for a further $\sim$15\% it retrieved a relevant passage but ranked it outside the top-10 (coverage 74.6\% at depth 10). The first figure reflects a genuine \emph{recall ceiling}---relevant content the dense encoder never retrieves---while the second reflects a ranking problem. Query enhancement can address both: enriching the query representation improves ranking, while combining the dense retriever with a lexical retriever (hybrid fusion, Section~\ref{sec:res_hybrid}) directly raises the recall ceiling. The full Recall@$k$ curve for both baselines is plotted in Figure~\ref{fig:recall_curve}.
 
 \begin{figure}[H]
   \centering
@@ -263,9 +266,8 @@ Table~\ref{tab:dense_leaderboard} presents the complete dense retrieval results,
         8 & Falcon-H1 3B & 3B & 0.5359 & 0.6484 & 0.5681 & +7.3\% \\
         9 & SILMA 2B & 2B & 0.5177 & 0.6289 & 0.5508 & +3.7\% \\
         \midrule
-        \multicolumn{7}{@{}l}{\textit{Dropped models (see Section~\ref{sec:res_dropped}):}} \\
+        \multicolumn{7}{@{}l}{\textit{Dropped model (see Section~\ref{sec:res_dropped}):}} \\
         --- & ALLaM 7B & 7B & 0.2550 & 0.3335 & 0.2708 & $-$48.9\% \\
-        --- & GPT-OSS 20B & 20B & \multicolumn{4}{c}{Dropped before full evaluation} \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -317,12 +319,12 @@ Table~\ref{tab:bm25_leaderboard} presents the BM25 retrieval results.
 
 The BM25 results were markedly different from the dense results. Only three models improved over the BM25 baseline: Jais-2 8B (+10.8\%), Aya Expanse 8B (+9.2\%), and Qwen~2.5 7B (+1.3\%). The remaining six models degraded BM25 performance, with Gemma~3~4B showing the largest decline ($-$25.4\%).
 
-The fact that two models---Jais-2 and Aya---achieved substantial BM25 improvements \emph{without} implementing the query repetition strategy (Equation~\ref{eq:q2d_bm25}) is a notable finding. Jais-2's success with BM25 is hypothesised to stem from its Arabic-centric vocabulary of 150,000 tokens (described in Section~\ref{sec:jais2}), which produces pseudo-documents with vocabulary that closely matches the BM25 index terms. Similarly, Aya Expanse's purpose-built multilingual training (101 languages with explicit Arabic optimisation, Section~\ref{sec:aya}) appears to generate lexically precise expansions.
+The fact that two models---Jais-2 and Aya---achieved substantial BM25 improvements \emph{without} implementing the query repetition strategy (Equation~\ref{eq:q2d_bm25}) is a notable finding. Jais-2's success with BM25 is hypothesised to stem from its Arabic-centric vocabulary of 150,000 tokens (described in Section~\ref{sec:jais2}), which produces pseudo-documents with vocabulary that closely matches the BM25 index terms. Similarly, Aya Expanse's multilingual training (23 languages with explicit Arabic support, Section~\ref{sec:aya}) appears to generate lexically precise expansions.
 
 \subsection{Dropped Models Analysis}
 \label{sec:res_dropped}
 
-Two models were dropped from the final comparison due to severe performance issues. Following Dr.~Tahani's guidance that even negative results constitute valuable research contributions, both cases are analysed in detail.
+One model, ALLaM-7B, was dropped from the final comparison due to a severe performance issue. Following Dr.~Tahani's guidance that even negative results constitute valuable research contributions, the case is analysed in detail.
 
 \subsubsection{ALLaM-7B}
 \label{sec:res_allam}
@@ -330,19 +332,6 @@ Two models were dropped from the final comparison due to severe performance issu
 ALLaM-7B (described in Section~\ref{sec:allam}) produced a catastrophic $-$48.9\% decline in NDCG@10 (0.2550 vs. baseline 0.4993), performing \emph{worse} than using no query enhancement at all. Investigation revealed a sentencepiece tokeniser artefact: the Unicode character ``\texttt{\char"2581}'' (used internally to mark word boundaries) leaked into the decoded pseudo-documents. These special characters contaminated the query embeddings, causing the mDPR encoder to produce degraded representations.
 
 This failure was attributed to ALLaM's preview/alpha release status at the time of testing. The model had been accepted at ICLR~2025 \cite{bari2025allam} but was not yet in stable release, and the tokeniser behaviour had not been fully validated for generation tasks.
-
-\subsubsection{GPT-OSS-20B}
-\label{sec:res_gptoss}
-
-GPT-OSS-20B (described in Section~\ref{sec:gptoss}) was dropped during the sanity check phase due to three compounding issues:
-
-\begin{enumerate}
-    \item \textbf{Impractical inference speed:} The Mixture-of-Experts architecture (32 experts, top-4 routing) was approximately 70$\times$ slower than dense models of comparable active parameter count when run through 4-bit quantisation. A full run of 2,896 queries would have required an estimated 40+ hours.
-    \item \textbf{English reasoning leakage:} The Harmony chat format caused the model to produce English-language reasoning before Arabic output, requiring a forced-final-channel prefix to suppress. Even with this workaround, output quality was inconsistent.
-    \item \textbf{Factual hallucination:} In the 5-query sanity check, 3 out of 5 generated pseudo-documents contained severe factual errors despite producing 100\% Arabic output. Hallucinated content would introduce misleading vocabulary into the enhanced queries.
-\end{enumerate}
-
-These issues demonstrated that the model's English-dominant training data renders it unreliable for Arabic query enhancement, regardless of its large parameter count.
 
 %======================================================================
 \section{Key Findings and Analysis}
@@ -354,7 +343,7 @@ This section synthesises the results across all experiments to identify the key 
 \subsection{Model Size Correlates with Dense Retrieval Performance}
 \label{sec:res_finding_size}
 
-A clear positive correlation was observed between model parameter count and dense retrieval improvement. Figure~\ref{fig:size_vs_performance} illustrates this relationship.
+A positive association was observed between model parameter count and dense retrieval improvement, though it must be interpreted cautiously: across the full model set, parameter count is confounded with architecture, training-data volume, and tokeniser design, so the cross-model trend is only suggestive. A cleaner test comes from the Qwen family, whose four models share a common architecture and differ chiefly in scale and generation. Within this family, parameter count and dense NDCG@10 are strongly associated (Pearson $r = 0.94$; Spearman $\rho = 1.00$ across the 3B, 4B, 7B, and 8B models), supporting the size--quality relationship once architecture is held constant. Figure~\ref{fig:size_vs_performance} illustrates the broader relationship.
 
 \begin{figure}[H]
     \centering
@@ -397,9 +386,9 @@ At both parameter scales, the newer Qwen3 generation outperformed Qwen~2.5, desp
 \subsection{Arabic Specialisation vs. Multilingual Training}
 \label{sec:res_finding_arabic}
 
-An important finding was that Arabic-specialised models did not consistently outperform multilingual models. Falcon-H1-3B, despite holding the highest Arabic OALL benchmark score ($\sim$62\%) at the 3B scale, was outperformed on dense NDCG@10 by both Qwen~2.5~3B (a multilingual model with a lower Arabic benchmark score) and Qwen3-4B. Similarly, Jais-2-8B, while achieving the best BM25 results, was surpassed on dense retrieval by Aya~Expanse~8B, a model designed for 101 languages without Arabic-specific architecture.
+An important finding was that Arabic-specialised models did not consistently outperform multilingual models. Falcon-H1-3B, despite holding the highest Arabic OALL benchmark score ($\sim$62\%) at the 3B scale, was outperformed on dense NDCG@10 by both Qwen~2.5~3B (a multilingual model with a lower OALL score) and Qwen3-4B. Similarly, Jais-2-8B, while achieving the best BM25 results, was surpassed on dense retrieval by Aya~Expanse~8B, a model designed for 23 languages without Arabic-specific architecture.
 
-This suggests that \textbf{Arabic NLP benchmark scores do not directly predict query expansion quality}. The skills measured by Arabic benchmarks (reading comprehension, question answering, reasoning) differ from the ability to generate vocabulary-rich, lexically diverse pseudo-documents that improve retrieval. Training data volume and diversity appear to be more important factors for this specific task.
+This suggests that \textbf{a model's Arabic-capability score on the Open Arabic LLM Leaderboard (OALL) does not directly predict its query expansion quality}. Falcon-H1-3B holds the highest OALL score at its parameter scale, yet it is outperformed on retrieval by multilingual models with lower OALL scores. The skills measured by OALL (reading comprehension, question answering, reasoning) differ from the ability to generate vocabulary-rich, lexically diverse pseudo-documents that improve retrieval; training-data volume and diversity appear to be more important factors for this specific task.
 
 The notable exception is Jais-2's BM25 performance: its custom 150,000-token Arabic vocabulary (Section~\ref{sec:jais2}) produces expansions with term distributions that align closely with BM25 index terms, making it uniquely effective for sparse retrieval.
 
@@ -443,47 +432,6 @@ Across the ten models evaluated, the following performance profiles emerged:
 
     \item \textbf{Temperature 0.1} was found to be optimal for deterministic pseudo-document generation, yielding +2.5\% improvement over temperature 0.7 in controlled testing (Section~\ref{sec:meth_temperature}).
 \end{enumerate}
-
-\subsection{Summary of All Experiments}
-\label{sec:res_summary}
-
-Table~\ref{tab:full_summary} provides a consolidated view of all experiments conducted in this research.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and corpus-steered query expansion. Bold values indicate the best result for each metric across all experiments.}
-    \label{tab:full_summary}
-    \begin{tabular}{@{}llcccc@{}}
-        \toprule
-        \textbf{Model / Method} & \textbf{Retriever} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{MRR} & \textbf{Status} \\
-        \midrule
-        \multicolumn{6}{@{}l}{\textit{Baselines}} \\
-        None (baseline) & Dense & 0.4993 & 0.6156 & 0.5328 & Baseline \\
-        None (baseline) & BM25 & 0.4621 & 0.5964 & 0.4836 & Baseline \\
-        \midrule
-        \multicolumn{6}{@{}l}{\textit{Initial Query2Doc experiments}} \\
-        Qwen 2.5 3B & Dense & 0.5435 & 0.6608 & 0.5742 & OK \\
-        Qwen 2.5 3B & BM25 & 0.4090 & 0.5384 & 0.4342 & Degraded \\
-        Falcon-H1 3B & Dense & 0.5359 & 0.6484 & 0.5681 & OK \\
-        Jais-2 8B & Dense & 0.6018 & 0.7161 & 0.6356 & Good \\
-        Jais-2 8B & BM25 & 0.5122 & 0.6448 & 0.5397 & Best BM25 (n=1) \\
-        Qwen3-4B & Dense & 0.5691 & 0.6824 & 0.6015 & Good \\
-        ALLaM 7B & Dense & 0.2550 & 0.3335 & 0.2708 & Dropped \\
-        GPT-OSS 20B & --- & --- & --- & --- & Dropped \\
-        Aya 8B & Dense & 0.6164 & 0.7256 & 0.6493 & Best Dense (blind) \\
-        Aya 8B & BM25 & 0.5046 & 0.6284 & 0.5377 & Good \\
-        \midrule
-        \multicolumn{6}{@{}l}{\textit{Expanded experiments}} \\
-        Aya 8B ($\beta=2$) & BM25 & 0.5855 & 0.7128 & 0.6165 & Best BM25 (rep.) \\
-        Hybrid RRF $k=20$ & BM25+Dense & 0.6267 & 0.7597 & 0.6517 & Best no-QE hybrid \\
-        BM25+CSQE & BM25 & 0.6157 & 0.7447 & 0.6380 & Good \\
-        Dense+CSQE & Dense & 0.5915 & 0.7073 & 0.6225 & Good \\
-        \textbf{BM25-expanded RRF} & \textbf{BM25+Dense} & \textbf{0.7137} & \textbf{0.8363} & \textbf{0.7362} & \textbf{Best overall} \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-The experimental results demonstrate a progression from individual retriever baselines through blind query enhancement, hybrid fusion, and finally corpus-steered expansion combined with hybrid retrieval. The best system (BM25-expanded RRF: BM25+CSQE + Dense original query) achieved 0.7137 nDCG@10---a 54.5\% improvement over the BM25 baseline and a 13.9\% improvement over the no-QE hybrid system. The detailed results of each expanded experiment are presented in Sections~\ref{sec:res_repetition}--\ref{sec:res_error_csqe}.
 
 %======================================================================
 \section{BM25 Query Repetition Results}
@@ -732,7 +680,7 @@ Table~\ref{tab:csqe_hybrid_configs} presents the results for all three CSQE appl
     \end{tabular}
 \end{table}
 
-BM25-expanded was the winning configuration despite giving the Dense retriever the original short query rather than the CSQE expansion. When CSQE is applied to both retrievers (Both-expanded, 0.6936), the two ranked lists become less divergent from each other---both are now based on expanded queries grounded in the same first-pass documents---which lowers the complementarity that RRF fusion relies upon. BM25-expanded preserves this complementarity: the BM25 run is enriched by CSQE vocabulary while the Dense run retains its independent semantic signal, making the two lists more complementary for fusion. This finding illustrates a \textbf{retriever-specific query representation principle}: each retriever should receive the query format that maximises its divergence from the other retriever's ranked list.
+BM25-expanded was the winning configuration despite giving the Dense retriever the original short query rather than the CSQE expansion. When CSQE is applied to both retrievers (Both-expanded, 0.6936), the two ranked lists become less divergent from each other---both are now based on expanded queries grounded in the same first-pass documents---which lowers the complementarity that RRF fusion relies upon. BM25-expanded preserves this complementarity: the BM25 run is enriched by CSQE vocabulary while the Dense run retains its independent semantic signal, making the two lists more complementary for fusion. A second, reinforcing factor concerns the Dense encoder itself: mDPR was fine-tuned on MS~MARCO, whose queries are short web-search strings \cite{bajaj_2016_msmarco}, whereas a CSQE-expanded query is very long (mean $\approx$1{,}500 characters, against $\approx$30 for the original query). Feeding such a long, out-of-distribution input to the Dense encoder degrades its ranking quality, so withholding the expansion from the Dense side both preserves list divergence and avoids this length penalty, while the lexical BM25 retriever still benefits from the added vocabulary. This finding illustrates a \textbf{retriever-specific query representation principle}: each retriever should receive the query format that maximises its divergence from the other retriever's ranked list.
 
 Table~\ref{tab:config_a_ablation} presents the contribution of each CSQE component within BM25-expanded RRF.
 
@@ -842,7 +790,7 @@ Table~\ref{tab:error_distribution} presents the per-query win/loss distribution.
 
 \begin{table}[htbp]
     \centering
-    \caption{Per-query comparison of the CSQE+Hybrid system (Both-expanded RRF, 0.6936 nDCG@10) against the Aya Blind BM25 $n=1$ baseline (0.5046 nDCG@10) on 2,896 MIRACL Arabic dev queries.}
+    \caption{Per-query comparison of the CSQE+Hybrid system (BM25-expanded RRF) against the Aya blind BM25 $n=1$ baseline (0.5046 nDCG@10) on 2,896 MIRACL Arabic dev queries. The system's per-query-mean nDCG@10 is 0.6936; this is computed over individual queries and differs slightly from the corpus-level headline of 0.7137 reported in Table~\ref{tab:system_progression}, which is produced by the official pooled evaluation.}
     \label{tab:error_distribution}
     \begin{tabular}{@{}lcc@{}}
         \toprule
@@ -857,9 +805,9 @@ Table~\ref{tab:error_distribution} presents the per-query win/loss distribution.
     \end{tabular}
 \end{table}
 
-The CSQE+Hybrid system improved on 56.8\% of queries and regressed on 16.6\%, with a mean per-query delta of +0.1890 nDCG@10. The 26.6\% of ties were predominantly queries where both systems achieved either 0.0 (irretrievable) or 1.0 (perfectly retrieved).
+The CSQE+Hybrid system improved on 56.8\% of queries and regressed on 16.6\%, with a mean per-query delta of +0.1890 nDCG@10. The 26.6\% of ties were predominantly queries where both systems achieved either 0.0 (no relevant document retrieved by either) or 1.0 (perfectly retrieved).
 
-A total of 258 queries (8.9\%) were classified as failures (CSQE nDCG@10 $< 0.1$). Inspection revealed that 257 of these 258 queries were irretrievable regardless of the QE method employed---the relevant passage was absent from the Wikipedia corpus dump used for indexing. These represented a dataset-level ceiling, not a CSQE failure. The remaining case involved the LLM generating a meta-description rather than vocabulary-rich content, a known failure mode of generative query expansion.
+A total of 258 queries (8.9\%) were classified as failures (CSQE+Hybrid nDCG@10 $< 0.1$). A corpus-membership check over the full 2{,}061{,}414-document MIRACL Arabic index confirmed that \emph{every} one of these queries has at least one relevant passage present in the corpus: none are irretrievable, and there is no dataset-level ceiling or indexing gap. The failures are therefore genuine retrieval failures of two kinds. For 199 of the 258 queries the relevant passage is present but is missed by \emph{all} methods, including the BM25 baseline---intrinsically hard queries for both lexical and semantic retrieval. The remaining 58 queries are retrievable by BM25 alone (43 of them with BM25 nDCG@10 $\geq 0.3$) but are lost by the CSQE hybrid; these are genuine regressions in which expansion or fusion displaced a document that the bare query would otherwise have surfaced.
 
 \begin{figure}[H]
     \centering
@@ -868,14 +816,14 @@ A total of 258 queries (8.9\%) were classified as failures (CSQE nDCG@10 $< 0.1$
     \label{fig:csqe_scatter}
 \end{figure}
 
-\subsection{First-Pass Quality as Dominant Predictor}
+\subsection{First-Pass Quality as the Largest Modulator}
 \label{sec:res_firstpass}
 
 Table~\ref{tab:error_patterns} presents the performance split by BM25 first-pass retrieval quality.
 
 \begin{table}[htbp]
     \centering
-    \caption{System performance split by whether BM25 first-pass ($k=5$) retrieved a relevant document.}
+    \caption{System performance split by whether the BM25 first-pass retrieved a relevant document at rank~1 (top-1, qrel $\geq 1$).}
     \label{tab:error_patterns}
     \begin{tabular}{@{}lcccc@{}}
         \toprule
@@ -893,20 +841,20 @@ Table~\ref{tab:query_length_split} presents the performance decomposition by que
 
 \begin{table}[htbp]
     \centering
-    \caption{System performance decomposed by the number of tokens in the original MIRACL query.}
+    \caption{System performance decomposed by the number of words in the original MIRACL query, using the 1--3 / 4--8 / 9+ word buckets adopted throughout this thesis.}
     \label{tab:query_length_split}
-    \begin{tabular}{@{}lcccc@{}}
+    \begin{tabular}{@{}lccccc@{}}
         \toprule
-        \textbf{Query Length} & \textbf{$n$} & \textbf{Blind QE nDCG@10} & \textbf{CSQE+Hybrid nDCG@10} & $\Delta$ \\
+        \textbf{Query Length} & \textbf{$n$} & \textbf{Blind QE} & \textbf{CSQE+Hybrid} & $\Delta$ abs & $\Delta$ rel \\
         \midrule
-        Short ($<$5 words) & 865 & 0.4793 & 0.6783 & +0.1990 \\
-        Medium (5--9 words) & 1,900 & --- & --- & --- \\
-        Long ($\geq$10 words) & 131 & 0.6003 & 0.7056 & +0.1053 \\
+        Short (1--3 words) & 147 & 0.369 & 0.530 & +0.161 & +43.6\% \\
+        Medium (4--8 words) & 2,495 & 0.506 & 0.703 & +0.197 & +38.8\% \\
+        Long (9+ words) & 254 & 0.567 & 0.698 & +0.132 & +23.3\% \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-When first-pass retrieval succeeded (36.6\% of queries), CSQE+Hybrid achieved 0.8877 nDCG@10---near-ceiling retrieval. The first-pass quality gap (+0.3063 between the first-pass success and failure groups) was larger than the overall system advantage over blind QE (+0.1890), confirming that first-pass retrieval quality is the primary driver of CSQE effectiveness. Figure~\ref{fig:first_pass_split} visualises this split. Short queries ($<$5 words, $n=865$) gained most from CSQE (+0.1990), as they are the most underspecified and benefit from both vocabulary expansion and corpus grounding. Long queries ($\geq$10 words, $n=131$) still gained (+0.1053) but less, because their greater information content already mitigated the information-poverty problem that motivates query expansion. Figure~\ref{fig:length_gain} shows the per-bucket comparison.
+When first-pass retrieval succeeded (36.6\% of queries), CSQE+Hybrid achieved 0.8877 nDCG@10---near-ceiling retrieval. The first-pass quality gap (+0.3063 between the first-pass success and failure groups) was larger than the overall system advantage over blind QE (+0.1890), confirming that first-pass retrieval quality is the largest single modulator of CSQE effectiveness. Figure~\ref{fig:first_pass_split} visualises this split. The improvement holds across all query lengths (Table~\ref{tab:query_length_split}): short queries (1--3 words, $n=147$) gain the most \emph{proportionally} (+43.6\%), as they are the most underspecified and benefit from both vocabulary expansion and corpus grounding, while medium queries (4--8 words) gain the most in \emph{absolute} terms (+0.197). Long queries (9+ words, $n=254$) still gain (+0.132, +23.3\%) but least, because their greater information content already mitigates the information-poverty problem that motivates query expansion. Figure~\ref{fig:length_gain} shows the per-bucket comparison.
 
 \begin{figure}[H]
     \centering
@@ -931,18 +879,18 @@ All 1,061 big-win queries ($\Delta > 0.3$) shared a single pattern: CSQE nDCG@10
     \centering
     \caption{Representative big-win queries illustrating the corpus grounding effect. In all three cases, CSQE achieved nDCG@10 = 1.000 while the blind baseline achieved 0.000.}
     \label{tab:bigwin_examples}
-    \begin{tabular}{@{}p{3.5cm}p{3.5cm}p{3.5cm}c@{}}
+    \begin{tabular}{@{}p{3.4cm}p{3.4cm}p{3.4cm}c@{}}
         \toprule
-        \textbf{Query} & \textbf{Blind QE generates} & \textbf{CSQE grounds to} & \textbf{CSQE} \\
+        \textbf{Query (gloss)} & \textbf{Blind QE generates} & \textbf{CSQE grounds to} & \textbf{CSQE} \\
         \midrule
-        \<ما هو الرباط المنصوري؟> & A spinal surgery procedure & Mamluk-era building in Cairo & 1.000 \\
-        \<من هو مؤسس الفلسفة البراغماتية؟> & Hallucinated person & John Dewey article & 1.000 \\
-        \<من هو نيكولا بوالو؟> & A French businessman & 17th-century French poet & 1.000 \\
+        \<ما هو الرباط المنصوري؟> (``What is al-Ribat al-Mansuri?'') & A surgical ligature/suture used in operations & A Mamluk-era Sufi lodge (\emph{ribat}) endowed by Sultan al-Mansur Qalawun & 1.000 \\
+        \<ما هي الأسماء الخمسة؟> (``What are the Five Nouns?'') & A list of popular given names (Muhammad, Adam, Ibrahim, \ldots) & The Arabic grammatical category of the Five Nouns (\<أب>, \<أخ>, \<حم>, \<فو>, \<ذو>) & 1.000 \\
+        \<ما هو الفن الجزيري؟> (``What is Insular art?'') & Modern environmental / land art & Insular (Hiberno-Saxon) art of the post-Roman British Isles & 1.000 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-This pattern validated the corpus grounding hypothesis: for niche or ambiguous Arabic terms, blind QE confidently generated a common modern interpretation, while corpus grounding locked onto the actual Wikipedia entity. The impact on query expansion was direct: the corpus anchor provided the correct Arabic vocabulary (e.g., \<مملوكي>، \<قاهرة> rather than \<جراحة العمود الفقري>) that both BM25 and Dense scoring relied upon.
+This pattern validated the corpus grounding hypothesis: for niche or ambiguous Arabic terms, blind QE confidently generated a common modern interpretation, while corpus grounding locked onto the actual Wikipedia entity. The impact on query expansion was direct: the corpus anchor supplied the correct Arabic vocabulary (e.g.\ \<رباط>، \<مملوكي>، \<قلاوون> for the first example, rather than the surgical terms produced by blind generation) that both BM25 and Dense scoring relied upon. Notably, for all three of these examples the bare query alone---with no expansion at all---already retrieved the correct article; the blind pseudo-document therefore actively \emph{poisoned} a query the retriever had already solved, whereas the corpus-grounded expansion stayed on target and preserved the hit.
 
 \subsection{Regression Analysis}
 \label{sec:res_regressions}
@@ -988,7 +936,50 @@ Table~\ref{tab:regression_causes} presents the classification of the 367 regress
 Type~A regressions (52\%, 191 queries) occurred when BM25 already handled the query well (baseline nDCG@10 $\geq 0.3$) and the CSQE expansion introduced Arabic vocabulary from the corpus document that diluted the original query terms. This was the same term-dilution effect observed in Section~\ref{sec:res_term_dilution}, but in reverse: here the expansion itself (rather than the pseudo-document) reduced BM25 precision for queries that were already well handled.
 
 \paragraph{Type B: Poisoned First-Pass.}
-Type~B regressions (36\%, 131 queries) occurred when BM25 was sensitive to Arabic homonyms and short or ambiguous queries. A concrete example was the query ``\<ماهو التطرف؟>'' (``What is extremism?''): BM25 retrieved ``\<لهجة جنوبية>'' (a southern dialect article) because ``\<ماهو>'' matched a dialectal phrase rather than the intended interrogative ``\<ما هو>'' (``what is''). The LLM then generated corpus-grounded content about dialects, poisoning the expansion for the actual query intent.
+Type~B regressions (36\%, 131 queries) share a common mechanism: the query is short or ambiguous and its surface form collides with an Arabic homonym, personal name, or near-topic entity, so BM25's first pass retrieves the \emph{wrong} entity. CSQE then grounds its expansion on those off-topic documents and the final query misses---even when the model's generation is otherwise clean---whereas blind expansion, which ignores the first pass, often answers correctly. The mode spans three sub-flavours. In a \emph{tokenisation/dialect homonym} (e.g.\ ``\<ماهو التطرف؟>'', ``what is extremism?''), four of the five first-pass documents match the token ``\<ماهو>'' and surface a southern-dialect article, a song, a novel, and an Iranian village rather than the extremism article, because ``\<ماهو>'' collides with a dialectal phrase rather than the intended interrogative ``\<ما هو>''. In a \emph{personal-name homonym} (e.g.\ ``\<متى ولد نجيب محفوظ؟>''), the first pass retrieves a different ``\<نجيب باشا محفوظ>''---a physician, not the novelist. In a \emph{wrong-entity / near-topic collision} (e.g.\ ``\<من هو مصمم موقع ويكيبيديا؟>''), the first pass returns an article on Wikipedia's ban in Turkey, leading the expansion to ground on an unrelated entity. In each case it is the first-pass error, not the generation, that drives the regression.
 
 \paragraph{Implications.}
-These two failure modes suggested concrete future improvements: (1)~a first-pass quality gate that falls back to blind QE when the top-1 BM25 document has low lexical overlap with the query, which would address Type~B regressions; and (2)~asymmetric expansion weighting that applies lower weight for the expansion in the concatenated query when BM25 is already strong, which would address Type~A regressions.
+These two failure modes motivate two concrete design improvements: a \emph{first-pass quality gate} that falls back to blind expansion when the top-1 BM25 document overlaps poorly with the query (addressing Type~B), and \emph{asymmetric expansion weighting} that down-weights the expansion when BM25 is already strong (addressing Type~A). Both are developed as recommendations in Chapter~\ref{chap:conclusion}.
+
+%======================================================================
+\section{Summary of All Experiments}
+\label{sec:res_summary}
+%======================================================================
+
+Table~\ref{tab:full_summary} provides a consolidated view of all experiments conducted in this research, gathered here so that the full progression can be read at a glance after the individual results have been presented.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and corpus-steered query expansion. Bold values indicate the best result for each metric across all experiments.}
+    \label{tab:full_summary}
+    \begin{tabular}{@{}llcccc@{}}
+        \toprule
+        \textbf{Model / Method} & \textbf{Retriever} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{MRR} & \textbf{Status} \\
+        \midrule
+        \multicolumn{6}{@{}l}{\textit{Baselines}} \\
+        None (baseline) & Dense & 0.4993 & 0.6156 & 0.5328 & Baseline \\
+        None (baseline) & BM25 & 0.4621 & 0.5964 & 0.4836 & Baseline \\
+        None (baseline) & BM25+Dense (RRF) & 0.6267 & 0.7597 & 0.6517 & Best no-QE \\
+        \midrule
+        \multicolumn{6}{@{}l}{\textit{Initial Query2Doc experiments}} \\
+        Qwen 2.5 3B & Dense & 0.5435 & 0.6608 & 0.5742 & OK \\
+        Qwen 2.5 3B & BM25 & 0.4090 & 0.5384 & 0.4342 & Degraded \\
+        Falcon-H1 3B & Dense & 0.5359 & 0.6484 & 0.5681 & OK \\
+        Jais-2 8B & Dense & 0.6018 & 0.7161 & 0.6356 & Good \\
+        Jais-2 8B & BM25 & 0.5122 & 0.6448 & 0.5397 & Best BM25 (n=1) \\
+        Qwen3-4B & Dense & 0.5691 & 0.6824 & 0.6015 & Good \\
+        ALLaM 7B & Dense & 0.2550 & 0.3335 & 0.2708 & Dropped \\
+        Aya 8B & Dense & 0.6164 & 0.7256 & 0.6493 & Best Dense (blind) \\
+        Aya 8B & BM25 & 0.5046 & 0.6284 & 0.5377 & Good \\
+        \midrule
+        \multicolumn{6}{@{}l}{\textit{Expanded experiments}} \\
+        Aya 8B ($\beta=2$) & BM25 & 0.5855 & 0.7128 & 0.6165 & Best BM25 (rep.) \\
+        Hybrid RRF $k=20$ & BM25+Dense & 0.6267 & 0.7597 & 0.6517 & Best no-QE hybrid \\
+        BM25+CSQE & BM25 & 0.6157 & 0.7447 & 0.6380 & Good \\
+        Dense+CSQE & Dense & 0.5915 & 0.7073 & 0.6225 & Good \\
+        \textbf{BM25-expanded RRF} & \textbf{BM25+Dense} & \textbf{0.7137} & \textbf{0.8363} & \textbf{0.7362} & \textbf{Best overall} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The experimental results demonstrate a progression from individual retriever baselines through blind query enhancement, hybrid fusion, and finally corpus-steered expansion combined with hybrid retrieval. The best system (BM25-expanded RRF: BM25+CSQE + Dense original query) achieved 0.7137 nDCG@10---a 54.5\% improvement over the BM25 baseline and a 13.9\% improvement over the no-QE hybrid system. The detailed results of each experiment were presented in Sections~\ref{sec:res_repetition}--\ref{sec:res_error_csqe} above.

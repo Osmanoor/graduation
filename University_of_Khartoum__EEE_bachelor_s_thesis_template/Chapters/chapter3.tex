@@ -1,3 +1,4 @@
+% !TEX root = ../1-main.tex
 \chapter{Methodology}
 \label{chap:methodology}
 
@@ -122,10 +123,12 @@ A quantitative analysis was performed over all 2,896 queries in the MIRACL Arabi
     \item \textbf{Successful:} NDCG@10 $\geq 0.7$
 \end{itemize}
 
+These three categories describe each query's \emph{absolute} retrieval quality in isolation. They should be distinguished from the \emph{pairwise} classification scheme introduced later for the corpus-steered query expansion analysis (Section~\ref{sec:meth_error_csqe}), which measures the \emph{change} in NDCG@10 between two systems rather than absolute success, together with the regression sub-typing built upon it. Each scheme answers a different question---an absolute success rating versus the magnitude and direction of a system-to-system change. The 0.3 and 0.7 cut-offs adopted here are pragmatic boundaries chosen for interpretability rather than derived from a formal statistical criterion.
+
 For each query, the following features were computed:
 
 \begin{enumerate}
-    \item \textbf{Query length} (in tokens), measured after whitespace tokenisation.
+    \item \textbf{Query length} (in words), measured after whitespace tokenisation.
     \item \textbf{Score gap} between the top-ranked passage and the second-ranked passage, as a proxy for retriever confidence.
     \item \textbf{First relevant document rank}, indicating how deep the retriever must search before finding a relevant passage.
     \item \textbf{Coverage at multiple cut-offs} (top-10, top-20, top-50, top-100), measuring the proportion of queries with at least one relevant passage at each depth.
@@ -139,9 +142,9 @@ The Pearson correlation coefficient was computed between query length and NDCG@1
 Queries were grouped into three length buckets to analyse the effect of query length on retrieval performance:
 
 \begin{itemize}
-    \item \textbf{Short:} 1--3 tokens (5.1\% of queries)
-    \item \textbf{Medium:} 4--8 tokens (86.2\% of queries)
-    \item \textbf{Long:} 9+ tokens (8.8\% of queries)
+    \item \textbf{Short:} 1--3 words (5.1\% of queries)
+    \item \textbf{Medium:} 4--8 words (86.2\% of queries)
+    \item \textbf{Long:} 9+ words (8.8\% of queries)
 \end{itemize}
 
 The mean NDCG@10 was computed for each bucket, and the performance gap between short and long queries was used to quantify the impact of information poverty on retrieval effectiveness.
@@ -264,12 +267,11 @@ Following the initial Query2Doc results with Qwen~2.5~3B, a comprehensive model 
 \subsection{Model Selection Criteria}
 \label{sec:meth_model_selection}
 
-Models were selected based on three criteria: (1) Arabic language support, either through dedicated Arabic training or strong multilingual capabilities; (2) parameter count within the 2--8 billion range to remain executable on Google Colab GPUs; and (3) open-source availability with permissive licences for research use. The selected models span three categories, all of which are described in detail in Section~\ref{sec:models_used}:
+Models were selected based on three criteria: (1) Arabic language support, either through dedicated Arabic training or strong multilingual capabilities; (2) parameter count within the 2--8 billion range to remain executable on Google Colab GPUs; and (3) open-source availability with permissive licences for research use. The selected models span two categories, both of which are described in detail in Section~\ref{sec:models_used}:
 
 \begin{itemize}
     \item \textbf{Arabic-specialised:} Falcon-H1-3B (Section~\ref{sec:falcon_h1}), Jais-2-8B (Section~\ref{sec:jais2}), ALLaM-7B (Section~\ref{sec:allam}), and SILMA Kashif-2B (Section~\ref{sec:silma}).
     \item \textbf{Multilingual:} Qwen~2.5~3B (Section~\ref{sec:qwen25_3b}), Qwen~2.5~7B (Section~\ref{sec:qwen25_7b}), Qwen3-4B (Section~\ref{sec:qwen3_4b}), Qwen3-8B (Section~\ref{sec:qwen3_8b}), Gemma~3~4B (Section~\ref{sec:gemma3}), and Aya~Expanse~8B (Section~\ref{sec:aya}).
-    \item \textbf{Experimental:} GPT-OSS-20B (Section~\ref{sec:gptoss}), a Mixture-of-Experts model included to test whether larger architectures provide benefits despite resource constraints.
 \end{itemize}
 
 Table~\ref{tab:model_configs} summarises the configuration used for each model.
@@ -288,11 +290,10 @@ Table~\ref{tab:model_configs} summarises the configuration used for each model.
         Qwen3-4B & 4B & FP16 & 0.7 & 32 & A100 \\
         Gemma 3 4B & 4B & FP16 & 0.1 & 16 & A100 \\
         Qwen 2.5 7B & 7B & FP16 & 0.1 & 16 & A100 \\
-        ALLaM 7B & 7B & NF4 & 0.7 & --- & A100 \\
+        ALLaM 7B & 7B & FP16 & 0.7 & --- & A100 \\
         Jais-2 8B & 8B & BF16 & 0.1 & 8 & A100 \\
         Qwen3-8B & 8B & FP16 & 0.1 & 16 & A100 \\
         Aya Expanse 8B & 8B & NF4 & 0.1 & 8 & A100 \\
-        GPT-OSS 20B & 20B & NF4 & 0.1 & --- & A100 \\
         \bottomrule
     \end{tabular}
     \\[0.5em]
@@ -311,7 +312,7 @@ To ensure fair comparison, all models were evaluated using an identical protocol
     \item \textbf{BM25 evaluation:} The same enhanced queries were evaluated against the BM25S sparse retrieval baseline.
 \end{enumerate}
 
-The work was divided between the two team members: one researcher tested Falcon-H1-3B, Jais-2-8B, ALLaM-7B, Qwen3-4B, and GPT-OSS-20B, while the other tested SILMA Kashif-2B, Qwen~2.5-7B, Qwen3-8B, Gemma~3~4B, and Aya~Expanse~8B. All experiments used the same codebase, system prompt, and evaluation pipeline to minimise confounding variables.
+The work was divided between the two team members: one researcher tested Falcon-H1-3B, Jais-2-8B, ALLaM-7B, and Qwen3-4B, while the other tested SILMA Kashif-2B, Qwen~2.5-7B, Qwen3-8B, Gemma~3~4B, and Aya~Expanse~8B. All experiments used the same codebase, system prompt, and evaluation pipeline to minimise confounding variables.
 
 \subsection{Temperature Selection}
 \label{sec:meth_temperature}
@@ -336,8 +337,6 @@ Several models required specific engineering workarounds, documented here for re
     \item \textbf{Qwen3-4B and Qwen3-8B:} The Qwen3 generation includes ``thinking'' tokens (internal chain-of-thought reasoning) that must be stripped from the output. The parameter \texttt{enable\_thinking=False} was passed during generation. Greedy decoding must not be used, as it causes infinite repetition loops.
 
     \item \textbf{ALLaM-7B:} As a preview-stage model, ALLaM exhibited a sentencepiece tokenizer artefact where the Unicode character ``\texttt{\char"2581}'' (lower one-eighth block) leaked into decoded outputs. This special character, used internally by the sentencepiece tokenizer to denote word boundaries, contaminated the pseudo-documents. The impact on retrieval performance is discussed in Section~\ref{sec:res_dropped}.
-
-    \item \textbf{GPT-OSS-20B:} The Mixture-of-Experts architecture (32 experts, top-4 routing, described in Section~\ref{sec:gptoss}) proved impractical through 4-bit quantisation, exhibiting generation speeds approximately 70$\times$ slower than dense models of comparable active parameter count. Furthermore, its Harmony chat format required a forced-final-channel prefix to suppress English-language reasoning.
 \end{enumerate}
 
 \subsection{Quantisation Strategy}
@@ -351,7 +350,7 @@ Models exceeding the available GPU memory in native precision were quantised usi
     \item \textbf{Double quantisation:} Enabled (quantises the quantisation constants for further memory savings)
 \end{itemize}
 
-This configuration was applied to Jais-2-8B (on T4 only; BF16 was used on A100), ALLaM-7B, Aya~Expanse~8B, and GPT-OSS-20B. Notably, Aya~Expanse~8B achieved the best overall performance despite being quantised to 4-bit, suggesting that model architecture and training data quality are more significant factors than numerical precision for this task.
+This configuration was applied to Jais-2-8B (on T4 only; BF16 was used on A100) and Aya~Expanse~8B (ALLaM-7B was run in full FP16 precision). Notably, Aya~Expanse~8B achieved the best overall performance despite being quantised to 4-bit, suggesting that model architecture and training data quality are more significant factors than numerical precision for this task.
 
 %======================================================================
 \section{Query Repetition for Sparse Retrieval}
@@ -443,6 +442,15 @@ The configuration used for the primary CSQE experiment was: $k=5$ first-pass doc
   \label{fig:csqe_pipeline}
 \end{figure}
 
+\paragraph{CSQE System Prompt.}
+For corpus-grounded generation, the model was given a system prompt distinct from the blind Query2Doc prompt of Section~\ref{sec:meth_q2d_llm}, instructing it to \emph{extract} content grounded in the retrieved passages rather than to generate freely:
+
+\begin{quote}
+    \textit{``You are an information retrieval assistant. You will examine retrieved documents and extract key sentences relevant to the query. The documents are in Arabic. Respond in Arabic only.''}
+\end{quote}
+
+\noindent The accompanying user message presented the original query followed by the numbered first-pass documents and a closing instruction to ``begin by examining the initially retrieved documents and identifying the ones that are relevant, even partially, to the query \ldots\ then extract the key sentences from each document that contribute to their relevance.'' A single English worked example (a query about warm-blooded sharks, taken from the original CSQE paper \cite{lei_2024_csqe}) was prepended as a one-shot demonstration; Aya Expanse, being multilingual, transfers this pattern to Arabic queries while still producing Arabic output. The blind-expansion branch reused the Query2Doc system prompt of Section~\ref{sec:meth_q2d_llm} verbatim.
+
 \paragraph{Rationale for Combining Corpus and Blind Samples.}
 Corpus-grounded samples provide attested Arabic vocabulary anchored to the actual Wikipedia passages retrieved in the first pass. Blind samples provide diverse answer-space vocabulary unconstrained by the corpus. The two sources are hypothesised to be complementary: corpus samples prevent hallucination of incorrect entities, while blind samples expand vocabulary coverage beyond the retrieved passages. This hypothesis is validated through the ablation study presented in Section~\ref{sec:res_csqe_ablation}.
 
@@ -499,7 +507,7 @@ Three categories were defined based on the per-query scores and deltas:
 \end{itemize}
 
 \paragraph{First-Pass Quality Split.}
-To assess the role of BM25 first-pass quality in CSQE effectiveness, queries were split into two groups based on whether the BM25 first-pass retrieval ($k=5$) returned at least one relevant document (any relevance judgement $> 0$ in the MIRACL qrels for the top-5 retrieved documents). This split enables analysis of whether CSQE gains are driven primarily by successful corpus grounding or by the blind expansion component.
+To assess the role of BM25 first-pass quality in CSQE effectiveness, queries were split into two groups based on whether the BM25 first-pass retrieval returned a relevant document at \emph{rank~1} (a positive relevance judgement, $\text{rel} > 0$, for the top-1 retrieved document in the MIRACL qrels). Although CSQE grounding draws on the top-$k=5$ first-pass documents, the rank-1 result is used as the indicator of first-pass quality because it most directly reflects whether the retriever has correctly identified the query topic. This split enables analysis of whether CSQE gains are driven primarily by successful corpus grounding or by the blind expansion component.
 
 \paragraph{Regression Classification.}
 Regression queries ($\Delta_i < -0.1$) were manually inspected and classified into three types:

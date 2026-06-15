@@ -9,4 +9,3 @@ ALLaM-7B (DROPPED),NCAI,7,Yes,Yes,FP16,allam_2024
 Jais-2-8B,G42,8,Yes,Yes,BF16,jais_2_2025
 Qwen3-8B,Alibaba,8,Yes (119 langs),No,FP16,qwen3_2025
 Aya Expanse 8B,Cohere,8,Yes (101 langs),No,4-bit NF4,aya_2024
-GPT-OSS 20B (DROPPED),OpenAI,20 (MoE),Yes,No,4-bit NF4,gpt_oss_2025

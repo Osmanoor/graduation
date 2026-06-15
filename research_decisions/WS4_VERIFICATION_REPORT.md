@@ -7,6 +7,8 @@
 
 > **Team review (Osman + Elhaj, 2026-05-31):** This report was walked through item-by-item in a review meeting. The verified items were accepted without revisiting. Decisions and notes from that meeting are recorded inline under **“Team decision”** in each relevant entry. Net changes from the meeting: **4.4** → adopt **OALL** as the base benchmark and standardise the generic "Arabic NLP benchmark" phrasing to OALL **thesis-wide** (sweep); **4.5** → keep as-is (the 30% mAP claim lives in the literature/“modern” review and is correct); **4.11** → downgraded to **PARTIAL** (depends on Workstream 1 integrity check); **4.16** → only **table/figure** labels need fixing (unused section labels are harmless); **4.17** → Config-A/C is a naming + Config-A error-analysis re-run, assigned to **Workstream 1**.
 
+> **Workstream 1 update (Mohammed, 2026-05-31 — `STREAM_1_COMPLETION_REPORT.md`):** WS1 (Tasks 1.1–1.4) is complete and closes several WS4 touchpoints. Net effect here: **4.8** → confirmed (BM25 **top-1, qrel≥1**; n=1061 rel / 1835 not-rel). **4.11** → resolved and **the "irretrievable" conclusion is REFUTED**: the corpus-membership check found **0 of 258 irretrievable** (all are genuine retrieval failures; corpus = full 2,061,414 docs, no preprocessing bug). **4.12** → big-win **count 1061 validated** by WS1's per-query CSV (example *texts* were our job, done). **4.14** → WS1 Task 1.4 keeps the three threshold systems + adds a signpost; "first-pass dominant predictor" → "largest modulator". **4.17** → WS1 Task 1.3 re-ran and validated the per-query **Config A** analysis (0.6936 / 0.5046 / Δ0.1890). Separately, WS1 found a **§4.2/§3.3 baseline error-analysis bug** (buggy custom nDCG) — see the new cross-note at the end.
+
 ---
 
 ## Summary table
@@ -20,18 +22,18 @@
 | 4.5 | CSQE "30% mAP over BM25" | ✅ VERIFIED *(corrected 2026-05-30)* | TREC DL19 mAP: BM25 **30.1** → CSQE Llama2-Chat-7B **39.1** = **+29.9% ≈ 30%** (Table 3 + Table 7). GPT-3.5 reaches 47.2. *(My first pass wrongly read only the BEIR nDCG@10 table and marked this FAILED.)* |
 | 4.6 | Retrieval depth in hybrid exp | ✅ VERIFIED | Depth = **top-100** everywhere (`k=100`). Not top-1000. |
 | 4.7 | CSQE temp=1.0 | ✅ VERIFIED | Config + every generate call use **temperature=1.0, do_sample=True**. |
-| 4.8 | First-pass "relevant" = qrel ≥1 or ≥2 | ✅ VERIFIED (by data) | MIRACL qrels are **binary**; only qrel≥1 is meaningful. (Analysis notebook not in repo.) |
+| 4.8 | First-pass "relevant" = qrel ≥1 or ≥2 | ✅ VERIFIED | **BM25 top-1, qrel≥1** (binary MIRACL). Confirmed independently by WS1 Task 1.3 (n=1061 rel / 1835 not-rel). |
 | 4.9 | CSQE expansion ≈1500 chars | ✅ VERIFIED | Computed from pkl: **mean 1486, median 1530** chars (orig mean 29.5). |
 | 4.10 | "mDPR trained on short queries" | ✅ VERIFIED (citable) | mDPR = `mdpr-tied-pft-msmarco`, fine-tuned on MS MARCO (short Bing web queries). Cite Bajaj et al. 2016. |
-| 4.11 | 258 failures: exhaustive or sampled | 🔎 PARTIAL *(team-revised)* | Inspection **was exhaustive** (all 258 classified), **but** the "irretrievable" conclusion depends on the WS1 dataset-integrity check → mark PARTIAL. |
+| 4.11 | 258 failures: exhaustive or sampled | ✅ RESOLVED *(WS1, 2026-05-31)* | Inspection was **exhaustive** (all 258). WS1 ran the membership check: **0/258 irretrievable** — the "dataset ceiling / passage absent" claim is **REFUTED**; all 258 are genuine retrieval failures (199 missed by BM25 too; 58 BM25-retrievable but lost by CSQE). §4.10 must drop the "irretrievable" wording. |
 | 4.12 | Three big-win examples | ✅ RESOLVED *(2026-05-31)* | Final trio chosen + **score-verified** (blind 0.000 → CSQE 1.000): **الرباط المنصوري (10061), الأسماء الخمسة (3034), الفن الجزيري (11753)**. Verbatim expansions to paste into §4.10 are in the detailed entry. |
 | 4.13 | Type B "first-pass poisoning" (general mode) | ✅ RESOLVED *(2026-05-31)* | **Reframed to the general Type-B pattern** (131 queries, homonym/name collisions poison BM25's first pass → CSQE grounds on wrong docs; blind ignores first pass and succeeds). Documented as a representative *set* (928 ماهو-homonym, 11371 نجيب محفوظ name-homonym, 11739 ويكيبيديا wrong-entity) — no single query singled out. Also fixed the §Regression bucket tables (84/928/3164 were mis-placed in Type A; 3702 mislabelled Type B). |
 | 4.14 | 0.3 threshold rationale | ✅ VERIFIED (no rationale) | The 0.3 "strong BM25" cut has **no stated justification** in the analysis — arbitrary. Supports softening (5.C.18). |
 | 4.15 | `zhang_2024_mugi` BibTeX | ⚠️ NEEDS EDIT | **Venue (EMNLP Findings 2024) is correct**, but **title and authors are fabricated.** (Also: `lei_2024_csqe` authors are wrong.) |
 | 4.16 | Ch.3/Ch.4 cross-ref labels used | ⚠️ NEEDS EDIT | **48 of 115 defined labels are never referenced** — incl. 3 table labels + 5 figure labels that prose should cite. |
-| 4.17 | Spot-check brief numbers | 🔎 PARTIAL | In-repo numbers reconcile, **except** the error-analysis doc reports 0.6936 (looks like Config C) under a "Config A RRF 0.7137" header — the known WS1.3 Config-A-vs-C issue. |
+| 4.17 | Spot-check brief numbers | ✅ RESOLVED *(WS1, 2026-05-31)* | 5 headline numbers correct. The Config-A/C discrepancy is now owned by WS1 Task 1.3, which re-ran + validated the per-query **Config A** analysis (0.6936 / 0.5046 / Δ0.1890); §4.10 to be relabelled Config A. WS1 also corrected a separate **§4.2 baseline buggy-nDCG** issue (see cross-note). |
 
-**Bottom line:** 8 fully verified, 1 verified-by-data, 5 need edits, 3 partial (after team review). The highest-impact corrections: **4.15** (fabricated citation fields — and a second one, CSQE) and **4.12** (two thesis showcase examples are factually wrong → replace). *Note: 4.5 was initially marked FAILED here but is in fact VERIFIED — the "30%" is real on TREC DL19 mAP (Llama2-Chat-7B); see corrected entry below.*
+**Bottom line (after team review + WS1 completion):** 9 verified, 4 resolved (12/13 reworked; 11/17 closed by WS1), 4 need edits (4.3, 4.4, 4.15, 4.16), 0 partial. The highest-impact items: **4.11** — WS1's corpus check **refutes the "irretrievable/dataset-ceiling" claim** (0/258), so §4.10 must be rewritten as genuine retrieval failures; **4.15** (fabricated citation fields — MuGI + CSQE); **4.12** (showcase examples reworked). *Note: 4.5 was initially marked FAILED here but is in fact VERIFIED — the "30%" is real on TREC DL19 mAP (Llama2-Chat-7B).*
 
 ---
 
@@ -76,9 +78,10 @@
 - **Source checked:** `experiments/exp_013_csqe_aya_8b.ipynb` config `'temperature': 1.0`; both corpus- and blind-sample generation pass `temperature=1.0, do_sample=True`. Confirmed again in the saved pkl `config`.
 - **Action:** Supports 5.B.8 (show the CSQE prompt + temp in §3.8).
 
-### 4.8 — First-pass "relevant" definition (qrel ≥1 vs ≥2) ✅ VERIFIED (by data constraint)
+### 4.8 — First-pass "relevant" definition (qrel ≥1 vs ≥2) ✅ VERIFIED
 - **Source checked:** `src/utils/data_loader_hf.py` (`qrels[qid][docid] = int(rel)`); MIRACL qrels are **binary** (relevance ∈ {0,1}); there are no grade-2 judgments.
 - **Finding:** "first-pass relevant" can only mean **qrel ≥ 1**. The qrel≥2 alternative is vacuous for MIRACL. **Code located:** the actual function is `first_pass_is_relevant(qid)` in `experiments/phase4_quick_wins (1).ipynb` cell 63 — it returns True iff the **top-1** BM25 first-pass doc has `rel > 0`. *(The error-analysis doc misnames its notebook as `phase4_quick_wins_Ablation_erroranalysis.ipynb`, which is why I first reported the code as not-in-repo; it actually lives in `phase4_quick_wins (1).ipynb`.)*
+- **WS1 confirmation (Task 1.3):** independently resolved the same way — "first-pass relevant = BM25 retrieves a relevant doc at **rank 1 (top-1, qrel≥1)**", giving **n=1061 relevant (CSQE 0.8877) / 1835 not-relevant (CSQE 0.5814)**. Note CSQE *grounding* uses top-5, so §4.10 must say "top-1" precisely.
 - **Action:** State precisely: "a query's first pass is counted relevant iff its **top-1** retrieved doc has MIRACL judgment = 1." Fix the notebook name in the error-analysis doc.
 
 ### 4.9 — CSQE expansion length ≈1500 chars ✅ VERIFIED
@@ -90,11 +93,14 @@
 - **Finding:** The dense encoder is `castorini/mdpr-tied-pft-msmarco` — "pft" = **pre-fine-tuned on MS MARCO** passage ranking. MS MARCO queries are real Bing web-search queries and are short (the literature explicitly notes "NQ has longer queries than MS MARCO").
 - **Action:** Citable as: mDPR is MS-MARCO-fine-tuned (MIRACL paper, Zhang et al. 2023) and MS MARCO queries are short web queries (**Bajaj et al., 2016, arXiv:1611.09268**). This supports re-adding the claim in §4.8 if 5.C.11's degradation explanation is restored.
 
-### 4.11 — 258 failures: exhaustive or sampled 🔎 PARTIAL *(team-revised from VERIFIED)*
-- **Source checked:** `docs/experiments/exp_error_analysis_csqe.md` §Failure Analysis.
-- **Finding:** The **inspection itself was exhaustive** — all 258 were classified: 257 "universally irretrievable" (CSQE, blind, BM25 all = 0.000) + 1 genuine CSQE failure (qid 1060). Not a sample.
-- **Caveat:** The "irretrievable" *conclusion* depends on the **Workstream 1.1 dataset-integrity check** (whether the qrel passages actually exist in the indexed corpus).
-- **Team decision (Osman + Elhaj):** **Downgrade to PARTIAL.** The team believes the 257 "irretrievable" cases stem from a real **dataset / chunking** problem in the indexed Wikipedia dump, but this must be **confirmed in Workstream 1** before the §4.10 wording is finalised. So: inspection = exhaustive (verified); irretrievability = pending WS1.
+### 4.11 — 258 failures: exhaustive or sampled ✅ RESOLVED *(WS1 Task 1.1, 2026-05-31)*
+- **Source checked:** `docs/experiments/exp_error_analysis_csqe.md` §Failure Analysis; WS1 corpus-membership check (`thesis_figures/notebooks/task_1_1_corpus_integrity.py`, verdict CSV `task_1_1_failure_corpus_check.csv`).
+- **Inspection scope (the original 4.11 question):** **exhaustive** — all 258 failures were classified. ✅
+- **WS1 outcome — the "irretrievable" conclusion is REFUTED.** The earlier team belief (and the doc's "257/258 universally irretrievable, passage absent from the dump") was **never membership-checked**. WS1 ran the actual check over the full **2,061,414-doc** corpus (= canonical size → index complete, **no preprocessing/chunking bug, no reindex needed**) and found:
+  - **0 of 258 irretrievable / 258 genuine retrieval failures** — every failing query has ≥1 relevant doc present in the corpus.
+  - 199 also miss on the BM25 baseline (present but un-retrieved by any method); **58 are retrieved by BM25 alone (43 with BM25 ≥ 0.3) but lost by the CSQE hybrid** = genuine regressions. qid 1060 ("sole genuine failure") is just one of those 58.
+  - Root cause of the original error: the notebook scatter labelled "CSQE<0.1 AND blind<0.1" points as *"irretrievable"* (a retrieval statement), and the write-up escalated it to a never-tested **corpus-membership** claim.
+- **Action:** §4.10 must drop the "irretrievable / ~8.9% dataset ceiling" framing and present these as **genuine retrieval failures** (199 missed-by-all + 58 BM25-retrievable-but-lost). This also moots the "1 genuine failure = meta-description (qid 1060)" framing → it's 58 regressions (ties to WS5.C.16). *(Supersedes the earlier "downgrade to PARTIAL / dataset-chunking" team note — WS1 has now closed it, in the opposite direction the team expected.)*
 
 ### 4.12 — Three big-win examples ✅ RESOLVED *(2026-05-31)*
 
@@ -163,7 +169,8 @@ These span the three sub-flavours of the mode (tokenisation homonym, name homony
 ### 4.14 — 0.3 threshold rationale ✅ VERIFIED (there is none)
 - **Source checked:** `exp_error_analysis_csqe.md` regression breakdown (Type A defined as "BM25 baseline ≥ 0.3").
 - **Finding:** The 0.3 cut for "strong/well-handled BM25" is used **without any stated justification** — it is an arbitrary bucket boundary.
-- **Action:** Feeds 5.C.18 — soften "dominant predictor" and drop or explicitly flag the 0.3 cut as an arbitrary convenience threshold.
+- **WS1 resolution (Task 1.4):** the threshold-system question is settled — **keep all three orthogonal systems** (absolute Failed/Mediocre/Successful in §3.3; pairwise Failure/Big-win/Regression in §3.9; the regression sub-typing) and **add one signposting paragraph** explaining they answer different questions; no number changes. WS1 also confirms the §4.10 wording change: **"first-pass is the dominant predictor" → "largest modulator."**
+- **Action:** Feeds 5.C.18 — apply the "largest modulator" softening; flag the 0.3 cut as an arbitrary convenience boundary inside the §3.3↔§3.9 signpost.
 
 ### 4.15 — `zhang_2024_mugi` BibTeX ⚠️ NEEDS EDIT (and a second bad citation found)
 - **Source checked:** `References.bib` entry vs aclanthology.org/2024.findings-emnlp.103.
@@ -180,14 +187,11 @@ These span the three sub-flavours of the mode (tokenisation homonym, name homony
 - **Action:** The "23 cross-reference labels" framing is inaccurate (far more labels exist, ~42% unused). Add in-text references for the table/figure labels (ties into 5.C.5 table audit and 7.1 figure plan); remove or use the dead section labels. *(Figure labels are currently placeholders, so those are expected until the figure plan lands.)*
 - **Team decision (Osman + Elhaj):** **Unused *section* labels are harmless — leave them** (a `\label` with no `\ref` produces no error and breaks nothing). The ones that **must** be fixed are the **table and figure** labels: every table/figure should be referenced in the prose. Do this **after** the text/tables/figures are finalised (so it dovetails with 5.C.5 table audit + 7.1 figure plan). Scope the action to tables + figures only.
 
-### 4.17 — Spot-check brief numbers vs experiment docs 🔎 PARTIAL
-- **Correction:** The brief **does** exist in the repo as `thesis_update_brief.md` (my first glob pattern missed it). The other report spot-checked 5 headline numbers against it (BM25 0.4621, mDPR 0.4993, Hybrid RRF 0.6267, Qwen 2.5 3B 0.5435, Aya n=1 BM25 0.5046) — all confirmed correct, which matches the raw metrics. My added check below still stands as a *separate* issue those 5 didn't cover.
-  - CSQE config (temp 1.0 / k=5 / 2+2 / α=4 / 128 tok) — matches pkl config ✅
-  - CSQE+BM25 0.6157 / R@100 0.9422 / MRR 0.6380 — matches `evaluate_enhanced_queries.ipynb` output ✅
-  - Error-analysis headline numbers (56.8% improved, 16.6% regress, +0.1890 mean, 258 failures, 1061 big wins, 0.8877 vs 0.5814) — internally consistent ✅
-  - **Discrepancy:** `exp_error_analysis_csqe.md` header says it analyses **"Config A RRF (0.7137)"**, but its per-query "CSQE+Hybrid" column reports **0.6936** for all queries — which matches the **Config C / Both-expanded** value, not Config A. This is precisely the **known WS1 Task 1.3 problem** ("re-run per-query error analysis for Config A, replaces Config C analysis"). Independent spot-check confirms the error analysis is currently on the wrong configuration.
-- **Action:** When the brief is available, diff its Quick Reference block. Meanwhile, WS1.3 (Config-A redo) must fix the 0.7137-vs-0.6936 labelling before §4.10 is finalised.
-- **Team decision (Osman + Elhaj):** The 5 spot-checked headline numbers are accepted as correct. The Config-A-vs-C discrepancy is treated as a **naming-consistency issue + the per-query error-analysis re-run for Config A** — both **assigned to Workstream 1** (Task 1.3). Considered **resolved here / noted** in this file; the actual fix happens in WS1, not WS4.
+### 4.17 — Spot-check brief numbers vs experiment docs ✅ RESOLVED *(WS1, 2026-05-31)*
+- **Correction:** The brief **does** exist in the repo as `thesis_update_brief.md` (my first glob pattern missed it). The 5 headline numbers (BM25 0.4621, mDPR 0.4993, Hybrid RRF 0.6267, Qwen 2.5 3B 0.5435, Aya n=1 BM25 0.5046) are all correct against the raw metrics. Other in-repo cross-checks that matched: CSQE config (temp 1.0 / k=5 / 2+2 / α=4 / 128 tok) ✅; CSQE+BM25 0.6157 / R@100 0.9422 / MRR 0.6380 ✅; error-analysis headline numbers (56.8% / 16.6% / +0.1890 / 258 / 1061 / 0.8877 vs 0.5814) internally consistent ✅.
+- **The Config-A-vs-C discrepancy I flagged — now owned + actioned by WS1 Task 1.3.** WS1 re-ran the per-query analysis from raw outputs and **validated the Config A aggregates exactly** (CSQE **0.6936** / blind **0.5046** / Δ **0.1890**; big-wins 1061; regressions 367; first-pass 0.8877/0.5814). The §4.10 redo will **replace all "Config C" references with Config A**. ⚠️ One thing for the writers to reconcile: **0.6936** is the **per-query-mean nDCG@10 of the analysed system**, whereas **0.7137** is the **corpus-level Config A RRF** headline (exp_021); the `exp_error_analysis_csqe.md` header still shows 0.7137 over a 0.6936 body — make the two numbers explicitly distinct (system-level vs per-query-mean) so they don't read as a contradiction.
+- **WS1 also surfaced a separate baseline-numbers bug** (not one of the 5): the **§4.2/§3.3 dense-baseline error analysis** was computed with a buggy custom nDCG → wrong failure rate, length buckets, correlation, and coverage. See the cross-note below; this is WS1's to fix, but it's the kind of number-integrity issue 4.17 was meant to catch.
+- **Action:** Resolution lives in WS1 (Task 1.3 for Config-A; §2 of the WS1 report for the §4.2 bug). For WS4, this item is closed.
 
 ---
 
@@ -199,15 +203,36 @@ These span the three sub-flavours of the mode (tokenisation homonym, name homony
 | 4.3 (0.1 & 0.7) | 5.B.5 SILMA temperature wording |
 | 4.4 (standardise → OALL) | 5.C.3 + thesis-wide `[SWEEP]`: generic "Arabic NLP benchmark" → OALL (excl. Ch.2 per-model scores & MIRACL-dataset mentions) |
 | 4.5 (DL19 mAP, Llama2-7B, +30%) | §2.4 CSQE claim is correct as written — cite Table 7 |
+| 4.8 (top-1, qrel≥1) | §4.10 first-pass wording — confirmed by WS1 Task 1.3 |
 | 4.9 (~1500 chars) + 4.10 (MS MARCO short) | optional restore of §4.8 dense-degradation explanation (5.C.11) |
+| 4.11 (irretrievable REFUTED, WS1) | §4.10 failure paragraph (5.C.15/5.C.16): rewrite as genuine retrieval failures (199 missed-by-all + 58 BM25-retrievable-but-lost); drop "dataset ceiling"; drop the qid-1060 "sole failure" framing |
+| 4.14 (no rationale) + WS1 1.4 | 5.C.18: "dominant predictor"→"largest modulator"; keep 3 threshold systems + signpost |
 | 4.12 (✅ final verified trio) | 5.C.17 big-win table: paste verbatim blind+CSQE expansions for 10061 / 3034 / 11753 (in the 4.12 entry); golden diagram = الأسماء الخمسة |
 | 4.13 (✅ ماهو التطرف verified; Type-A table mis-bucketed) | 5.C.18 / WS1.3 §4.10 regression rewrite: KEEP ماهو التطرف (Type B); fix 928 double-listing; repopulate Type A with real BM25≥0.3 examples (regression-miner cell) — qid 3702 confirmed Type A |
 | 4.15 (bad bib) | escalates WS6 Task 6.4 full citation audit |
 | 4.16 (dead labels) | 5.C.5 table audit + 7.1 figure plan |
-| 4.17 (Config A vs C) | confirms WS1 Task 1.3 is required before §4.10 final |
+| 4.17 (Config A vs C) | resolved by WS1 Task 1.3 (per-query Config A validated: 0.6936/0.5046/Δ0.1890); reconcile 0.7137 (system) vs 0.6936 (per-query mean) labels |
+
+---
+
+## Cross-note — WS1 §2: §4.2/§3.3 baseline error-analysis bug (NOT a WS4 task, recorded for awareness)
+WS1 found that the **dense-baseline** error analysis (sourced from `exp_001_quantitative_analysis.json`) was computed with a **buggy custom nDCG**, disagreeing with the canonical mDPR run on several quantities. WS1 recomputed from the canonical run (`exp_001_baseline_dense.txt`) with `pytrec_eval` (which reproduces all four headline metrics 0.4993/0.6156/0.8407/0.5328 exactly), so the analysis file is the outlier. Corrections (WS1 to apply, §4.2/§3.3 only):
+
+| §4.2/§3.3 quantity | OLD (buggy) | CORRECTED |
+|---|---|---|
+| Short-bucket nDCG@10 | 0.240 | **0.345** |
+| short-vs-long gap | 41% | **28%** (non-monotonic: Medium > Long) |
+| length↔nDCG correlation | +0.125 (p<0.001) | **≈ −0.01 (no linear trend)** |
+| Failed (<0.3) | 39.0% | **33.9%** |
+| Successful (≥0.7) | 5.1% | **32.9%** |
+| Coverage @10 / @100 | 93.4% / 99.4% | **74.6% / 90.1%** |
+| nDCG@10 = 0 queries | 192 | **736** |
+
+*Scope:* dense baseline only; headline metrics, all CSQE/hybrid results, and §4.10 are unaffected (§4.10 already used `pytrec_eval`). Relevant to WS4 only as context — it does **not** change any 4.x verdict, but it does mean the §4.2 length/correlation numbers our report referenced in 4.9's note (the "short-query motivation") shift to "short queries underperform" without a linear length trend.
 
 ## Artifacts produced during verification
 - `ws4_labels.py` — label-usage audit script (repo root; scratch — safe to delete).
 - Computations on `results/enhanced_queries/exp_013_csqe_aya_8b.pkl` and `enhanced_queries_aya_expanse_8b.pkl` (expansion length; example extraction).
+- **WS1 source for the cross-updates above:** `research_decisions/STREAM_1_COMPLETION_REPORT.md` (Tasks 1.1–1.4 + §2 baseline-bug).
 
 **END.**

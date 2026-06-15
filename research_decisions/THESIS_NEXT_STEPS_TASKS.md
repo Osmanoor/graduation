@@ -136,13 +136,13 @@
 
 > Each is a single lookup or computation. Outcome may flip a decision.
 
-> **✅ COMPLETED 2026-05-30, team-reviewed 2026-05-31 — full results + meeting notes in `research_decisions/WS4_VERIFICATION_REPORT.md`.**
+> **✅ COMPLETED 2026-05-30, team-reviewed 2026-05-31, WS1-synced 2026-05-31 — full results + meeting notes in `research_decisions/WS4_VERIFICATION_REPORT.md`.**
 > Headlines: 4.5 VERIFIED, keep as-is (30% is real on TREC DL19 **mAP**: BM25 30.1 → CSQE Llama2-7B 39.1, Table 7 — note it's mAP not nDCG);
 > 4.4 → **adopt OALL** as base benchmark + standardise generic "Arabic NLP benchmark" → OALL **thesis-wide [SWEEP]** (keep Ch.2 per-model scores & MIRACL-dataset mentions); 4.15 NEEDS EDIT (MuGI + `lei_2024_csqe` title/authors fabricated — papers were read, only metadata wrong → escalate 6.4);
 > 4.12 → keep الرباط المنصوري, **drop John Dewey** (blind was correct), **fix Boileau** description (businessman→computer scientist), find 3 better examples;
 > 4.13 → reframe to the **general Type B** "first-pass poisoning" mode (928 ماهو-homonym, 11371 name-homonym, 11739 wrong-entity); keep ماهو التطرف as one illustration; regression bucket tables fixed (A≥0.3 / B<0.1 / C 0.1–0.3, no double-listing);
-> 4.11 → **PARTIAL** (irretrievability pending WS1 integrity check); 4.16 → only **table/figure** labels need fixing (section labels harmless);
-> 4.17 → Config-A/C naming + Config-A error-analysis re-run assigned to **WS1.3**.
+> 4.16 → only **table/figure** labels need fixing (section labels harmless).
+> **WS1-closed (per `STREAM_1_COMPLETION_REPORT.md`):** 4.8 confirmed (BM25 top-1, qrel≥1); **4.11 → "irretrievable" REFUTED** (0/258 — all genuine retrieval failures, corpus complete; §4.10 must drop the dataset-ceiling wording); 4.14 → keep 3 threshold systems + signpost, "dominant predictor"→"largest modulator"; 4.17 → Config-A validated by WS1.3 (0.6936/0.5046/Δ0.1890), reconcile 0.7137 system vs 0.6936 per-query labels. WS1 also corrected a separate §4.2 baseline buggy-nDCG (dense-baseline only).
 
 | Task | What to verify | Source |
 |------|---------------|--------|
@@ -172,7 +172,7 @@
 
 ### 5.A — Chapter 2 rewrites
 
-- **5.A.1** `[REREAD][EDIT]` Add **dataset analysis section** to Ch.2 (before Models Used). Cover the ~8 datasets evaluated and why MIRACL was chosen. — *item 2.1, pt1*
+- **5.A.1** ✅ DONE (2026-06-15) `[REREAD][EDIT]` Add **dataset analysis section** to Ch.2 (before Models Used). Cover the ~8 datasets evaluated and why MIRACL was chosen. — *item 2.1, pt1* → added as §2.3 "Evaluation Dataset Selection" with web-verified citations.
 - **5.A.2** `[EDIT]` Move the **hybrid retrieval equation** from theory section into §2.2 (Mathematical Models) for consistency. — *item 2.2, pt1*
 - **5.A.3** `[REREAD][EDIT]` **Re-frame the problem statement** — lead with "applying QE to improve Arabic RAG" with multiple approaches as the main contribution. Move "small models" to secondary novelty. Cascade into 1.2/1.3/1.4. *Depends on Q2 supervisor answer.* — *item 2.7, pt1/pt2*
 - **5.A.4** `[REREAD][EDIT]` **Expand the QE techniques section (§2.4 area)** to cover all four families (expansion, rewriting, decomposition, abstraction) with the papers actually read for each. — *items 2.8/2.9, pt2*
@@ -418,14 +418,50 @@ Visual-quality feedback noted in `thesis_figures/README.md` "Visual feedback" se
 | 5.C.7 | ✅ DONE | Size-based repetition interpretation dropped; replaced with pseudo-document-length explanation |
 | 5.C.8 | ✅ DONE | "Missing ingredient" → empirical restatement |
 | 5.C.10 | ✅ DONE | CC tie-breaking hedged to "a possible explanation is…" |
-| 5.C.11 | ✅ DONE | "~1,500 chars" and "trained on short queries" claims **dropped** (fallback path: verifications 4.9/4.10 not done); degradation now stated as empirical observation only |
+| 5.C.11 | ✅ DONE (RESTORED 2026-06-15) | Now that WS4 4.9/4.10 are verified, the §4.9 dense-degradation explanation was **restored with citations**: mDPR's MS-MARCO short-query fine-tuning (cite `bajaj_2016_msmarco`) + ~1,500-char expansions, as a reinforcing factor alongside the complementarity mechanism |
 | 5.C.12 | ✅ DONE | Ablation discussion reframed to lead with complementarity finding |
 | 5.C.13 | ✅ DONE | §4.9 retriever-specific explanation reframed to complementarity/divergence mechanism ("two ranked lists become less divergent → lower fusion ceiling"), matching task specification |
 | 5.C.14 | ✅ DONE | "Key design finding of the thesis" → "this finding illustrates a principle" |
 | 5.C.16 | ✅ DONE | Query ID 1060 removed; single-case example demoted to brief mention |
-| 5.C.18 | ✅ DONE | "Dominant predictor" → "primary driver" |
+| 5.C.18 | ✅ DONE (2026-06-15) | Heading + prose → "largest modulator" (per WS1 1.4 / WS4 4.14); first-pass defined as top-1 |
 | 5.D.3 | ✅ DONE | Recs 2 and 4 (already implemented) deleted; Rec 8 (publication) deleted; Rec 5 (dialectal) softened to "open question" framing |
 | 5.D.5 | ✅ DONE | "Any multi-retriever pipeline" → "similar hybrid pipelines" |
+| | | |
+| \multicolumn — **2026-06-10 apply pass (WS1 Track A + WS4 + WS6 + ready WS5)** | | |
+| WS1 1.1–1.4 | ✅ DONE (2026-06-10) | §4.2 canonical numbers (failed 34%, successful 33%, coverage 90.1%@100, length 0.345/0.511/0.476, r≈0, nDCG=0 → 736); §3.3 tokens→words + threshold signpost; §4.10 failure paragraph + first-pass top-1 + Medium row |
+| 4.4 / 5.C.3 | ✅ DONE (2026-06-10) | Generic "Arabic NLP benchmark" → OALL (§4.5.3 + Ch.5 recap + §4.5.3 "lower OALL score") |
+| 4.8 | ✅ DONE (2026-06-10) | First-pass = BM25 top-1, qrel≥1 (§3.9 + §4.10) |
+| 4.11 / 5.C.15 / 5.C.16 | ✅ DONE (2026-06-10) | §4.10 failure paragraph: "irretrievable/dataset-ceiling" refuted → 199 missed-by-all + 58 BM25-lost |
+| 4.12 / 5.C.17 | ✅ DONE (2026-06-10) | Big-win trio replaced (الرباط المنصوري / الأسماء الخمسة / الفن الجزيري) + blind-poisoning framing |
+| 4.13 | ✅ DONE (2026-06-10) | Type B reframed to general first-pass-poisoning mode with 3 representative examples |
+| 4.14 | ✅ DONE (2026-06-10) | 0.3 threshold flagged as a pragmatic boundary; "largest modulator" |
+| 4.15 / 6.4 | ✅ DONE (2026-06-10) | 10 fabricated References.bib entries fixed (incl. `aya_2024` MRI-URL, `yoon` misrepresentation); +Exp4Fuse/Macmillan-Scott/Qwen3-Embedding/Swan added |
+| 4.17 | ✅ DONE (2026-06-10) | §4.10 caption → BM25-expanded (Config A); 0.6936 per-query vs 0.7137 corpus-level reconciled |
+| 6.1 | ✅ DONE (2026-06-10) | §2.4 gap narrowed to monolingual Arabic + Macmillan-Scott cite |
+| 6.2 | ✅ DONE (2026-06-10) | §2.4 asymmetry gap reframed + Exp4Fuse cite |
+| 6.5 | ✅ DONE (2026-06-10) | Rec 2/8: keep BGE-M3, replace mE5-large with Qwen3-Embedding-8B + Swan-Large |
+| 5.A.5 | ✅ DONE (2026-06-10) | Decorative Alsubhi (paper-12) citation removed from morphological-gap sentence |
+| 5.B.8 | ✅ DONE (2026-06-10) | Exact CSQE system prompt added to §3.8 |
+| 5.C.2 | ✅ DONE (2026-06-10) | Qwen-family correlation (Pearson 0.94 / Spearman 1.00) + confound caveat in §4.5.1 |
+| 5.C.19 | ✅ DONE (2026-06-10) | §4.10 implications → forward pointer; the two recs already present in Ch.5 §5.3 (Recs 6–7) |
+| 5.C.20 | ✅ DONE (2026-06-10) | §4.10 length table → Scheme A (1–3/4–8/9+), Medium row filled |
+| 5.D.2 | ✅ DONE (2026-06-10/15) | ALLaM `▁` disclosure present; MIRACL metadata-gap added (§5.2); `wang_2023_query2doc` cite added to challenge 2 |
+| 5.D.4 | ✅ DONE (2026-06-10) | "Overall" paragraph moved to close §5.1, augmented with 0.7137 headline |
+| Abstracts EN+AR | ✅ DONE (2026-06-10) | 39%→34%; "significant gap" softened; closing numbers already correct |
+| | | |
+| \multicolumn — **2026-06-15 session (GPT-OSS removal + remaining deferred)** | | |
+| 5.A.8 | ✅ DONE (2026-06-15) | **GPT-OSS deleted completely** — Ch.2 §2.4 Experimental subsection + model_comparison row + counts; Ch.3 category/config/issues/quantisation; Ch.4 dropped-models §ALLaM-only + leaderboard + summary rows; Ch.5 challenge 3; generated `table_2_2.tex` + CSV; `gptoss_2025` bib entry removed |
+| 5.E.2 | ✅ DONE (2026-06-15) | Resolved by GPT-OSS deletion: "eleven"→"ten" thesis-wide (abstract/Ch.1/Ch.2/Ch.4/Ch.5 all consistent at ten 2–8B models) |
+| 5.A.2 | ✅ DONE (2026-06-15) | RRF + CC equations moved from §2.1.3 into new §2.2 "Hybrid Fusion Functions" (`sec:hybrid_math`); eq labels preserved so Ch.3 refs still resolve |
+| 5.A.4 | ✅ DONE (2026-06-15) | §2.1.4 expanded to four families (expansion/decomposition/disambiguation/abstraction); `zheng_2023_take` used for abstraction (resolves an orphan) |
+| 5.C.9 | ✅ DONE (2026-06-15) | No-QE hybrid (0.6267) added as a reference baseline in §4.1 table + prose |
+| 5.C.21 | ✅ DONE (2026-06-15) | "Summary of All Experiments" table moved to end of Ch.4 as its own section |
+| 5.A.1 | ✅ DONE (2026-06-15) | New §2.3 "Evaluation Dataset Selection" added to Ch.2 before Models Used (from `datasets/Dataset_Analysis_Report.md`): 6-dataset comparison table + MIRACL justification (hard negatives, native queries, scale) + MSA-only limitation → Ch.5. Citations **web-verified** and added: `clark_2020_tydiqa`, `abdallah_2024_arabicaqa`, `sen_2022_mintaka`, `hasan_2024_nativqa`, `mozannar_2019_arabic` |
+| 3.1 | ✅ DONE (2026-06-15) | Decorative-citation audit (3 subagents → findings I web-verified). **Found 4 more fabricated bib author/title fields** (same pattern as WS6) and fixed them: `alwajih_2024_swan` (real: Bhatia/Nagoudi/El Mekki/Alwajih/Abdul-Mageed), `macmillanscott_2025_generative` (Özyiğit Eda B., not Ali H.), `liu_2025_exp4fuse` (Zhang, not Guo), `sengupta_2023_jais` (Bokang/Koto + real co-authors). Decorative-claim fixes: Query2Doc "OPT-1.3B/6.7B" → softened; GaQR "4–9x" → softened. Left Pyserini/QLoRA titles (verified correct / cosmetic). |
+| 3.2 | ✅ DONE (2026-06-15) | Fabricated-rationale audit of Ch.3. **SILMA 2.5% VERIFIED correct** (0.5177 vs 0.5052) — known residual closed. Fixed ALLaM precision NF4→FP16 in Table 3.2 + dropped ALLaM from the NF4 list (internal contradiction with §2.4's "14.5 GB FP16"). Left Jais-2 Table 3.2 temp/batch (agent evidence was planning docs, not the run log; thesis internally consistent). All other Ch.3 numbers traced to experiment docs — clean. |
+| 3.3 | ✅ DONE (2026-06-15) | Model-descriptor audit vs official cards. Fixed: Aya "101 languages"→**23** (ch2 + 2× ch4) + win-rate "83.9%" softened; Qwen 2.5-3B license Apache 2.0→**Qwen Research** (prose + table); SILMA RAGQA 0.3575→**0.3478**; Jais-2 SFT "4M Arabic/10M English" softened; ALLaM "6M samples/245K pairs/540B tokens" softened; Qwen3-4B "eight named Arabic dialects" softened. Left (verified OK or name-bound): SILMA "2B" (model name), Gemma "~10 pts below Falcon OALL" (corroborated by Falcon blog), internal VRAM measurements. |
+| 3.5 | ✅ DONE (2026-06-15) | Estimation-vs-measurement sweep folded into 3.2: no unrecorded fabricated runtime/multiplier siblings remain in Ch.3 (16×/8×/2× already removed; ~40 min and ~8 h are measured). |
+| 5.B.5 / 5.B.10 / 5.A.7 / 5.F.2 / 5.F.3 | ✅ CLOSED (bookkeeping, 2026-06-12 audit) | Already satisfied in text — see 2026-06-12 §D |
 
 ### Self-initiated changes (not from task list)
 
@@ -460,10 +496,150 @@ Updated 2026-05-31 evening — after WS1 completion + figures pipeline render:
 - **WS5.C.2:** Pearson/Spearman for Qwen family — small computation, can do locally.
 - **WS5.C.17:** big-win example texts (الرباط المنصوري, John Dewey, Nicolas Boileau) need qualitative verification — not derivable from the CSV.
 - **WS5.D.1:** Mohammed's Ch.5 deep-dive recording was incomplete.
-- **WS3.1–3.3:** require reading each chapter section carefully.
+- **WS3.1–3.3:** ✅ DONE (2026-06-15) via three verification subagents + my web-verification — see the "Completed tasks" table and the 2026-06-15 (cont.) entry.
 - **WS5.A, 5.E, 5.F:** blocked on supervisor Q2/Q3 (Ch.1/abstract rewrite).
 - **Hand-compile data:** Tables 2.1, 2.2, 3.1, 3.2, 4.6 + R@10/R@100/MRR for Osman's 5 models in Table 4.2.
 - **Visual upgrade of figures (optional):** see `thesis_figures/README.md` "Visual feedback" section. Not on the critical path.
+
+---
+
+### 2026-06-10 — Apply pass: WS1 (Track A) + WS4 + WS6 + ready WS2/3/5 items into the thesis
+
+Grouped-by-file edit pass to fold all settled verification/research outcomes into the LaTeX so the next supervisor draft is internally consistent. Source reports: `STREAM_1_COMPLETION_REPORT.md`, `WS4_VERIFICATION_REPORT.md`, `WS6_RESEARCH_REPORT.md`.
+
+**DONE — `References.bib`**
+- Fixed all **10 fabricated entries** (WS6 6.4 + WS4 4.15): `aya_2024` (was MRI-paper URL → arXiv 2412.04261, correct title/authors), `yoon_2025_llm_retrieval`, `zhang_2024_mugi`, `lei_2024_csqe`, `lei_2025_thinkqe`, `yang_2025_aqe`, `zhang_2025_pbr`, `xia_2025_kar`, `young_2024_gaqr` (Orion→Oliver), `louis_2024_query` (→`@mastersthesis`, author Bhusal).
+- Added: `macmillanscott_2025_generative` (6.1), `liu_2025_exp4fuse` (6.2), `qwen3emb_2025` + `alwajih_2024_swan` (6.5).
+- **Decision #2 honoured:** the 11 orphaned entries were **kept** (harmless; deletion deferred).
+
+**DONE — `chapter2.tex`**
+- WS6 6.4e prose corrections: MuGI rewritten (Multi-Text Generation Integration + tie-in to our β repetition), **Yoon recharacterised as a skeptical "knowledge-leakage" counterpoint** (was misrepresented as supporting), Xia/Yang/ThinkQE/PBR claims corrected, "Louis and Bhusal" → "Bhusal".
+- 6.1 gap narrowed to **monolingual** Arabic + Macmillan-Scott cited as concurrent corroboration (§2.4 l.~393 + research-gap item 1).
+- 6.2 gap reframed + **Exp4Fuse** cited as nearest prior art (§2.4 research-gap).
+- 5.A.5: removed the decorative Alsubhi (paper-12) citation at the morphological-gap sentence.
+- 5.A.6: verified §2.3.2 BM25S params already consistent (k1=0.9/b=0.4) — no edit needed.
+
+**DONE — `chapter3.tex`**
+- §3.3 length buckets "tokens" → "words" (WS1 1.2); added three-threshold-systems **signpost paragraph** + 0.3/0.7-are-pragmatic note (WS1 1.4 / WS4 4.14).
+- Fixed first-pass-quality definition **top-5 "≥1 relevant" → top-1, qrel≥1** (WS4 4.8 / WS1 1.3) in §3.9 methodology.
+- 5.B.8: added the **exact CSQE system prompt** (verbatim, from exp_013 notebook) to §3.8, mirroring the §3.5 blind-prompt quote.
+
+**DONE — `chapter4.tex`**
+- **§4.2 numeric corrections (WS1 §2)** from the canonical pytrec_eval run: segmentation 39/56/5% → **33.9/33.2/32.9%** (n 982/962/952; per-category avg 0.053/0.511/0.948); nDCG=0 count 192 → **736**; length table → **0.345/0.511/0.476** (words; non-monotonic, 28% gap); correlation +0.125 → **≈ −0.01**; coverage 93.4/96.7/98.8/99.4 → **74.6/80.8/86.9/90.1%**, reframed as a **recall ceiling** motivating hybrid (decision #4).
+- 5.C.2: added **Qwen-family correlation** (Pearson r=0.94, Spearman ρ=1.00) + cross-model confound caveat in §4.5.1.
+- 4.4 / 5.C.3: §4.5.3 generic "Arabic NLP benchmark" → **OALL**.
+- **§4.10 rewrite:** failure paragraph "257/258 irretrievable / dataset ceiling" → **0 irretrievable, 199 missed-by-all + 58 BM25-retrievable-but-lost** (WS1 1.1 / WS4 4.11); fixed caption "Both-expanded" → **BM25-expanded** + reconciled 0.6936 per-query vs 0.7137 corpus-level (4.17); heading "Dominant Predictor" → **"Largest Modulator"**, first-pass = top-1 (4.8/4.14); length-split table → **Scheme A (1–3/4–8/9+)**, Medium row filled (5.C.20); **big-win trio replaced** (الرباط المنصوري / الأسماء الخمسة / الفن الجزيري) with blind-poisoning framing (4.12/5.C.17); **Type B reframed to general first-pass-poisoning mode** with 3 representative examples (4.13); implications converted to a forward-pointer to Ch.5 recs (5.C.19).
+
+**DONE — `chapter5.tex`**
+- §5.1 baseline recap aligned (34%, short=72% of long, r≈0); OALL standardisation + size-confound note; **conclusion reorder (5.D.4)** — "Overall" paragraph moved to **close** §5.1, augmented with the 0.4621→0.7137 headline.
+- §5.2: ALLaM sentencepiece (`▁`) disclosure already present; **added MIRACL no-metadata limitation** (5.D.2).
+- §5.3: Rec 2 + Rec 8 embedding update — keep BGE-M3, replace dated mE5-large with **Qwen3-Embedding-8B + Swan-Large** + validation caveat (6.5). (First-pass-gate + asymmetric-weighting recs already present as Recs 6–7, so 5.C.19's "move from §4.10" is satisfied.)
+
+**DONE — `chapter1.tex` + abstracts (consistency-only, NOT the Q2-gated reframe)**
+- Ch.1: reviewed — carries none of the changed numbers/claims; counts already consistent ("ten" 2–8B models + GPT-OSS surveyed separately). **No edits required.**
+- 5-Abstract.tex / 6-ARAbstract.tex: 39% → **34%** failure rate; "significant short-query gap" → "pronounced underperformance of very short queries" (EN + AR). Headline result numbers (0.7137 / 54.5% / 13.9%) already correct.
+
+**DONE — supporting docs**
+- `error_analysis_phase1_quantitative.md`: added a **correction banner** with the corrected §4.2 table (the doc body still holds the old buggy numbers — banner says use thesis values).
+- `exp_error_analysis_csqe.md`: already carried WS1 Task-1.1 correction banners (no new edit).
+
+---
+
+#### LEFT / DEFERRED / NEEDS A DECISION
+
+- **GPT-OSS deletion (5.A.8) — ✅ RESOLVED 2026-06-15: deleted completely** (prose + generated tables + bib + counts eleven→ten). *(Original deferral rationale, kept for history: it conflicted with the "include negative results" principle and required touching the generated table snippets `table_2_2.tex` / `table_2_2_models.csv` alongside the prose; the user confirmed deletion, so it was done coordinated across all locations. See the 2026-06-15 entry.)*
+- **5.C.9 / 5.C.21 (structural moves) — ✅ DONE 2026-06-15.** Hybrid-no-QE added to §4.1 baselines; "Summary of All Experiments" table moved to chapter end. (No broken cross-refs; verified.)
+- **Supervisor-gated — not touched:** Ch.1 problem-statement reframe (5.A.3 / 5.E.1 / 5.E.3 / 5.E.4) and the full abstract rewrite (5.F.1) await Dr. Tahani's Q2/Q3/Q5. Only consistency fixes were applied to Ch.1/abstracts.
+- **5.A.1 (dataset-analysis section) / 5.A.4 (QE-families expansion) — ✅ DONE 2026-06-15.** 5.A.4 in the GPT-OSS pass; 5.A.1 after the user supplied `datasets/Dataset_Analysis_Report.md`, added as §2.3 with web-verified citations.
+- **4.16 (dead table/figure labels):** do after figures are embedded/finalised.
+- **WS3.1–3.3 broad sweeps:** ✅ DONE 2026-06-15. The exhaustive decorative-citation, fabricated-rationale, and model-descriptor sweeps were completed via three subagents whose findings I web-verified before applying. Notably caught 4 more fabricated bib author/title fields + several wrong model-descriptor facts (Aya 23 langs, Qwen2.5-3B license, SILMA RAGQA). See the 2026-06-15 (cont.) entry below.
+- **Residual:** `exp_error_analysis_csqe.md` big-win example table still lists the old John Dewey trio (banner-covered; thesis now uses the verified trio).
+
+---
+
+#### ⚠️ FIGURE CONCERns (for the later figures session)
+
+1. **Three §4.2 figures must be regenerated from the canonical run — the text is now AHEAD of them:**
+   - **Fig 4.2** (`fig_4_2_failure_cliff_v1.pdf`): built on the buggy per-query nDCG; the whole distribution shifts and the "39%" annotation is now **34%**. Regenerate from the canonical run, and consider softening the "failure cliff" name (the distribution is now ~34/33/33, not a cliff).
+   - **Fig 4.3** (`fig_4_3_length_box_v1.pdf`): new bucket means **0.345 / 0.511 / 0.476**, axis label "words" not "tokens".
+   - **Fig 4.4** (`fig_4_4_recall_curve.pdf`) / coverage: must reflect the corrected coverage (90.1% @100, not 99.4%).
+2. **Fig 4.13 / 4.14 are OK:** Fig 4.13 caption already uses top-1 (0.8877/0.5814); Fig 4.14 already uses the 1–3/4–8/9+ buckets — the §4.10 table was updated to match it this session.
+3. **Figures rendered but not yet `\includegraphics`-embedded/verified.** Confirm every `fig_*` PDF referenced in Ch.2–4 exists and is the **post-WS1** version before compiling the supervisor draft.
+4. **GPT-OSS lives in the generated Ch.2 tables** (`table_2_1.tex`, `table_2_2.tex`, `table_2_2_models.csv`). If GPT-OSS is deleted (5.A.8), these must be regenerated together with the prose, or the table will contradict the text.
+5. **Big-win "golden diagram"** (WS4 4.12 suggested الأسماء الخمسة as a worked blind-vs-CSQE figure) is **not** implemented; the examples are currently an inline table only.
+6. Verify the hand-compiled tables (2.1, 2.2, 3.1, 3.2, 4.6) did not inherit any of the corrected §4.2 numbers (they shouldn't have, but confirm during the figures pass).
+
+---
+
+### 2026-06-12 — Apply-pass verification audit (research only; no thesis edits made)
+
+Audited the uncommitted 2026-06-10 apply pass (git diff vs HEAD) against this task list. **All edits claimed DONE in the 2026-06-10 log are confirmed present in the .tex/.bib files** (spot-verified: §4.2 corrected numbers, §3.3 words+signpost, §4.10 rewrite incl. failure paragraph / big-win trio / Type-B reframe / "Largest Modulator" / Medium row, CSQE prompt in §3.8, first-pass top-1 in §3.9, OALL conversion, Qwen correlation, References.bib fixes incl. `aya_2024`, abstract 34% fix, Ch.5 reorder + MIRACL-metadata + embedding-model update). Sweeps re-verified clean: no "Phase 4", no exp-number refs, no Config A/B/C, no unjustified "statistically", no 0.9466, abstract closing numbers 0.7137/54.5/13.9 correct in EN+AR.
+
+#### C. GAPS — ready to apply but neither applied nor recorded as deferred (fix the bookkeeping or apply next session)
+
+| Item | Status found | Action needed |
+|------|-------------|---------------|
+| **5.A.2** hybrid-equation move | **ORPHAN — not applied, not recorded.** RRF + CC equations still live in §2.1.3 Hybrid Retrieval (`chapter2.tex:80–92`, `eq:hybrid_cc_ch2`), not in §2.2 Mathematical Models. Pure edit, no dependency. | Apply (move or duplicate-with-pointer), or explicitly defer. |
+| **5.E.2** ten-vs-eleven | **Mislabelled as supervisor-blocked; it is not.** Real inconsistency exists: abstract says "Ten … were evaluated" but `chapter2.tex:229` ("the eleven LLMs evaluated"), `:452` ("systematic evaluation of eleven"), `:467` ("Eleven … described"), and `chapter5.tex:45` ("Two of the eleven models evaluated") all use eleven without the "surveyed 11 / evaluated 10" framing the task prescribes. | Apply the 10/11 convention edit (independent of Q2/Q3). |
+| **5.C.11 restore** | **Unrecorded [DECIDE].** WS4 verified both 4.9 (~1,500 chars: mean 1486/median 1530) and 4.10 (mDPR = MS-MARCO-fine-tuned, short queries; cite Bajaj et al. 2016) AFTER the claims were dropped via the fallback path. WS4 report explicitly says the §4.8 dense-degradation explanation "can now be restored with a verified source if desired". | Decide: restore with citations, or keep dropped. |
+| **7.2** Gemini brief verification | **Never logged anywhere.** Likely mooted: WS1 1.3 re-ran the per-query analysis from raw outputs (the brief-distrust motivation), and WS4 4.17 spot-checked the brief's numbers. | Record explicit close-out (recommend: CLOSED — superseded by WS1.3 + WS4.17) or run it. |
+| **5.C.5** Ch.4 table audit | Implicitly deferred behind figure embedding via the 4.16 team decision, but never named in the LEFT list. | Add to deferred list: do together with 4.16 after figures are embedded. |
+
+#### D. Bookkeeping closures — already satisfied in the text but never marked done
+
+- **5.B.5** SILMA temperature: `chapter3.tex:325` already reads "(0.7 and 0.1)" matching WS4 4.3. ✅ CLOSE. ⚠️ Caveat: the same sentence claims "0.1 yielded a 2.5\% improvement" — the 2.5% figure was NOT verified by 4.3 (only the two pkls' existence was). Flag for the WS3.2 fabricated-rationale sweep.
+- **5.B.10** retrieval depth: `chapter3.tex:404` says top-100, matching WS4 4.6 (verified top-100 everywhere). ✅ CLOSE.
+- **5.A.7** Song & Zheng: WS6 6.3 verdict = KEEP (entry correct, taxonomy matches §2.4). Citation stays; no edit needed. ✅ CLOSE.
+- **5.F.3** Arabic abstract numerals: `6-ARAbstract.tex` consistently uses Western/ASCII digits (2,896 / 34\% / 0.7137 / 54.5\%); convention is internally consistent. ✅ CLOSE (matching existing convention = ASCII).
+- **5.D.2 (Wang precedent sub-item):** Ch.5 challenge 2 already acknowledges "the query repetition strategy recommended by the original Query2Doc paper" — substantively applied. Optional polish: add explicit `\cite{wang_2023_query2doc}`.
+- **5.F.2** closing numbers: verified correct in both abstracts. ✅ CLOSE.
+
+#### E. Stale notes inside this file (superseded; do not act on them)
+
+- The 2026-06-01 "Open tasks (status unchanged)" block still lists WS4 4.3–4.17 as needing verification, 5.C.2 + 5.C.17 as open, and hand-compile tables as pending — **all superseded** by WS4 completion (2026-05-30/31), the 2026-06-10 apply pass, and the 2026-06-01 table-compile session respectively. The blanket "WS5.A, 5.E, 5.F blocked on supervisor" is too broad: only 5.A.3 / 5.E.1 / 5.E.3 / 5.E.4 / 5.F.1 / 5.F.4 are genuinely gated.
+
+#### F. Minor polish candidates (optional, non-blocking)
+
+- `chapter4.tex:400`: "a multilingual model with a lower Arabic benchmark score" → "lower OALL score" for full 4.4-sweep compliance (OALL is named earlier in the same sentence, so low risk either way).
+- `chapter2.tex:151`: generic formula text says "typically $k_1 = 1.2$, $b = 0.75$" — fine as textbook description since the §2.3.2 Notation paragraph pins the operative k1=0.9/b=0.4, but be aware it's the last remaining "other" BM25 parameter mention.
+
+---
+
+### 2026-06-15 — GPT-OSS removal + remaining deferred items applied
+
+User instruction: delete GPT-OSS completely (10 models, not 11); apply all remaining deferred items except those gated on supervisor questions or figures; apply the ready tasks surfaced by the 2026-06-12 audit; mark everything done. All edits are in the .tex/.bib (see the "Completed tasks" table above for the per-item rows).
+
+**Applied this session:**
+- **5.A.8 — GPT-OSS deleted completely**, with all indirect references adjusted to **ten models**: Ch.2 (Experimental-Models subsection + §2.4.10 + model-comparison table row/footnote + counts), Ch.3 (category list, config table, model-issues bullet, quantisation sentence, work-division), Ch.4 (dense-leaderboard dropped row, "Dropped Models Analysis" → ALLaM-only, summary-table row), Ch.5 (challenge 3 → ALLaM-only), generated `table_2_2.tex` + `table_2_2_models.csv`, and the orphaned `gptoss_2025` entry removed from `References.bib`. Verified: zero "GPT-OSS"/"eleven"/`sec:gptoss` matches remain in the .tex.
+- **5.E.2** resolved by the above (consistent "ten" everywhere).
+- **5.A.2** hybrid equations moved to §2.2 (`sec:hybrid_math`). **5.A.4** QE-techniques expanded to four families. **5.C.9** hybrid no-QE reference baseline added to §4.1. **5.C.21** summary table moved to chapter end. **5.C.11** dense-degradation explanation restored with `bajaj_2016_msmarco`. Polish F applied (OALL phrasing; Wang cite).
+
+**2026-06-12 audit gaps — now closed:**
+- 5.A.2 ✅ applied · 5.E.2 ✅ applied · 5.C.11 ✅ restored.
+- **7.2 (Gemini brief verification): CLOSED — superseded** by WS1 1.3 (per-query analysis re-run from raw outputs) + WS4 4.17 (brief headline numbers spot-checked). Not run; no longer needed.
+- **5.C.5 (Ch.4 table audit): DEFERRED** — bundle with **4.16** (dead table/figure labels) and do **after figures are embedded** (team decision under 4.16). Figure-gated, so out of scope for this pass.
+
+**5.A.1 — now DONE (later in the same session).** The user supplied `datasets/Dataset_Analysis_Report.md`, removing the fabrication risk. A focused §2.3 "Evaluation Dataset Selection" was added to Ch.2 (6-dataset comparison table + MIRACL justification + MSA-only limitation). All five new dataset citations were **verified on the web against primary sources** (arXiv/ACL Anthology) before being added to `References.bib` — not taken from the report uncritically.
+
+**Still genuinely blocked (unchanged):**
+- Supervisor-gated: 5.A.3 / 5.E.1 / 5.E.3 / 5.E.4 (Ch.1 reframe), 5.F.1 / 5.F.4 (abstract rewrite/translation) — await Dr. Tahani Q2/Q3/Q5.
+- Figure-gated: 4.16 + 5.C.5 (after embedding); **§4.2 figures (Fig 4.2/4.3/4.4) still need regeneration from canonical data** — thesis text is ahead of them. GPT-OSS is now gone from prose + generated tables, so the model tables (2.2) are consistent.
+
+---
+
+### 2026-06-15 (cont.) — WS3.1–3.3 AI-pattern sweeps (subagents + my web-verification)
+
+Three `general-purpose` subagents were dispatched (one per sweep) to *report findings only*; every ❌/⚠️ recommendation was then re-verified by me against the primary source before any edit (the agents are auditing for fabrication, so I did not trust their corrections blindly — and indeed had to discard a couple of over-corrections, e.g. the Pyserini title).
+
+**Highest-value catches (all verified, then fixed):**
+- **More fabricated citations** (same "correct URL, wrong author/title" pattern WS6 found) — including in 3 entries *I myself added last session*: `alwajih_2024_swan`, `macmillanscott_2025_generative`, `liu_2025_exp4fuse`, plus pre-existing `sengupta_2023_jais`. All corrected against arXiv author lists I fetched directly.
+- **Wrong model facts:** Aya Expanse is **23 languages, not 101** (101 = the older Aya-101; this propagated into 2 Ch.4 sentences used to *explain* the BM25 result); **Qwen 2.5-3B is the Qwen Research License, not Apache 2.0**; **SILMA RAGQA = 0.3478, not 0.3575**.
+- **Ch.3 internal contradiction:** ALLaM listed as NF4-quantised in Table 3.2 but FP16 (14.5 GB) in §2.4 → fixed to FP16.
+- **SILMA 2.5% temperature claim VERIFIED correct** (0.5177 vs 0.5052) — closes the long-standing residual.
+
+**Deliberately NOT changed (verified OK or too risky to assert a replacement):** Pyserini/QLoRA bib titles (correct/cosmetic); Jais-2 release date + Table 3.2 temp/batch (project records say Dec 2024 / the thesis is internally consistent; agent evidence was planning docs, not run logs); SILMA "2B" (matches the official model name); Gemma "~10 pts below Falcon on OALL" (corroborated by the Falcon blog); internal VRAM measurements (legitimate, just unsourced). Unverified specifics (ALLaM 6M/245K, Jais-2 SFT split, GaQR multiplier, Query2Doc model names) were **softened/removed** rather than swapped for an unconfirmed number.
+
+Net: WS3 is the last non-supervisor/non-figure workstream. Remaining open work = supervisor-gated Ch.1/abstract reframe and the figure track only.
 
 ---
 

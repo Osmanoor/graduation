@@ -1,7 +1,27 @@
 # Error Analysis Phase 1: Quantitative Results
 **Date:** January 17, 2026  
 **Experiment:** exp_001_baseline_dense (mDPR + Identity Enhancement)  
-**Status:** ✅ Complete
+**Status:** ⚠️ SUPERSEDED — see correction banner below
+
+---
+
+> ## ⚠️ CORRECTION (2026-06-10, WS1 §2)
+> The figures in this document were computed from `exp_001_quantitative_analysis.json`, whose custom analysis code used a **non-standard nDCG**. They were recomputed from the canonical run (`exp_001_baseline_dense.txt`) with `pytrec_eval`, which reproduces all four published headline metrics exactly (0.4993 / 0.6156 / 0.8407 / 0.5328). **The thesis (§4.2, §3.3) now uses the corrected values below; use these, not the body of this file.** Length buckets are also relabelled **tokens → words** (boundaries unchanged).
+>
+> | Quantity | OLD (this file, buggy) | CORRECTED (canonical run) |
+> |---|---|---|
+> | Failed (<0.3) | 39.0% (1,130) | **33.9% (982)** |
+> | Mediocre (0.3–0.7) | 55.9% (1,618) | **33.2% (962)** |
+> | Successful (≥0.7) | 5.1% (148) | **32.9% (952)** |
+> | nDCG@10 = 0 queries | 192 | **736** |
+> | Short 1–3 words nDCG@10 | 0.240 | **0.345** |
+> | Medium 4–8 words nDCG@10 | 0.367 | **0.511** |
+> | Long 9+ words nDCG@10 | 0.406 | **0.476** (non-monotonic: Medium > Long) |
+> | short-vs-long gap | 41% (short = 59% of long) | **28% (short = 72% of long)** |
+> | length↔nDCG correlation r | +0.125 (p<0.001) | **≈ −0.01 (no linear trend)** |
+> | Coverage @10 / @20 / @50 / @100 | 93.4 / 96.7 / 98.8 / 99.4% | **74.6 / 80.8 / 86.9 / 90.1%** |
+>
+> Reconciliation: `thesis_figures/data/computed/sec4_2_reconciliation.csv`. Scope: dense-baseline error analysis only; headline metrics and all CSQE/hybrid results are unaffected.
 
 ---
 
