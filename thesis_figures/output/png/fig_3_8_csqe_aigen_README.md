@@ -1,6 +1,10 @@
 # CSQE AI-Generated Figure Variants — README
 
-Generated via **PaperBanana 0.1.2**. Current images regenerated 2026-06-19 with strongest available models and verified pipeline source context.
+Generated via **PaperBanana 0.1.2**.
+
+Two generations exist:
+- **v1–v4.png** — 2026-06-19 run, `gemini-3.1-pro-preview` VLM + `gemini-3-pro-image` image gen (current)
+- **v1–v4_boosted.png** — 2026-06-05 original run, `gemini-2.5-flash` VLM + `gemini-3-pro-image-preview` image gen (preserved for comparison)
 
 ## Setup (reproduced by anyone with the API key)
 
@@ -8,109 +12,96 @@ Generated via **PaperBanana 0.1.2**. Current images regenerated 2026-06-19 with 
 **Repo:** https://github.com/llmsresearch/paperbanana  
 **Install:** `python -m pip install "paperbanana[mcp]"`
 
-**Generation scripts:**
-- `thesis_figures/gen_csqe_variants.py` — full 4-variant script
+**Generation script:** `thesis_figures/gen_csqe_variants.py`
 
-**Environment variable required:**
+**Environment variable required (never hardcode):**
 ```
-GOOGLE_API_KEY=<your-key>
+$env:GOOGLE_API_KEY='<your-key>'   # PowerShell
+export GOOGLE_API_KEY=<your-key>   # bash
 ```
-Set this before calling `paperbanana.core.config.Settings()` — the field uses the alias `GOOGLE_API_KEY` (Pydantic BaseSettings reads it from env, not from the keyword arg `google_api_key`).
 
-**Models (2026-06-19 run):**
-- VLM (planning + styling + critic): `gemini-3.1-pro-preview` (strongest available reasoning model)
-- Image generation: `gemini-3.1-flash-image`  
-  Note: the PaperBanana default `gemini-2.0-flash` is deprecated — always override with a current model.
+---
 
-**MCP server config** (for Claude Code, add to project `.mcp.json` and restart):
-```json
-{
-  "mcpServers": {
-    "paperbanana": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["--from", "paperbanana[mcp]", "paperbanana-mcp"],
-      "env": { "GOOGLE_API_KEY": "YOUR_KEY_HERE" }
-    }
-  }
-}
-```
+## 2026-06-19 Run (current — v1–v4.png)
+
+**Run ID:** `run_20260619_121015_df4fa0`  
+**VLM (planning + styling + critic):** `gemini-3.1-pro-preview`  
+**Image generation:** `gemini-3-pro-image`  
+**refinement_iterations:** 3
 
 **Pipeline notes:**
-- No reference index was found (`data/reference_sets/` not populated) — the Retriever agent returned no examples. This means PaperBanana generated without in-context reference images, relying purely on the planner+stylist prompt chain.
-- Each run used `refinement_iterations=3`. v1, v2, v4 were approved by the critic in 1 iteration. v3 needed 2 iterations (critic caught a near-zero-opacity rendering issue on the background bands and the second render was approved).
-- Seeds: PaperBanana does not expose a seed parameter; reproducibility is approximate (same model + same prompt → similar but not identical output on re-run).
-
----
-
-## Shared source context (all variants)
-
-All variants used the same `source_context` (from `gen_csqe_variants.py` → `SHARED_CONTEXT`):
-
-> Three-stage CSQE pipeline over MIRACL Arabic corpus:
-> Stage 1: BM25 first-pass retrieval (top-k₁=5 passages).
-> Stage 2: Aya Expanse 8B called 4 times — 2 corpus-grounded samples (c₁,c₂) + 2 blind samples (b₁,b₂).
-> Stage 3: BM25 re-retrieval with q⊕q⊕q⊕q⊕c₁⊕c₂⊕b₁⊕b₂ (α=4 repetitions to counter term dilution).
-> Results: BM25+CSQE = 0.616 nDCG@10; best system (CSQE+Dense RRF) = 0.714.
-> Worked example: الأسماء الخمسة query — blind QE hallucinates names (nDCG=0.0), CSQE grounds to correct grammar article (nDCG=1.0).
-
----
-
-## Variants
+- No reference index found (`data/reference_sets/` not populated) — Retriever returned no examples; planner+stylist ran from text only.
+- `gemini-3-pro-image` produced washed-out/low-contrast images on first iterations; the critic detected this and requested stronger colours. All variants recovered within 3 iterations.
+- Source context fully verified against `exp_013_csqe_aya_8b.md` and `csqe_parameter_verification.md` — no hallucinated parameters.
+- **Key correction vs. 2026-06-05 run:** corpus-grounded prompt now accurately describes the LLM task as EXTRACTION of key sentences from retrieved documents (not free-form answer generation).
 
 ### v1 — Three-stage flowchart with results label
 
-**File:** `fig_3_8_csqe_aigen_v1.png`  
-**Generated:** 2026-06-19 11:01  
-**Run ID:** `run_20260619_110102_91fdc4`  
-**Iterations:** 1 (critic approved immediately)
+**File:** `fig_3_8_csqe_aigen_v1.png` (2.0 MB)  
+**Iterations:** 3 (critic flagged contrast issues; accepted after iteration 3)
 
-**Communicative intent prompt:**
-> A clear, stage-labelled flowchart of the CSQE three-stage pipeline. Show the user query entering Stage 1 (BM25 first-pass), the top-5 retrieved passages flowing into Stage 2 where Aya 8B produces four samples (two corpus-grounded c₁,c₂ and two blind b₁,b₂), then all four samples plus α=4 query repetitions concatenated into one expanded query in Stage 3 (BM25 second-pass) producing the final ranked list. Differentiate the corpus-grounded samples visually from the blind samples. Include the result nDCG@10 = 0.616.
-
-**What makes it different:** Canonical left-to-right flowchart. All three stages clearly labelled. Four sample boxes colour-differentiated. Numeric result included.
+**Communicative intent:**
+> A clear, stage-labelled flow diagram of the three-stage CSQE pipeline for Arabic BM25 retrieval. Stage 1 box: query q enters BM25, which returns the top-5 passages (each truncated to 128 tokens). Stage 2 box: Aya Expanse 8B is invoked 4 times (temp=1.0): two corpus-grounded calls (c1, c2) each receive query + 5 passages and EXTRACT key sentences; two blind calls (b1, b2) receive query only and generate from parametric knowledge. Use distinct visual styles (colour or shading) to distinguish corpus-grounded from blind boxes. Stage 3 box: the four pseudo-documents plus 4 repetitions of q are concatenated (show formula q x4 + c1+c2+b1+b2 or alpha=4 label), then fed to BM25 for the second retrieval. Annotate the final output: nDCG@10 = 0.616.
 
 ---
 
 ### v2 — Side-by-side Blind vs. CSQE comparison with worked example
 
-**File:** `fig_3_8_csqe_aigen_v2.png`  
-**Generated:** 2026-06-19 11:03  
-**Run ID:** `run_20260619_110102_91fdc4`  
-**Iterations:** 1 (critic approved immediately)
+**File:** `fig_3_8_csqe_aigen_v2.png` (2.0 MB)  
+**Iterations:** 2 (critic JSON parse error on iter 2; defaulted to approved)
 
-**Communicative intent prompt:**
-> A side-by-side comparison layout contrasting Blind Query2Doc (left column) with CSQE (right column), using the الأسماء الخمسة worked example. Left column: query → LLM (no context) → hallucinates a list of names → wrong retrieval → nDCG@10 = 0.000. Right column: query → BM25 first-pass → top-5 passages → LLM produces corpus-grounded expansion about أب أخ حم فو ذو → correct retrieval → nDCG@10 = 1.000. The visual contrast between the two paths is the main point.
-
-**What makes it different:** Shows the failure mode directly. Examiner sees in one glance why blind QE fails and why corpus-grounding fixes it. Uses the recommended الأسماء الخمسة golden example.
+**Communicative intent:**
+> A side-by-side contrast figure showing WHY corpus grounding matters. Title: 'Blind Query2Doc vs. CSQE -- Arabic grammar query example'. LEFT column (Blind QE): query (Five Nouns / al-asma' al-khamsa) -> Aya 8B (no context) -> generates list of personal names: Muhammad, Adam, Ibrahim ... -> BM25 retrieves biography articles -> relevant grammar article not found -> nDCG@10 = 0.000. RIGHT column (CSQE): query -> BM25 first-pass retrieves grammar article on Five Nouns -> Aya 8B extracts: father/ab, brother/akh, father-in-law/ham, mouth/faw, possessor/dhaw from the retrieved article -> BM25 re-retrieval finds the correct grammar article -> nDCG@10 = 1.000. The category-error hallucination on the left vs. corpus-anchored extraction on the right is the single visual point. Show the Arabic terms where possible.
 
 ---
 
 ### v3 — Compact three-band horizontal layout
 
-**File:** `fig_3_8_csqe_aigen_v3.png`  
-**Generated:** 2026-06-19 11:05  
-**Run ID:** `run_20260619_110102_91fdc4`  
-**Iterations:** 2 (critic flagged near-zero-opacity background bands in iter 1; iter 2 approved)
+**File:** `fig_3_8_csqe_aigen_v3.png` (1.9 MB)  
+**Iterations:** 1 (critic JSON parse error; defaulted to approved)
 
-**Communicative intent prompt:**
-> A compact overview that fits in a thesis single-column figure. Show the pipeline as three horizontal bands labelled Stage 1, Stage 2, Stage 3. Inside Stage 2 show four distinct LLM call boxes: c1 and c2 shaded one colour (corpus-grounded), b1 and b2 shaded a different colour (blind). Show the query repetition factor alpha=4 in the Stage 3 concatenation formula. Keep labels concise so nothing is crowded.
-
-**What makes it different:** Designed for single-column space constraints. Horizontal band layout vs. left-to-right arrow chain. Prioritises label density over explicit flow arrows.
+**Communicative intent:**
+> A compact pipeline overview designed for single-column thesis width (~8 cm). Three horizontal bands: Band 1 (Stage 1): query q -> BM25 -> top-5 passages. Band 2 (Stage 2): four LLM call boxes arranged in two pairs -- c1+c2 (corpus-grounded, one colour) and b1+b2 (blind, different colour). Label: Aya Expanse 8B, temp=1.0. Band 3 (Stage 3): concatenation node showing 'q*4 + c1+c2+b1+b2' (alpha=4 repetitions) -> BM25 second pass -> final ranked list. Keep all text labels short. Show nDCG improvement: 0.462 -> 0.616.
 
 ---
 
-### v4 — Narrative two-path divergence with formula as visual element
+### v4 — Narrative fork-and-merge with formula as visual element
 
-**File:** `fig_3_8_csqe_aigen_v4.png`  
-**Generated:** 2026-06-19 11:08  
-**Run ID:** `run_20260619_110102_91fdc4`  
-**Iterations:** 1 (critic approved immediately)
+**File:** `fig_3_8_csqe_aigen_v4.png` (2.0 MB)  
+**Iterations:** 2 (critic flagged contrast on iter 1; JSON parse error on iter 2; defaulted to approved)
 
-**Communicative intent prompt:**
-> A narrative-driven figure that foregrounds the corpus-grounding mechanism. Show the two-path divergence clearly: one path from the query goes straight to Aya 8B (blind), the other first hits BM25, retrieves real Wikipedia passages, then goes to Aya 8B (grounded). Both paths produce pseudo-documents that are concatenated with four repetitions of the original query before the final BM25 retrieval. Show the query repetition formula q+q+q+q+c1+c2+b1+b2 as a visual element rather than just a text label.
+**Communicative intent:**
+> A narrative figure foregrounding the corpus-grounding mechanism as a fork-and-merge topology. From a central query node, two branches diverge: CORPUS BRANCH: query -> BM25 (k1=5) -> 5 Wikipedia passages -> Aya 8B (extract key sentences) -> c1, c2. BLIND BRANCH: query -> Aya 8B (generate from knowledge) -> b1, b2. Both branches converge at a MERGE node that assembles the final expanded query. Display the assembly formula as a banner or framed node: q_CSQE = [q][q][q][q][c1][c2][b1][b2] (four copies of q, then four pseudo-documents). The merged query feeds into BM25 for the final retrieval step. Label the corpus branch with 'vocabulary anchored in Wikipedia text' and the blind branch with 'parametric diversity'. Show the headline metric: nDCG@10 = 0.616 for BM25+CSQE.
 
-**What makes it different:** Treats the formula as a visual node, not a caption. The two-path fork is the central compositional element, showing the divergence from query → blind vs. query → BM25 → grounded before they merge into one expanded query.
+---
+
+## 2026-06-05 Run (preserved as _boosted — v1–v4_boosted.png)
+
+**Run ID:** `run_20260605_084757_7e92b0` (v1, v2) / `run_20260605_085830_1e16c6` (v3, v4)  
+**VLM:** `gemini-2.5-flash`  
+**Image gen:** `gemini-3-pro-image-preview`
+
+All four variants were approved by the critic in 1 iteration each. File sizes: v1=2.0 MB, v2=2.3 MB, v3=2.1 MB, v4=2.1 MB.
+
+Variants shared the same communicative intent as the 2026-06-19 run in overall structure, but the source context described corpus-grounded samples as "writing a short passage using the retrieved documents" rather than extracting key sentences. The 2026-06-19 run corrects this.
+
+---
+
+## Shared source context (2026-06-19 run)
+
+All variants used the same `source_context` (verified against exp_013 doc and parameter verification doc):
+
+- k₁ = 5 first-pass passages (our MIRACL implementation; original CSQE paper uses k=10)
+- LLM: Aya Expanse 8B, BF16, A100 40 GB, temp=1.0, max_new_tokens=128
+- Corpus-grounded (c1, c2): LLM **extracts key sentences** from retrieved passages — EXTRACTIVE
+- Blind (b1, b2): LLM **generates** a passage from parametric knowledge — GENERATIVE
+- Final query: q×4 ⊕ c1 ⊕ c2 ⊕ b1 ⊕ b2 (α=4 repetitions, one per expansion, to counter BM25 term dilution)
+- BM25+CSQE: nDCG@10 = 0.6157 (+33.2% over BM25 baseline 0.4621)
+- Best system (BM25+CSQE + Dense RRF k=20): nDCG@10 = 0.7137
+
+Worked example (qid 3034): query «ما هي الأسماء الخمسة في اللغة العربية؟»  
+Blind QE: confuses grammar term with personal names → nDCG@10 = 0.000  
+CSQE: first-pass retrieves correct grammar article → extraction locks on أب أخ حم فو ذو → nDCG@10 = 1.000
 
 ---
 
@@ -118,16 +109,16 @@ All variants used the same `source_context` (from `gen_csqe_variants.py` → `SH
 
 **v2** — the side-by-side comparison with the الأسماء الخمسة worked example.
 
-**Why:** The thesis's central claim is not "here is a pipeline diagram" but "corpus grounding prevents the hallucinations that blind QE introduces." v2 shows this in a single figure: the examiner sees the wrong path (blind → names hallucination → nDCG=0.0) and the right path (CSQE → correct grammar article → nDCG=1.0) without needing to read the caption. This is the تفسير-by-example approach recommended in `WS4_TASK_4.12_BIGWIN_EXAMPLES.md` §3.
+The thesis's central claim is that corpus grounding prevents the hallucinations that blind QE introduces. v2 shows this in one figure: the examiner sees the wrong path (blind → names hallucination → nDCG=0.0) and the right path (CSQE → correct grammar article → nDCG=1.0) without reading the caption.
 
-v1 is the safer backup: a clean canonical pipeline diagram that describes the system without the worked example. If the thesis layout already includes a separate big-win table (§4.10, Table 5.C.17), v1 avoids redundancy. If Fig 3.8 needs to stand alone as a figure that also teaches the reader *why* CSQE works, v2 wins.
+**v1** is the safer backup: a clean canonical pipeline diagram that describes the system without depending on the worked example. If the thesis already has a big-win table in a nearby section, v1 avoids redundancy.
 
-v3 and v4 are valid alternatives if column-width or layout constraints change the framing.
+**v3** and **v4** suit column-width-constrained layouts or situations where the formula needs to be a visual centrepiece.
 
 ---
 
 ## Post-processing
 
-None — all four images are raw PaperBanana outputs with no manual editing.
+None — all images are raw PaperBanana outputs with no manual editing.
 
-The existing TikZ source at `thesis_figures/system_diagrams/fig_3_8_csqe.tex` is preserved as the reproducible fallback.
+The TikZ source at `thesis_figures/system_diagrams/fig_3_8_csqe.tex` is preserved as the reproducible vector fallback.
