@@ -437,8 +437,8 @@ The configuration used for the primary CSQE experiment was: $k=5$ first-pass doc
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{fig_3_8_csqe.pdf}
-  \caption[CSQE pipeline]{Corpus-Steered Query Expansion (CSQE) pipeline. Stage 1: BM25 retrieves a first-pass top-$k_1$ context. Stage 2: corpus context plus the original query are fed to the Aya LLM, which generates a corpus-grounded pseudo-document. Stage 3: the query (repeated $\alpha$ times) is concatenated with the pseudo-document and fed to a BM25 second pass.}
+  \includegraphics[width=0.95\textwidth]{fig_3_8_csqe_aigen_v4_boosted.png}
+  \caption[CSQE pipeline]{Corpus-Steered Query Expansion (CSQE) pipeline. Stage 1: BM25 retrieves the top-$k_1=5$ first-pass passages. Stage 2: Aya Expanse 8B is invoked four times ($\alpha=4$, temp~$=1.0$): two corpus-grounded calls ($c_1$, $c_2$) extract key sentences from the retrieved passages; two blind calls ($b_1$, $b_2$) generate from parametric knowledge. Stage 3: the original query (repeated $\alpha$ times) is concatenated with all four pseudo-documents and fed to a BM25 second pass, yielding nDCG@10~$=0.616$.}
   \label{fig:csqe_pipeline}
 \end{figure}
 
