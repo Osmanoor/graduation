@@ -1,6 +1,6 @@
 # CSQE AI-Generated Figure Variants — README
 
-Generated via **PaperBanana 0.1.2** on 2026-06-05.
+Generated via **PaperBanana 0.1.2**. Current images regenerated 2026-06-19 with strongest available models and verified pipeline source context.
 
 ## Setup (reproduced by anyone with the API key)
 
@@ -10,7 +10,6 @@ Generated via **PaperBanana 0.1.2** on 2026-06-05.
 
 **Generation scripts:**
 - `thesis_figures/gen_csqe_variants.py` — full 4-variant script
-- `thesis_figures/gen_csqe_v3v4.py` — v3/v4 only (used for final run)
 
 **Environment variable required:**
 ```
@@ -18,10 +17,10 @@ GOOGLE_API_KEY=<your-key>
 ```
 Set this before calling `paperbanana.core.config.Settings()` — the field uses the alias `GOOGLE_API_KEY` (Pydantic BaseSettings reads it from env, not from the keyword arg `google_api_key`).
 
-**Models:**
-- VLM (planning + styling + critic): `gemini-2.5-flash`  
-  Note: the PaperBanana default `gemini-2.0-flash` is deprecated as of 2026-06 — use `gemini-2.5-flash`.
-- Image generation: `gemini-3-pro-image-preview` (PaperBanana default, confirmed available)
+**Models (2026-06-19 run):**
+- VLM (planning + styling + critic): `gemini-3.1-pro-preview` (strongest available reasoning model)
+- Image generation: `gemini-3.1-flash-image`  
+  Note: the PaperBanana default `gemini-2.0-flash` is deprecated — always override with a current model.
 
 **MCP server config** (for Claude Code, add to project `.mcp.json` and restart):
 ```json
@@ -39,7 +38,7 @@ Set this before calling `paperbanana.core.config.Settings()` — the field uses 
 
 **Pipeline notes:**
 - No reference index was found (`data/reference_sets/` not populated) — the Retriever agent returned no examples. This means PaperBanana generated without in-context reference images, relying purely on the planner+stylist prompt chain.
-- Each run used `refinement_iterations=3` but all 4 variants were approved by the critic in 1 iteration ("No issues found. Image is publication-ready.").
+- Each run used `refinement_iterations=3`. v1, v2, v4 were approved by the critic in 1 iteration. v3 needed 2 iterations (critic caught a near-zero-opacity rendering issue on the background bands and the second render was approved).
 - Seeds: PaperBanana does not expose a seed parameter; reproducibility is approximate (same model + same prompt → similar but not identical output on re-run).
 
 ---
@@ -61,9 +60,9 @@ All variants used the same `source_context` (from `gen_csqe_variants.py` → `SH
 
 ### v1 — Three-stage flowchart with results label
 
-**File:** `fig_3_8_csqe_aigen_v1.png` (2.0 MB)  
-**Generated:** 2026-06-05 08:49 (second clean run; first generated at 08:46 from run `run_20260605_084126_9127ae`)  
-**Run ID:** `run_20260605_084757_7e92b0`  
+**File:** `fig_3_8_csqe_aigen_v1.png`  
+**Generated:** 2026-06-19 11:01  
+**Run ID:** `run_20260619_110102_91fdc4`  
 **Iterations:** 1 (critic approved immediately)
 
 **Communicative intent prompt:**
@@ -75,9 +74,9 @@ All variants used the same `source_context` (from `gen_csqe_variants.py` → `SH
 
 ### v2 — Side-by-side Blind vs. CSQE comparison with worked example
 
-**File:** `fig_3_8_csqe_aigen_v2.png` (2.3 MB)  
-**Generated:** 2026-06-05 08:51  
-**Run ID:** `run_20260605_084757_7e92b0`  
+**File:** `fig_3_8_csqe_aigen_v2.png`  
+**Generated:** 2026-06-19 11:03  
+**Run ID:** `run_20260619_110102_91fdc4`  
 **Iterations:** 1 (critic approved immediately)
 
 **Communicative intent prompt:**
@@ -89,10 +88,10 @@ All variants used the same `source_context` (from `gen_csqe_variants.py` → `SH
 
 ### v3 — Compact three-band horizontal layout
 
-**File:** `fig_3_8_csqe_aigen_v3.png` (2.2 MB)  
-**Generated:** 2026-06-05 09:00  
-**Run ID:** `run_20260605_085830_1e16c6`  
-**Iterations:** 1 (critic approved immediately)
+**File:** `fig_3_8_csqe_aigen_v3.png`  
+**Generated:** 2026-06-19 11:05  
+**Run ID:** `run_20260619_110102_91fdc4`  
+**Iterations:** 2 (critic flagged near-zero-opacity background bands in iter 1; iter 2 approved)
 
 **Communicative intent prompt:**
 > A compact overview that fits in a thesis single-column figure. Show the pipeline as three horizontal bands labelled Stage 1, Stage 2, Stage 3. Inside Stage 2 show four distinct LLM call boxes: c1 and c2 shaded one colour (corpus-grounded), b1 and b2 shaded a different colour (blind). Show the query repetition factor alpha=4 in the Stage 3 concatenation formula. Keep labels concise so nothing is crowded.
@@ -103,9 +102,9 @@ All variants used the same `source_context` (from `gen_csqe_variants.py` → `SH
 
 ### v4 — Narrative two-path divergence with formula as visual element
 
-**File:** `fig_3_8_csqe_aigen_v4.png` (2.2 MB)  
-**Generated:** 2026-06-05 09:02  
-**Run ID:** `run_20260605_085830_1e16c6`  
+**File:** `fig_3_8_csqe_aigen_v4.png`  
+**Generated:** 2026-06-19 11:08  
+**Run ID:** `run_20260619_110102_91fdc4`  
 **Iterations:** 1 (critic approved immediately)
 
 **Communicative intent prompt:**

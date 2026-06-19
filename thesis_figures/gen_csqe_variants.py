@@ -164,7 +164,8 @@ async def generate_variant(pipeline, variant, idx):
 
 async def main():
     settings = Settings(
-        vlm_model="gemini-2.5-flash",
+        vlm_model="gemini-3.1-pro-preview",
+        image_model="gemini-3.1-flash-image",
         refinement_iterations=3,
     )
     pipeline = PaperBananaPipeline(settings=settings)
