@@ -2,7 +2,7 @@
 \chapter{Methodology}
 \label{chap:methodology}
 
-This chapter presents the methodology employed throughout this research. The experimental work was conducted in a systematic, phased approach: establishing retrieval baselines (Section~\ref{sec:meth_baseline}), performing error analysis to identify failure patterns (Section~\ref{sec:meth_error}), implementing and adapting the Query2Doc query enhancement technique (Section~\ref{sec:meth_query2doc}), and conducting a comprehensive model comparison across ten open-source Large Language Models (Section~\ref{sec:meth_model_comparison}). The chapter then presents the query repetition methodology for resolving BM25 term-dilution (Section~\ref{sec:meth_repetition}), the hybrid BM25--Dense fusion methodology (Section~\ref{sec:meth_hybrid}), the Corpus-Steered Query Expansion (CSQE) pipeline including its component ablation design and retriever-specific application strategy (Section~\ref{sec:meth_csqe}), and the per-query error analysis methodology (Section~\ref{sec:meth_error_csqe}). All experimental setup details, including dataset characteristics and hardware configurations, are described in Section~\ref{sec:meth_dataset}. The results corresponding to each methodological phase are presented in Chapter~\ref{chap:results}.
+This chapter presents the methodology employed throughout this research. The experimental work was conducted in a systematic, phased approach: establishing retrieval baselines (Section~\ref{sec:meth_baseline}), performing error analysis to identify failure patterns (Section~\ref{sec:meth_error}), implementing and adapting the Query2Doc QE technique (Section~\ref{sec:meth_query2doc}), and conducting a comprehensive model comparison across ten open-source LLMs (Section~\ref{sec:meth_model_comparison}). The chapter then presents the query repetition methodology for resolving BM25 term-dilution (Section~\ref{sec:meth_repetition}), the hybrid BM25--Dense fusion methodology (Section~\ref{sec:meth_hybrid}), the CSQE pipeline including its component ablation design and retriever-specific application strategy (Section~\ref{sec:meth_csqe}), and the per-query error analysis methodology (Section~\ref{sec:meth_error_csqe}). All experimental setup details, including dataset characteristics and hardware configurations, are described in Section~\ref{sec:meth_dataset}. The results corresponding to each methodological phase are presented in Chapter~\ref{chap:results}.
 
 %======================================================================
 \section{Dataset and Experimental Setup}
@@ -12,9 +12,9 @@ This chapter presents the methodology employed throughout this research. The exp
 \subsection{Dataset: MIRACL Arabic}
 \label{sec:meth_miracl}
 
-All experiments in this thesis were conducted on the Arabic subset of the Multilingual Information Retrieval Across a Continuum of Languages (MIRACL) benchmark \cite{zhang_2023_miracl}. MIRACL was selected as the primary dataset for three reasons: (1) it is retrieval-focused with human-annotated relevance judgements, (2) it contains natural query-document mismatch characteristic of real-world Arabic information needs, and (3) it is the standard benchmark for multilingual retrieval research, enabling comparison with published results.
+All experiments in this thesis were conducted on the Arabic subset of the MIRACL benchmark \cite{zhang_2023_miracl}. MIRACL was selected as the primary dataset for three reasons: (1) it is retrieval-focused with human-annotated relevance judgements, (2) it contains natural query-document mismatch characteristic of real-world Arabic information needs, and (3) it is the standard benchmark for multilingual retrieval research, enabling comparison with published results.
 
-The MIRACL Arabic corpus consists of 2,061,414 passages derived from 656,982 Arabic Wikipedia articles. Each passage is identified by a document identifier in the format \texttt{X\#Y}, where \texttt{X} denotes the article and \texttt{Y} the passage number within that article. The development set, which was used for all experiments reported in this thesis, contains 2,896 queries with 29,197 human-annotated relevance judgements. Each judgement assigns a relevance grade ranging from 0 (not relevant) to 3 (highly relevant), provided by native Arabic speakers. The corpus is written exclusively in Modern Standard Arabic (MSA); consequently, the evaluation of dialectal Arabic queries falls outside the scope of this work.
+The MIRACL Arabic corpus consists of 2,061,414 passages derived from 656,982 Arabic Wikipedia articles. Each passage is identified by a document identifier in the format \texttt{X\#Y}, where \texttt{X} denotes the article and \texttt{Y} the passage number within that article. The development set, which was used for all experiments reported in this thesis, contains 2,896 queries with 29,197 human-annotated relevance judgements. Each judgement assigns a relevance grade ranging from 0 (not relevant) to 3 (highly relevant), provided by native Arabic speakers. The corpus is written exclusively in MSA; consequently, the evaluation of dialectal Arabic queries falls outside the scope of this work.
 
 The dataset was accessed directly from HuggingFace\footnote{\url{https://huggingface.co/datasets/miracl/miracl}} without local download, as both the corpus and pre-built retrieval indices were available through the Pyserini toolkit \cite{lin_2021_pyserini}.
 
@@ -28,7 +28,7 @@ All experiments were conducted on Google Colab, utilising two GPU configurations
     \item \textbf{NVIDIA A100 (40\,GB VRAM):} Used for models requiring 4-bit quantisation or exceeding 7 billion parameters, and for batch sizes larger than 8.
 \end{itemize}
 
-The software environment consisted of Python 3.10, PyTorch 2.0+, the Hugging Face Transformers library (v4.30+), Pyserini (v0.22.1) for index access, and FAISS for dense vector search. For models exceeding GPU memory in native precision, 4-bit NormalFloat (NF4) quantisation was applied using the \texttt{bitsandbytes} library \cite{dettmers_2023_qlora}, following the QLoRA quantisation scheme.
+The software environment consisted of Python 3.10, PyTorch 2.0+, the Hugging Face Transformers library (v4.30+), Pyserini (v0.22.1) for index access, and FAISS for dense vector search. For models exceeding GPU memory in native precision, NF4 quantisation was applied using the \texttt{bitsandbytes} library \cite{dettmers_2023_qlora}, following the Quantised Low-Rank Adaptation (QLoRA) quantisation scheme.
 
 \subsection{Evaluation Metrics}
 \label{sec:meth_metrics}
@@ -46,35 +46,35 @@ Additionally, Recall@100 was computed to assess overall retrieval coverage. All 
 \subsection{Experimental Pipeline Overview}
 \label{sec:meth_pipeline}
 
-The experimental pipeline follows a two-phase architecture, as illustrated in Figure~\ref{fig:pipeline_overview}. In the first phase (query enhancement), each query from the MIRACL development set is processed by a query enhancement module, which may leave the query unchanged (baseline) or augment it using an LLM-generated pseudo-document. In the second phase (retrieval and evaluation), the enhanced query is passed to a retrieval system, and the top-100 results are evaluated against the MIRACL relevance judgements.
+The experimental pipeline follows a two-phase architecture, as illustrated in Figure~\ref{fig:pipeline_overview}. In the first phase (QE), each query from the MIRACL development set is processed by a QE module, which may leave the query unchanged (baseline) or augment it using an LLM-generated pseudo-document. In the second phase (retrieval and evaluation), the enhanced query is passed to a retrieval system, and the top-100 results are evaluated against the MIRACL relevance judgements.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{fig_3_1_pipeline.pdf}
-    \caption[Experimental pipeline overview]{Overview of the experimental pipeline. A user query passes through the query enhancement layer; BM25S and mDPR retrieve independently; their ranked lists are fused (CC or RRF) and the top-$k$ passages are scored against the MIRACL Arabic dev qrels. The query enhancement module is the variable component across experiments; the retrieval and evaluation components remain fixed.}
+    \caption[Experimental pipeline overview]{Overview of the experimental pipeline. A user query passes through the QE layer; BM25S and mDPR retrieve independently; their ranked lists are fused (CC or RRF) and the top-$k$ passages are scored against the MIRACL Arabic dev qrels. The QE module is the variable component across experiments; the retrieval and evaluation components remain fixed.}
     \label{fig:pipeline_overview}
 \end{figure}
 
-A key design decision was to separate query generation from retrieval evaluation into two independent notebooks. The query enhancement phase (which requires GPU for LLM inference) saves enhanced queries to disk as serialised Python objects. The evaluation phase then loads these pre-generated queries and performs retrieval and metric computation. This two-notebook workflow enabled efficient reuse of enhanced queries across multiple retrieval configurations (Dense and BM25) without regenerating them.
+A key design decision was to separate query generation from retrieval evaluation into two independent notebooks. The QE phase (which requires GPU for LLM inference) saves enhanced queries to disk as serialised Python objects. The evaluation phase then loads these pre-generated queries and performs retrieval and metric computation. This two-notebook workflow enabled efficient reuse of enhanced queries across multiple retrieval configurations (Dense and BM25) without regenerating them.
 
 %======================================================================
 \section{Baseline Implementation}
 \label{sec:meth_baseline}
 %======================================================================
 
-Two retrieval baselines were established to provide reference performance levels against which all query enhancement experiments would be compared: a dense retrieval baseline using mDPR and a sparse retrieval baseline using BM25S. Both baselines used an \texttt{IdentityEnhancer} that returned queries unchanged.
+Two retrieval baselines were established to provide reference performance levels against which all QE experiments would be compared: a dense retrieval baseline using mDPR and a sparse retrieval baseline using BM25S. Both baselines used an \texttt{IdentityEnhancer} that returned queries unchanged.
 
 \subsection{Dense Retrieval Baseline (mDPR)}
 \label{sec:meth_dense_baseline}
 
-The dense retrieval baseline employed Multilingual Dense Passage Retrieval (mDPR), described in Section~\ref{sec:mdpr}. The mDPR encoder (\texttt{castorini/mdpr-tied-pft-msmarco}) was loaded on GPU, and queries were encoded in batches of 64. The pre-built FAISS index for MIRACL Arabic (5.47\,GB, 768-dimensional embeddings) was accessed via Pyserini. For each query, the top-100 passages were retrieved using cosine similarity.
+The dense retrieval baseline employed mDPR, described in Section~\ref{sec:mdpr}. The mDPR encoder (\texttt{castorini/mdpr-tied-pft-msmarco}) was loaded on GPU, and queries were encoded in batches of 64. The pre-built FAISS index for MIRACL Arabic (5.47\,GB, 768-dimensional embeddings) was accessed via Pyserini. For each query, the top-100 passages were retrieved using cosine similarity.
 
-mDPR was pre-trained on MS~MARCO (English) and was \emph{not} fine-tuned on the MIRACL Arabic corpus, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice mirrors a realistic deployment scenario in which an off-the-shelf multilingual retriever is improved through query-side interventions rather than corpus-specific fine-tuning, and ensures that observed improvements reflect query enhancement rather than retriever memorisation of evaluation queries. Figure~\ref{fig:mdpr_encoding} illustrates the mDPR query-encoding pipeline.
+mDPR was pre-trained on the English Microsoft Machine Reading Comprehension (MS~MARCO) dataset and was \emph{not} fine-tuned on the MIRACL Arabic corpus, unlike models such as BGE-M3 and E5 which were partially trained on MIRACL. This choice mirrors a realistic deployment scenario in which an off-the-shelf multilingual retriever is improved through query-side interventions rather than corpus-specific fine-tuning, and ensures that observed improvements reflect QE rather than retriever memorisation of evaluation queries. Figure~\ref{fig:mdpr_encoding} illustrates the mDPR query-encoding pipeline.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{fig_3_4_mdpr.pdf}
-  \caption[mDPR encoding flow]{Dense retrieval pipeline using multilingual DPR. Queries are encoded in batches on a single A100 GPU under FP16; the resulting 768-dimensional vectors are searched against a pre-built FAISS index of the corpus.}
+  \caption[mDPR encoding flow]{Dense retrieval pipeline using mDPR. Queries are encoded in batches on a single A100 GPU under FP16; the resulting 768-dimensional vectors are searched against a pre-built FAISS index of the corpus.}
   \label{fig:mdpr_encoding}
 \end{figure}
 
@@ -86,12 +86,12 @@ The sparse retrieval baseline employed BM25S \cite{bm25s_2024}, a pure-Python im
 The BM25S index was built from the MIRACL Arabic corpus with the following configuration:
 
 \begin{itemize}
-    \item \textbf{Tokenisation:} Arabic stemming using PyStemmer with NLTK Arabic stopwords (245+ words).
+    \item \textbf{Tokenisation:} Arabic stemming using PyStemmer with Natural Language Toolkit (NLTK) Arabic stopwords (245+ words).
     \item \textbf{BM25 variant:} Lucene-style scoring with parameters $k_1 = 0.9$ and $b = 0.4$.
     \item \textbf{Index storage:} Google Drive ($\sim$0.5\,GB), loaded via symbolic links in Colab.
 \end{itemize}
 
-This configuration achieved 96\% of the official MIRACL Pyserini baseline performance, with the 4\% difference deemed acceptable given the benefits of a pure-Python pipeline that integrates directly with the query enhancement modules. Figure~\ref{fig:bm25s_indexing} summarises the BM25S indexing pipeline.
+This configuration achieved 96\% of the official MIRACL Pyserini baseline performance, with the 4\% difference deemed acceptable given the benefits of a pure-Python pipeline that integrates directly with the QE modules. Figure~\ref{fig:bm25s_indexing} summarises the BM25S indexing pipeline.
 
 \begin{figure}[H]
   \centering
@@ -103,14 +103,14 @@ This configuration achieved 96\% of the official MIRACL Pyserini baseline perfor
 \subsection{Baseline Comparison Rationale}
 \label{sec:meth_baseline_rationale}
 
-Dense and sparse retrieval were tested \emph{separately} rather than combined into a hybrid system. This decision, confirmed during the project planning phase, was made to provide clearer insight into where query enhancement improvements originate. As discussed in Section~\ref{sec:ir_methods}, dense retrieval captures semantic similarity while sparse retrieval relies on exact term matching. Testing both baselines independently enables analysis of whether a given query enhancement technique benefits semantic matching, lexical matching, or both.
+Dense and sparse retrieval were tested \emph{separately} rather than combined into a hybrid system. This decision, confirmed during the project planning phase, was made to provide clearer insight into where QE improvements originate. As discussed in Section~\ref{sec:ir_methods}, dense retrieval captures semantic similarity while sparse retrieval relies on exact term matching. Testing both baselines independently enables analysis of whether a given QE technique benefits semantic matching, lexical matching, or both.
 
 %======================================================================
 \section{Error Analysis Methodology}
 \label{sec:meth_error}
 %======================================================================
 
-Before implementing query enhancement techniques, a systematic error analysis was conducted on the dense retrieval baseline to identify the primary failure patterns and guide technique selection.
+Before implementing QE techniques, a systematic error analysis was conducted on the dense retrieval baseline to identify the primary failure patterns and guide technique selection.
 
 \subsection{Quantitative Analysis Framework}
 \label{sec:meth_error_quant}
@@ -123,7 +123,7 @@ A quantitative analysis was performed over all 2,896 queries in the MIRACL Arabi
     \item \textbf{Successful:} NDCG@10 $\geq 0.7$
 \end{itemize}
 
-These three categories describe each query's \emph{absolute} retrieval quality in isolation. They should be distinguished from the \emph{pairwise} classification scheme introduced later for the corpus-steered query expansion analysis (Section~\ref{sec:meth_error_csqe}), which measures the \emph{change} in NDCG@10 between two systems rather than absolute success, together with the regression sub-typing built upon it. Each scheme answers a different question---an absolute success rating versus the magnitude and direction of a system-to-system change. The 0.3 and 0.7 cut-offs adopted here are pragmatic boundaries chosen for interpretability rather than derived from a formal statistical criterion.
+These three categories describe each query's \emph{absolute} retrieval quality in isolation. They should be distinguished from the \emph{pairwise} classification scheme introduced later for the CSQE analysis (Section~\ref{sec:meth_error_csqe}), which measures the \emph{change} in NDCG@10 between two systems rather than absolute success, together with the regression sub-typing built upon it. Each scheme answers a different question---an absolute success rating versus the magnitude and direction of a system-to-system change. The 0.3 and 0.7 cut-offs adopted here are pragmatic boundaries chosen for interpretability rather than derived from a formal statistical criterion.
 
 For each query, the following features were computed:
 
@@ -152,21 +152,21 @@ The mean NDCG@10 was computed for each bucket, and the performance gap between s
 \subsection{Failed Query Inspection}
 \label{sec:meth_error_inspection}
 
-The 20 worst-performing queries (NDCG@10 = 0.000, indicating zero relevant passages in the top-10) were manually inspected to identify recurring linguistic patterns. Each query was categorised by question type (factoid, definition, temporal), the presence of named entities, diacritics, technical terminology, and spelling variations. These observations informed the selection of the first query enhancement technique.
+The 20 worst-performing queries (NDCG@10 = 0.000, indicating zero relevant passages in the top-10) were manually inspected to identify recurring linguistic patterns. Each query was categorised by question type (factoid, definition, temporal), the presence of named entities, diacritics, technical terminology, and spelling variations. These observations informed the selection of the first QE technique.
 
 %======================================================================
 \section{Query2Doc Implementation}
 \label{sec:meth_query2doc}
 %======================================================================
 
-Based on the error analysis findings (presented in Section~\ref{sec:res_error}), Query2Doc \cite{wang_2023_query2doc} was selected as the first query enhancement technique. This section describes the Query2Doc approach, the modifications made for Arabic zero-shot application, and the implementation details.
+Based on the error analysis findings (presented in Section~\ref{sec:res_error}), Query2Doc \cite{wang_2023_query2doc} was selected as the first QE technique. This section describes the Query2Doc approach, the modifications made for Arabic zero-shot application, and the implementation details.
 
 \subsection{Query2Doc Technique}
 \label{sec:meth_q2d_technique}
 
 Query2Doc, introduced by Wang et al. \cite{wang_2023_query2doc}, uses an LLM to generate a pseudo-document---a short passage that attempts to answer the query. This pseudo-document is then concatenated with the original query to form an enhanced query. The rationale is that the pseudo-document introduces additional vocabulary, context, and semantic information that bridges the gap between the query and relevant passages.
 
-As described in Section~\ref{sec:qe_techniques}, Query2Doc falls within the category of LLM-based generative query enhancement techniques. It differs from Hypothetical Document Embeddings (HyDE) \cite{gao_2022_precise} in a critical way: while HyDE uses the generated document \emph{alone} as the retrieval query, Query2Doc \emph{concatenates} the generated document with the original query, preserving the original query terms. The Query2Doc generation pipeline used in this thesis is illustrated in Figure~\ref{fig:query2doc}.
+As described in Section~\ref{sec:qe_techniques}, Query2Doc falls within the category of LLM-based generative QE techniques. It differs from HyDE \cite{gao_2022_precise} in a critical way: while HyDE uses the generated document \emph{alone} as the retrieval query, Query2Doc \emph{concatenates} the generated document with the original query, preserving the original query terms. The Query2Doc generation pipeline used in this thesis is illustrated in Figure~\ref{fig:query2doc}.
 
 \begin{figure}[H]
   \centering
@@ -342,10 +342,10 @@ Several models required specific engineering workarounds, documented here for re
 \subsection{Quantisation Strategy}
 \label{sec:meth_quantisation}
 
-Models exceeding the available GPU memory in native precision were quantised using 4-bit NormalFloat (NF4) quantisation via the \texttt{bitsandbytes} library \cite{dettmers_2023_qlora}. The quantisation configuration was:
+Models exceeding the available GPU memory in native precision were quantised using NF4 quantisation via the \texttt{bitsandbytes} library \cite{dettmers_2023_qlora}. The quantisation configuration was:
 
 \begin{itemize}
-    \item \textbf{Quantisation type:} NF4 (NormalFloat 4-bit)
+    \item \textbf{Quantisation type:} NF4
     \item \textbf{Compute dtype:} BF16 (for matrix multiplication)
     \item \textbf{Double quantisation:} Enabled (quantises the quantisation constants for further memory savings)
 \end{itemize}
@@ -391,28 +391,28 @@ Nine models were evaluated across eight configurations ($n \in \{1, 3, 5, 7, 10\
 
 The baseline experiments (Section~\ref{sec:res_baseline_comparison}) confirmed that BM25 and mDPR exhibit complementary strengths: mDPR achieves superior ranking quality while BM25 provides broader lexical coverage. Hybrid retrieval fusion combines the ranked lists from both retrievers into a single ranking to exploit this complementarity. Two fusion methods, introduced in Section~\ref{sec:hybrid_retrieval}, were evaluated.
 
-\paragraph{Reciprocal Rank Fusion (RRF).}
+\paragraph{RRF.}
 RRF (Equation~\ref{eq:rrf_ch2}) combines ranked lists by summing inverse rank scores with a smoothing constant $k$. Two values were tested: $k=20$, following the standard practice established by Bruch et al. \cite{bruch_2023_rrf}, and $k=60$.
 
-\paragraph{Convex Combination (CC).}
+\paragraph{CC.}
 CC (Equation~\ref{eq:hybrid_cc_ch2}) computes a weighted sum of normalised retriever scores, where $\alpha$ controls the relative contribution of the dense retriever. Before combination, the scores from each retriever were min-max normalised to $[0, 1]$ on a per-query basis to account for the different score scales of BM25 and mDPR. The weight $\alpha$ was swept over $\{0.1, 0.2, \ldots, 0.9\}$.
 
 \paragraph{Setup.}
-Both BM25S and mDPR retrieved the top-100 candidates independently using the original (unenhanced) queries. Fusion and re-ranking were performed in Python without additional GPU inference. The resulting hybrid baseline establishes the performance ceiling that all subsequent query enhancement methods must surpass. The two fusion methods are illustrated side by side in Figure~\ref{fig:hybrid_fusion}.
+Both BM25S and mDPR retrieved the top-100 candidates independently using the original (unenhanced) queries. Fusion and re-ranking were performed in Python without additional GPU inference. The resulting hybrid baseline establishes the performance ceiling that all subsequent QE methods must surpass. The two fusion methods are illustrated side by side in Figure~\ref{fig:hybrid_fusion}.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{fig_3_7_hybrid.pdf}
-  \caption[Hybrid fusion: CC and RRF]{Two retriever-fusion methods evaluated in this thesis. Convex Combination (left) computes a weighted sum of normalised retrieval scores; Reciprocal Rank Fusion (right) sums the reciprocal of each retriever's rank for every document.}
+  \caption[Hybrid fusion: CC and RRF]{Two retriever-fusion methods evaluated in this thesis. CC (left) computes a weighted sum of normalised retrieval scores; RRF (right) sums the reciprocal of each retriever's rank for every document.}
   \label{fig:hybrid_fusion}
 \end{figure}
 
 %======================================================================
-\section{Corpus-Steered Query Expansion (CSQE)}
+\section{CSQE}
 \label{sec:meth_csqe}
 %======================================================================
 
-Corpus-Steered Query Expansion (CSQE), introduced by Lei et al. \cite{lei_2024_csqe} and described in Section~\ref{sec:modern_qe}, extends blind Query2Doc by grounding LLM-generated expansions in first-pass retrieved documents. This section describes the CSQE pipeline as adapted for Arabic retrieval, the component ablation design, and the retriever-specific application strategy.
+CSQE, introduced by Lei et al. \cite{lei_2024_csqe} and described in Section~\ref{sec:modern_qe}, extends blind Query2Doc by grounding LLM-generated expansions in first-pass retrieved documents. This section describes the CSQE pipeline as adapted for Arabic retrieval, the component ablation design, and the retriever-specific application strategy.
 
 \subsection{The CSQE Pipeline}
 \label{sec:meth_csqe_pipeline}
@@ -438,7 +438,7 @@ The configuration used for the primary CSQE experiment was: $k=5$ first-pass doc
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{fig_3_8_csqe_aigen_v4_boosted.png}
-  \caption[CSQE pipeline]{Corpus-Steered Query Expansion (CSQE) pipeline. Stage 1: BM25 retrieves the top-$k_1=5$ first-pass passages. Stage 2: Aya Expanse 8B is invoked four times ($\alpha=4$, temp~$=1.0$): two corpus-grounded calls ($c_1$, $c_2$) extract key sentences from the retrieved passages; two blind calls ($b_1$, $b_2$) generate from parametric knowledge. Stage 3: the original query (repeated $\alpha$ times) is concatenated with all four pseudo-documents and fed to a BM25 second pass, yielding nDCG@10~$=0.616$.}
+  \caption[CSQE pipeline]{CSQE pipeline. Stage 1: BM25 retrieves the top-$k_1=5$ first-pass passages. Stage 2: Aya Expanse 8B is invoked four times ($\alpha=4$, temp~$=1.0$): two corpus-grounded calls ($c_1$, $c_2$) extract key sentences from the retrieved passages; two blind calls ($b_1$, $b_2$) generate from parametric knowledge. Stage 3: the original query (repeated $\alpha$ times) is concatenated with all four pseudo-documents and fed to a BM25 second pass, yielding nDCG@10~$=0.616$.}
   \label{fig:csqe_pipeline}
 \end{figure}
 
@@ -483,7 +483,7 @@ For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \l
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{fig_3_9_best_system.pdf}
-  \caption[Best system architecture]{Architecture of the thesis's best-performing system. CSQE-expanded queries are fed to BM25 while the original short queries are fed to mDPR; the two ranked lists are fused with Reciprocal Rank Fusion ($k=20$), yielding the headline nDCG@10 of 0.714.}
+  \caption[Best system architecture]{Architecture of the thesis's best-performing system. CSQE-expanded queries are fed to BM25 while the original short queries are fed to mDPR; the two ranked lists are fused with RRF ($k=20$), yielding the headline nDCG@10 of 0.714.}
   \label{fig:best_system}
 \end{figure}
 

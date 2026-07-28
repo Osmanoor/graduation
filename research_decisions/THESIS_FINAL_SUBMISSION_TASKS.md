@@ -68,14 +68,29 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase C — Structural & formatting fixes (independent — run in parallel with A)
 
-- [ ] **C1 — Reorder front matter** — **Owner: Osman** (S)
+> **2026-07-28:** Agent prompts for Osman's Wave-1 tasks (C1+C8, C2+C3, C6, C7) are ready in `research_decisions/OSMAN_WAVE1_PROMPTS.md`.
+
+- [x] **C1 — Reorder front matter** — **Owner: Osman** (S) — **DONE 2026-07-28**
   Exact order: Title → Declaration of Authorship → Dedication → Acknowledgments → English Abstract → Arabic Abstract → Table of Contents → **List of Figures → List of Tables** → List of Abbreviations. *(Report Part 2A; video 2 33:45.)*
+  **Done:** `1-main.tex:120-125` reordered to `\tableofcontents → \listoffigures → \listoftables → \include{7-ListofAbbreviations}`. Rebuilt PDF renders ToC viii → LoF xii → LoT xiii → Abbreviations xvi; compiles clean (0 errors).
+  ⚠️ **CONFIRM WITH SUPERVISOR:** Dr. Tahani's order puts **List of Figures before List of Tables**, but the faculty `thesis Guidelines .pdf` (2018, "Preliminary Pages") lists **List of Tables before List of Figures**. We followed Dr. Tahani — confirm she is knowingly overriding the written guideline.
 
-- [ ] **C2 — Fill the List of Abbreviations** — **Owner: Osman** `[AI]` (S)
+- [x] **C2 — Fill the List of Abbreviations** — **Owner: Osman** `[AI]` (S) — **DONE 2026-07-28**
   It is currently **empty** ("فاضية، ما اتملت"). Extract all abbreviations used in the thesis, sort **A→Z**. *(Report Part 2B; video 2 34:20.)*
+  **Done:** `7-ListofAbbreviations.tex` rewritten — the two template placeholders ("Test Example"/"Another Example") removed, **64 entries** added, sorted A→Z, in the template's `\acro` bold-initials style (plain text where bolding is awkward: BF16, FP16, NF4, BM25S). `[LONGEST]` set to `[MS MARCO]` so the label column aligns. `MS~MARCO` and `TyDi~QA` use the `\acro{key}[short]{long}` form to keep spaces out of the internal key. Renders on pp. xvi–xviii.
+  Also fixed two defects the filled list exposed: (a) the running header read **LIST OF TABLES** on the abbreviation pages (`\chapter*` never resets `\leftmark`) — added `\markboth{\MakeUppercase{List of Abbreviations}}{}`; (b) a **blank page xix** — the 64 entries filled p. xviii exactly, TeX broke at the list's closing negative penalty (`\@endparpenalty`), and `\clearpage`'s `\hbox{}` fallback then materialised the empty page. Fixed with `\itemsep`/`\parsep` `=0pt` inside the environment, which gives the list slack. Thesis is now **122 pages**, compiles clean (0 errors).
+  ⚠️ **NOT included, expansions unverifiable:** ACQAD, 3C3H, Arabic-SQuAD (single mentions; I did not invent expansions — confirm before adding). Excluded by design: pure model/product names (Qwen, Jais, Aya, SILMA, Gemma, Falcon-H1, ALLaM, BGE-M3, E5, T4, A100…) and one-off cited-system names (GaQR, ThinkQE, QE-RAG, Exp4Fuse).
+  ⚠️ **If entries are added later:** ~15+ more could refill p. xviii exactly and bring the blank page back; same two lengths (or trimming an entry) will clear it.
 
-- [ ] **C3 — First-mention rule sweep** — **Owner: Osman** `[AI]` (M)
+- [x] **C3 — First-mention rule sweep** — **Owner: Osman** `[AI]` (M) — **DONE 2026-07-28**
   Thesis-wide: first mention = full phrase + (ABBR); later mentions = abbreviation only. E.g. "Retrieval-Augmented Generation (RAG)". Audit + fix every acronym. *(Report Part 2B; video 2 34:20.)*
+  **Done in two passes.** Pass 1 — added the missing first-mention expansions (~28 edits): HyDE, GRF, GPT-3, APIs, GPUs, BM25, MIRACL, mDPR (Ch.1); FAISS, QA, DCG, VRAM, SwiGLU, FP16, Squared-ReLU, BF16, AI, RMSNorm, SiLU, NF4, MAP (Ch.2); QLoRA, MS MARCO, NLTK (Ch.3); NLP, MTEB/MMTEB/STS (Ch.5). **`QE` was never defined anywhere in the thesis** — now defined at `chapter1.tex:9`. Also normalised `mAP`→`MAP`.
+  Pass 2 — **strict enforcement per Osman's instruction (2026-07-28): each expansion appears exactly once, even where it costs readability.** 89 occurrences of "query enhancement" → `QE` across Ch.1–5, plus every repeated re-definition stripped to the bare abbreviation (LLM, RAG, MSA, HyDE, GRF, BM25, CSQE, MIRACL, mDPR, RRF, CC, SFT, OALL, NF4, QA). **Section headings and the ToC are included** — Osman's explicit call when asked. ToC now reads: `2.1.1 LLMs and the Transformer Architecture`, `2.1.2 RAG`, `2.1.4 QE Techniques`, `2.2.4.2 NDCG@k`, `2.2.4.3 MRR`, `2.4.3.1 mDPR`, `3.8 CSQE`, `4.8 CSQE Results`, `4.5.4 Dense vs. BM25 Behaviour with QE`.
+  Verified by script: every expansion now occurs exactly once in Ch.1–5 and once in the standalone abstract (the abstract is read independently, so it carries its own first mentions). Untouched as scoped: `6-ARAbstract.tex` (task B2), the Ch.3 verbatim LLM prompt blocks, and generated files.
+  ⚠️ **Side effect of including headings:** `NDCG` and `MRR` were previously defined *in* their §2.2.4.2/§2.2.4.3 headings. Those headings are now bare, so the definitions moved into the first body sentence below them — the only two places where an abbreviation precedes its own expansion. Reversible in one edit each if Dr. Tahani objects.
+  ⚠️ **STILL OPEN — `nDCG` vs `NDCG` casing:** the thesis mixes 81 × `NDCG@10` with 46 × `nDCG@10` (Ch.3–5, incl. table/figure captions). The abbreviation list asserts one canonical form (`NDCG`), so this now reads as an inconsistency. **Not fixed** — it is a mass rewrite across captions and tables. Pick one form and sweep, ideally alongside E3.
+  ⚠️ **Build noise (pre-existing, not from these tasks):** ~128 `Hyper reference 'acro:X' undefined` warnings — `acronym`+`hyperref` link list entries to targets only `\ac{}` creates, and the thesis never uses `\ac{}`. Verified the original placeholder file produced the same warning. One-line fix if wanted: `\usepackage[nohyperlinks]{acronym}` (`1-main.tex:78`).
+  ⚠️ **Same header bug as C2 affects the abstract pages** (`\chapter*` again) — not fixed, one-line `\markboth` each.
 
 - [ ] **C4 — Thesis Layout §1.3 → one single paragraph** — **Owner: Elhaj** (S)
   Currently one paragraph *per chapter*; must become **one single continuous paragraph** ("Chapter 2 establishes… Chapter 3 details… Chapter 4 reports…"). *(Report §6; video 2 03:37–04:20. Closes old 5.E.4.)*
@@ -89,13 +104,15 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [ ] **C7 — Verify caption placement** — **Owner: Osman** (S)
   Table captions ABOVE tables; figure captions BELOW figures. We believe this is already correct — verify every table/figure rather than assume. *(Report §10; video 2 25:28.)*
 
-- [ ] **C8 — Page-number placement consistency** — **Owner: Osman** (S)
+- [x] **C8 — Page-number placement consistency** — **Owner: Osman** (S) — **DONE 2026-07-28 (verdict: no change needed)**
   Video 2 (14:10): numbers appear top-of-page generally but bottom on chapter-start pages (and front-matter roman numerals looked odd on screen). This is standard LaTeX book behavior — confirm the template is consistent and matches faculty conventions; fix only if genuinely inconsistent.
+  **Verdict:** the faculty `thesis Guidelines .pdf` "Pagination" section specifies only the numbering *scheme* (title page = page one but number not printed; lowercase roman before the body; arabic from Ch.1 p.1) — it says **nothing** about placement on the page. Top-right on normal pages / bottom-centre on chapter-start pages is standard `report`-class + `fancyhdr` behaviour and is compliant. **Nothing was changed.**
+  ⚠️ **CONFIRM WITH SUPERVISOR:** one real gap vs. the written guideline — it says *"The Title page is considered to be page one… Roman numerals begin with the title"*, but `\pagenumbering{roman}` currently sits **after** the titlepage (`1-main.tex:114`), so the Declaration page becomes **i** instead of **ii**. One-line fix (move it above `\begin{titlepage}`), but it shifts every front-matter roman numeral. **Not applied** — ask whether she wants it.
 
-- [ ] **C9 — Write the Dedication** — **Owner: Osman** (S)
+- [ ] **C9 — Write the Dedication — DEFERRED to the very end** (Osman, 2026-07-28) — **Owner: Osman** (S)
   Currently needed for the front-matter order. Osman has prior poetic form (video 2 36:30 😄). Also confirm Declaration of Authorship + Acknowledgments pages exist for the C1 ordering.
 
-- [ ] **C10 — Chapter summaries: keep (decision, verify)** — **Owner: Elhaj** (S)
+- [ ] **C10 — Chapter summaries: keep (decision, verify) — DEFERRED until content edits settle** (Osman, 2026-07-28: summaries depend on Phase A/D edits; doing them now means redoing them) — **Owner: Elhaj** (S)
   Dr. Tahani: optional but keeping them is "ممتاز". **Decision: keep.** Just verify every chapter actually has one and the style is consistent. *(Report §1; video 1 §1.)*
 
 ---
