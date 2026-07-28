@@ -8,46 +8,40 @@ Arabic information retrieval faces challenges that compound this retrieval bottl
 
 Query enhancement---the modification of a user's query before it is submitted to the retriever---offers a promising pre-retrieval intervention. Rather than modifying the retriever or reindexing the knowledge base, query enhancement operates as a modular layer that enriches the query with additional vocabulary, context, and semantic information. This approach is retriever-agnostic, requires no changes to the existing infrastructure, and can be deployed incrementally. Recent work has demonstrated that LLMs can generate effective query expansions by producing pseudo-documents that bridge the vocabulary gap between queries and relevant passages.
 
-However, existing query enhancement research is overwhelmingly English-centric and relies on proprietary models with 175 billion or more parameters. The foundational techniques---Query2Doc, HyDE, and GRF---were all developed and validated using GPT-3 or comparable commercial APIs. Whether these techniques transfer effectively to Arabic, and whether small open-source models running on consumer-grade hardware can serve as viable alternatives, has not been systematically investigated.
+However, existing query enhancement research is overwhelmingly English-centric. The foundational techniques---Query2Doc, HyDE, and GRF---were developed and validated on English benchmarks using proprietary models with 175 billion or more parameters, and they treat the retriever as a black box: the same expanded query is submitted regardless of whether retrieval is sparse, dense, or hybrid. Whether these techniques transfer to Arabic, how LLM-generated expansions interact with each retrieval paradigm, and whether expansions can be grounded in the target corpus rather than generated blindly, are questions the literature leaves open---particularly under the practical constraint of openly available models of modest scale rather than commercial APIs.
 
 %======================================================================
 \section{Problem Definition}
 \label{sec:problem_definition}
 %======================================================================
 
-The problem addressed in this thesis lies at the intersection of three gaps in the current state of Arabic information retrieval.
-
-\textbf{The retrieval gap.} Arabic information retrieval systems exhibit high failure rates even on standard benchmarks. Dense and sparse retrieval methods, while achieving reasonable aggregate performance, fail on a substantial proportion of individual queries. Short queries, which carry insufficient information for the retriever to identify relevant passages, are disproportionately affected. This information poverty in short queries is a fundamental limitation that cannot be addressed by improving the retriever alone.
-
-\textbf{The language gap.} LLM-based query enhancement techniques were developed for English and validated on English benchmarks using English-language models. Arabic presents distinct challenges---morphological richness, orthographic variation, and vocabulary mismatch---that may cause these techniques to behave differently. The effectiveness of generative query enhancement for Arabic has not been empirically established.
-
-\textbf{The resource gap.} The query enhancement literature relies almost exclusively on proprietary models with hundreds of billions of parameters, accessed through commercial APIs. This creates a practical barrier for deployment in resource-constrained settings. Whether small open-source models with 2--8 billion parameters, executable on freely available cloud GPUs, can generate useful Arabic query expansions remains an open question.
-
-These three gaps motivate the central research question of this thesis: \textit{To what extent can small, open-source LLMs improve Arabic information retrieval through query enhancement, and what model characteristics determine effectiveness?}
+Arabic information retrieval systems fail on a substantial proportion of individual queries even on standard benchmarks: aggregate scores conceal frequent cases in which no relevant passage is retrieved at a usable rank, and the generation stage of a RAG system cannot recover from such failures. These failures are concentrated where the query itself carries too little information---short queries suffer from information poverty, providing too few terms to discriminate among millions of passages, while the terms they do provide are subject to the vocabulary mismatch created by Arabic's root-and-pattern morphology, orthographic variation, and diglossia. Because this deficiency originates in the query rather than in the retriever or the index, it cannot be resolved by strengthening the retriever alone; it calls for a pre-retrieval intervention that enriches the query before it is submitted. LLM-based query enhancement offers exactly such an intervention, yet its established techniques were developed for English using proprietary models of 175 billion or more parameters, leaving unanswered the questions on which Arabic deployment depends: whether generated expansions bridge or aggravate the Arabic vocabulary gap; whether an expansion that benefits dense semantic retrieval also benefits---or instead degrades---sparse lexical retrieval; and whether grounding the expansion in evidence retrieved from the target corpus produces more reliable enhancement than generating it from the model's parametric knowledge alone. The specific problem addressed in this thesis is therefore how LLM-based query enhancement should be constructed and deployed for Arabic information retrieval---how expansions are generated (blind or corpus-steered) and to which retriever within a hybrid sparse--dense architecture they are applied---so that retrieval effectiveness improves substantially over strong unenhanced baselines while relying only on openly available models of practical scale. This problem motivates the central research question of this thesis: \textit{To what extent can LLM-based query enhancement---blind and corpus-steered---improve Arabic information retrieval across sparse, dense, and hybrid retrieval paradigms?} In answering it, this thesis develops and validates a pipeline that couples corpus-steered query expansion with asymmetric hybrid BM25--dense fusion, in which the expansion is applied to the sparse retriever only.
 
 %======================================================================
 \section{Objectives}
 \label{sec:objectives}
 %======================================================================
 
-The objectives of this thesis are as follows:
+In pursuit of the central research question stated in Section~\ref{sec:problem_definition}, the objectives of this thesis are as follows:
 
 \begin{enumerate}[label=\arabic*.]
-    \item To establish retrieval baselines for Arabic information retrieval using both dense and sparse methods, tested independently to isolate the sources of improvement from subsequent query enhancement experiments.
+    \item To establish independent dense and sparse retrieval baselines for Arabic information retrieval on the MIRACL Arabic benchmark, quantifying the effectiveness of each paradigm and the complementarity between them using standard retrieval metrics (NDCG@10, Recall, and MRR).
 
-    \item To conduct systematic error analysis on the baseline results to identify the primary failure patterns in Arabic retrieval and guide the selection of query enhancement techniques.
+    \item To conduct a systematic error analysis of the baseline results---quantifying the overall failure rate, the effect of query length, and retrieval coverage---in order to identify the failure patterns that query enhancement must address and to guide the selection of the enhancement technique.
 
-    \item To adapt and implement the Query2Doc query enhancement technique for Arabic zero-shot application using small open-source LLMs, including engineering optimisations for practical deployment on consumer-grade GPUs.
+    \item To adapt the Query2Doc technique for Arabic zero-shot application using openly available LLMs, including the engineering optimisations required for practical execution on freely available cloud GPUs.
 
-    \item To evaluate and compare ten open-source LLMs with 2--8 billion parameters for Arabic query expansion quality using a standardised evaluation protocol across both dense and sparse retrieval paradigms.
+    \item To conduct a standardised comparative evaluation of openly available LLMs spanning 2--8 billion parameters as Arabic query-expansion generators, identifying the most effective model under each retrieval paradigm and characterising the performance patterns observed across model families.
 
-    \item To analyse the interaction between LLM-based query enhancement and retrieval paradigm to identify model characteristics---such as parameter count, training data composition, and vocabulary design---that predict query expansion effectiveness for Arabic.
+    \item To analyse how LLM-generated query expansions interact with sparse versus dense retrieval, establishing whether query enhancement strategies must be adapted to the retrieval paradigm.
 
-    \item To investigate query repetition as a technique for resolving the BM25 term-dilution degradation observed when pseudo-documents are concatenated with short Arabic queries, and to identify the optimal repetition factor across multiple LLM models.
+    \item To investigate query repetition as a remedy for the term-dilution degradation that pseudo-document concatenation induces in sparse retrieval, determining the optimal repetition factor across the evaluated models.
 
-    \item To adapt and evaluate Corpus-Steered Query Expansion (CSQE) for Arabic retrieval, grounding LLM-generated expansions in first-pass retrieved documents and assessing the contribution of corpus-grounded versus blind expansion components through ablation.
+    \item To establish a hybrid sparse--dense fusion baseline without query enhancement, quantifying the performance ceiling that any enhancement-based system must exceed.
 
-    \item To combine corpus-steered query expansion with hybrid BM25--Dense retrieval and determine the optimal retriever-specific query representation strategy, examining whether applying query expansion asymmetrically to one retriever outperforms applying it to both.
+    \item To adapt and evaluate Corpus-Steered Query Expansion (CSQE) for Arabic retrieval, isolating the contributions of its corpus-grounded and blind expansion components through controlled ablation.
+
+    \item To determine the optimal placement of query expansion within the hybrid pipeline by evaluating retriever-specific application strategies---expanding the sparse retriever, the dense retriever, or both---and to explain the observed behaviour through a per-query error analysis of the final system.
 \end{enumerate}
 
 %======================================================================

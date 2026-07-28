@@ -33,16 +33,16 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 > The meeting's key realization (video 2, 37:35): the problem statement still centers on "small open-source LLMs," but our actual contribution became CSQE + asymmetric hybrid fusion. Elhaj: *"دي ممكن تكون أكبر غلط حالياً في التزيس."* This is the **only cross-cutting task cluster** (video 2, 43:10) — everything it touches (Ch.1, abstract, conclusion) should stabilize before the abstract rewrite and the final conciseness pass.
 
-- [ ] **A1 — Rewrite the Problem Statement** — **Owner: Elhaj** `[AI]` (L)
+- [x] **A1 — Rewrite the Problem Statement** — **Owner: Elhaj** `[AI]` (L) — **DONE 2026-07-29**
   One single continuous paragraph (even if long), highly specific, funnel from wide (Arabic IR/RAG recall challenges) to narrow (the exact problem: short-query information poverty / vocabulary mismatch), ending with the exact thesis problem. **Content reframe:** center it on query enhancement for Arabic retrieval with our final pipeline (CSQE + hybrid fusion) as the answer — drop "small open-source models" as the headline framing. *(Report §2, §3; video 1 §2/§5; video 2 37:35–43:10. Closes old 5.A.3.)*
 
-- [ ] **A2 — Fix the central research question** — **Owner: Elhaj** (S)
+- [x] **A2 — Fix the central research question** — **Owner: Elhaj** (S) — **DONE 2026-07-29**
   Remove *"and what model characteristics determine effectiveness"* — we explicitly de-scoped model-characteristics analysis. Refocus the RQ on how far LLM-based query enhancement (blind + corpus-steered) can improve Arabic retrieval. Any RQs elsewhere must map back to the single problem statement. *(Video 1 §6; Report §3.)*
 
-- [ ] **A3 — Introduction funnel structure** — **Owner: Elhaj** `[AI]` (M)
+- [x] **A3 — Introduction funnel structure** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-07-29**
   The whole Introduction section should follow the funnel: open broad, progressively narrow, arrive at the problem statement as its natural endpoint. *(Report §2; video 1 §4.)*
 
-- [ ] **A4 — Rewrite the Objectives** — **Owner: Elhaj** `[AI]` (M)
+- [x] **A4 — Rewrite the Objectives** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-07-29** (9 objectives, 1:1 with experiments; hybrid baseline + per-query error analysis now anchored)
   Clear, explicit, **measurable** goals — one per thing we actually experimented on (we counted ~8: model comparison for QE, BM25 query repetition, hybrid fusion, CSQE, asymmetric fusion configs, error analysis, …). Exploratory origin is fine (confirmed), but each written objective must state what was tested/evaluated/achieved so it can be **checked off in the conclusion**. *(Report §5; video 2 01:45–03:37.)*
 
 - [ ] **A5 — Small-models de-emphasis sweep** — **Owner: Elhaj** `[AI]` (M)
