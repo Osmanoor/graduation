@@ -68,8 +68,12 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase C — Structural & formatting fixes (independent — run in parallel with A)
 
-- [ ] **C1 — Reorder front matter** — **Owner: Osman** (S)
+> **2026-07-28:** Agent prompts for Osman's Wave-1 tasks (C1+C8, C2+C3, C6, C7) are ready in `research_decisions/OSMAN_WAVE1_PROMPTS.md`.
+
+- [x] **C1 — Reorder front matter** — **Owner: Osman** (S) — **DONE 2026-07-28**
   Exact order: Title → Declaration of Authorship → Dedication → Acknowledgments → English Abstract → Arabic Abstract → Table of Contents → **List of Figures → List of Tables** → List of Abbreviations. *(Report Part 2A; video 2 33:45.)*
+  **Done:** `1-main.tex:120-125` reordered to `\tableofcontents → \listoffigures → \listoftables → \include{7-ListofAbbreviations}`. Rebuilt PDF renders ToC viii → LoF xii → LoT xiii → Abbreviations xvi; compiles clean (0 errors).
+  ⚠️ **CONFIRM WITH SUPERVISOR:** Dr. Tahani's order puts **List of Figures before List of Tables**, but the faculty `thesis Guidelines .pdf` (2018, "Preliminary Pages") lists **List of Tables before List of Figures**. We followed Dr. Tahani — confirm she is knowingly overriding the written guideline.
 
 - [ ] **C2 — Fill the List of Abbreviations** — **Owner: Osman** `[AI]` (S)
   It is currently **empty** ("فاضية، ما اتملت"). Extract all abbreviations used in the thesis, sort **A→Z**. *(Report Part 2B; video 2 34:20.)*
@@ -89,13 +93,15 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [ ] **C7 — Verify caption placement** — **Owner: Osman** (S)
   Table captions ABOVE tables; figure captions BELOW figures. We believe this is already correct — verify every table/figure rather than assume. *(Report §10; video 2 25:28.)*
 
-- [ ] **C8 — Page-number placement consistency** — **Owner: Osman** (S)
+- [x] **C8 — Page-number placement consistency** — **Owner: Osman** (S) — **DONE 2026-07-28 (verdict: no change needed)**
   Video 2 (14:10): numbers appear top-of-page generally but bottom on chapter-start pages (and front-matter roman numerals looked odd on screen). This is standard LaTeX book behavior — confirm the template is consistent and matches faculty conventions; fix only if genuinely inconsistent.
+  **Verdict:** the faculty `thesis Guidelines .pdf` "Pagination" section specifies only the numbering *scheme* (title page = page one but number not printed; lowercase roman before the body; arabic from Ch.1 p.1) — it says **nothing** about placement on the page. Top-right on normal pages / bottom-centre on chapter-start pages is standard `report`-class + `fancyhdr` behaviour and is compliant. **Nothing was changed.**
+  ⚠️ **CONFIRM WITH SUPERVISOR:** one real gap vs. the written guideline — it says *"The Title page is considered to be page one… Roman numerals begin with the title"*, but `\pagenumbering{roman}` currently sits **after** the titlepage (`1-main.tex:114`), so the Declaration page becomes **i** instead of **ii**. One-line fix (move it above `\begin{titlepage}`), but it shifts every front-matter roman numeral. **Not applied** — ask whether she wants it.
 
-- [ ] **C9 — Write the Dedication** — **Owner: Osman** (S)
+- [ ] **C9 — Write the Dedication — DEFERRED to the very end** (Osman, 2026-07-28) — **Owner: Osman** (S)
   Currently needed for the front-matter order. Osman has prior poetic form (video 2 36:30 😄). Also confirm Declaration of Authorship + Acknowledgments pages exist for the C1 ordering.
 
-- [ ] **C10 — Chapter summaries: keep (decision, verify)** — **Owner: Elhaj** (S)
+- [ ] **C10 — Chapter summaries: keep (decision, verify) — DEFERRED until content edits settle** (Osman, 2026-07-28: summaries depend on Phase A/D edits; doing them now means redoing them) — **Owner: Elhaj** (S)
   Dr. Tahani: optional but keeping them is "ممتاز". **Decision: keep.** Just verify every chapter actually has one and the style is consistent. *(Report §1; video 1 §1.)*
 
 ---
