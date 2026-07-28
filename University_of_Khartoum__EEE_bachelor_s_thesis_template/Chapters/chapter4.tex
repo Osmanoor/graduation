@@ -2,7 +2,7 @@
 \chapter{Results and Discussion}
 \label{chap:results}
 
-This chapter presents the results of all experiments conducted in this research, following the zigzag structure with the methodology described in Chapter~\ref{chap:methodology}. Section~\ref{sec:res_baseline} reports the baseline retrieval performance. Section~\ref{sec:res_error} presents the error analysis findings that guided technique selection. Section~\ref{sec:res_query2doc} reports the initial Query2Doc results with both dense and sparse retrieval. Section~\ref{sec:res_model_comparison} presents the comprehensive model comparison across ten LLMs. Section~\ref{sec:res_key_findings} synthesises the key findings from the model comparison phase. The chapter then reports the expanded experimental results: the BM25 query repetition sweep (Section~\ref{sec:res_repetition}), hybrid retrieval fusion (Section~\ref{sec:res_hybrid}), Corpus-Steered Query Expansion (Section~\ref{sec:res_csqe}), CSQE combined with hybrid fusion (Section~\ref{sec:res_csqe_hybrid}), and a per-query error analysis decomposing the sources of improvement and regression (Section~\ref{sec:res_error_csqe}).
+This chapter presents the results of all experiments conducted in this research, following the zigzag structure with the methodology described in Chapter~\ref{chap:methodology}. Section~\ref{sec:res_baseline} reports the baseline retrieval performance. Section~\ref{sec:res_error} presents the error analysis findings that guided technique selection. Section~\ref{sec:res_query2doc} reports the initial Query2Doc results with both dense and sparse retrieval. Section~\ref{sec:res_model_comparison} presents the comprehensive model comparison across ten LLMs. Section~\ref{sec:res_key_findings} synthesises the key findings from the model comparison phase. The chapter then reports the expanded experimental results: the BM25 query repetition sweep (Section~\ref{sec:res_repetition}), hybrid retrieval fusion (Section~\ref{sec:res_hybrid}), CSQE (Section~\ref{sec:res_csqe}), CSQE combined with hybrid fusion (Section~\ref{sec:res_csqe_hybrid}), and a per-query error analysis decomposing the sources of improvement and regression (Section~\ref{sec:res_error_csqe}).
 
 %======================================================================
 \section{Baseline Results and Comparison}
@@ -34,7 +34,7 @@ The mDPR dense baseline reproduced the official MIRACL result exactly: this work
 
 The two baselines exhibited complementary performance characteristics. mDPR achieved higher NDCG@10 (+8.1\%) and MRR (+10.2\%), indicating superior ranking quality---relevant passages were placed higher in the result list. BM25S achieved higher Recall@100 (+2.0\%), indicating broader retrieval coverage---more relevant passages were retrieved overall, though ranked less effectively.
 
-This complementary behaviour aligns with the theoretical properties of dense and sparse retrieval discussed in Section~\ref{sec:ir_methods}: dense retrieval captures semantic similarity and ranks well, while sparse retrieval excels at broad lexical matching. This finding confirmed the decision to test query enhancement techniques on both retrievers independently. It also motivates a third reference point: fusing the two retrievers without any query enhancement (Reciprocal Rank Fusion, $k=20$) already raises NDCG@10 to 0.6267 (Table~\ref{tab:baseline_results}). This no-QE hybrid is reported here, alongside the single-retriever baselines, as the strongest non-enhancement reference; it is analysed in detail in Section~\ref{sec:res_hybrid}, where it serves as the ceiling that all query enhancement methods must surpass. The per-query NDCG@10 distribution for both single-retriever baselines is shown in Figure~\ref{fig:per_query_dist}.
+This complementary behaviour aligns with the theoretical properties of dense and sparse retrieval discussed in Section~\ref{sec:ir_methods}: dense retrieval captures semantic similarity and ranks well, while sparse retrieval excels at broad lexical matching. This finding confirmed the decision to test QE techniques on both retrievers independently. It also motivates a third reference point: fusing the two retrievers without any QE (RRF, $k=20$) already raises NDCG@10 to 0.6267 (Table~\ref{tab:baseline_results}). This no-QE hybrid is reported here, alongside the single-retriever baselines, as the strongest non-enhancement reference; it is analysed in detail in Section~\ref{sec:res_hybrid}, where it serves as the ceiling that all QE methods must surpass. The per-query NDCG@10 distribution for both single-retriever baselines is shown in Figure~\ref{fig:per_query_dist}.
 
 \begin{figure}[H]
   \centering
@@ -48,7 +48,7 @@ This complementary behaviour aligns with the theoretical properties of dense and
 \label{sec:res_error}
 %======================================================================
 
-The error analysis methodology described in Section~\ref{sec:meth_error} was applied to the dense baseline. The findings guided the selection of the first query enhancement technique.
+The error analysis methodology described in Section~\ref{sec:meth_error} was applied to the dense baseline. The findings guided the selection of the first QE technique.
 
 \subsection{Overall Failure Rate}
 \label{sec:res_error_rate}
@@ -70,7 +70,7 @@ Table~\ref{tab:error_segmentation} presents the performance segmentation of all 
     \end{tabular}
 \end{table}
 
-A notable finding was that 34\% of queries (982 out of 2,896) were classified as failed, of which 736 retrieved no relevant passage at all within the top-10. The remaining queries split almost evenly between the mediocre (33\%) and successful (33\%) bands. While the substantial failed and mediocre fractions establish a clear opportunity for query enhancement, the analysis also shows that roughly a third of queries were already well served by the dense baseline. Figure~\ref{fig:failure_cliff} visualises this distribution on the cumulative per-query NDCG@10 curve.
+A notable finding was that 34\% of queries (982 out of 2,896) were classified as failed, of which 736 retrieved no relevant passage at all within the top-10. The remaining queries split almost evenly between the mediocre (33\%) and successful (33\%) bands. While the substantial failed and mediocre fractions establish a clear opportunity for QE, the analysis also shows that roughly a third of queries were already well served by the dense baseline. Figure~\ref{fig:failure_cliff} visualises this distribution on the cumulative per-query NDCG@10 curve.
 
 \begin{figure}[H]
   \centering
@@ -104,7 +104,7 @@ Short queries achieved only 72\% of the performance of long queries (NDCG@10 = 0
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.85\textwidth]{fig_4_3_length_box_v1.pdf}
-  \caption[NDCG@10 by query length]{Distribution of mDPR NDCG@10 within each query-length bucket. Short queries clearly underperform, motivating query enhancement as a remedy for information poverty in short queries.}
+  \caption[NDCG@10 by query length]{Distribution of mDPR NDCG@10 within each query-length bucket. Short queries clearly underperform, motivating QE as a remedy for information poverty in short queries.}
   \label{fig:length_dist}
 \end{figure}
 
@@ -129,7 +129,7 @@ The coverage analysis revealed an important distinction between retrieval and ra
     \end{tabular}
 \end{table}
 
-Even at depth 100, the dense retriever failed to surface any relevant passage for roughly 10\% of queries (coverage 90.1\%), and for a further $\sim$15\% it retrieved a relevant passage but ranked it outside the top-10 (coverage 74.6\% at depth 10). The first figure reflects a genuine \emph{recall ceiling}---relevant content the dense encoder never retrieves---while the second reflects a ranking problem. Query enhancement can address both: enriching the query representation improves ranking, while combining the dense retriever with a lexical retriever (hybrid fusion, Section~\ref{sec:res_hybrid}) directly raises the recall ceiling. The full Recall@$k$ curve for both baselines is plotted in Figure~\ref{fig:recall_curve}.
+Even at depth 100, the dense retriever failed to surface any relevant passage for roughly 10\% of queries (coverage 90.1\%), and for a further $\sim$15\% it retrieved a relevant passage but ranked it outside the top-10 (coverage 74.6\% at depth 10). The first figure reflects a genuine \emph{recall ceiling}---relevant content the dense encoder never retrieves---while the second reflects a ranking problem. QE can address both: enriching the query representation improves ranking, while combining the dense retriever with a lexical retriever (hybrid fusion, Section~\ref{sec:res_hybrid}) directly raises the recall ceiling. The full Recall@$k$ curve for both baselines is plotted in Figure~\ref{fig:recall_curve}.
 
 \begin{figure}[H]
   \centering
@@ -198,7 +198,7 @@ Table~\ref{tab:q2d_bm25} presents the results of Query2Doc with BM25S sparse ret
     \end{tabular}
 \end{table}
 
-In stark contrast to the dense results, Query2Doc \emph{degraded} BM25 performance across all metrics, with NDCG@10 declining by 11.5\%. This result, while negative, provided a valuable insight into the interaction between query enhancement techniques and retrieval paradigms.
+In stark contrast to the dense results, Query2Doc \emph{degraded} BM25 performance across all metrics, with NDCG@10 declining by 11.5\%. This result, while negative, provided a valuable insight into the interaction between QE techniques and retrieval paradigms.
 
 \subsubsection{Term Dilution Analysis}
 \label{sec:res_term_dilution}
@@ -329,7 +329,7 @@ One model, ALLaM-7B, was dropped from the final comparison due to a severe perfo
 \subsubsection{ALLaM-7B}
 \label{sec:res_allam}
 
-ALLaM-7B (described in Section~\ref{sec:allam}) produced a catastrophic $-$48.9\% decline in NDCG@10 (0.2550 vs. baseline 0.4993), performing \emph{worse} than using no query enhancement at all. Investigation revealed a sentencepiece tokeniser artefact: the Unicode character ``\texttt{\char"2581}'' (used internally to mark word boundaries) leaked into the decoded pseudo-documents. These special characters contaminated the query embeddings, causing the mDPR encoder to produce degraded representations.
+ALLaM-7B (described in Section~\ref{sec:allam}) produced a catastrophic $-$48.9\% decline in NDCG@10 (0.2550 vs. baseline 0.4993), performing \emph{worse} than using no QE at all. Investigation revealed a sentencepiece tokeniser artefact: the Unicode character ``\texttt{\char"2581}'' (used internally to mark word boundaries) leaked into the decoded pseudo-documents. These special characters contaminated the query embeddings, causing the mDPR encoder to produce degraded representations.
 
 This failure was attributed to ALLaM's preview/alpha release status at the time of testing. The model had been accepted at ICLR~2025 \cite{bari2025allam} but was not yet in stable release, and the tokeniser behaviour had not been fully validated for generation tasks.
 
@@ -388,14 +388,14 @@ At both parameter scales, the newer Qwen3 generation outperformed Qwen~2.5, desp
 
 An important finding was that Arabic-specialised models did not consistently outperform multilingual models. Falcon-H1-3B, despite holding the highest Arabic OALL benchmark score ($\sim$62\%) at the 3B scale, was outperformed on dense NDCG@10 by both Qwen~2.5~3B (a multilingual model with a lower OALL score) and Qwen3-4B. Similarly, Jais-2-8B, while achieving the best BM25 results, was surpassed on dense retrieval by Aya~Expanse~8B, a model designed for 23 languages without Arabic-specific architecture.
 
-This suggests that \textbf{a model's Arabic-capability score on the Open Arabic LLM Leaderboard (OALL) does not directly predict its query expansion quality}. Falcon-H1-3B holds the highest OALL score at its parameter scale, yet it is outperformed on retrieval by multilingual models with lower OALL scores. The skills measured by OALL (reading comprehension, question answering, reasoning) differ from the ability to generate vocabulary-rich, lexically diverse pseudo-documents that improve retrieval; training-data volume and diversity appear to be more important factors for this specific task.
+This suggests that \textbf{a model's Arabic-capability score on the OALL does not directly predict its query expansion quality}. Falcon-H1-3B holds the highest OALL score at its parameter scale, yet it is outperformed on retrieval by multilingual models with lower OALL scores. The skills measured by OALL (reading comprehension, QA, reasoning) differ from the ability to generate vocabulary-rich, lexically diverse pseudo-documents that improve retrieval; training-data volume and diversity appear to be more important factors for this specific task.
 
 The notable exception is Jais-2's BM25 performance: its custom 150,000-token Arabic vocabulary (Section~\ref{sec:jais2}) produces expansions with term distributions that align closely with BM25 index terms, making it uniquely effective for sparse retrieval.
 
-\subsection{Dense vs. BM25 Behaviour with Query Enhancement}
+\subsection{Dense vs. BM25 Behaviour with QE}
 \label{sec:res_finding_retriever}
 
-The divergent response of dense and sparse retrieval to query enhancement is one of the most practically significant findings of this research. Table~\ref{tab:retriever_divergence} summarises the pattern.
+The divergent response of dense and sparse retrieval to QE is one of the most practically significant findings of this research. Table~\ref{tab:retriever_divergence} summarises the pattern.
 
 \begin{table}[htbp]
     \centering
@@ -414,9 +414,9 @@ The divergent response of dense and sparse retrieval to query enhancement is one
     \end{tabular}
 \end{table}
 
-Dense retrieval benefited universally from query enhancement because the mDPR encoder operates in a continuous semantic space where additional context improves the query embedding representation. BM25, conversely, relies on exact term matching, where additional terms can dilute the weights of the original query keywords (Section~\ref{sec:res_term_dilution}).
+Dense retrieval benefited universally from QE because the mDPR encoder operates in a continuous semantic space where additional context improves the query embedding representation. BM25, conversely, relies on exact term matching, where additional terms can dilute the weights of the original query keywords (Section~\ref{sec:res_term_dilution}).
 
-This finding has direct implications for RAG system design: query enhancement techniques must be adapted to the retrieval paradigm, and a strategy that works well for dense retrieval should not be assumed to transfer to sparse retrieval without modification.
+This finding has direct implications for RAG system design: QE techniques must be adapted to the retrieval paradigm, and a strategy that works well for dense retrieval should not be assumed to transfer to sparse retrieval without modification.
 
 \subsection{Model Selection Summary}
 \label{sec:res_finding_best}
@@ -520,11 +520,11 @@ Five key observations emerged from the repetition sweep:
 \label{sec:res_hybrid}
 %======================================================================
 
-This section presents the results of the hybrid fusion experiments described in Section~\ref{sec:meth_hybrid}. Table~\ref{tab:hybrid_results} reports the full Convex Combination (CC) $\alpha$-sweep and both Reciprocal Rank Fusion (RRF) configurations.
+This section presents the results of the hybrid fusion experiments described in Section~\ref{sec:meth_hybrid}. Table~\ref{tab:hybrid_results} reports the full CC $\alpha$-sweep and both RRF configurations.
 
 \begin{table}[htbp]
     \centering
-    \caption{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries). CC = Convex Combination (min-max normalised per query, $\alpha$ controls Dense weight); RRF = Reciprocal Rank Fusion.}
+    \caption{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries). CC scores are min-max normalised per query, with $\alpha$ controlling the Dense weight.}
     \label{tab:hybrid_results}
     \begin{tabular}{@{}lcccc@{}}
         \toprule
@@ -560,7 +560,7 @@ Five key observations were drawn from the hybrid fusion results:
 
     \item RRF $k=20$ slightly outperformed $k=60$ (0.6267 vs. 0.6230 nDCG@10). The smaller $k$ gives more weight to top-ranked items, which benefits nDCG@10 but does not affect Recall@100 (both 0.9467).
 
-    \item The hybrid RRF $k=20$ result of 0.6267 nDCG@10 established the non-QE hybrid baseline that all subsequent query enhancement methods were required to surpass.
+    \item The hybrid RRF $k=20$ result of 0.6267 nDCG@10 established the non-QE hybrid baseline that all subsequent QE methods were required to surpass.
 \end{enumerate}
 
 \begin{figure}[H]
@@ -571,11 +571,11 @@ Five key observations were drawn from the hybrid fusion results:
 \end{figure}
 
 %======================================================================
-\section{Corpus-Steered Query Expansion Results}
+\section{CSQE Results}
 \label{sec:res_csqe}
 %======================================================================
 
-This section presents the results of the Corpus-Steered Query Expansion experiments described in Section~\ref{sec:meth_csqe}. The results are organised into two subsections: main CSQE results and the component ablation.
+This section presents the results of the CSQE experiments described in Section~\ref{sec:meth_csqe}. The results are organised into two subsections: main CSQE results and the component ablation.
 
 \subsection{Main CSQE Results}
 \label{sec:res_csqe_main}
@@ -950,7 +950,7 @@ Table~\ref{tab:full_summary} provides a consolidated view of all experiments con
 
 \begin{table}[htbp]
     \centering
-    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and corpus-steered query expansion. Bold values indicate the best result for each metric across all experiments.}
+    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and CSQE. Bold values indicate the best result for each metric across all experiments.}
     \label{tab:full_summary}
     \begin{tabular}{@{}llcccc@{}}
         \toprule
@@ -982,4 +982,4 @@ Table~\ref{tab:full_summary} provides a consolidated view of all experiments con
     \end{tabular}
 \end{table}
 
-The experimental results demonstrate a progression from individual retriever baselines through blind query enhancement, hybrid fusion, and finally corpus-steered expansion combined with hybrid retrieval. The best system (BM25-expanded RRF: BM25+CSQE + Dense original query) achieved 0.7137 nDCG@10---a 54.5\% improvement over the BM25 baseline and a 13.9\% improvement over the no-QE hybrid system. The detailed results of each experiment were presented in Sections~\ref{sec:res_repetition}--\ref{sec:res_error_csqe} above.
+The experimental results demonstrate a progression from individual retriever baselines through blind QE, hybrid fusion, and finally corpus-steered expansion combined with hybrid retrieval. The best system (BM25-expanded RRF: BM25+CSQE + Dense original query) achieved 0.7137 nDCG@10---a 54.5\% improvement over the BM25 baseline and a 13.9\% improvement over the no-QE hybrid system. The detailed results of each experiment were presented in Sections~\ref{sec:res_repetition}--\ref{sec:res_error_csqe} above.
