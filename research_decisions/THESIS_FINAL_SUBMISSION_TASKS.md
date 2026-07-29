@@ -64,6 +64,18 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ---
 
+## Phase A-bis — Data corrections found during verification (NEW, 2026-07-29)
+
+- [ ] **H1 — SILMA temperature mix-up in the repetition sweep** — **Owner: Elhaj** (S) — **DECISION NEEDED**
+  Root cause proven: `phase4_quick_wins (1).ipynb` cell 7 maps `'SILMA 2B': 'silma_2b_temp07.pkl'` — the Exp 1.1 repetition sweep loaded SILMA's **temperature-0.7** expansions while every other model (and Ch.3 Table 3.2, and the dense Table 4.6) uses **temperature 0.1**. Hence Table 4.7 says 0.4277 and Table 4.11 says 0.4194 for the same configuration. **Table 4.7 (0.4277) is canonical**; the sweep is the deviant. Only SILMA is affected — the other 8 models match to 4 d.p. across both tables.
+  - **Option A (recommended):** re-run SILMA's 8 repetition configs with `silma_2b_temp01.pkl` (~8 min, CPU-only, all inputs in-repo), then update Tables 4.11/4.12 + regenerate Figs 4.7/4.8.
+  - **Option B (no re-run):** keep 0.4277 in Table 4.7, footnote Table 4.11 that SILMA's sweep used temp 0.7. Table 4.12's Δ=+0.0639 stays correct as printed.
+  - **Rejected:** changing Table 4.7 to 0.4194 — it would split SILMA's dense/sparse rows across two temperatures.
+  - **Independent of the choice:** `thesis_figures/data/raw/model_comparison_bm25.csv:3` and `thesis_figures/output/pdf/table_4_3.tex:6` pair temp-0.1 n=1 metrics with the temp-0.7 best config (Δ=0.0555, matching neither table); **Figs 4.7 and 4.8 currently plot different SILMA values** because they read different CSVs. Both need regenerating from one source regardless.
+  - Full evidence: `research_decisions/SILMA_CONFLICT_RESOLUTION.md`.
+
+---
+
 ## Phase B — Abstracts (after Phase A)
 
 - [ ] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M) — *A7 blocker B5 lands here: the abstract still carries the pre-A1 framing (old RQ, no CSQE, no asymmetric-placement finding). Starter sentences proposed in `A7_mapping_audit.md` §(g) B5.*
@@ -127,7 +139,12 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase D — Page budget, appendices, repo
 
-- [ ] **D1 — Pin down the page count** — **Owner: Elhaj** (S)
+- [x] **D1 — Pin down the page count** — **Owner: Elhaj** (S) — **ANSWERED 2026-07-29** from a clean local xelatex build (post-Phase-A, post-Osman-C1/C2/C3):
+  > **Core manuscript (Ch.1–5) = 103 pages — 3 OVER the 100-page limit.**
+  > Ch.1 p.1 · Ch.2 p.7 · Ch.3 p.36 · Ch.4 p.60 · Ch.5 p.95 · Bibliography starts p.104 (ends p.128). Front matter is roman (i–xvi+). **No appendices exist yet**, so D3's code appendix adds nothing to the count.
+  > Implication: D2 (move large tables to appendices) + D5 (conciseness) must free ≥3 pages just to reach the limit, and more for a comfortable margin. The biggest single lever is Ch.4 (60→94, i.e. 35 pages of results/tables).
+
+- [x] **D1-orig — Pin down the page count** — *(superseded by the measurement above)* — **Owner: Elhaj** (S)
   Rule: core manuscript (Ch.1–5) ≤ **100 pages**; references + appendices + front matter don't count. Our reading in the meeting: whole PDF 121, ~104 without refs, ~99 without appendices — borderline. Compute the real Ch.1–5 count and record the number; this decides how aggressive D2/D5 must be. *(Report §10; video 2 09:20–13:30.)*
 
 - [ ] **D2 — Appendix-candidates analysis** — **Owner: Osman** `[AI]` (M)

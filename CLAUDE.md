@@ -23,11 +23,13 @@
 - **Metrics:** Recall@10, NDCG@10, MRR
 - **Resources:** Google Colab, limited API budget
 
-## What's NOT Decided (Do Not Assume)
-- Which embedding model to use
-- Which query enhancement technique first
-- Which Arabic LLM for enhancement
-- Specific implementation details
+## Settled (was "not decided" — all resolved by experiment)
+- Retrievers: mDPR (dense) + BM25S (sparse)
+- Technique: Query2Doc first, then CSQE (2 corpus + 2 blind, α=4)
+- Generator: Aya Expanse 8B (CC-BY-NC — see Ch.5 licence caveat + Challenges item 8)
+
+## Still open
+- Nothing experimental. Remaining work is thesis editing (see `research_decisions/THESIS_FINAL_SUBMISSION_TASKS.md`).
 
 ## Response Format
 1. State what the docs say (with file reference)
@@ -165,20 +167,29 @@ CSQE config: k=5 first-pass, 2 corpus + 2 blind samples, α=4 query repetition, 
 Alpha sweep (Config A RRF): α=1→0.7123, α=2→0.7121, α=3→0.7130, α=4→0.7137 (nearly flat).
 
 ### Error Analysis Key Numbers (2026-04-11)
-- CSQE improves 56.8% of queries, regresses 16.6%, mean delta +0.1890 nDCG@10
+- CSQE improves 56.8% of queries, regresses 16.6%, ties 26.6%; mean delta +0.1890 nDCG@10
+- ⚠️ Per-query MEAN of the best system is 0.6936, NOT 0.7137. The 0.7137 headline is the corpus-level pooled evaluation. Never mix the two (ch4 Table 4.17 caption).
+- Baseline for all per-query deltas = Aya blind BM25 n=1 = 0.5046 (not the hybrid, not 0.5855)
 - 1st-pass IS relevant (1,061 queries, 36.6%): CSQE+Hybrid = **0.8877** nDCG@10
 - 1st-pass NOT relevant (1,835 queries): CSQE+Hybrid = 0.5814 nDCG@10
-- Short queries (< 5 words, n=865): Δ = +0.1990 | Long queries (≥10 words, n=131): Δ = +0.1053
-- Regressions (367): 52% Type A (strong BM25 hurt by expansion), 36% Type B (poisoned first-pass), 12% Type C
+- Query-length buckets — CANON is 1-3 / 4-8 / 9+ words (ch4 Tables 4.4 and 4.19). Do NOT use "<5 / >=10 words".
+- Baseline (mDPR, no QE) by bucket: 1-3 words 0.345 (n=147) | 4-8 words 0.511 (n=2,495) | 9+ words 0.476 (n=254)
+- CSQE+Hybrid gain by bucket: 1-3 words +0.161 (+43.6%) | 4-8 words +0.197 (+38.8%) | 9+ words +0.132 (+23.3%)
+- Regressions (367): Type A 191 (52%, strong BM25 hurt by expansion), Type B 131 (36%, poisoned first-pass), Type C 45 (12%)
+- ⚠️ SILMA 2B BM25 n=1: canon is **0.4277** (temp 0.1, ch4 Table 4.7). The 0.4194 in the repetition sweep is a temp-0.7 artefact — see task H1 in THESIS_FINAL_SUBMISSION_TASKS.md.
 
 ### Reference Baselines — CSQE + Hybrid Fusion (Exp 2.1, 2026-04-10)
-| Method | nDCG@10 | Recall@10 | Recall@100 | MRR |
-|--------|---------|-----------|------------|-----|
-| Hybrid RRF k=20 (no QE) | 0.6267 | 0.7597 | 0.9466 | 0.6517 |
-| B: BM25 + Dense+CSQE CC (α=0.4) | 0.6588 | 0.7851 | 0.9569 | 0.6777 |
-| C: BM25+CSQE + Dense+CSQE CC (α=0.5) | 0.6959 | 0.8249 | 0.9647 | 0.7079 |
-| A: BM25+CSQE + Dense CC (α=0.6) | 0.7088 | 0.8302 | 0.9717 | 0.7268 |
-| **A: BM25+CSQE + Dense RRF (k=20)** | **0.7137** | **0.8363** | **0.9734** | **0.7362** |
+| Method | Fusion | nDCG@10 | Recall@10 | Recall@100 | MRR |
+|--------|--------|---------|-----------|------------|-----|
+| Hybrid RRF k=20 (no QE) | RRF | 0.6267 | 0.7597 | 0.9466 | 0.6517 |
+| B: Dense-expanded (BM25 raw + Dense+CSQE) | RRF | 0.6474 | 0.7928 | 0.9571 | 0.6578 |
+| B: Dense-expanded (BM25 raw + Dense+CSQE) | CC α=0.4 | 0.6588 | 0.7851 | 0.9569 | 0.6777 |
+| C: Both-expanded (BM25+CSQE + Dense+CSQE) | RRF | 0.6936 | 0.8290 | 0.9660 | 0.7037 |
+| C: Both-expanded (BM25+CSQE + Dense+CSQE) | CC α=0.5 | 0.6959 | 0.8249 | 0.9647 | 0.7079 |
+| A: BM25-expanded (BM25+CSQE + Dense raw) | CC α=0.6 | 0.7088 | 0.8302 | 0.9717 | 0.7268 |
+| **A: BM25-expanded (BM25+CSQE + Dense raw)** | **RRF k=20** | **0.7137** | **0.8363** | **0.9734** | **0.7362** |
+
+**Like-for-like RRF comparison (use THIS for the placement claim): 0.7137 (sparse-only) > 0.6936 (both) > 0.6474 (dense-only).**
 
 **Best system: 0.7137 nDCG@10** (+0.0870 over hybrid, +54.5% over BM25 alone).
 **Key insight:** Apply CSQE only to BM25 — Dense encoder degrades on long expanded queries.
