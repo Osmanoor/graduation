@@ -108,8 +108,9 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   ⚠️ **`perin_2025_investigating`** — uncited orphan, no `booktitle`; renders nowhere. Kept per no-delete decision; needs venue + date if ever cited.
   ⚠️ **Committed `1-main.pdf` was six weeks stale** (June 19, 121 pp — predated C1/C2/C3 and A1–A4). Verification rebuild → 122 pp, so its diff is mostly pre-existing source changes, not this task's.
 
-- [ ] **C7 — Verify caption placement** — **Owner: Osman** (S)
+- [x] **C7 — Verify caption placement** — **Owner: Osman** (S) — **DONE 2026-07-29 (verdict: no change needed)**
   Table captions ABOVE tables; figure captions BELOW figures. We believe this is already correct — verify every table/figure rather than assume. *(Report §10; video 2 25:28.)*
+  **Verdict: zero violations, zero edits.** Audited all **58 float environments** (34 tables, 24 figures) across `1-main.tex`, front matter, Ch.1–5, and the generated `.tex` fragments. Every table caption is above its `tabular`, every figure caption below its `\includegraphics`, and `\label` sits immediately after `\caption` throughout. Numbering verified unchanged (per-chapter, separate per entity type). Local compile clean: 0 errors, 0 undefined `\ref`, 0 `??` in the PDF, 122 pages.
 
 - [x] **C8 — Page-number placement consistency** — **Owner: Osman** (S) — **DONE 2026-07-28 (verdict: no change needed)**
   Video 2 (14:10): numbers appear top-of-page generally but bottom on chapter-start pages (and front-matter roman numerals looked odd on screen). This is standard LaTeX book behavior — confirm the template is consistent and matches faculty conventions; fix only if genuinely inconsistent.
