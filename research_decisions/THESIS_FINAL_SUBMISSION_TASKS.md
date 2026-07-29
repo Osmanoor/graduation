@@ -59,14 +59,14 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 > 5. **Pre-submission literature re-verification** (from A5 fact-check §7, `A5_edit_verification.md`): (a) the claim "LLM-based QE has not been evaluated for monolingual Arabic retrieval" was only ever *searched* at sub-7B scope (WS6) — re-run the search without the size filter; (b) obtain Macmillan-Scott et al. 2025 (arXiv 2511.19325) — WS6 notes say it evaluates MuGI and Exp4Fuse across eight languages *including Arabic* (cross-lingual) — confirm our gap claims survive contact with the actual paper; (c) MuGI and Exp4Fuse have no summaries in `papers/` — their characterisations rest on second-hand notes.
 > 6. **Aya licence caveat now in Ch.5 Overall** — Aya Expanse 8B is CC-BY-NC (per Table in Ch.2); the conclusion now says "practical … subject to the licence of the chosen generator". Review whether to keep, soften, or move to Limitations.
 
-- [ ] **A7 — AI audit of the 1-to-1 mapping** — **Owner: JOINT** `[AI]` (S)
+- [x] **A7 — AI audit of the 1-to-1 mapping** — **Owner: JOINT** `[AI]` (S) — **DONE 2026-07-29** (Opus audit: chain sound — 9/9 objectives have Ch.3+Ch.4+Ch.5 anchors, 0 orphan conclusion paragraphs; 6 blockers + 13 minors + 4 acronym violations found and fixed, except B5 = stale abstract, deferred to B1. Full audit: `research_decisions/A7_mapping_audit.md`. Deferred minors: M12 full open-source→openly-available sweep (Ch.2/3 factual contexts), M14 SILMA naming — both folded into D5/terminology pass.)
   Committee evaluates on strict mapping: Problem ↔ Objectives ↔ Methodology & Results ↔ Conclusions. Run a dedicated Claude check that every objective is addressed in methodology/results and checked off in the conclusion; fix gaps. *(Report §5; video 2 03:07 — "نستصحبها معانا مع الـ AI".)*
 
 ---
 
 ## Phase B — Abstracts (after Phase A)
 
-- [ ] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M)
+- [ ] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M) — *A7 blocker B5 lands here: the abstract still carries the pre-A1 framing (old RQ, no CSQE, no asymmetric-placement finding). Starter sentences proposed in `A7_mapping_audit.md` §(g) B5.*
   Target ≈ 3/4 page (250–350 words); must fit one page; not shorter than half a page; Times New Roman 12, 1.5 spacing. Structure (use this as the AI prompt, as agreed): **Context/Area → Problem → Objectives → Methodology → Key Findings → Overall Conclusion.** Built on the new A1/A4 text. *(Report §8; video 2 07:20 + 36:30. Closes old 5.F.1.)*
 
 - [ ] **B2 — Arabic abstract (المستخلص): shrink + Arabize** — **Owner: Osman** `[AI]` (M)

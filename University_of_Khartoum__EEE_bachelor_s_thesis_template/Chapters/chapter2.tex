@@ -205,7 +205,7 @@ Recall at $k$ measures the proportion of all relevant documents that appear with
 \subsubsection{NDCG@$k$}
 \label{sec:ndcg_math}
 
-Normalized Discounted Cumulative Gain (NDCG) measures ranking quality by considering both the relevance of retrieved documents and their positions. Documents at higher ranks contribute more to the score, reflecting the intuition that users examine top-ranked results more carefully.
+NDCG measures ranking quality by considering both the relevance of retrieved documents and their positions. Documents at higher ranks contribute more to the score, reflecting the intuition that users examine top-ranked results more carefully.
 
 The Discounted Cumulative Gain (DCG) at position $k$ is defined as:
 
@@ -226,7 +226,7 @@ The Discounted Cumulative Gain (DCG) at position $k$ is defined as:
 \subsubsection{MRR}
 \label{sec:mrr_math}
 
-Mean Reciprocal Rank (MRR) measures the average of the reciprocal ranks of the first relevant document across a set of queries $Q$:
+MRR measures the average of the reciprocal ranks of the first relevant document across a set of queries $Q$:
 
 \begin{equation}
 \text{MRR} = \frac{1}{|Q|} \sum_{i=1}^{|Q|} \frac{1}{\text{rank}_i}
@@ -476,16 +476,16 @@ Taken together, the literature reviewed above leaves four gaps at the intersecti
 Specifically, the following questions remain unanswered:
 
 \begin{itemize}
-    \item To what extent can LLM-based QE improve Arabic information retrieval under sparse, dense, and hybrid retrieval, when the expansion is generated zero-shot by openly available LLMs (2--8 billion parameters)?
+    \item To what extent can LLM-based QE---blind and corpus-steered---improve Arabic information retrieval across sparse, dense, and hybrid retrieval paradigms, when the expansion is generated zero-shot by openly available LLMs of 2--8 billion parameters?
     \item Does the Query2Doc technique, originally validated with proprietary 175-billion-parameter models on English text, transfer to Arabic when applied zero-shot?
+    \item Which openly available LLMs (2--8 billion parameters) are the most effective Arabic expansion generators under each retrieval paradigm, and do Arabic-specialised models outperform multilingual models of comparable scale?
     \item How do LLM-generated Arabic expansions interact with sparse as opposed to dense retrieval, and must the expansion strategy therefore be adapted to the retrieval paradigm?
     \item Does the query-repetition remedy proposed for English transfer to Arabic, at what repetition factor, and does the optimal factor hold across generator models?
     \item Does grounding the expansion in documents retrieved from the target corpus yield more reliable enhancement for Arabic than blind generation, and how do the corpus-grounded and blind components contribute individually?
     \item Within a hybrid sparse--dense architecture, to which retriever should the expansion be applied?
-    \item Which openly available LLMs (2--8 billion parameters) are the most effective Arabic expansion generators under each retrieval paradigm, and do Arabic-specialised models outperform multilingual models of comparable scale?
 \end{itemize}
 
-These questions are addressed in this thesis through a staged experimental programme on the MIRACL Arabic benchmark, progressing from independent sparse and dense baselines and their error analysis, through a standardised comparison of openly available LLMs (2--8 billion parameters) as expansion generators and a query-repetition sweep for sparse retrieval, to a hybrid sparse--dense fusion baseline and finally the adaptation of CSQE to Arabic and its placement within the hybrid pipeline, as described in the following chapter.
+These questions are addressed in this thesis through a staged experimental programme on the MIRACL Arabic benchmark, progressing from independent sparse and dense baselines and their error analysis, through a standardised comparison of openly available LLMs (2--8 billion parameters) as expansion generators and a query-repetition sweep for sparse retrieval, to a hybrid sparse--dense fusion baseline and finally the adaptation of CSQE to Arabic and its placement within the hybrid pipeline, as described in the following chapter. Answering these questions additionally requires independent sparse and dense baselines, a diagnostic error analysis of their failures, and a hybrid fusion reference established without enhancement; these are treated as prerequisite objectives rather than as gaps in the literature.
 
 %======================================================================
 \section{Chapter Summary}
