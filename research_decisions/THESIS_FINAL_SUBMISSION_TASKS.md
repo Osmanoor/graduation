@@ -45,11 +45,17 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [x] **A4 — Rewrite the Objectives** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-07-29** (9 objectives, 1:1 with experiments; hybrid baseline + per-query error analysis now anchored)
   Clear, explicit, **measurable** goals — one per thing we actually experimented on (we counted ~8: model comparison for QE, BM25 query repetition, hybrid fusion, CSQE, asymmetric fusion configs, error analysis, …). Exploratory origin is fine (confirmed), but each written objective must state what was tested/evaluated/achieved so it can be **checked off in the conclusion**. *(Report §5; video 2 01:45–03:37.)*
 
-- [ ] **A5 — Small-models de-emphasis sweep** — **Owner: Elhaj** `[AI]` (M)
+- [x] **A5 — Small-models de-emphasis sweep** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-07-29** (Opus agent sweep: 55 occurrences, 41 KEEP / 14 FIX, all 14 applied; full audit + borderline calls in `research_decisions/A5_small_models_sweep_report.md`)
   Review the whole thesis (Ch.1 and Ch.5 especially) for leftover framing that presents small models as *the* contribution; align with the new statement/objectives. *(Video 2 38:25 — "محتاجين نعمل Review للبحث كله".)*
 
-- [ ] **A6 — Cascade check: Conclusion** — **Owner: Elhaj** (S)
+- [ ] **A6 — Cascade check: Conclusion** — **Owner: Elhaj** (S) — *prep ready: A5 report §(d) has the Ch.5↔9-objectives mapping + 3 drafted paragraphs (Obj 3 engineering, Obj 8 ablation, Obj 9 per-query analysis); verify the 1,061 count collision (ch4 L832 vs L876) and the §4.2 canonical error-analysis numbers before applying*
   After A1–A4, verify the Conclusion (and anywhere echoing the old statement) answers the *new* problem statement. Methodology/Results are expected to be unaffected (video 1 §5) — confirm rather than assume.
+
+> **Phase A review flags (2026-07-29, from the A1–A4 session — decide at Elhaj's read-through):**
+> 1. **§1.1 closing sentence detail** — it currently pre-announces the empirical finding ("asymmetric hybrid sparse–dense fusion, expansion applied to the sparse retriever only"). AI recommendation: keep the pipeline announcement (technology-driven framing is sanctioned) but drop the "asymmetric / sparse-side-only" specificity — that is a Chapter 4 *result*, and Objective 9 already poses it honestly as an open question.
+> 2. **The word "small" in the objectives** — removed in A4; scope is now carried numerically ("openly available LLMs spanning 2–8 billion parameters"). Optional: reinstate once, e.g. Objective 4 → "small, openly available LLMs (2–8 billion parameters)". Numeric range carries the content; the word adds emphasis only. Safe anywhere except the RQ and the problem-statement endpoint.
+> 3. **First-mention re-audit (Ch.2/Ch.3)** — acronym definitions moved into Ch.1 during the merge of the C3 sweep with the A1–A4 rewrite; later chapters may hold duplicates/orphans. Fold into E3/A7.
+> 4. **Osman to review the 9-objective structure** (was ~8 in the meeting count) — per G1.
 
 - [ ] **A7 — AI audit of the 1-to-1 mapping** — **Owner: JOINT** `[AI]` (S)
   Committee evaluates on strict mapping: Problem ↔ Objectives ↔ Methodology & Results ↔ Conclusions. Run a dedicated Claude check that every objective is addressed in methodology/results and checked off in the conclusion; fix gaps. *(Report §5; video 2 03:07 — "نستصحبها معانا مع الـ AI".)*
