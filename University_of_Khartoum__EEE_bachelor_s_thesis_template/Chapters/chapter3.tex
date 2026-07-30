@@ -183,7 +183,7 @@ Several modifications were made to adapt Query2Doc for this research context:
 \begin{enumerate}
     \item \textbf{Zero-shot prompting:} The original Query2Doc paper employed few-shot prompting with 4 demonstration examples using GPT-3 (\texttt{text-davinci-003}, 175B parameters). In this work, pseudo-document generation was performed zero-shot. The demonstrations of the original method are English query--passage pairs, and no curated set of Arabic demonstrations was available; constructing one would have introduced a design variable absent from the original method, and it is therefore left as a direction for future work (Section~\ref{sec:recommendations}). Zero-shot prompting also keeps every prompt short, which matters when generation is batched over 2,896 queries for each of ten models within the available GPU budget (Section~\ref{sec:meth_q2d_batch}), and it allows each model's Arabic expansion capability to be assessed without task-specific demonstrations.
 
-    \item \textbf{Openly available models of 2--8 billion parameters:} Rather than using proprietary API-based models, all experiments used openly available models that run on Google Colab free-tier GPUs. This approach ensures reproducibility and eliminates API costs.
+    \item \textbf{Openly available models of 2--8 billion parameters:} Rather than using proprietary API-based models, all experiments used openly available models that can run on Google Colab free-tier GPUs. This approach ensures reproducibility and eliminates API costs.
 
     \item \textbf{Arabic-only generation:} The system prompt explicitly instructs the model to respond in Arabic only, whereas the original paper targeted English queries.
 
