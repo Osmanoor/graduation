@@ -120,11 +120,19 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [ ] **C5 — Promote bold inline headings to numbered sub-headings** — **Owner: Elhaj** (M)
   Agreed in video 2 (06:10–07:20): §2.1.4 Query Enhancement Techniques → 2.1.4.1, 2.1.4.2, … (p.28) and §2.1.5 Arabic Language Processing Challenges → 2.1.5.1, 2.1.5.2, … (p.30). While there, audit for any other large section using bold-text pseudo-headings and apply the same. *(Report §7.)*
 
-- [ ] **C6 — Citations: IEEE order-of-appearance + web access dates** — **Owner: Osman** `[AI]` (M)
+- [x] **C6 — Citations: IEEE order-of-appearance + web access dates** — **Owner: Osman** `[AI]` (M) — **DONE 2026-07-29**
   (a) Verify the bibliography style numbers references strictly in order of first appearance ([1], [2], [3]…) — Elhaj was unsure the LaTeX setup does this; check the .bst/biblatex config and the rendered PDF. (b) Every web reference must have full URL + explicit access date ("[Online]. Available: … [Accessed: …]"). *(Report Part 2C; video 2 34:20–35:30.)*
+  **(a) PASS — no changes needed.** Compared first-appearance order (from the per-chapter `.aux` files) against `\bibitem` order in `1-main.bbl`: **48/48, zero mismatches.** `IEEEtran.bst` is unsorted, so it emits in citation order. Multi-key `\cite`s all ascend too. `References.bib` entry order untouched — irrelevant to IEEEtran.
+  **(b) 4 entries stamped, all 5 web URLs alive (HTTP 200).** `silma_2024`, `bm25s_2024`, `louis_2024_query`, `bari2025allam`. Mechanism: IEEEtran **already auto-prints `url`** as `[Online]. Available: …`, so `note` carries only the date (it renders just before `[Online]` — exactly where IEEE puts `Accessed:`); brace-protected as `{A}ccessed` because IEEEtran lowercases a note's first char. arXiv / DOI'd / ACL-venue entries left alone by design.
+  **Verified by local compile** (`xelatex → bibtex → xelatex ×2`): 0 errors, 0 undefined citations, 122 pages. No Overleaf check needed.
+  ⚠️ **`bari2025allam` is a borderline stamp** — it has ICLR venue metadata (argues against a date) but no DOI/arXiv ID and OpenReview pages are mutable. Revert is one line. Its missing arXiv ID (2407.15390) flagged, not edited.
+  ⚠️ **~35 arXiv entries render `[Online]. Available: …` with no access date.** Correct IEEE, but a literal reading of the directive may query it. Same one-line fix each if uniformity is wanted.
+  ⚠️ **`perin_2025_investigating`** — uncited orphan, no `booktitle`; renders nowhere. Kept per no-delete decision; needs venue + date if ever cited.
+  ⚠️ **Committed `1-main.pdf` was six weeks stale** (June 19, 121 pp — predated C1/C2/C3 and A1–A4). Verification rebuild → 122 pp, so its diff is mostly pre-existing source changes, not this task's.
 
-- [ ] **C7 — Verify caption placement** — **Owner: Osman** (S)
+- [x] **C7 — Verify caption placement** — **Owner: Osman** (S) — **DONE 2026-07-29 (verdict: no change needed)**
   Table captions ABOVE tables; figure captions BELOW figures. We believe this is already correct — verify every table/figure rather than assume. *(Report §10; video 2 25:28.)*
+  **Verdict: zero violations, zero edits.** Audited all **58 float environments** (34 tables, 24 figures) across `1-main.tex`, front matter, Ch.1–5, and the generated `.tex` fragments. Every table caption is above its `tabular`, every figure caption below its `\includegraphics`, and `\label` sits immediately after `\caption` throughout. Numbering verified unchanged (per-chapter, separate per entity type). Local compile clean: 0 errors, 0 undefined `\ref`, 0 `??` in the PDF, 122 pages.
 
 - [x] **C8 — Page-number placement consistency** — **Owner: Osman** (S) — **DONE 2026-07-28 (verdict: no change needed)**
   Video 2 (14:10): numbers appear top-of-page generally but bottom on chapter-start pages (and front-matter roman numerals looked odd on screen). This is standard LaTeX book behavior — confirm the template is consistent and matches faculty conventions; fix only if genuinely inconsistent.
