@@ -71,13 +71,26 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [x] **A8 — Close the Objective 2 mapping gap in the Conclusion** — **Owner: Elhaj** (S) — **DONE 2026-07-29**
   A7's own blocker-B1 fix added "characterising the linguistic failure patterns arising from Arabic morphological, orthographic and lexical variation" to Objective 2, but A7 was never re-run afterwards, so no conclusion sentence was added. Methodology (§3.3.3 Failed Query Inspection) and results (§4.2.4, three named patterns with Arabic examples) both exist; only the Ch.5 check-off was missing. **Fix applied:** one sentence appended to Ch.5 §5.1 ¶1, citing `sec:res_error_rationale`. Verified against ch4:144 — the three patterns are vocabulary mismatch (\<آزوت>/\<نيتروجين>), named-entity variation (\<إبن الهيثم>/\<ابن الهيثم>), diacritic sensitivity (\<المَثَانةُ>/\<المثانة>).
 
-- [ ] **H2 — Jais-2-8B temperature is wrong in Ch.3 Table 3.2** — **Owner: Elhaj** (S) — **CONFIRMED 2026-07-29, not yet fixed**
+- [ ] **H2 — Jais-2-8B temperature is wrong in Ch.3 Table 3.2** — **Owner: Osman** (S) — **CONFIRMED 2026-07-29, not yet fixed**
   `chapter3.tex:294` prints Jais-2 8B at temperature **0.1**, but its own feeder file `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv:8` says **0.7** (and the generation notebook sets 0.7). The `.tex` cell is the outlier — the CSV is canonical. **No Ch.4/Ch.5 number changes**; this is a single table cell. Fix = change `0.1` to `0.7` in that row. *(Found by the SILMA temperature investigation; see `research_decisions/SILMA_TEMPERATURE_RATIONALE_CHECK.md`.)*
 
-- [ ] **H3 — Table 3.2 caption may misstate top_p for Qwen3-4B** — **Owner: Elhaj** (S) — **UNRESOLVED, needs notebook check**
+- [ ] **H3 — Table 3.2 caption may misstate top_p for Qwen3-4B** — **Owner: Osman** (S) — **UNRESOLVED, needs notebook check**
   The caption says "top_p = 0.9 unless otherwise noted". The investigating agent reports Qwen3-4B actually used `top_p=0.8, top_k=20` (the Qwen3 developer-recommended sampling settings), but the feeder CSV records `0.9` for Qwen3-4B. **Agent and CSV disagree** — resolve by reading `Query_generator_qwen3_4B.ipynb` before changing anything. If the agent is right, both the CSV and the caption need correcting. Low impact: sampling detail only, no metric changes.
 
-- [ ] **H1 — SILMA temperature mix-up in the repetition sweep** — **Owner: Elhaj** (S) — **DECISION NEEDED** — *2026-07-29: investigation complete, re-run at temperature **0.1** (see below and `SILMA_TEMPERATURE_RATIONALE_CHECK.md`). Elhaj is re-running.*
+- [ ] **H1 — SILMA temperature mix-up in the repetition sweep** — **Owner: Osman** (S) — **HANDED TO OSMAN 2026-07-29 by Elhaj**
+
+  > **Handover note (Elhaj → Osman).** Two separate things are involved here; please keep them apart when you look at it:
+  > 1. **The temperature *decision* for SILMA.** Elhaj's position is that this was made deliberately and is correct — and the evidence agrees with him: your `Query_generator_silma_2B.ipynb:510` hard-codes `TEMPERATURE = 0.1`, and `OSMAN_MODEL_COMPARISON_RESULTS.md:18-31` records "Decision: Use temperature 0.1 for all subsequent experiments". `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv:2` carries your own note: *"temp 0.1 chosen empirically over 0.7 (+2.5%)"*. **Nothing here is being questioned.**
+  > 2. **Which pickle the Exp 1.1 repetition sweep actually loaded.** This is the only issue: `phase4_quick_wins (1).ipynb` cell 7 maps `'SILMA 2B': 'silma_2b_temp07.pkl'`. Both facts can be true at once — the decision was 0.1, the sweep read the older 0.7 file.
+  >
+  > **Open question for you:** was loading `silma_2b_temp07.pkl` in the sweep intentional for some reason we have not found, or is it a leftover from the earlier default-config run? If intentional, say why and we will document it instead of re-running.
+  >
+  > **What was checked, so you do not repeat it:** a repo-wide search found developer-recommended-temperature statements for Falcon-H1 (0.1), Qwen3 (0.7 / top_p 0.8 / top_k 20) and ALLaM (card says 0.6, we deliberately used 0.7 for comparability) — **and none for SILMA**. Only SILMA has both `.pkl` variants on disk; the other 8 sweep rows load the same pickle as the model-comparison run, so nothing else is affected. `exp_011_bm25_repetition.md` records no temperature choice at all.
+  >
+  > **Sources:** `research_decisions/SILMA_TEMPERATURE_RATIONALE_CHECK.md` (this investigation) · `research_decisions/SILMA_CONFLICT_RESOLUTION.md` (original root-cause analysis) · `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv` (canonical per-model hyperparameters).
+  >
+  > **Related and also yours now:** H2 and H3 below — both are Table 3.2 hyperparameter cells and depend on the same knowledge.
+
   Root cause proven: `phase4_quick_wins (1).ipynb` cell 7 maps `'SILMA 2B': 'silma_2b_temp07.pkl'` — the Exp 1.1 repetition sweep loaded SILMA's **temperature-0.7** expansions while every other model (and Ch.3 Table 3.2, and the dense Table 4.6) uses **temperature 0.1**. Hence Table 4.7 says 0.4277 and Table 4.11 says 0.4194 for the same configuration. **Table 4.7 (0.4277) is canonical**; the sweep is the deviant. Only SILMA is affected — the other 8 models match to 4 d.p. across both tables.
   - **Option A (recommended):** re-run SILMA's 8 repetition configs with `silma_2b_temp01.pkl` (~8 min, CPU-only, all inputs in-repo), then update Tables 4.11/4.12 + regenerate Figs 4.7/4.8.
   - **Option B (no re-run):** keep 0.4277 in Table 4.7, footnote Table 4.11 that SILMA's sweep used temp 0.7. Table 4.12's Δ=+0.0639 stays correct as printed.

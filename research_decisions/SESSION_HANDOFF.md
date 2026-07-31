@@ -37,7 +37,7 @@
 
 | # | Item | Options |
 |---|---|---|
-| **H1** | **SILMA temperature mix-up** — Exp 1.1 loaded SILMA's temp-0.7 expansions while every other model used temp 0.1. Table 4.7 says 0.4277, Table 4.11 says 0.4194 for the same config. Figs 4.7/4.8 currently plot different SILMA values. | **A:** re-run 8 configs (~8 min, CPU, inputs in repo) + regenerate tables/figures. **B:** keep 0.4277, footnote Table 4.11. *Figures need regenerating either way.* |
+| ~~H1~~ | **SILMA temperature — REASSIGNED TO OSMAN 2026-07-29.** Investigation complete; SILMA's temperature *decision* (0.1, chosen empirically) is confirmed correct and is not in question — only which pickle the Exp 1.1 sweep loaded. Handover note with all evidence and sources is in the H1 task entry. **H2 and H3 (Table 3.2 hyperparameter cells) also went to Osman.** Elhaj: no action. | — |
 | Flag 2 | Reinstate the word "small" once in Objective 4? | Optional; numeric range already carries it |
 | Flag 6 | Aya CC-BY-NC caveat currently in Ch.5 "Overall" *and* Challenges item 8 | Keep both / trim the Overall |
 
