@@ -68,6 +68,9 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase A-bis — Data corrections found during verification (NEW, 2026-07-29)
 
+- [x] **A8 — Close the Objective 2 mapping gap in the Conclusion** — **Owner: Elhaj** (S) — **DONE 2026-07-29**
+  A7's own blocker-B1 fix added "characterising the linguistic failure patterns arising from Arabic morphological, orthographic and lexical variation" to Objective 2, but A7 was never re-run afterwards, so no conclusion sentence was added. Methodology (§3.3.3 Failed Query Inspection) and results (§4.2.4, three named patterns with Arabic examples) both exist; only the Ch.5 check-off was missing. **Fix applied:** one sentence appended to Ch.5 §5.1 ¶1, citing `sec:res_error_rationale`. Verified against ch4:144 — the three patterns are vocabulary mismatch (\<آزوت>/\<نيتروجين>), named-entity variation (\<إبن الهيثم>/\<ابن الهيثم>), diacritic sensitivity (\<المَثَانةُ>/\<المثانة>).
+
 - [ ] **H1 — SILMA temperature mix-up in the repetition sweep** — **Owner: Elhaj** (S) — **DECISION NEEDED**
   Root cause proven: `phase4_quick_wins (1).ipynb` cell 7 maps `'SILMA 2B': 'silma_2b_temp07.pkl'` — the Exp 1.1 repetition sweep loaded SILMA's **temperature-0.7** expansions while every other model (and Ch.3 Table 3.2, and the dense Table 4.6) uses **temperature 0.1**. Hence Table 4.7 says 0.4277 and Table 4.11 says 0.4194 for the same configuration. **Table 4.7 (0.4277) is canonical**; the sweep is the deviant. Only SILMA is affected — the other 8 models match to 4 d.p. across both tables.
   - **Option A (recommended):** re-run SILMA's 8 repetition configs with `silma_2b_temp01.pkl` (~8 min, CPU-only, all inputs in-repo), then update Tables 4.11/4.12 + regenerate Figs 4.7/4.8.
