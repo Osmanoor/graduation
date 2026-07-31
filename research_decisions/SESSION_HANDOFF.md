@@ -1,7 +1,7 @@
 # Session Handoff — Thesis Final Submission
 
 **Written:** 2026-07-29, end of the Phase A session. Load this first in a new chat.
-**Repo state:** `main` = `9954718`, pushed. Working tree clean except three non-thesis files.
+**Repo state:** `main` pushed and current (see `git log`). Working tree clean except three non-thesis files.
 **Master task list:** `research_decisions/THESIS_FINAL_SUBMISSION_TASKS.md` — that file is the source of truth, this is the orientation.
 
 ---
@@ -46,7 +46,7 @@
 ## 4. Recommended next work (one task at a time)
 
 **Immediate, small, self-contained:**
-1. **Ch.5 ¶1 sentence for Objective 2** *(new task — not yet in the list)*. A7's own fix added "characterising the linguistic failure patterns arising from Arabic morphological, orthographic and lexical variation" to Objective 2. Methodology (§3.3.3) and results (§4.2.4, the آزوت/نيتروجين and ابن الهيثم examples) exist, but the conclusion never mentions it. One sentence closes the last mapping gap.
+1. ~~Ch.5 ¶1 sentence for Objective 2~~ — **DONE as task A8, 2026-07-29.** The last mapping gap is closed.
 2. **C4 — §1.3 Thesis Layout → one single paragraph.** A direct supervisor instruction, still unfulfilled; §1.3 is currently four bold-led paragraphs and got *longer* during A7. Low risk, high visibility.
 
 **Then Phase B:**
@@ -64,6 +64,6 @@
 - **Unverified literature:** Macmillan-Scott et al. 2025 (arXiv 2511.19325) is cited but not in `papers/`; WS6 notes say it evaluates MuGI and Exp4Fuse across eight languages *including* Arabic — confirm our gap claims survive reading it. MuGI and Exp4Fuse also have no first-hand summaries.
 - **The monolingual-Arabic gap claim** was only ever searched at sub-7B scope — re-run unfiltered.
 - **Acronym audit was partial** — only Ch.1-defined acronyms were checked for first-mention violations; RRF, CC, VRAM, OALL and others were not.
-- **A7 was not re-run after its own fixes** were applied (that is how item 4.1 above was missed).
+- **A7 was not re-run after its own fixes** were applied — that is how the Objective 2 gap (since fixed as A8) was missed. If objectives are edited again, re-check the Ch.5 check-off.
 - Deferred to D5/terminology: full "open-source" → "openly available" sweep; SILMA Kashif-2B vs SILMA 2B naming.
 - **CSQE is absent from the Ch.2 technique taxonomy** (§2.1.4 lists HyDE/Query2Doc/GRF only) — natural to fold into C5 if wanted. *Deliberately not done; would add ~80 words to a thesis already over the page limit.*
