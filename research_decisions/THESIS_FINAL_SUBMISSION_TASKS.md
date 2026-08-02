@@ -127,6 +127,8 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase D — Page budget, appendices, repo
 
+> **2026-07-30:** Agent prompts for Osman's Wave-2 tasks (E1, D2, D4) are ready in `research_decisions/OSMAN_WAVE2_PROMPTS.md` — run E1 before D2 (D2 consumes E1's report). B2 waits on B1. Each prompt now ends with an approval gate: agent reports → Osman approves → agent marks the task done here.
+
 - [ ] **D1 — Pin down the page count** — **Owner: Elhaj** (S)
   Rule: core manuscript (Ch.1–5) ≤ **100 pages**; references + appendices + front matter don't count. Our reading in the meeting: whole PDF 121, ~104 without refs, ~99 without appendices — borderline. Compute the real Ch.1–5 count and record the number; this decides how aggressive D2/D5 must be. *(Report §10; video 2 09:20–13:30.)*
 
@@ -149,8 +151,16 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase E — Figures & tables
 
-- [ ] **E1 — Figure↔table duplication analysis** — **Owner: Osman** `[AI]` (M)
+- [x] **E1 — Figure↔table duplication analysis** — **Owner: Osman** `[AI]` (M) — **DONE 2026-08-02**
   Agreed open question (video 2 26:30–33:45): several figures are pure re-plots of adjacent tables (e.g. Fig 4.1 vs Table 4.1 — same nDCG numbers). Run a Claude analysis: (a) which figures merely duplicate tables; (b) for each — keep both / drop one / move one to appendix; (c) can we produce *genuine* figures not derived from tables (diagrams, distributions)? Feed conclusions into D2/D5.
+  **Done:** full report at `research_decisions/E1_FIGURE_TABLE_DUPLICATION_REPORT.md`. Inventoried all **23 figures + 34 tables** (Ch.1 and Ch.5 have zero floats; Ch.2–3's 8 diagrams are all ORIGINAL — no suspects). Verdicts: **6 DUPLICATE** (Fig 4.2, 4.5, 4.6, 4.13, 4.14, 4.15 — drop all six, HIGH confidence), **5 PARTIAL OVERLAP** (4.3, 4.4, 4.8, 4.10, 4.11 — in 4 of 5 the *table* is what should be trimmed or moved, not the figure), **12 ORIGINAL**. **Page savings ≈ 3.2 pages** high-confidence, **≈ 4.5** with the medium-confidence appendix moves. §7 of the report has a copy-paste delete list for D5 and an appendix-candidate list for D2; 6 genuine (non-re-plot) figure opportunities are specced in §4 with their data sources.
+  **Correction to the meeting's premise:** Fig 4.1 is **not** a re-plot of Table 4.1 — it is a genuine per-query distribution over 2,896 queries, Table 4.1 is 3 rows of aggregates. **Keep both.** The real case is one section later: **Fig 4.5 is a bar chart of Table 4.8's NDCG@10 column printed on the same page directly beneath it** (p. 66), and Fig 4.6 re-plots three more of its columns (p. 67). Verified by rendering the actual pages.
+  **Input to D1:** core manuscript measured at **97 pages** (Ch.1 p.1 → Ch.5 ends p.97; Bibliography starts p.98) — **already under the 100 limit.** These cuts buy margin and answer Dr. Tahani's tables-vs-figures directive; they are not rescuing a violation. D5 does not need to be aggressive.
+  ⚠️ **Three live defects found in figures now in the thesis** (→ E2): (a) **Fig 4.9's axis labels are mojibake** — `Î"` instead of `Δ`, both axes, verified on p. 75 of the compiled PDF; the notebook source is correct (U+0394), so re-running `03_model_comparison.ipynb` fixes it (also affects `fig_4_8_gains_v2_slope`). (b) **Fig 4.5/4.6 contain an `Aya 8B CSQE` bar** that is absent from Table 4.8 and does not belong in a Query2Doc chart; both also omit ALLaM, which the table includes — moot if the drops are accepted. (c) **Fig 4.15's percentage labels are clipped** by the donut ring ("12%" renders as "%") — moot if dropped.
+  ⚠️ **Fig 3.6 (CSQE pipeline) is an AI-generated JPEG** mis-named `.png` (PaperBanana/Gemini, 2752×1536) — a raster in an otherwise all-vector thesis, illustrating **our own contribution**. A TikZ version already exists (`system_diagrams/fig_3_8_csqe.tex`). **Recommend raising with Dr. Tahani** — a committee may ask how the figure was produced.
+  ⚠️ **Two items need a team decision:** (a) **Fig 4.3** — drop it, or replace it with the proposed query-length histogram (G3)? Dropping removes the only view of within-bucket spread; medium confidence either way. (b) **Build G1 (per-query win/loss scatter) and/or G2 (recall funnel)?** Both are genuine figures rather than re-plots — exactly what Dr. Tahani asked for. G2 is cheap and doubles as F1 defense material.
+  ⚠️ **Bonus finding for D2/D5 — table↔table duplication:** **Table 2.3 (p.19) and Table 2.4 (p.26)** list the same 10 models with overlapping columns, 7 pages apart in the same chapter. One should go. (Table 4.22 ↔ 4.28 is already covered by the Fig 4.11 verdict.)
+  ⚠️ **Dead code for E3:** `\iffalse` figure block `fig:regression_pie_old` at `chapter4.tex:922-933`.
 
 - [ ] **E2 — Figures review + §4.2 regeneration (carry-over)** — **Owner: Elhaj** (M)
   Meeting: "في حاجات محتاجة مراجعة الـ Graphs دي" (video 2 14:10). Combine with the known carry-over from the old list: **Fig 4.2 / 4.3 / 4.4 must be regenerated from the canonical post-WS1 data** (text is ahead of them: 34% failure rate, word buckets 0.345/0.511/0.476, coverage 90.1%@100). Then verify every referenced `fig_*` PDF is the current version.
