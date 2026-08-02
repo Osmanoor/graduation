@@ -45,20 +45,64 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [x] **A4 — Rewrite the Objectives** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-07-29** (9 objectives, 1:1 with experiments; hybrid baseline + per-query error analysis now anchored)
   Clear, explicit, **measurable** goals — one per thing we actually experimented on (we counted ~8: model comparison for QE, BM25 query repetition, hybrid fusion, CSQE, asymmetric fusion configs, error analysis, …). Exploratory origin is fine (confirmed), but each written objective must state what was tested/evaluated/achieved so it can be **checked off in the conclusion**. *(Report §5; video 2 01:45–03:37.)*
 
-- [ ] **A5 — Small-models de-emphasis sweep** — **Owner: Elhaj** `[AI]` (M)
+- [x] **A5 — Small-models de-emphasis sweep** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-07-29** (Opus agent sweep: 55 occurrences, 41 KEEP / 14 FIX, all 14 applied; full audit + borderline calls in `research_decisions/A5_small_models_sweep_report.md`)
   Review the whole thesis (Ch.1 and Ch.5 especially) for leftover framing that presents small models as *the* contribution; align with the new statement/objectives. *(Video 2 38:25 — "محتاجين نعمل Review للبحث كله".)*
 
-- [ ] **A6 — Cascade check: Conclusion** — **Owner: Elhaj** (S)
+- [x] **A6 — Cascade check: Conclusion** — **Owner: Elhaj** (S) — **DONE 2026-07-29** (all 9 objectives now have conclusion coverage: 3 paragraphs added after full number verification — see `research_decisions/A6_number_verification.md`; 1,061 collision = genuine coincidence; §4.2 numbers fully canonical; false "all 1,061 big-wins" claim fixed at ch4 §4.9.3; A5 edits fact-checked, 11 corrections applied — see `research_decisions/A5_edit_verification.md`)
   After A1–A4, verify the Conclusion (and anywhere echoing the old statement) answers the *new* problem statement. Methodology/Results are expected to be unaffected (video 1 §5) — confirm rather than assume.
 
-- [ ] **A7 — AI audit of the 1-to-1 mapping** — **Owner: JOINT** `[AI]` (S)
+> **Phase A review flags (2026-07-29, from the A1–A4 session — decide at Elhaj's read-through):**
+> 1. **§1.1 closing sentence detail** — it currently pre-announces the empirical finding ("asymmetric hybrid sparse–dense fusion, expansion applied to the sparse retriever only"). AI recommendation: keep the pipeline announcement (technology-driven framing is sanctioned) but drop the "asymmetric / sparse-side-only" specificity — that is a Chapter 4 *result*, and Objective 9 already poses it honestly as an open question.
+> 2. **The word "small" in the objectives** — removed in A4; scope is now carried numerically ("openly available LLMs spanning 2–8 billion parameters"). Optional: reinstate once, e.g. Objective 4 → "small, openly available LLMs (2–8 billion parameters)". Numeric range carries the content; the word adds emphasis only. Safe anywhere except the RQ and the problem-statement endpoint.
+> 3. **First-mention re-audit (Ch.2/Ch.3)** — acronym definitions moved into Ch.1 during the merge of the C3 sweep with the A1–A4 rewrite; later chapters may hold duplicates/orphans. Fold into E3/A7.
+> 4. **Osman to review the 9-objective structure** (was ~8 in the meeting count) — per G1.
+> 5. **Pre-submission literature re-verification** (from A5 fact-check §7, `A5_edit_verification.md`): (a) the claim "LLM-based QE has not been evaluated for monolingual Arabic retrieval" was only ever *searched* at sub-7B scope (WS6) — re-run the search without the size filter; (b) obtain Macmillan-Scott et al. 2025 (arXiv 2511.19325) — WS6 notes say it evaluates MuGI and Exp4Fuse across eight languages *including Arabic* (cross-lingual) — confirm our gap claims survive contact with the actual paper; (c) MuGI and Exp4Fuse have no summaries in `papers/` — their characterisations rest on second-hand notes.
+> **2026-07-29 — SCOPE DECISION (Elhaj):** the final-round revision commit (`31240f1`) went beyond this task list. Everything not required to remove a *false or self-contradicting* statement was **reverted** to the end-of-Phase-A text (`6ba4e80`) in commit `f0e0fb9`. Reverted: Doc2Query++ and Arabic-AQE-survey citations (both unverified, no copy in `papers/`, and the first conceded novelty), the CSQE taxonomy bullet, the CSQE 830/1,000 description rewrite, the §1.1 closing rephrase, the expanded Overall licence sentence. Kept (each removes a defect): Ch.3 zero-shot justification (old text claimed small models have limited context windows — false, they have 12K–128K), Ch.3 CSQE one-shot disclosure (thesis claimed zero-shot throughout while CSQE uses a one-shot English example), Ch.2/Ch.3 licence criterion (old text said "permissive licences" — Aya is CC-BY-NC), Ch.2 §2.5.2 topic sentence (old text described KAR/AQE/ThinkQE/PBR as small-model studies — they are not), Ch.5 Challenges item 8 + matching recommendation, and terminology consistency. **Rule for the rest of the project: no thesis edit without a task-list entry.**
+>
+> 6. **Aya licence caveat now in Ch.5 Overall** — Aya Expanse 8B is CC-BY-NC (per Table in Ch.2); the conclusion now says "practical … subject to the licence of the chosen generator". Review whether to keep, soften, or move to Limitations.
+
+- [x] **A7 — AI audit of the 1-to-1 mapping** — **Owner: JOINT** `[AI]` (S) — **DONE 2026-07-29** (Opus audit: chain sound — 9/9 objectives have Ch.3+Ch.4+Ch.5 anchors, 0 orphan conclusion paragraphs; 6 blockers + 13 minors + 4 acronym violations found and fixed, except B5 = stale abstract, deferred to B1. Full audit: `research_decisions/A7_mapping_audit.md`. Deferred minors: M12 full open-source→openly-available sweep (Ch.2/3 factual contexts), M14 SILMA naming — both folded into D5/terminology pass.)
   Committee evaluates on strict mapping: Problem ↔ Objectives ↔ Methodology & Results ↔ Conclusions. Run a dedicated Claude check that every objective is addressed in methodology/results and checked off in the conclusion; fix gaps. *(Report §5; video 2 03:07 — "نستصحبها معانا مع الـ AI".)*
+
+---
+
+## Phase A-bis — Data corrections found during verification (NEW, 2026-07-29)
+
+- [x] **A8 — Close the Objective 2 mapping gap in the Conclusion** — **Owner: Elhaj** (S) — **DONE 2026-07-29**
+  A7's own blocker-B1 fix added "characterising the linguistic failure patterns arising from Arabic morphological, orthographic and lexical variation" to Objective 2, but A7 was never re-run afterwards, so no conclusion sentence was added. Methodology (§3.3.3 Failed Query Inspection) and results (§4.2.4, three named patterns with Arabic examples) both exist; only the Ch.5 check-off was missing. **Fix applied:** one sentence appended to Ch.5 §5.1 ¶1, citing `sec:res_error_rationale`. Verified against ch4:144 — the three patterns are vocabulary mismatch (\<آزوت>/\<نيتروجين>), named-entity variation (\<إبن الهيثم>/\<ابن الهيثم>), diacritic sensitivity (\<المَثَانةُ>/\<المثانة>).
+
+- [ ] **H2 — Jais-2-8B temperature is wrong in Ch.3 Table 3.2** — **Owner: Osman** (S) — **CONFIRMED 2026-07-29, not yet fixed**
+  `chapter3.tex:294` prints Jais-2 8B at temperature **0.1**, but its own feeder file `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv:8` says **0.7** (and the generation notebook sets 0.7). The `.tex` cell is the outlier — the CSV is canonical. **No Ch.4/Ch.5 number changes**; this is a single table cell. Fix = change `0.1` to `0.7` in that row. *(Found by the SILMA temperature investigation; see `research_decisions/SILMA_TEMPERATURE_RATIONALE_CHECK.md`.)*
+
+- [ ] **H3 — Table 3.2 caption may misstate top_p for Qwen3-4B** — **Owner: Osman** (S) — **UNRESOLVED, needs notebook check**
+  The caption says "top_p = 0.9 unless otherwise noted". The investigating agent reports Qwen3-4B actually used `top_p=0.8, top_k=20` (the Qwen3 developer-recommended sampling settings), but the feeder CSV records `0.9` for Qwen3-4B. **Agent and CSV disagree** — resolve by reading `Query_generator_qwen3_4B.ipynb` before changing anything. If the agent is right, both the CSV and the caption need correcting. Low impact: sampling detail only, no metric changes.
+
+- [ ] **H1 — SILMA temperature mix-up in the repetition sweep** — **Owner: Osman** (S) — **HANDED TO OSMAN 2026-07-29 by Elhaj**
+
+  > **Handover note (Elhaj → Osman).** Two separate things are involved here; please keep them apart when you look at it:
+  > 1. **The temperature *decision* for SILMA.** Elhaj's position is that this was made deliberately and is correct — and the evidence agrees with him: your `Query_generator_silma_2B.ipynb:510` hard-codes `TEMPERATURE = 0.1`, and `OSMAN_MODEL_COMPARISON_RESULTS.md:18-31` records "Decision: Use temperature 0.1 for all subsequent experiments". `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv:2` carries your own note: *"temp 0.1 chosen empirically over 0.7 (+2.5%)"*. **Nothing here is being questioned.**
+  > 2. **Which pickle the Exp 1.1 repetition sweep actually loaded.** This is the only issue: `phase4_quick_wins (1).ipynb` cell 7 maps `'SILMA 2B': 'silma_2b_temp07.pkl'`. Both facts can be true at once — the decision was 0.1, the sweep read the older 0.7 file.
+  >
+  > **Open question for you:** was loading `silma_2b_temp07.pkl` in the sweep intentional for some reason we have not found, or is it a leftover from the earlier default-config run? If intentional, say why and we will document it instead of re-running.
+  >
+  > **What was checked, so you do not repeat it:** a repo-wide search found developer-recommended-temperature statements for Falcon-H1 (0.1), Qwen3 (0.7 / top_p 0.8 / top_k 20) and ALLaM (card says 0.6, we deliberately used 0.7 for comparability) — **and none for SILMA**. Only SILMA has both `.pkl` variants on disk; the other 8 sweep rows load the same pickle as the model-comparison run, so nothing else is affected. `exp_011_bm25_repetition.md` records no temperature choice at all.
+  >
+  > **Sources:** `research_decisions/SILMA_TEMPERATURE_RATIONALE_CHECK.md` (this investigation) · `research_decisions/SILMA_CONFLICT_RESOLUTION.md` (original root-cause analysis) · `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv` (canonical per-model hyperparameters).
+  >
+  > **Related and also yours now:** H2 and H3 below — both are Table 3.2 hyperparameter cells and depend on the same knowledge.
+
+  Root cause proven: `phase4_quick_wins (1).ipynb` cell 7 maps `'SILMA 2B': 'silma_2b_temp07.pkl'` — the Exp 1.1 repetition sweep loaded SILMA's **temperature-0.7** expansions while every other model (and Ch.3 Table 3.2, and the dense Table 4.6) uses **temperature 0.1**. Hence Table 4.7 says 0.4277 and Table 4.11 says 0.4194 for the same configuration. **Table 4.7 (0.4277) is canonical**; the sweep is the deviant. Only SILMA is affected — the other 8 models match to 4 d.p. across both tables.
+  - **Option A (recommended):** re-run SILMA's 8 repetition configs with `silma_2b_temp01.pkl` (~8 min, CPU-only, all inputs in-repo), then update Tables 4.11/4.12 + regenerate Figs 4.7/4.8.
+  - **Option B (no re-run):** keep 0.4277 in Table 4.7, footnote Table 4.11 that SILMA's sweep used temp 0.7. Table 4.12's Δ=+0.0639 stays correct as printed.
+  - **Rejected:** changing Table 4.7 to 0.4194 — it would split SILMA's dense/sparse rows across two temperatures.
+  - **Independent of the choice:** `thesis_figures/data/raw/model_comparison_bm25.csv:3` and `thesis_figures/output/pdf/table_4_3.tex:6` pair temp-0.1 n=1 metrics with the temp-0.7 best config (Δ=0.0555, matching neither table); **Figs 4.7 and 4.8 currently plot different SILMA values** because they read different CSVs. Both need regenerating from one source regardless.
+  - Full evidence: `research_decisions/SILMA_CONFLICT_RESOLUTION.md`.
 
 ---
 
 ## Phase B — Abstracts (after Phase A)
 
-- [ ] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M)
+- [ ] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M) — *A7 blocker B5 lands here: the abstract still carries the pre-A1 framing (old RQ, no CSQE, no asymmetric-placement finding). Starter sentences proposed in `A7_mapping_audit.md` §(g) B5.*
   Target ≈ 3/4 page (250–350 words); must fit one page; not shorter than half a page; Times New Roman 12, 1.5 spacing. Structure (use this as the AI prompt, as agreed): **Context/Area → Problem → Objectives → Methodology → Key Findings → Overall Conclusion.** Built on the new A1/A4 text. *(Report §8; video 2 07:20 + 36:30. Closes old 5.F.1.)*
 
 - [ ] **B2 — Arabic abstract (المستخلص): shrink + Arabize** — **Owner: Osman** `[AI]` (M)
@@ -129,7 +173,12 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 > **2026-07-30:** Agent prompts for Osman's Wave-2 tasks (E1, D2, D4) are ready in `research_decisions/OSMAN_WAVE2_PROMPTS.md` — run E1 before D2 (D2 consumes E1's report). B2 waits on B1. Each prompt now ends with an approval gate: agent reports → Osman approves → agent marks the task done here.
 
-- [ ] **D1 — Pin down the page count** — **Owner: Elhaj** (S)
+- [x] **D1 — Pin down the page count** — **Owner: Elhaj** (S) — **ANSWERED 2026-07-29** from a clean local xelatex build (post-Phase-A, post-Osman-C1/C2/C3):
+  > **Core manuscript (Ch.1–5) = 103 pages — 3 OVER the 100-page limit.**
+  > Ch.1 p.1 · Ch.2 p.7 · Ch.3 p.36 · Ch.4 p.60 · Ch.5 p.95 · Bibliography starts p.104 (ends p.128). Front matter is roman (i–xvi+). **No appendices exist yet**, so D3's code appendix adds nothing to the count.
+  > Implication: D2 (move large tables to appendices) + D5 (conciseness) must free ≥3 pages just to reach the limit, and more for a comfortable margin. The biggest single lever is Ch.4 (60→94, i.e. 35 pages of results/tables).
+
+- [x] **D1-orig — Pin down the page count** — *(superseded by the measurement above)* — **Owner: Elhaj** (S)
   Rule: core manuscript (Ch.1–5) ≤ **100 pages**; references + appendices + front matter don't count. Our reading in the meeting: whole PDF 121, ~104 without refs, ~99 without appendices — borderline. Compute the real Ch.1–5 count and record the number; this decides how aggressive D2/D5 must be. *(Report §10; video 2 09:20–13:30.)*
 
 - [ ] **D2 — Appendix-candidates analysis** — **Owner: Osman** `[AI]` (M)

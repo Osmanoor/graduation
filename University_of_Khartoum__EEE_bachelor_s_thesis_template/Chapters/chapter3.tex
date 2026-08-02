@@ -181,9 +181,9 @@ As described in Section~\ref{sec:qe_techniques}, Query2Doc falls within the cate
 Several modifications were made to adapt Query2Doc for this research context:
 
 \begin{enumerate}
-    \item \textbf{Zero-shot prompting:} The original Query2Doc paper employed few-shot prompting with 4 demonstration examples using GPT-3 (\texttt{text-davinci-003}, 175B parameters). In this work, zero-shot prompting was adopted exclusively. This decision was driven by resource constraints (small open-source models have limited context windows for few-shot examples) and the desire to evaluate model capabilities without task-specific demonstrations.
+    \item \textbf{Zero-shot prompting:} The original Query2Doc paper employed few-shot prompting with 4 demonstration examples using GPT-3 (\texttt{text-davinci-003}, 175B parameters). In this work, pseudo-document generation was performed zero-shot. The demonstrations of the original method are English query--passage pairs, and no curated set of Arabic demonstrations was available; constructing one would have introduced a design variable absent from the original method, and it is therefore left as a direction for future work (Section~\ref{sec:recommendations}). Zero-shot prompting also keeps every prompt short, which matters when generation is batched over 2,896 queries for each of ten models within the available GPU budget (Section~\ref{sec:meth_q2d_batch}), and it allows each model's Arabic expansion capability to be assessed without task-specific demonstrations.
 
-    \item \textbf{Small open-source models:} Rather than using proprietary API-based models, all experiments utilised open-source models with 2--8 billion parameters that can run on Google Colab free-tier GPUs. This approach ensures reproducibility and eliminates API costs.
+    \item \textbf{Openly available models of 2--8 billion parameters:} Rather than using proprietary API-based models, all experiments used openly available models that can run on Google Colab free-tier GPUs. This approach ensures reproducibility and eliminates API costs.
 
     \item \textbf{Arabic-only generation:} The system prompt explicitly instructs the model to respond in Arabic only, whereas the original paper targeted English queries.
 
@@ -262,12 +262,12 @@ For sparse retrieval, the same enhanced queries were evaluated against the BM25S
 \label{sec:meth_model_comparison}
 %======================================================================
 
-Following the initial Query2Doc results with Qwen~2.5~3B, a comprehensive model comparison was conducted to identify the optimal LLM for Arabic query expansion. Ten open-source models were evaluated using the identical Query2Doc pipeline.
+Following the initial Query2Doc results with Qwen~2.5~3B, a comprehensive model comparison was conducted to identify the optimal LLM for Arabic query expansion. Ten openly available models were evaluated using the identical Query2Doc pipeline.
 
 \subsection{Model Selection Criteria}
 \label{sec:meth_model_selection}
 
-Models were selected based on three criteria: (1) Arabic language support, either through dedicated Arabic training or strong multilingual capabilities; (2) parameter count within the 2--8 billion range to remain executable on Google Colab GPUs; and (3) open-source availability with permissive licences for research use. The selected models span two categories, both of which are described in detail in Section~\ref{sec:models_used}:
+Models were selected based on three criteria: (1) Arabic language support, either through dedicated Arabic training or strong multilingual capabilities; (2) parameter count within the 2--8 billion range to remain executable on Google Colab GPUs; and (3) open weights under a licence permitting research use, whether permissive or non-commercial. The selected models span two categories, both of which are described in detail in Section~\ref{sec:models_used}:
 
 \begin{itemize}
     \item \textbf{Arabic-specialised:} Falcon-H1-3B (Section~\ref{sec:falcon_h1}), Jais-2-8B (Section~\ref{sec:jais2}), ALLaM-7B (Section~\ref{sec:allam}), and SILMA Kashif-2B (Section~\ref{sec:silma}).
@@ -449,7 +449,7 @@ For corpus-grounded generation, the model was given a system prompt distinct fro
     \textit{``You are an information retrieval assistant. You will examine retrieved documents and extract key sentences relevant to the query. The documents are in Arabic. Respond in Arabic only.''}
 \end{quote}
 
-\noindent The accompanying user message presented the original query followed by the numbered first-pass documents and a closing instruction to ``begin by examining the initially retrieved documents and identifying the ones that are relevant, even partially, to the query \ldots\ then extract the key sentences from each document that contribute to their relevance.'' A single English worked example (a query about warm-blooded sharks, taken from the original CSQE paper \cite{lei_2024_csqe}) was prepended as a one-shot demonstration; Aya Expanse, being multilingual, transfers this pattern to Arabic queries while still producing Arabic output. The blind-expansion branch reused the Query2Doc system prompt of Section~\ref{sec:meth_q2d_llm} verbatim.
+\noindent The accompanying user message presented the original query followed by the numbered first-pass documents and a closing instruction to ``begin by examining the initially retrieved documents and identifying the ones that are relevant, even partially, to the query \ldots\ then extract the key sentences from each document that contribute to their relevance.'' A single English worked example (a query about warm-blooded sharks, taken from the original CSQE paper \cite{lei_2024_csqe}) was prepended as a one-shot demonstration---the sole exception to the zero-shot protocol of Section~\ref{sec:meth_q2d_modifications}; Aya Expanse, being multilingual, transfers this pattern to Arabic queries while still producing Arabic output. The blind-expansion branch reused the Query2Doc system prompt of Section~\ref{sec:meth_q2d_llm} verbatim.
 
 \paragraph{Rationale for Combining Corpus and Blind Samples.}
 Corpus-grounded samples provide attested Arabic vocabulary anchored to the actual Wikipedia passages retrieved in the first pass. Blind samples provide diverse answer-space vocabulary unconstrained by the corpus. The two sources are hypothesised to be complementary: corpus samples prevent hallucination of incorrect entities, while blind samples expand vocabulary coverage beyond the retrieved passages. This hypothesis is validated through the ablation study presented in Section~\ref{sec:res_csqe_ablation}.
