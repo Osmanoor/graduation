@@ -117,10 +117,22 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   Current: `1-main.tex:49` sets `\huge` for `\chapter` ≈ **24.9 pt**; `\section` uses the `report.cls` default `\Large` ≈ **17.3 pt**; `\subsection` `\large` ≈ 14.4 pt. Body 12 pt is correct.
   Fix = `\fontsize{18}{22}\bfseries` on the chapter and a `\titleformat{\section}` at 16 pt. **Page-negative** (smaller headings reclaim space), but it re-flows pages again, so sequence it with J3/E2/E3 rather than doing it alone. Cover page not yet audited against [01:47].
 
-- [ ] **J3 — Five Ch.4 tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S)
-  From `1-main.log` `Overfull \hbox` warnings. Worst: `tab:csqe_hybrid_configs` (`chapter4.tex:665-681`) at **168.5 pt too wide** — this is the table carrying the thesis's central asymmetric-placement claim, and it is **currently printed missing a column**. Also Table 4.28 (`chapter4.tex:955-983`) at 105.6 pt: on the printed page the Status column reads "Baselin", "Degrade", "Best overa". Plus three more.
+- [ ] **J3 — Six tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S)
+  **Re-measured 2026-08-04 from a clean full build (xelatex → bibtex → xelatex ×2) after J1.** The font change shrank every overflow but removed none. 285 `Overfull \hbox` warnings total; the ones that are actual tables:
+
+  | Too wide | Table | Location |
+  |---|---|---|
+  | **306.2 pt** | **Table 2.1** (QE techniques comparison) | `thesis_figures/output/pdf/table_2_1.tex` — *generated file, fix at source* |
+  | 113.8 pt | `tab:delta_analysis` | `chapter4.tex:735-749` |
+  | **103.2 pt** | **`tab:csqe_hybrid_configs`** | `chapter4.tex:665-681` |
+  | 69.9 pt | `tab:dense_leaderboard` | `chapter4.tex:250-262` |
+  | 57.8 pt | `tab:full_summary` (Table 4.28) | `chapter4.tex:955-983` |
+  | 50.9 pt | `tab:system_progression` | `chapter4.tex:762-775` |
+
+  ⚠️ **`tab:csqe_hybrid_configs` carries the thesis's central asymmetric-placement claim and is printed with a column missing.** `tab:full_summary` prints its Status column as "Baselin", "Degrade", "Best overa".
+  ⚠️ **Table 2.1 is the worst in the thesis at 306.2 pt** and was missed by the earlier audits because it lives in a generated file, not in `chapter4.tex`. Fix it in `thesis_figures/`, not in the chapter, or the next regeneration reverts it.
   Fix = wrap each `tabular` in `\resizebox{\textwidth}{!}{…}`. Page-neutral or page-negative, no prose risk.
-  ⚠️ Was sheltering under **E3**'s figure gate. It is independent of the figure work and should not wait. Re-measure after J1 — the font change may have altered the overflow amounts.
+  ⚠️ Was sheltering under **E3**'s figure gate. It is independent of the figure work and should not wait.
 
 - [ ] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S)
   The committed PDF was built *before* the source reverts in its own commit (`14533f2`) and still renders text that commit removed. Anyone measuring pages or checking layout from it is off by ~1 page and reading reverted text. Either rebuild-and-commit, or drop the PDF from version control. *(Found independently by both the C5 and C10 audits.)*
