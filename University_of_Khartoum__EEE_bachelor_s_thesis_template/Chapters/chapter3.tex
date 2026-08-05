@@ -438,7 +438,7 @@ The configuration used for the primary CSQE experiment was: $k=5$ first-pass doc
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{fig_3_8_csqe_aigen_v4_boosted.png}
-  \caption[CSQE pipeline]{CSQE pipeline. Stage 1: BM25 retrieves the top-$k_1=5$ first-pass passages. Stage 2: Aya Expanse 8B is invoked four times ($\alpha=4$, temp~$=1.0$): two corpus-grounded calls ($c_1$, $c_2$) extract key sentences from the retrieved passages; two blind calls ($b_1$, $b_2$) generate from parametric knowledge. Stage 3: the original query (repeated $\alpha$ times) is concatenated with all four pseudo-documents and fed to a BM25 second pass, yielding nDCG@10~$=0.616$.}
+  \caption[CSQE pipeline]{CSQE pipeline. Stage 1: BM25 retrieves the top-$k_1=5$ first-pass passages. Stage 2: Aya Expanse 8B is invoked four times ($\alpha=4$, temp~$=1.0$): two corpus-grounded calls ($c_1$, $c_2$) extract key sentences from the retrieved passages; two blind calls ($b_1$, $b_2$) generate from parametric knowledge. Stage 3: the original query (repeated $\alpha$ times) is concatenated with all four pseudo-documents and fed to a BM25 second pass, yielding NDCG@10~$=0.616$.}
   \label{fig:csqe_pipeline}
 \end{figure}
 
@@ -483,7 +483,7 @@ For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \l
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.95\textwidth]{fig_3_9_best_system.pdf}
-  \caption[Best system architecture]{Architecture of the thesis's best-performing system. CSQE-expanded queries are fed to BM25 while the original short queries are fed to mDPR; the two ranked lists are fused with RRF ($k=20$), yielding the headline nDCG@10 of 0.714.}
+  \caption[Best system architecture]{Architecture of the thesis's best-performing system. CSQE-expanded queries are fed to BM25 while the original short queries are fed to mDPR; the two ranked lists are fused with RRF ($k=20$), yielding the headline NDCG@10 of 0.714.}
   \label{fig:best_system}
 \end{figure}
 
