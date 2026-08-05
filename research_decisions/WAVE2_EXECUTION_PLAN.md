@@ -1,7 +1,32 @@
 # Wave 2 — Execution Plan (per task)
 
-**Date:** 2026-08-04
+**Date:** 2026-08-04 · **Amended 2026-08-04** after pulling Osman's work and Elhaj's J8 ruling.
 **Status:** PLAN ONLY. Nothing here is applied.
+
+> ### AMENDMENTS (read before using the sections below)
+>
+> **1. J9(b) is DONE — Osman ran the full `nDCG` → `NDCG` sweep.** 49 replacements across
+> `chapter3.tex`, `chapter4.tex` and `table_2_1.tex`. Verified: **0 occurrences of `nDCG`
+> remain** in Ch.1–5 or the abstract; the PDF holds 167 × `NDCG`. He also confirmed the
+> rendered figures already read `NDCG@10`, so E2 will not reintroduce it. **§3's
+> recommendation to defer J9(b) is void — only J9(a) retitle and J9(c) `summarised` remain.**
+>
+> **2. J3's Table 2.1 fix is simpler than planned.** Verified by grep: **no notebook or
+> script writes `thesis_figures/output/pdf/table_2_1.tex`.** It is a hand-maintained file
+> that merely lives in the output folder. **§2's "fix at the generator or regeneration
+> reverts it" is wrong — edit the `.tex` directly.** The CSV `table_2_1_papers.csv` is
+> orphaned source material, not a live input.
+>
+> **3. J8 is superseded.** Elhaj ruled: do not ask Dr. Tahani. The bold-heading question
+> is now decided across the whole thesis in
+> **`research_decisions/BOLD_HEADINGS_DECISIONS.md`** — 138 items inventoried, 19 promoted,
+> 25 de-bolded, 94 list items left alone. **That file replaces both §10 (C5) and §11 (J8)
+> below.** C5 grows from 8 headings to 19 promotions + 25 de-bolds; cost is **+1.07 page**,
+> not +0.5.
+>
+> **4. Osman also closed D4** (new public repo, `Osmanoor/arabic-rag-query-enhancement`)
+> and trimmed the abbreviation list 64 → 60. ⚠️ **D3 must cite that repo URL**, and Osman
+> flags the repo may be renamed first.
 **Baseline for every page figure below:** the clean full build of 2026-08-04 —
 124 pages total, **core Ch.1–5 = exactly 100**, 0 errors, 0 undefined refs/cites,
 body font Times New Roman.
