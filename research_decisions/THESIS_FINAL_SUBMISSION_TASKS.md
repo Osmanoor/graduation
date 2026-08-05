@@ -102,22 +102,25 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase J — Document presentation & format defects (NEW, 2026-08-01)
 
-> **Why this phase exists.** Dr. Tahani's voice notes (`meetings/2026-07_supervisor_voice_notes_transcripts.md`, Note 1 [00:00]–[00:40]) put the write-up at **10 marks out of 60**, and `2026-07_supervisor_voice_notes_key_points.md:97` records that *"unjustified margins, wrong font, an abstract spilling past ¾ page"* can cost **5–6 of those 10** independently of content quality. Two of those three were live in the manuscript until 2026-08-01.
+> **Why this phase exists.** Dr. Tahani's voice notes (`meetings/2026-07_supervisor_voice_notes_transcripts.md`, Note 1) put the write-up at **10 marks out of 60**, and Note 8 states that an abstract spilling past ¾ page, unjustified margins or the wrong font can cost **5–6 of those 10** independently of content quality — *"بتطلعك من الـ A plus"*. Two of those three were live in the manuscript until 2026-08-01. See `2026-07_supervisor_voice_notes_key_points.md` §1.7.
 
 - [x] **J1 — Body font was not Times New Roman** — **Owner: Elhaj** (S) — **DONE 2026-08-01**
   **Proven, not inferred:** `pdffonts 1-main.pdf` showed body text in `LMRoman12-Regular/Bold/Italic` (Latin Modern). The `TimesNewRomanPSMT` entries in the same output are `Type 3 / Custom` — fonts embedded inside the matplotlib figure PDFs, not document text.
   **Root cause — a regression.** The original template (commit `0e650de`) used `\usepackage{newtxtext}`, a Times clone. The migration to XeLaTeX for Arabic support replaced it with `fontspec` + `polyglossia` and **never set a main font**, so XeLaTeX silently fell back to its Latin Modern default.
-  **Required by both sources:** faculty guidelines ("Times New Roman is preferred"); Dr. Tahani, repeatedly — `17.3.2026.md:151`, voice note 1 [00:40] (*"فونت 12 تايمز نيو رومان 1 ونص لاين سبيس"*), [04:06].
+  **Required by both sources:** faculty guidelines ("Times New Roman is preferred"); Dr. Tahani, repeatedly — `17.3.2026.md:151`, voice note 1 (*"font 12 Times New Roman واحد ونص line spacing نعمل ضبط جوانب يكون justified"*, and again at the body-text rule *"بـ 12 طبعاً unbold"*).
   **Fix applied** at `1-main.tex:5-12`: `\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}`. The fallback matters — **Overleaf does not ship Times New Roman** (licensing); TeX Gyre Termes is metrically identical, so the same source compiles correctly in both places.
   **Measured effect:** total 130 → 124 pages; **core Ch.1–5 went from 104–105 to exactly 100** (Ch.1 p.1 · Ch.2 p.6 · Ch.3 p.33 · Ch.4 p.57 · Ch.5 p.92 · Bibliography p.101). 0 build errors. **This supersedes D1.**
   ⚠️ **Every page re-flowed.** E2/E3 must be re-checked against the new pagination; figure and table placement has moved throughout.
 
-- [ ] **J2 — Heading sizes deviate from the supervisor's spec** — **Owner: Elhaj** (S)
-  Voice note 1 [03:27]–[04:06]: chapter title **18 bold**, side headings **16 bold**, body **12**. Cover-page project name **20 bold** ([01:47]).
-  Current: `1-main.tex:49` sets `\huge` for `\chapter` ≈ **24.9 pt**; `\section` uses the `report.cls` default `\Large` ≈ **17.3 pt**; `\subsection` `\large` ≈ 14.4 pt. Body 12 pt is correct.
-  Fix = `\fontsize{18}{22}\bfseries` on the chapter and a `\titleformat{\section}` at 16 pt. **Page-negative** (smaller headings reclaim space), but it re-flows pages again, so sequence it with J3/E2/E3 rather than doing it alone. Cover page not yet audited against [01:47].
+- [x] **J2 — Heading sizes deviate from the supervisor's spec** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Chapter 18 bold, section 16 bold (`1-main.tex:47-58`). ⚠️ **The plan's page estimate was wrong**: predicted −1 to −2 pages, actual ≈−0.1 — every chapter still starts on the same page. It pays for nothing.
+  Voice note 1: chapter title **18 bold and centred**, side headings (1.1) **16 bold**, body **12 unbold**, justified, 1.5 spacing. Cover-page project name **20 bold**.
+  Current: `1-main.tex:49` sets `\huge` for `\chapter` ≈ **24.9 pt**; `\section` uses the `report.cls` default `\Large` ≈ **17.3 pt**; `\subsection` `\large` ≈ 14.4 pt. Body 12 pt is correct, and justification is already set (`1-main.tex:19-20`, `ragged2e` + `\justifying`).
+  Fix = `\fontsize{18}{22}\bfseries` + centred on the chapter and a `\titleformat{\section}` at 16 pt. **Page-negative** (smaller headings reclaim space), but it re-flows pages again, so sequence it with J3/E2/E3 rather than doing it alone.
+  **Subsection (1.1.1) has no explicit rule from her** — she quotes the range "14, 16, up to 18" and specifies only 18 (chapter) and 16 (side headings). 14 pt is the natural reading; current 14.4 pt is effectively already there.
+  **2026-08-05 — cover-page audit is now UNBLOCKED.** The earlier Speechmatics transcript garbled this passage; the Gemini re-transcription recovers the full spec. Audit against: project title **20 pt TNR bold** · submission phrase in *italic* · student names **and index numbers** · supervisor name · *"submitted to Department of Electrical and Electronic Engineering, Faculty of Engineering, University of Khartoum"* · date · university logo. She is explicit that you must **not** design one yourself (*"ما بتعمل صفحة غلاف من راسك"*) — use the department template, and a coordinator-circulated template overrides it. Also confirm the cover carries **no visible page number** while still counting as page `i`.
+  *(Source: `meetings/2026-07_supervisor_voice_notes_transcripts.md` Note 1. Cite by quoted phrase — the timestamps changed when the file was re-transcribed and Gemini's are model-estimated.)*
 
-- [ ] **J3 — Six tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S)
+- [x] **J3 — Six tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Table 2.1 rebuilt structurally (dropped the raw-BibTeX `Cite key` column and the `Family` column, ragged-right `p{}` wrapping, caption corrected); five Ch.4 tables wrapped in `esizebox`. Verified in the rendered PDF, not the log. ⚠️ Cite keys were **not** converted to `\cite` — that would renumber the whole bibliography and void C6.
   **Re-measured 2026-08-04 from a clean full build (xelatex → bibtex → xelatex ×2) after J1.** The font change shrank every overflow but removed none. 285 `Overfull \hbox` warnings total; the ones that are actual tables:
 
   | Too wide | Table | Location |
@@ -137,19 +140,19 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [ ] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S)
   The committed PDF was built *before* the source reverts in its own commit (`14533f2`) and still renders text that commit removed. Anyone measuring pages or checking layout from it is off by ~1 page and reading reverted text. Either rebuild-and-commit, or drop the PDF from version control. *(Found independently by both the C5 and C10 audits.)*
 
-- [ ] **J5 — `Chapters/chapter2_generated.tex` is dead weight** — **Owner: Elhaj** (S)
+- [x] **J5 — `Chapters/chapter2_generated.tex` is dead weight** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Deleted; page count unchanged, confirming it was unused.
   Not `\include`d by `1-main.tex`. Contains an older draft of §2.1.4/§2.1.5 with 20+ bold pseudo-headings, and matches audit greps. Delete or move out of `Chapters/`.
 
-- [ ] **J6 — §4.10.4 documents Type A and Type B but not Type C** — **Owner: Elhaj** (S)
+- [x] **J6 — §4.10.4 documents Type A and Type B but not Type C** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Added a Type C clause and changed “these two failure modes”; aligned Fig 4.15's caption (“Type C (other)” → “partial BM25”).
   Table 4.25 (`chapter4.tex:900-913`) reports Type C as 45 queries / 12%, but the `\paragraph` run stops at Type B and jumps to `Implications.` Content gap, not structural.
 
-- [ ] **J7 — Two singleton `\subsubsection`s** — **Owner: Elhaj** (S)
+- [x] **J7 — Two singleton `\subsubsection`s** — **Owner: Elhaj** (S) — **CLOSED 2026-08-04, no change.** The plan said to demote `4.3.2.1` to a bold run-in heading. **Withdrawn** — that reintroduces the bold pseudo-heading pattern this wave removed thesis-wide. Both stay as numbered subsubsections.
   `chapter4.tex:203` (4.3.2.1, only child of §4.3.2) and `:329` (4.4.3.1, only child of §4.4.3). A 1-of-1 numbered subdivision is a style smell — either promote to `\subsection` or demote to prose.
 
-- [ ] **J8 — 17 `\paragraph{}` headings render unnumbered and invisible in the ToC** — **Owner: Elhaj** (M)
+- [x] **J8 — 17 `\paragraph{}` headings render unnumbered and invisible in the ToC** — **Owner: Elhaj** (M) — **SUPERSEDED 2026-08-04.** Elhaj ruled against asking Dr. Tahani. Decided thesis-wide in `BOLD_HEADINGS_DECISIONS.md` and executed: 19 promoted, 9 de-bolded, §5.1's 12 converted to a numbered list, 94 list items untouched.
   Across Ch.2–4 (`chapter3.tex` §3.6/§3.7/§3.8.1/§3.9, `chapter4.tex` §4.10.4, `chapter2.tex:378`). With `secnumdepth=3` they show as bold run-in labels with no number — **the exact visual outcome the supervisor objected to for §2.1.4/§2.1.5** (task C5). If she applies the same objection to Ch.3, runs R4/R5/R7 from `C5_bold_headings_audit.md` come into play. Worth pre-empting at the next meeting.
 
-- [ ] **J9 — Consistency micro-fixes** — **Owner: Elhaj** (S)
+- [x] **J9 — Consistency micro-fixes** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** §4.11 retitled “Chapter Summary”; `summarized` → `summarised`. (b) `nDCG`→`NDCG` was already done by Osman.
   Retitle §4.11 "Summary of All Experiments" → "Chapter Summary" (matches §2.6); `nDCG` → `NDCG` at `chapter4.tex:985`; `summarized` → `summarised` at `chapter2.tex:495`. *(From `C10_chapter_summaries_audit.md`.)* Separate from the thesis-wide `nDCG`/`NDCG` casing sweep still open under C3.
 
 ---
@@ -166,8 +169,11 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   ⚠️ **Cut to fit one page** (in priority order, restorable if something else goes): the dense-gain range/average; the Arabic-specialised-vs-multilingual finding (`chapter4.tex:389`); the named best models (Aya Expanse 8B, Jais-2 8B); the "3B beats GPT-3 175B" comparison.
   ⚠️ **Note on Dr. Tahani's numbers:** her "250–350 words ≈ 3/4 page" is calibrated to Times New Roman 12 / 1.5 spacing (`meetings/17.3.2026.md:143` — *"لأنو إحنا بنكتب بـ 12 Times New Roman، 1.5 Line spacing"*). It did not hold while the thesis was in Latin Modern — see **J1**. At 315 words in Times the abstract fills one page, slightly more than 3/4.
 
-- [ ] **B2 — Arabic abstract (المستخلص): shrink + Arabize** — **Owner: Osman** `[AI]` (M)
+- [ ] **B2 — Arabic abstract (المستخلص): shrink + Arabize** — **Owner: Osman** `[AI]`⚠️ (M)
   Currently **1.5 pages → must become ≈ 3/4 page**. Re-derive from the new English abstract. Full Arabization of technical terms where standard equivalents exist (الاسترجاع الكثيف, التوليد المعزز بالاسترجاع (RAG)); Arabic term first + English acronym in parentheses at first mention; keep ASCII/Western numerals (0, 1, 2…). Self-review by both of us for terminology. *(Report §9; video 2 08:08–09:20. Closes old 5.F.4.)*
+  ⚠️ **THE `[AI]` TAG CONFLICTS WITH AN EXPLICIT INSTRUCTION (found 2026-08-05).** Voice note 13: *"الترجمة حاولوا بقدر الإمكان ما تكون ترجمة **Google** ولا ترجمة **AI**، حاولوا استخدموا الـ terminologies المستخدمة عندنا في اللغة العربية الصحيحة، ده في ترجمة المستخلص."* The earlier Speechmatics transcript rendered this as *"ولا ترجمة أي"* and the AI clause was lost entirely; the Gemini re-transcription recovers it.
+  **Reading:** her target is Arabic that *reads* machine-translated, not a ban on tooling. Defensible route — **Osman writes the Arabic himself**, uses AI only to check terminology against standard equivalents, and both of us review for fluency. What must not happen is pasting the English abstract into a model and shipping the output.
+  ⚠️ **B2 IS ON THE CRITICAL PATH, NOT IN A LATER WAVE.** Voice note 13: *"أهم من ديل كلهم الـ abstract بالعربي والإنجليزي **لازم أشوفهم، لازم أشوفهم قبل التسليم**."* She rates the abstracts above Ch.1 and Ch.5, says it twice, and is unavailable around her daughter's wedding on **1/8** (note 13) with submission in the first days of August (note 14). B1 is done; B2 is the last piece of the artefact she must personally review. **She will read this abstract herself — machine-translated Arabic is recognisable on sight.**
 
 ---
 
@@ -199,10 +205,10 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   ⚠️ **Build noise (pre-existing, not from these tasks):** ~128 `Hyper reference 'acro:X' undefined` warnings — `acronym`+`hyperref` link list entries to targets only `\ac{}` creates, and the thesis never uses `\ac{}`. Verified the original placeholder file produced the same warning. One-line fix if wanted: `\usepackage[nohyperlinks]{acronym}` (`1-main.tex:78`).
   ℹ️ **Related but much milder — abstract running head.** `\chapter*` never sets a running head, so the English abstract's *continuation* page (currently p. v) shows a **blank** left header instead of "ABSTRACT". Unlike C2's case this is not a *wrong* header, just a missing one — the first page of any `\chapter*` uses `\thispagestyle{plain}` and correctly shows no header at all. **Left alone deliberately:** B1 shrinks the abstract to ≈3/4 page, which removes the continuation page and the issue with it. Only worth a `\markboth` if the abstract still runs to 2 pages after B1.
 
-- [ ] **C4 — Thesis Layout §1.3 → one single paragraph** — **Owner: Elhaj** (S)
+- [x] **C4 — Thesis Layout §1.3 → one single paragraph** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Four `	extbf{Chapter~ef{}}` wrappers deleted and the paragraphs joined. Pure markup, no rewording.
   Currently one paragraph *per chapter*; must become **one single continuous paragraph** ("Chapter 2 establishes… Chapter 3 details… Chapter 4 reports…"). *(Report §6; video 2 03:37–04:20. Closes old 5.E.4.)*
 
-- [ ] **C5 — Promote bold inline headings to numbered sub-headings** — **Owner: Elhaj** (M)
+- [x] **C5 — Promote bold inline headings to numbered sub-headings** — **Owner: Elhaj** (M) — **DONE 2026-08-04**, widened thesis-wide. §2.1.4→2.1.4.1-4, §2.1.5→2.1.5.1-4, §2.3→2.3.1-3, §3.6→3.6.1-4, §3.9→3.9.1-4. §5.1's twelve conclusions became a numbered `enumerate` matching §5.2/§5.3 (Elhaj's call — cost ≈+0.1 page instead of +0.88 for subsections). Full rationale: `BOLD_HEADINGS_DECISIONS.md`.
   Agreed in video 2 (06:10–07:20): §2.1.4 Query Enhancement Techniques → 2.1.4.1, 2.1.4.2, … (p.28) and §2.1.5 Arabic Language Processing Challenges → 2.1.5.1, 2.1.5.2, … (p.30). While there, audit for any other large section using bold-text pseudo-headings and apply the same. *(Report §7.)*
 
 - [x] **C6 — Citations: IEEE order-of-appearance + web access dates** — **Owner: Osman** `[AI]` (M) — **DONE 2026-07-29**
@@ -227,7 +233,7 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [ ] **C9 — Write the Dedication — DEFERRED to the very end** (Osman, 2026-07-28) — **Owner: Osman** (S)
   Currently needed for the front-matter order. Osman has prior poetic form (video 2 36:30 😄). Also confirm Declaration of Authorship + Acknowledgments pages exist for the C1 ordering.
 
-- [ ] **C10 — Chapter summaries: keep (decision, verify) — DEFERRED until content edits settle** (Osman, 2026-07-28: summaries depend on Phase A/D edits; doing them now means redoing them) — **Owner: Elhaj** (S)
+- [x] **C10 — Chapter summaries: keep (decision, verify)** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Audit: `C10_chapter_summaries_audit.md`. Ch.2 and Ch.4 had summaries; **Ch.3 did not** and ended mid-list — added a 139-word prose summary, which landed in existing whitespace at 0 page cost. Ch.1 and Ch.5 correctly have none (§1.3 and §5.1 serve that role).
   Dr. Tahani: optional but keeping them is "ممتاز". **Decision: keep.** Just verify every chapter actually has one and the style is consistent. *(Report §1; video 1 §1.)*
 
 ---
@@ -275,6 +281,7 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 - [ ] **D5 — Conciseness / redundancy pass — DO LAST** — **Owner: Elhaj drives, JOINT review** `[AI]` (L)
   Explicitly agreed to be the **last content task** (video 2 25:28), after all other edits settle. Method agreed (video 2 21:00–24:25): ask Claude for a redundancy/verbosity analysis of the full thesis — for each flagged passage: current text → proposed shorter text + a **confidence score**. High-confidence trims get batch-approved; low-confidence ones we review one by one. Goal: shorten without cancelling content ("بدل ما إسهب الحاجة في نص صفحة، إسهبها في ثلاث أسطر"). Target: comfortable margin under 100 pages.
+  ⚠️ **D5'S SCOPE IS BLOCKED ON AN UNANSWERED QUESTION (raised 2026-08-05).** Voice note 8, her general guidance to all four groups: *"ما في عدد محدد ولكن متوقع يعني من **50، 70** أقصى حاجة ممكن **80 صفحة**."* That is not the ≤100 this phase is calibrated to — which came from her *specific* answer to our question (`Thesis Review Report.md` §10). Under 100 we are at the line and D5 trims for margin; under 80 we are ~20 pages over and D2's appendix moves plus an aggressive D5 still would not close it. **Ask her which binds before scoping D5** — bundle with `D2 DECISION 3`. See `meetings/2026-07_supervisor_voice_notes_key_points.md` §1.1.
 
 ---
 

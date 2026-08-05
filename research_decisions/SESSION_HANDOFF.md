@@ -7,7 +7,40 @@ Load this first in a new chat.
 
 ---
 
-## 0. FLAGS — read these first (updated 2026-08-04)
+## 0. FLAGS — read these first (updated 2026-08-04, end of Wave 2 execution)
+
+### ✅ Wave 2 is done — 10 tasks applied
+
+**B1 · C4 · C5 · C10 · J1 · J2 · J3 · J5 · J6 · J9** all closed. J7 closed with no change,
+J8 superseded. Build after all of it: **126 pages, 0 errors, 0 undefined references or
+citations, body font Times New Roman.**
+
+**Core Ch.1–5 = 101 pages.** One over, deliberately — Elhaj's instruction was to promote
+structure as needed now and recover the pages in D2/D5 rather than let the limit constrain
+the thesis. **D2's biggest lever is unused:** moving §2.4's per-model prose to an appendix
+frees ~3.5 pages, and appendix pages do not count.
+
+**Three plan estimates turned out wrong. Do not trust the originals:**
+
+| Claim | Reality |
+|---|---|
+| J2 saves 1–2 pages | **Saves ~0.1.** Every chapter still starts on the same page. |
+| Promotions cost +1.95 pages | **Cost +1**, because §5.1 became a list, not 12 subsections. |
+| Table 2.1 must be fixed at its generator | **No generator exists.** It is hand-maintained. |
+
+**Two plan recommendations were withdrawn during execution:**
+- **J7** — "demote the singleton to a bold run-in heading" would have reintroduced the exact
+  pattern this wave removed. Both singletons left as numbered subsubsections.
+- **J3** — "render the cite keys as `\cite`" would renumber the whole bibliography (IEEE
+  orders by first appearance, and Table 2.1 precedes §2.5) and void Osman's C6 verification.
+  The column was dropped instead.
+
+### 🔴 The title page is still the template placeholder
+
+`1-main.tex:104-116` still reads *"This is the Thesis Title"*, *"Student Name (Index)"*,
+*"Supervisor name"*, *"September 2024"*. It has never been filled in. **Needs Elhaj** —
+the title, index numbers and submission date are not derivable from the repo. Dr. Tahani
+specifies the project name at **Times New Roman 20 bold** (voice note 1, [01:47]).
 
 ### 🟢 The page-count crisis is over
 
