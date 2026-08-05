@@ -512,3 +512,10 @@ Regression queries ($\Delta_i < -0.1$) were manually inspected and classified in
     \item \textbf{Type B (Poisoned first-pass):} The BM25 baseline achieved NDCG@10 $< 0.1$ for the query; the first-pass retrieval returned irrelevant documents, causing the LLM to ground its expansion on incorrect content.
     \item \textbf{Type C (Partial BM25):} The BM25 baseline achieved NDCG@10 between 0.1 and 0.3; a mixed-quality scenario where the expansion may have helped or hurt depending on specific query characteristics.
 \end{itemize}
+
+%======================================================================
+\section{Chapter Summary}
+\label{sec:ch3_summary}
+%======================================================================
+
+This chapter has described the experimental methodology adopted throughout the thesis. The Arabic subset of the MIRACL benchmark was established as the evaluation corpus, and independent dense (mDPR) and sparse (BM25S) baselines were implemented and evaluated under a common protocol. A quantitative and qualitative error analysis of those baselines was then defined in order to identify the failure modes that QE must address. The Query2Doc technique was adapted for Arabic zero-shot application, together with the batching, quantisation and two-notebook arrangements required to execute it on freely available cloud GPUs, and a standardised protocol was specified for comparing the candidate generators. Finally, the chapter set out the query repetition scheme devised to counter term dilution in sparse retrieval, the hybrid fusion methods, the CSQE pipeline with its component ablation and retriever-specific application strategies, and the per-query error analysis used to interpret the behaviour of the final system.

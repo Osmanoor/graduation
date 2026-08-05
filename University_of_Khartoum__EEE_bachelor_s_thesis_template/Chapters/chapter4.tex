@@ -250,6 +250,7 @@ Table~\ref{tab:dense_leaderboard} presents the complete dense retrieval results,
     \centering
     \caption{Dense retrieval (mDPR) results for all models, ranked by NDCG@10. The improvement column is relative to the no-enhancement dense baseline.}
     \label{tab:dense_leaderboard}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}clccccc@{}}
         \toprule
         \textbf{Rank} & \textbf{Model} & \textbf{Params} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{MRR} & \textbf{$\Delta$NDCG} \\
@@ -270,6 +271,7 @@ Table~\ref{tab:dense_leaderboard} presents the complete dense retrieval results,
         --- & ALLaM 7B & 7B & 0.2550 & 0.3335 & 0.2708 & $-$48.9\% \\
         \bottomrule
     \end{tabular}
+    }
 \end{table}
 
 All nine successfully evaluated models improved over the dense baseline, with improvements ranging from +3.7\% (SILMA 2B) to +23.5\% (Aya Expanse 8B). The top three models---Aya Expanse 8B, Jais-2 8B, and Qwen3-8B---all achieved improvements exceeding +19\%, demonstrating that Query2Doc with appropriately selected LLMs can substantially enhance Arabic dense retrieval.
@@ -662,6 +664,7 @@ Table~\ref{tab:csqe_hybrid_configs} presents the results for all three CSQE appl
     \centering
     \caption{Results for three CSQE application strategies in hybrid fusion. BM25-expanded: BM25 receives CSQE query, Dense receives original query. Dense-expanded: BM25 receives original query, Dense receives CSQE query. Both-expanded: both retrievers receive CSQE query.}
     \label{tab:csqe_hybrid_configs}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}llcccc@{}}
         \toprule
         \textbf{Strategy} & \textbf{Fusion} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{Recall@100} & \textbf{MRR} \\
@@ -678,6 +681,7 @@ Table~\ref{tab:csqe_hybrid_configs} presents the results for all three CSQE appl
         \textbf{BM25-expanded (BM25+CSQE + Dense raw)} & \textbf{RRF} & \textbf{0.7137} & \textbf{0.8363} & \textbf{0.9734} & \textbf{0.7362} \\
         \bottomrule
     \end{tabular}
+    }
 \end{table}
 
 BM25-expanded was the winning configuration despite giving the Dense retriever the original short query rather than the CSQE expansion. When CSQE is applied to both retrievers (Both-expanded, 0.6936), the two ranked lists become less divergent from each other---both are now based on expanded queries grounded in the same first-pass documents---which lowers the complementarity that RRF fusion relies upon. BM25-expanded preserves this complementarity: the BM25 run is enriched by CSQE vocabulary while the Dense run retains its independent semantic signal, making the two lists more complementary for fusion. A second, reinforcing factor concerns the Dense encoder itself: mDPR was fine-tuned on MS~MARCO, whose queries are short web-search strings \cite{bajaj_2016_msmarco}, whereas a CSQE-expanded query is very long (mean $\approx$1{,}500 characters, against $\approx$30 for the original query). Feeding such a long, out-of-distribution input to the Dense encoder degrades its ranking quality, so withholding the expansion from the Dense side both preserves list divergence and avoids this length penalty, while the lexical BM25 retriever still benefits from the added vocabulary. This finding illustrates a \textbf{retriever-specific query representation principle}: each retriever should receive the query format that maximises its divergence from the other retriever's ranked list.
@@ -732,6 +736,7 @@ Table~\ref{tab:delta_analysis} summarises the NDCG@10 improvements of BM25-expan
     \centering
     \caption{NDCG@10 improvements of BM25-expanded RRF over prior systems.}
     \label{tab:delta_analysis}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}lcc@{}}
         \toprule
         \textbf{Comparison} & $\Delta$\textbf{NDCG@10} & \textbf{\% change} \\
@@ -746,6 +751,7 @@ Table~\ref{tab:delta_analysis} summarises the NDCG@10 improvements of BM25-expan
         Dense-expanded vs Hybrid RRF & +0.0207 & Weakest config still beats no-QE hybrid \\
         \bottomrule
     \end{tabular}
+    }
 \end{table}
 
 All three CSQE fusion configurations exceeded the no-QE hybrid baseline. The +0.0870 improvement of BM25-expanded over the hybrid baseline (+13.9\%) isolated the contribution of CSQE beyond what hybrid fusion alone provides.
@@ -759,6 +765,7 @@ Table~\ref{tab:system_progression} summarises the NDCG@10 progression from the b
     \centering
     \caption{NDCG@10 progression from baseline to best system on the MIRACL Arabic dev set (2,896 queries). $\Delta$ cumulative measured from BM25S baseline.}
     \label{tab:system_progression}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}llcc@{}}
         \toprule
         \textbf{Stage} & \textbf{System} & \textbf{NDCG@10} & \textbf{$\Delta$ cumul.} \\
@@ -772,6 +779,7 @@ Table~\ref{tab:system_progression} summarises the NDCG@10 progression from the b
         \textbf{CSQE+Hybrid} & \textbf{BM25-expanded: BM25+CSQE + Dense RRF} & \textbf{0.7137} & \textbf{+54.5\% over BM25} \\
         \bottomrule
     \end{tabular}
+    }
 \end{table}
 
 The progression demonstrated a consistent improvement through three stages of pipeline development. Blind QE improvements (Sections~\ref{sec:res_query2doc} and \ref{sec:res_repetition}) confirmed that LLM-generated pseudo-documents are effective for Arabic information retrieval. The hybrid baseline (Section~\ref{sec:res_hybrid}) established that lexical and semantic retrieval are complementary. CSQE (Section~\ref{sec:res_csqe}) introduced corpus grounding that outperformed blind QE on BM25. The final combination of corpus-steered expansion applied asymmetrically to hybrid retrieval (BM25-expanded RRF) achieved 0.7137 NDCG@10---a 54.5\% improvement over BM25 alone and a 42.9\% improvement over mDPR alone. Recall@100 = 0.9734 indicated that 97.3\% of relevant documents appeared within the top 100 candidates, establishing a strong upper bound for downstream reranking.
@@ -949,6 +957,7 @@ Table~\ref{tab:full_summary} provides a consolidated view of all experiments con
     \centering
     \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and CSQE. Bold values indicate the best result for each metric across all experiments.}
     \label{tab:full_summary}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}llcccc@{}}
         \toprule
         \textbf{Model / Method} & \textbf{Retriever} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{MRR} & \textbf{Status} \\
@@ -977,6 +986,7 @@ Table~\ref{tab:full_summary} provides a consolidated view of all experiments con
         \textbf{BM25-expanded RRF} & \textbf{BM25+Dense} & \textbf{0.7137} & \textbf{0.8363} & \textbf{0.7362} & \textbf{Best overall} \\
         \bottomrule
     \end{tabular}
+    }
 \end{table}
 
 The experimental results demonstrate a progression from individual retriever baselines through blind QE, hybrid fusion, and finally corpus-steered expansion combined with hybrid retrieval. The best system (BM25-expanded RRF: BM25+CSQE + Dense original query) achieved 0.7137 NDCG@10---a 54.5\% improvement over the BM25 baseline and a 13.9\% improvement over the no-QE hybrid system. The detailed results of each experiment were presented in Sections~\ref{sec:res_repetition}--\ref{sec:res_error_csqe} above.

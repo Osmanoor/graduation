@@ -1,19 +1,19 @@
-\begin{tabular}{lllllll}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.9cm}c>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{2.4cm}>{\raggedright\arraybackslash}p{3.7cm}@{}}
 \toprule
-Paper & Year & Family & Method & Dataset & Key result & Cite key \\
+Paper & Year & Method & Dataset & Key result \\
 \midrule
-Query2Doc (Wang et al.) & 2023 & generation & LLM pseudo-document concatenation & MS MARCO + BEIR & +8 NDCG@10 on MS MARCO with GPT-3 & wang\_2023\_query2doc \\
-HyDE (Gao et al.) & 2022 & generation & LLM hypothetical document & TREC-DL / BEIR & strong zero-shot improvements & gao\_2022\_hyde \\
-GAR (Mao et al.) & 2021 & generation & LLM generates answer/context for query rewriting & open-domain QA & competitive with supervised reranking & mao\_2021\_gar \\
-GRF (Mackie et al.) & 2023 & generation & Generative Relevance Feedback for dense & TREC-DL & \textasciitilde +10 mAP; fusion best & mackie\_2023\_grf\_dense \\
-CSQE (Lei et al.) & 2024 & generation & Corpus-Steered Query2Doc & TREC-DL & +30\% mAP over BM25 & lei\_2024\_csqe \\
-MuGI (Zhang et al.) & 2024 & generation & Multi-Text Generation Integration & BEIR & Best QE practices study & zhang\_2024\_mugi \\
-ThinkQE (Lei et al.) & 2025 & generation & Iterative chain-of-thought expansion & TREC-DL & SOTA on multi-step queries & lei\_2025\_thinkqe \\
-Exp4Fuse (Liu et al.) & 2025 & fusion & Original + expanded query via modified RRF & multiple & nearest prior art to thesis & liu\_2025\_exp4fuse \\
-DAPR (Wang et al.) & 2024 & generation & Dense Approach via Pre-trained Retrievers & academic IR & context-rich expansion & wang\_2024\_dapr \\
-AQE (Yang et al.) & 2025 & generation & Aligned Query Expansion via LLM alignment & academic IR & efficient at scale & yang\_2025\_aqe \\
-KAR (Xia et al.) & 2025 & generation & Knowledge-Aware Query Expansion & textual + relational retrieval & strong on relational & xia\_2025\_kar \\
-Song \& Zheng (survey) & 2024 & survey & Query optimisation taxonomy (4 ops) & -- & defines expansion/decomposition/disambiguation/abstraction & song\_2024\_a \\
-QE survey (arXiv 2509.07794) & 2025 & survey & Comprehensive QE survey in LLM era & -- & recent QE families & survey\_2025\_qe \\
+Query2Doc (Wang et al.) & 2023 & LLM pseudo-document concatenation & MS MARCO + BEIR & +8 NDCG@10 on MS MARCO with GPT-3 \\
+HyDE (Gao et al.) & 2022 & LLM hypothetical document & TREC-DL / BEIR & strong zero-shot improvements \\
+GAR (Mao et al.) & 2021 & LLM generates answer/context for query rewriting & open-domain QA & competitive with supervised reranking \\
+GRF (Mackie et al.) & 2023 & Generative Relevance Feedback for dense & TREC-DL & \textasciitilde +10 MAP; fusion best \\
+CSQE (Lei et al.) & 2024 & Corpus-Steered Query2Doc & TREC-DL & +30\% MAP over BM25 \\
+MuGI (Zhang et al.) & 2024 & Multi-Text Generation Integration & BEIR & best QE practices study \\
+ThinkQE (Lei et al.) & 2025 & Iterative chain-of-thought expansion & TREC-DL & state of the art on multi-step queries \\
+Exp4Fuse (Liu et al.) & 2025 & Original + expanded query via modified RRF & multiple & nearest prior art to thesis \\
+DAPR (Wang et al.) & 2024 & Dense Approach via Pre-trained Retrievers & academic IR & context-rich expansion \\
+AQE (Yang et al.) & 2025 & Aligned Query Expansion via LLM alignment & academic IR & efficient at scale \\
+KAR (Xia et al.) & 2025 & Knowledge-Aware Query Expansion & textual + relational retrieval & strong on relational \\
+Song \& Zheng (survey) & 2024 & Query optimisation taxonomy (4 operations) & --- & defines expansion, decomposition, disambiguation, abstraction \\
+QE survey (arXiv 2509.07794) & 2025 & Comprehensive QE survey in the LLM era & --- & recent QE families \\
 \bottomrule
 \end{tabular}
