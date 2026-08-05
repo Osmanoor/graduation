@@ -359,7 +359,7 @@ This configuration was applied to Jais-2-8B (on T4 only; BF16 was used on A100) 
 
 The model comparison experiments (Section~\ref{sec:res_mc_bm25}) revealed that single-pass Query2Doc ($n=1$) degraded BM25 performance for six of nine models due to term dilution (Section~\ref{sec:res_term_dilution}). The original Query2Doc paper \cite{wang_2023_query2doc} recommended concatenating $n=5$ pseudo-documents with equal weighting, but did not investigate the sensitivity of the repetition factor to model size or pseudo-document length. Two solution families were evaluated to address this limitation.
 
-\paragraph{Fixed Repetition (Query2Doc-style).}
+\subsection{Fixed Repetition (Query2Doc-style)}
 The original query is prepended $n$ times before the pseudo-document, where $n$ is a global hyperparameter applied identically to every query regardless of its length or the pseudo-document length. The enhanced query is assembled as:
 
 \begin{equation}
@@ -369,7 +369,7 @@ The original query is prepended $n$ times before the pseudo-document, where $n$ 
 
 \noindent where $\circ$ denotes string concatenation with a space separator and $k$ is the number of pseudo-documents (for single-pass Query2Doc, $k=1$). Fixed repetition was swept over $n \in \{1, 3, 5, 7, 10\}$.
 
-\paragraph{Adaptive Repetition (MuGI-style).}
+\subsection{Adaptive Repetition (MuGI-style)}
 Zhang et al. \cite{zhang_2024_mugi} proposed computing $n$ per-query from the ratio of pseudo-document length to query length, controlled by a parameter $\beta$:
 
 \begin{equation}
@@ -379,10 +379,10 @@ Zhang et al. \cite{zhang_2024_mugi} proposed computing $n$ per-query from the ra
 
 \noindent where $|q|$ and $|d|$ are the token lengths of the query and pseudo-document respectively. Larger $\beta$ yields fewer repetitions; smaller $\beta$ yields more. Adaptive repetition was swept over $\beta \in \{2, 4, 6\}$.
 
-\paragraph{Motivation for the Adaptive Variant.}
+\subsection{Motivation for the Adaptive Variant}
 The optimal number of repetitions depends on the length ratio between query and pseudo-document. A 3-word query paired with a 200-token pseudo-document requires more repetition than a 15-word query paired with a 100-token pseudo-document. The MuGI per-query adaptation removes this length sensitivity and, as reported in Section~\ref{sec:res_repetition}, produced the best results for the two largest models (Aya Expanse 8B and Jais-2 8B), where $\beta=2$ was the winning configuration.
 
-\paragraph{Sweep Design.}
+\subsection{Sweep Design}
 Nine models were evaluated across eight configurations ($n \in \{1, 3, 5, 7, 10\}$ and $\beta \in \{2, 4, 6\}$), yielding 72 BM25 evaluations. All pseudo-document expansions had been generated during the model comparison phase (Section~\ref{sec:meth_model_comparison}); no new LLM inference was required. The stored expansion files (serialised Python objects) were loaded and combined with varying repetition factors, then evaluated using \texttt{pytrec\_eval} on the full MIRACL Arabic development set (2,896 queries). 
 %======================================================================
 \section{Hybrid Retrieval Fusion}
@@ -489,10 +489,10 @@ For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \l
 
 Aggregate metrics such as NDCG@10 can mask substantial per-query variation: a system with a high average may still regress on a significant minority of queries. A per-query error analysis was conducted to decompose the overall CSQE improvement and identify the conditions under which corpus-steered expansion helps or hinders retrieval.
 
-\paragraph{Per-Query Metric Computation.}
+\subsection{Per-Query Metric Computation}
 The \texttt{pytrec\_eval} library was used to compute NDCG@10 for each of the 2,896 MIRACL Arabic development queries under both the CSQE+Hybrid system and the Aya Blind BM25 $n=1$ baseline. The per-query delta was defined as $\Delta_i = \text{NDCG@10}_{\text{CSQE},i} - \text{NDCG@10}_{\text{Blind},i}$.
 
-\paragraph{Classification Thresholds.}
+\subsection{Classification Thresholds}
 Three categories were defined based on the per-query scores and deltas:
 
 \begin{itemize}
@@ -501,10 +501,10 @@ Three categories were defined based on the per-query scores and deltas:
     \item \textbf{Regression:} $\Delta_i < -0.1$. Queries where CSQE performs worse than the blind baseline by a non-trivial margin.
 \end{itemize}
 
-\paragraph{First-Pass Quality Split.}
+\subsection{First-Pass Quality Split}
 To assess the role of BM25 first-pass quality in CSQE effectiveness, queries were split into two groups based on whether the BM25 first-pass retrieval returned a relevant document at \emph{rank~1} (a positive relevance judgement, $\text{rel} > 0$, for the top-1 retrieved document in the MIRACL qrels). Although CSQE grounding draws on the top-$k=5$ first-pass documents, the rank-1 result is used as the indicator of first-pass quality because it most directly reflects whether the retriever has correctly identified the query topic. This split enables analysis of whether CSQE gains are driven primarily by successful corpus grounding or by the blind expansion component.
 
-\paragraph{Regression Classification.}
+\subsection{Regression Classification}
 Regression queries ($\Delta_i < -0.1$) were manually inspected and classified into three types:
 
 \begin{itemize}
