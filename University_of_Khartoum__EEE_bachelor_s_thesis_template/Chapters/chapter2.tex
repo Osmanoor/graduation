@@ -375,7 +375,7 @@ mDPR \cite{karpukhin_2020_dense} is a bi-encoder dense retrieval model based on 
 
 BM25S \cite{bm25s_2024} is a Python-native implementation of the BM25 algorithm that eliminates the Java dependencies required by traditional implementations such as Pyserini. In this thesis, BM25S was configured with $k_1 = 0.9$ and $b = 0.4$, matching the Pyserini default configuration used in the official MIRACL benchmark to ensure comparability. (The BM25S library defaults are $k_1 = 1.5$, $b = 0.75$.) BM25S was selected over Pyserini for its simpler deployment pipeline and faster iteration speed, achieving 96\% of the Pyserini BM25 baseline performance on the MIRACL Arabic evaluation set.
 
-\paragraph{Notation.} Throughout the remainder of this thesis, the term ``BM25'' refers to the BM25S implementation with the configuration above ($k_1 = 0.9$, $b = 0.4$), unless explicitly stated otherwise.
+Throughout the remainder of this thesis, the term ``BM25'' refers to the BM25S implementation with the configuration above ($k_1 = 0.9$, $b = 0.4$), unless explicitly stated otherwise.
 
 \subsection{Model Comparison Summary}
 \label{sec:model_summary}
@@ -492,7 +492,7 @@ These questions are addressed in this thesis through a staged experimental progr
 \label{sec:chapter_summary}
 %======================================================================
 
-This chapter established the theoretical and empirical foundations for the research presented in this thesis. The key points are summarized as follows:
+This chapter established the theoretical and empirical foundations for the research presented in this thesis. The key points are summarised as follows:
 
 \begin{itemize}
     \item RAG systems address the hallucination and knowledge staleness limitations of LLMs by incorporating external knowledge retrieval (Section~\ref{sec:rag}), but their effectiveness is bounded by retrieval quality.

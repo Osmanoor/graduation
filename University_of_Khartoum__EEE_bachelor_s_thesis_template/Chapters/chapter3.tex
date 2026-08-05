@@ -391,13 +391,10 @@ Nine models were evaluated across eight configurations ($n \in \{1, 3, 5, 7, 10\
 
 The baseline experiments (Section~\ref{sec:res_baseline_comparison}) confirmed that BM25 and mDPR exhibit complementary strengths: mDPR achieves superior ranking quality while BM25 provides broader lexical coverage. Hybrid retrieval fusion combines the ranked lists from both retrievers into a single ranking to exploit this complementarity. Two fusion methods, introduced in Section~\ref{sec:hybrid_retrieval}, were evaluated.
 
-\paragraph{RRF.}
 RRF (Equation~\ref{eq:rrf_ch2}) combines ranked lists by summing inverse rank scores with a smoothing constant $k$. Two values were tested: $k=20$, following the standard practice established by Bruch et al. \cite{bruch_2023_rrf}, and $k=60$.
 
-\paragraph{CC.}
 CC (Equation~\ref{eq:hybrid_cc_ch2}) computes a weighted sum of normalised retriever scores, where $\alpha$ controls the relative contribution of the dense retriever. Before combination, the scores from each retriever were min-max normalised to $[0, 1]$ on a per-query basis to account for the different score scales of BM25 and mDPR. The weight $\alpha$ was swept over $\{0.1, 0.2, \ldots, 0.9\}$.
 
-\paragraph{Setup.}
 Both BM25S and mDPR retrieved the top-100 candidates independently using the original (unenhanced) queries. Fusion and re-ranking were performed in Python without additional GPU inference. The resulting hybrid baseline establishes the performance ceiling that all subsequent QE methods must surpass. The two fusion methods are illustrated side by side in Figure~\ref{fig:hybrid_fusion}.
 
 \begin{figure}[H]
@@ -442,7 +439,6 @@ The configuration used for the primary CSQE experiment was: $k=5$ first-pass doc
   \label{fig:csqe_pipeline}
 \end{figure}
 
-\paragraph{CSQE System Prompt.}
 For corpus-grounded generation, the model was given a system prompt distinct from the blind Query2Doc prompt of Section~\ref{sec:meth_q2d_llm}, instructing it to \emph{extract} content grounded in the retrieved passages rather than to generate freely:
 
 \begin{quote}
@@ -451,7 +447,6 @@ For corpus-grounded generation, the model was given a system prompt distinct fro
 
 \noindent The accompanying user message presented the original query followed by the numbered first-pass documents and a closing instruction to ``begin by examining the initially retrieved documents and identifying the ones that are relevant, even partially, to the query \ldots\ then extract the key sentences from each document that contribute to their relevance.'' A single English worked example (a query about warm-blooded sharks, taken from the original CSQE paper \cite{lei_2024_csqe}) was prepended as a one-shot demonstration---the sole exception to the zero-shot protocol of Section~\ref{sec:meth_q2d_modifications}; Aya Expanse, being multilingual, transfers this pattern to Arabic queries while still producing Arabic output. The blind-expansion branch reused the Query2Doc system prompt of Section~\ref{sec:meth_q2d_llm} verbatim.
 
-\paragraph{Rationale for Combining Corpus and Blind Samples.}
 Corpus-grounded samples provide attested Arabic vocabulary anchored to the actual Wikipedia passages retrieved in the first pass. Blind samples provide diverse answer-space vocabulary unconstrained by the corpus. The two sources are hypothesised to be complementary: corpus samples prevent hallucination of incorrect entities, while blind samples expand vocabulary coverage beyond the retrieved passages. This hypothesis is validated through the ablation study presented in Section~\ref{sec:res_csqe_ablation}.
 
 \subsection{Component Ablation Design}

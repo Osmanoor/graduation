@@ -915,7 +915,7 @@ Table~\ref{tab:regression_causes} presents the classification of the 367 regress
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{fig_4_15_regtype_v2_donut.pdf}
-    \caption[Regression type breakdown]{Type breakdown of the 367 queries that regress under CSQE+Hybrid ($\Delta < -0.1$). Type A (strong-BM25-hurt-by-expansion) accounts for 52\%, Type B (poisoned first-pass) for 36\%, and Type C (other) for 12\%.}
+    \caption[Regression type breakdown]{Type breakdown of the 367 queries that regress under CSQE+Hybrid ($\Delta < -0.1$). Type A (strong-BM25-hurt-by-expansion) accounts for 52\%, Type B (poisoned first-pass) for 36\%, and Type C (partial BM25) for 12\%.}
     \label{fig:regression_pie}
 \end{figure}
 
@@ -932,17 +932,14 @@ Table~\ref{tab:regression_causes} presents the classification of the 367 regress
 \end{figure}
 \fi
 
-\paragraph{Type A: Strong BM25 Hurt by Expansion.}
 Type~A regressions (52\%, 191 queries) occurred when BM25 already handled the query well (baseline NDCG@10 $\geq 0.3$) and the CSQE expansion introduced Arabic vocabulary from the corpus document that diluted the original query terms. This was the same term-dilution effect observed in Section~\ref{sec:res_term_dilution}, but in reverse: here the expansion itself (rather than the pseudo-document) reduced BM25 precision for queries that were already well handled.
 
-\paragraph{Type B: Poisoned First-Pass.}
 Type~B regressions (36\%, 131 queries) share a common mechanism: the query is short or ambiguous and its surface form collides with an Arabic homonym, personal name, or near-topic entity, so BM25's first pass retrieves the \emph{wrong} entity. CSQE then grounds its expansion on those off-topic documents and the final query misses---even when the model's generation is otherwise clean---whereas blind expansion, which ignores the first pass, often answers correctly. The mode spans three sub-flavours. In a \emph{tokenisation/dialect homonym} (e.g.\ ``\<ماهو التطرف؟>'', ``what is extremism?''), four of the five first-pass documents match the token ``\<ماهو>'' and surface a southern-dialect article, a song, a novel, and an Iranian village rather than the extremism article, because ``\<ماهو>'' collides with a dialectal phrase rather than the intended interrogative ``\<ما هو>''. In a \emph{personal-name homonym} (e.g.\ ``\<متى ولد نجيب محفوظ؟>''), the first pass retrieves a different ``\<نجيب باشا محفوظ>''---a physician, not the novelist. In a \emph{wrong-entity / near-topic collision} (e.g.\ ``\<من هو مصمم موقع ويكيبيديا؟>''), the first pass returns an article on Wikipedia's ban in Turkey, leading the expansion to ground on an unrelated entity. In each case it is the first-pass error, not the generation, that drives the regression.
 
-\paragraph{Implications.}
-These two failure modes motivate two concrete design improvements: a \emph{first-pass quality gate} that falls back to blind expansion when the top-1 BM25 document overlaps poorly with the query (addressing Type~B), and \emph{asymmetric expansion weighting} that down-weights the expansion when BM25 is already strong (addressing Type~A). Both are developed as recommendations in Chapter~\ref{chap:conclusion}.
+The remaining 12 per cent (Type~C) fall in an intermediate band in which the BM25 baseline is neither strong nor absent, and no single mechanism dominates. The two dominant modes motivate two concrete design improvements: a \emph{first-pass quality gate} that falls back to blind expansion when the top-1 BM25 document overlaps poorly with the query (addressing Type~B), and \emph{asymmetric expansion weighting} that down-weights the expansion when BM25 is already strong (addressing Type~A). Both are developed as recommendations in Chapter~\ref{chap:conclusion}.
 
 %======================================================================
-\section{Summary of All Experiments}
+\section{Chapter Summary}
 \label{sec:res_summary}
 %======================================================================
 

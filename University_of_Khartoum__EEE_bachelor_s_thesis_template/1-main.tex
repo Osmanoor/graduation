@@ -45,12 +45,17 @@
 
 % Titles Formatting
 \usepackage{titlesec}
+% Heading sizes per Dr. Tahani (voice note 1, [03:27]-[04:06]):
+% chapter title 18 bold, side headings 16 bold, body 12.
 \titleformat{\chapter}[block]
-  {\normalfont\huge\bfseries\centering}
+  {\normalfont\fontsize{18}{22}\selectfont\bfseries\centering}
   {Chapter \thechapter}
   {0pt}
   {\vspace{1em} \\}
 \titlespacing*{\chapter}{0pt}{-30pt}{20pt}
+\titleformat{\section}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries}
+  {\thesection}{1em}{}
 \titlespacing*{\section}{0pt}{\baselineskip}{\baselineskip}
 
 % Figures and Graphics
