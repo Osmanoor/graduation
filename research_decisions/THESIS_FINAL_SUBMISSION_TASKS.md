@@ -100,10 +100,71 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ---
 
+## Phase J — Document presentation & format defects (NEW, 2026-08-01)
+
+> **Why this phase exists.** Dr. Tahani's voice notes (`meetings/2026-07_supervisor_voice_notes_transcripts.md`, Note 1 [00:00]–[00:40]) put the write-up at **10 marks out of 60**, and `2026-07_supervisor_voice_notes_key_points.md:97` records that *"unjustified margins, wrong font, an abstract spilling past ¾ page"* can cost **5–6 of those 10** independently of content quality. Two of those three were live in the manuscript until 2026-08-01.
+
+- [x] **J1 — Body font was not Times New Roman** — **Owner: Elhaj** (S) — **DONE 2026-08-01**
+  **Proven, not inferred:** `pdffonts 1-main.pdf` showed body text in `LMRoman12-Regular/Bold/Italic` (Latin Modern). The `TimesNewRomanPSMT` entries in the same output are `Type 3 / Custom` — fonts embedded inside the matplotlib figure PDFs, not document text.
+  **Root cause — a regression.** The original template (commit `0e650de`) used `\usepackage{newtxtext}`, a Times clone. The migration to XeLaTeX for Arabic support replaced it with `fontspec` + `polyglossia` and **never set a main font**, so XeLaTeX silently fell back to its Latin Modern default.
+  **Required by both sources:** faculty guidelines ("Times New Roman is preferred"); Dr. Tahani, repeatedly — `17.3.2026.md:151`, voice note 1 [00:40] (*"فونت 12 تايمز نيو رومان 1 ونص لاين سبيس"*), [04:06].
+  **Fix applied** at `1-main.tex:5-12`: `\IfFontExistsTF{Times New Roman}{\setmainfont{Times New Roman}}{\setmainfont{TeX Gyre Termes}}`. The fallback matters — **Overleaf does not ship Times New Roman** (licensing); TeX Gyre Termes is metrically identical, so the same source compiles correctly in both places.
+  **Measured effect:** total 130 → 124 pages; **core Ch.1–5 went from 104–105 to exactly 100** (Ch.1 p.1 · Ch.2 p.6 · Ch.3 p.33 · Ch.4 p.57 · Ch.5 p.92 · Bibliography p.101). 0 build errors. **This supersedes D1.**
+  ⚠️ **Every page re-flowed.** E2/E3 must be re-checked against the new pagination; figure and table placement has moved throughout.
+
+- [ ] **J2 — Heading sizes deviate from the supervisor's spec** — **Owner: Elhaj** (S)
+  Voice note 1 [03:27]–[04:06]: chapter title **18 bold**, side headings **16 bold**, body **12**. Cover-page project name **20 bold** ([01:47]).
+  Current: `1-main.tex:49` sets `\huge` for `\chapter` ≈ **24.9 pt**; `\section` uses the `report.cls` default `\Large` ≈ **17.3 pt**; `\subsection` `\large` ≈ 14.4 pt. Body 12 pt is correct.
+  Fix = `\fontsize{18}{22}\bfseries` on the chapter and a `\titleformat{\section}` at 16 pt. **Page-negative** (smaller headings reclaim space), but it re-flows pages again, so sequence it with J3/E2/E3 rather than doing it alone. Cover page not yet audited against [01:47].
+
+- [ ] **J3 — Six tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S)
+  **Re-measured 2026-08-04 from a clean full build (xelatex → bibtex → xelatex ×2) after J1.** The font change shrank every overflow but removed none. 285 `Overfull \hbox` warnings total; the ones that are actual tables:
+
+  | Too wide | Table | Location |
+  |---|---|---|
+  | **306.2 pt** | **Table 2.1** (QE techniques comparison) | `thesis_figures/output/pdf/table_2_1.tex` — *generated file, fix at source* |
+  | 113.8 pt | `tab:delta_analysis` | `chapter4.tex:735-749` |
+  | **103.2 pt** | **`tab:csqe_hybrid_configs`** | `chapter4.tex:665-681` |
+  | 69.9 pt | `tab:dense_leaderboard` | `chapter4.tex:250-262` |
+  | 57.8 pt | `tab:full_summary` (Table 4.28) | `chapter4.tex:955-983` |
+  | 50.9 pt | `tab:system_progression` | `chapter4.tex:762-775` |
+
+  ⚠️ **`tab:csqe_hybrid_configs` carries the thesis's central asymmetric-placement claim and is printed with a column missing.** `tab:full_summary` prints its Status column as "Baselin", "Degrade", "Best overa".
+  ⚠️ **Table 2.1 is the worst in the thesis at 306.2 pt** and was missed by the earlier audits because it lives in a generated file, not in `chapter4.tex`. Fix it in `thesis_figures/`, not in the chapter, or the next regeneration reverts it.
+  Fix = wrap each `tabular` in `\resizebox{\textwidth}{!}{…}`. Page-neutral or page-negative, no prose risk.
+  ⚠️ Was sheltering under **E3**'s figure gate. It is independent of the figure work and should not wait.
+
+- [ ] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S)
+  The committed PDF was built *before* the source reverts in its own commit (`14533f2`) and still renders text that commit removed. Anyone measuring pages or checking layout from it is off by ~1 page and reading reverted text. Either rebuild-and-commit, or drop the PDF from version control. *(Found independently by both the C5 and C10 audits.)*
+
+- [ ] **J5 — `Chapters/chapter2_generated.tex` is dead weight** — **Owner: Elhaj** (S)
+  Not `\include`d by `1-main.tex`. Contains an older draft of §2.1.4/§2.1.5 with 20+ bold pseudo-headings, and matches audit greps. Delete or move out of `Chapters/`.
+
+- [ ] **J6 — §4.10.4 documents Type A and Type B but not Type C** — **Owner: Elhaj** (S)
+  Table 4.25 (`chapter4.tex:900-913`) reports Type C as 45 queries / 12%, but the `\paragraph` run stops at Type B and jumps to `Implications.` Content gap, not structural.
+
+- [ ] **J7 — Two singleton `\subsubsection`s** — **Owner: Elhaj** (S)
+  `chapter4.tex:203` (4.3.2.1, only child of §4.3.2) and `:329` (4.4.3.1, only child of §4.4.3). A 1-of-1 numbered subdivision is a style smell — either promote to `\subsection` or demote to prose.
+
+- [ ] **J8 — 17 `\paragraph{}` headings render unnumbered and invisible in the ToC** — **Owner: Elhaj** (M)
+  Across Ch.2–4 (`chapter3.tex` §3.6/§3.7/§3.8.1/§3.9, `chapter4.tex` §4.10.4, `chapter2.tex:378`). With `secnumdepth=3` they show as bold run-in labels with no number — **the exact visual outcome the supervisor objected to for §2.1.4/§2.1.5** (task C5). If she applies the same objection to Ch.3, runs R4/R5/R7 from `C5_bold_headings_audit.md` come into play. Worth pre-empting at the next meeting.
+
+- [ ] **J9 — Consistency micro-fixes** — **Owner: Elhaj** (S)
+  Retitle §4.11 "Summary of All Experiments" → "Chapter Summary" (matches §2.6); `nDCG` → `NDCG` at `chapter4.tex:985`; `summarized` → `summarised` at `chapter2.tex:495`. *(From `C10_chapter_summaries_audit.md`.)* Separate from the thesis-wide `nDCG`/`NDCG` casing sweep still open under C3.
+
+---
+
 ## Phase B — Abstracts (after Phase A)
 
-- [ ] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M) — *A7 blocker B5 lands here: the abstract still carries the pre-A1 framing (old RQ, no CSQE, no asymmetric-placement finding). Starter sentences proposed in `A7_mapping_audit.md` §(g) B5.*
+- [x] **B1 — Rewrite the English abstract** — **Owner: Elhaj** `[AI]` (M) — **DONE 2026-08-01**
   Target ≈ 3/4 page (250–350 words); must fit one page; not shorter than half a page; Times New Roman 12, 1.5 spacing. Structure (use this as the AI prompt, as agreed): **Context/Area → Problem → Objectives → Methodology → Key Findings → Overall Conclusion.** Built on the new A1/A4 text. *(Report §8; video 2 07:20 + 36:30. Closes old 5.F.1.)*
+  **Done:** `5-Abstract.tex` rewritten — **315 words, one single paragraph**, verified by build to end on page **iv** with no spill. All six structural elements present in order.
+  Two independent drafts were produced and merged: ours (evidence-dense) and a `gemini-3.1-pro-preview` draft generated over the full text of Ch.1/3/4/5. Neither contained a factual error. Ours was the base; Gemini contributed the CSQE gloss, the mechanism behind the placement finding, and the explicit objectives sentence. Full record, both drafts, the comparison, and a 10-item fact-check list: `research_decisions/B1_abstract_workpack.md`.
+  **Removed:** the pre-A1 framing ("small open-source LLMs … model characteristics") which contradicted A2; and the "model size correlates / training-data diversity predicts better than Arabic benchmarks" claim, which is *stronger than `chapter5.tex:20` now states* and so contradicted the thesis.
+  **Added:** CSQE (previously absent from the abstract entirely), the asymmetric-placement finding with like-for-like RRF numbers (0.7137 / 0.6936 / 0.6474), and an explicit objectives sentence.
+  **Single paragraph** per the faculty guidelines: *"The abstract is a separate document from the thesis, no reference numbers, and no multiple paragraphs."* The previous version had four.
+  ⚠️ **Cut to fit one page** (in priority order, restorable if something else goes): the dense-gain range/average; the Arabic-specialised-vs-multilingual finding (`chapter4.tex:389`); the named best models (Aya Expanse 8B, Jais-2 8B); the "3B beats GPT-3 175B" comparison.
+  ⚠️ **Note on Dr. Tahani's numbers:** her "250–350 words ≈ 3/4 page" is calibrated to Times New Roman 12 / 1.5 spacing (`meetings/17.3.2026.md:143` — *"لأنو إحنا بنكتب بـ 12 Times New Roman، 1.5 Line spacing"*). It did not hold while the thesis was in Latin Modern — see **J1**. At 315 words in Times the abstract fills one page, slightly more than 3/4.
 
 - [ ] **B2 — Arabic abstract (المستخلص): shrink + Arabize** — **Owner: Osman** `[AI]` (M)
   Currently **1.5 pages → must become ≈ 3/4 page**. Re-derive from the new English abstract. Full Arabization of technical terms where standard equivalents exist (الاسترجاع الكثيف, التوليد المعزز بالاسترجاع (RAG)); Arabic term first + English acronym in parentheses at first mention; keep ASCII/Western numerals (0, 1, 2…). Self-review by both of us for terminology. *(Report §9; video 2 08:08–09:20. Closes old 5.F.4.)*
