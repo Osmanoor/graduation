@@ -137,7 +137,7 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   Fix = wrap each `tabular` in `\resizebox{\textwidth}{!}{…}`. Page-neutral or page-negative, no prose risk.
   ⚠️ Was sheltering under **E3**'s figure gate. It is independent of the figure work and should not wait.
 
-- [ ] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S)
+- [x] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Rebuilt with `xelatex → bibtex → xelatex ×2` and committed in `1780284`. 126 pages, 0 errors, 0 undefined refs/cites. The committed PDF now matches the committed sources.
   The committed PDF was built *before* the source reverts in its own commit (`14533f2`) and still renders text that commit removed. Anyone measuring pages or checking layout from it is off by ~1 page and reading reverted text. Either rebuild-and-commit, or drop the PDF from version control. *(Found independently by both the C5 and C10 audits.)*
 
 - [x] **J5 — `Chapters/chapter2_generated.tex` is dead weight** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Deleted; page count unchanged, confirming it was unused.
@@ -168,6 +168,19 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   **Single paragraph** per the faculty guidelines: *"The abstract is a separate document from the thesis, no reference numbers, and no multiple paragraphs."* The previous version had four.
   ⚠️ **Cut to fit one page** (in priority order, restorable if something else goes): the dense-gain range/average; the Arabic-specialised-vs-multilingual finding (`chapter4.tex:389`); the named best models (Aya Expanse 8B, Jais-2 8B); the "3B beats GPT-3 175B" comparison.
   ⚠️ **Note on Dr. Tahani's numbers:** her "250–350 words ≈ 3/4 page" is calibrated to Times New Roman 12 / 1.5 spacing (`meetings/17.3.2026.md:143` — *"لأنو إحنا بنكتب بـ 12 Times New Roman، 1.5 Line spacing"*). It did not hold while the thesis was in Latin Modern — see **J1**. At 315 words in Times the abstract fills one page, slightly more than 3/4.
+
+- [ ] **J10 — The title page has never been filled in** — **Owner: Elhaj** (S) — **BLOCKS SUBMISSION**
+  `1-main.tex:104-116` still carries the template placeholders: *“This is the Thesis Title”*, *“Student Name (Index)”* ×2, *“Supervisor name”*, *“September 2024”*.
+  Needed: the exact thesis title, both students' names + index numbers, Dr. Tahani's full title and name, and the real submission month/year.
+  ⚠️ **Formatting is specified**, not free: Dr. Tahani, voice note 1 [01:47] — project name in **Times New Roman 20 bold**; [02:22] — the cover page has a department standard and recent years place the university logo at the top. `2026-07_supervisor_voice_notes_transcripts.md`. Current title uses `\Large` (≈17.3 pt), not 20 pt.
+  ⚠️ Also confirm whether the coordinator (“المنسقة”) has circulated a fixed template — [02:22] says to follow it if so.
+
+- [ ] **J11 — Apply D2's approved appendix moves** — **Owner: JOINT** (M)
+  D2 is complete **as an analysis only** — its report states nothing has been applied and carries a per-item sign-off sheet (§6). The moves themselves are unstarted.
+  ⚠️ **This is the only remaining lever on the page count.** Core Ch.1–5 is currently **101** (1 over). D2's largest item — moving §2.4's per-model prose to an appendix — frees **≈3.5 pages**, and appendix pages do not count toward the 100.
+  ⚠️ D2's own page figures are from the **stale pre-J1 build** (it says 105 / “5 over”). The levers are valid; the arithmetic needs redoing against the current 101.
+  ⚠️ **Cross-report conflict flagged in D2 §0.6:** E1 says drop Table 4.22 because Table 4.28 covers it, while D2 proposes moving Table 4.28 to an appendix. Doing both deletes the system-progression numbers from the main text. Resolve before D3/D5.
+  ⚠️ **`ppendix` will not work out of the box** (D2 §2.4): `1-main.tex` hardcodes the chapter label as `Chapter 	hechapter`, so appendices render as “Chapter A”, and `listings` is not loaded.
 
 - [ ] **B2 — Arabic abstract (المستخلص): shrink + Arabize** — **Owner: Osman** `[AI]`⚠️ (M)
   Currently **1.5 pages → must become ≈ 3/4 page**. Re-derive from the new English abstract. Full Arabization of technical terms where standard equivalents exist (الاسترجاع الكثيف, التوليد المعزز بالاسترجاع (RAG)); Arabic term first + English acronym in parentheses at first mention; keep ASCII/Western numerals (0, 1, 2…). Self-review by both of us for terminology. *(Report §9; video 2 08:08–09:20. Closes old 5.F.4.)*
