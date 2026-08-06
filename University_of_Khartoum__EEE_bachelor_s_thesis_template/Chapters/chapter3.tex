@@ -278,7 +278,7 @@ Table~\ref{tab:model_configs} summarises the configuration used for each model.
 
 \begin{table}[htbp]
     \centering
-    \caption{Model configurations for the Query2Doc comparison experiments. All models used \texttt{max\_new\_tokens}~=~128 and \texttt{top\_p}~=~0.9 unless otherwise noted.}
+    \caption{Model configurations for the Query2Doc comparison experiments. All models used \texttt{max\_new\_tokens}~=~128 and \texttt{top\_p}~=~0.9, with the exception of Qwen3-4B, which used the Qwen3 non-thinking sampling recommendation of \texttt{top\_p}~=~0.8 and \texttt{top\_k}~=~20.}
     \label{tab:model_configs}
     \begin{tabular}{@{}llcccc@{}}
         \toprule
@@ -291,7 +291,7 @@ Table~\ref{tab:model_configs} summarises the configuration used for each model.
         Gemma 3 4B & 4B & FP16 & 0.1 & 16 & A100 \\
         Qwen 2.5 7B & 7B & FP16 & 0.1 & 16 & A100 \\
         ALLaM 7B & 7B & FP16 & 0.7 & --- & A100 \\
-        Jais-2 8B & 8B & BF16 & 0.1 & 8 & A100 \\
+        Jais-2 8B & 8B & BF16 & 0.7 & 8 & A100 \\
         Qwen3-8B & 8B & FP16 & 0.1 & 16 & A100 \\
         Aya Expanse 8B & 8B & NF4 & 0.1 & 8 & A100 \\
         \bottomrule

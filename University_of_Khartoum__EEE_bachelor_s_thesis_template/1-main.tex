@@ -102,29 +102,42 @@
 
 \begin{document}
 % Title Page
+% Faculty guidelines, "Pagination": the title page IS page one and roman numerals begin
+% with it, though the number is not printed on it. Closes the C8 conflict.
+\pagenumbering{roman}
 \begin{titlepage}
     \begin{center}
         \vspace*{-0.05cm} % Lift the content up
         \includegraphics[width=0.2\textwidth]{Figures/Fig_logo.jpg}\\[1cm]  % Adjusted spacing
-        {\Large\textbf{This is the Thesis Title}}\\[0.5cm]
+        % TITLE — 20 pt bold per Dr. Tahani (voice note 1, [01:47]).
+        % PENDING ELHAJ'S CONFIRMATION: option A from research_decisions/REMAINING_WORK_PLAN.md §2.
+        % The registered proposal title was "Improving Retrieval Recall in Arabic RAG Systems
+        % via Query Enhancement" — confirm whether the department allows it to change.
+        {\fontsize{20}{24}\selectfont\textbf{Improving Retrieval Quality in Arabic RAG Systems\\[0.2cm] via Corpus-Steered Query Enhancement}}\\[0.5cm]
         {\large \textit{A thesis submitted in partial fulfillment of the requirements of the B.Sc. degree in Electrical and Electronic Engineering}}\\[1.5cm]
         \begin{spacing}{1.5}  % Set line spacing to 1.5
         \textbf{Submitted by:}\\[0.5cm]
-        {\textbf{Student Name (Index)}}\\
-        {\textbf{Student Name (Index)}}\\[1cm]
+        % TODO(Elhaj): replace INDEX with the real index numbers, and confirm both full names.
+        {\textbf{Mohammed Elhaj Sami (INDEX)}}\\
+        {\textbf{Osman Bashir (INDEX)}}\\[1cm]
         \textbf{Supervised by:}\\[0.5cm]
-        {\textbf{Supervisor name}}\\[1cm]
+        % TODO(Elhaj): full name and academic title; confirm the spelling "Tahani".
+        {\textbf{Dr. Tahani}}\\[1cm]
         \textbf{To}\\[0.5cm]
         {\textbf{Department of Electrical and Electronic Engineering}}\\
         {\textbf{Faculty of Engineering}}\\
         {\textbf{University of Khartoum}}\\[1.5cm]
-        \textbf{September 2024}
+        \textbf{August 2026}
         \end{spacing}
     \end{center}
 \end{titlepage}
 
+% The titlepage environment resets the page counter to 1 on \end{titlepage}, which would
+% make the Declaration page i. The guidelines count the title page as page one, so the
+% Declaration must be ii.
+\setcounter{page}{2}
+
 % Start of the Content
-\pagenumbering{roman}
 \include{2-DeclarationofAuthorship}
 \include{3-Dedication}
 \include{4-Acknowledgements}

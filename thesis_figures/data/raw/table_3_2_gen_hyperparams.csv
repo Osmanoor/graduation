@@ -2,7 +2,7 @@ model,temperature,top_p,max_new_tokens,special
 SILMA Kashif-2B,0.1,0.9,128,temp 0.1 chosen empirically over 0.7 (+2.5%)
 Qwen 2.5 3B,0.7,0.9,128,original Query2Doc default
 Falcon-H1-3B,0.1,0.9,128,model-recommended (>0.1 drops performance)
-Qwen3-4B,0.7,0.9,128,enable_thinking=False; do_sample=True (greedy gives infinite repetitions)
+Qwen3-4B,0.7,0.8,128,enable_thinking=False; do_sample=True (greedy gives infinite repetitions)
 Gemma 3 4B,0.1,0.9,128,
 Qwen 2.5-7B,0.1,0.9,128,
 Jais-2-8B,0.7,0.9,128,token_type_ids not passed
