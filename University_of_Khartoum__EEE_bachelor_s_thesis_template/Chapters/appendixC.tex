@@ -1,0 +1,241 @@
+% !TEX root = ../1-main.tex
+\chapter{Implementation Code}
+\label{app:code}
+
+This appendix reproduces the code that implements the corpus-steered query
+expansion (CSQE) pipeline described in Section~\ref{sec:meth_csqe}: the system
+prompts used for both the blind and the corpus-grounded generation branches, the
+routine that assembles the final expanded query, and the configuration that fixes
+every hyperparameter reported in Chapter~\ref{chap:methodology}. The listings are
+taken verbatim from the experiment notebooks, with diagnostic print statements and
+environment-specific paths removed for readability. The complete code base,
+including the retrieval, fusion and evaluation components, is available in the
+repository given in Section~\ref{app:repo}.
+
+%======================================================================
+\section{Query Expansion System Prompts}
+\label{app:code_prompts}
+%======================================================================
+
+Two system prompts are used. The first is the blind (Query2Doc-style) prompt of
+Section~\ref{sec:meth_q2d_llm}, which asks the model to write a passage answering
+the query from its own parametric knowledge. The second is the corpus-grounded
+CSQE prompt of Section~\ref{sec:meth_csqe}, which instead casts the model as an
+information-retrieval assistant and asks it to extract key sentences from the
+passages returned by the first pass. Both require Arabic output.
+
+\begin{codeblock}
+\begin{lstlisting}[caption={Blind and corpus-grounded system prompts.},label={lst:systems}]
+BLIND_SYSTEM = (
+    "You are asked to write a passage that answers the given query. "
+    "Do not ask the user for further clarification. "
+    "Respond in Arabic only."
+)
+
+CSQE_SYSTEM = (
+    "You are an information retrieval assistant. "
+    "You will examine retrieved documents and extract key sentences "
+    "relevant to the query. "
+    "The documents are in Arabic. Respond in Arabic only."
+)
+\end{lstlisting}
+\end{codeblock}
+
+The corpus-grounded branch is additionally prefixed with a single English worked
+example, taken from Table~2 of the original CSQE paper \cite{lei_2024_csqe}. This
+is the sole departure from the zero-shot protocol described in
+Section~\ref{sec:meth_q2d_modifications}; Aya Expanse, being multilingual,
+transfers the pattern to Arabic queries while still producing Arabic output.
+
+\begin{codeblock}
+\begin{lstlisting}[caption={The one-shot demonstration prepended to the corpus-grounded prompt.},label={lst:oneshot}]
+CSQE_ONE_SHOT = (
+    'Query: "how are some sharks warm blooded"\n'
+    'Retrieved documents:\n'
+    '1. Most sharks are cold-blooded. Some, like the Mako and the Great '
+    'white shark, are partially warm-blooded (they are endotherms)...\n'
+    '2. Are sharks cold-blooded or warm-blooded? Sharks have a reputation '
+    'as cold-blooded...\n'
+    '3. Great white sharks are some of the only warm blooded sharks...\n'
+    'You will begin by examining the initially retrieved documents and '
+    'identifying the ones that are relevant, even partially, to the query. '
+    'Once the relevant documents are identified, you will extract the key '
+    'sentences from each document that contribute to their relevance.\n'
+    'Based on the query "how are some sharks warm blooded", I have examined '
+    'the initially retrieved documents. Here are the relevant documents and '
+    'the key sentences extracted from each:\n'
+    'Document 1:\n'
+    '"Most sharks are cold-blooded. Some, like the Mako and the Great white '
+    'shark, are partially warm-blooded (they are endotherms)."\n'
+    'Document 3:\n'
+    '"Great white sharks are some of the only warm-blooded sharks."\n'
+)
+\end{lstlisting}
+\end{codeblock}
+
+The two prompt builders below assemble the final user messages. The blind branch
+passes the query through unchanged, because its system prompt already carries the
+task; the corpus-grounded branch numbers the truncated first-pass passages and
+appends the extraction instruction.
+
+\begin{codeblock}
+\begin{lstlisting}[caption={Prompt construction for the corpus-grounded and blind branches.},label={lst:builders}]
+def build_csqe_prompt(query, retrieved_docs_truncated):
+    """CSQE corpus-grounded prompt. The model should EXTRACT sentences
+    from the retrieved documents, not generate freely."""
+    docs_str = '\n'.join(
+        f'{i+1}. {doc}' for i, doc in enumerate(retrieved_docs_truncated)
+    )
+    prompt = (
+        f'{CSQE_ONE_SHOT}\n'
+        f'Query: "{query}"\n'
+        f'Retrieved documents:\n{docs_str}\n'
+        f'You will begin by examining the initially retrieved documents '
+        f'and identifying the ones that are relevant, even partially, to '
+        f'the query. Once the relevant documents are identified, you will '
+        f'extract the key sentences from each document that contribute to '
+        f'their relevance. Respond in Arabic only.'
+    )
+    return prompt
+
+
+def build_blind_prompt(query):
+    """Blind (Query2Doc) prompt. The system prompt handles the task;
+    the user message is just the query."""
+    return query
+\end{lstlisting}
+\end{codeblock}
+
+%======================================================================
+\section{Query Repetition and Expansion Assembly}
+\label{app:code_assembly}
+%======================================================================
+
+The routine below is the core of the method. For a batch of queries it builds both
+prompt types, invokes the generator four times (twice corpus-grounded, twice
+blind), and assembles the final expanded query. The assembly step is the single
+line that implements the repetition factor $\alpha$ of
+Section~\ref{sec:meth_repetition}: the original query is repeated $\alpha$ times
+and concatenated with all four generated passages, so that the original query
+terms are not diluted by the much longer expansion when the result is scored by
+BM25.
+
+\begin{codeblock}
+\begin{lstlisting}[caption={CSQE batch enhancement and final query assembly.},label={lst:assembly}]
+def batch_enhance(self, qids, queries):
+    """Full CSQE pipeline for a batch of queries.
+    Four batched generation passes: corpus x2 + blind x2."""
+    n = len(qids)
+    corpus_bs     = self.config['corpus_batch_size']
+    blind_bs      = self.config['blind_batch_size']
+    max_corpus_len = self.config['max_corpus_prompt_length']
+    max_blind_len  = self.config['max_blind_prompt_length']
+
+    # Step 1: build all prompts
+    corpus_prompts, blind_prompts, all_retrieved = [], [], []
+    for qid, query in zip(qids, queries):
+        docs = self.get_retrieved_docs(qid)      # BM25 first pass, truncated
+        all_retrieved.append(docs)
+        doc_texts = [d['text'] for d in docs if d['text']]
+        corpus_prompts.append(build_csqe_prompt(query, doc_texts))
+        blind_prompts.append(build_blind_prompt(query))
+
+    # Step 2: corpus-grounded expansions (2 samples)
+    corpus_samples_1 = self.batch_generate(
+        CSQE_SYSTEM, corpus_prompts, corpus_bs,
+        temperature=1.0, max_length=max_corpus_len)
+    corpus_samples_2 = self.batch_generate(
+        CSQE_SYSTEM, corpus_prompts, corpus_bs,
+        temperature=1.0, max_length=max_corpus_len)
+
+    # Step 3: blind expansions (2 samples)
+    blind_samples_1 = self.batch_generate(
+        BLIND_SYSTEM, blind_prompts, blind_bs,
+        temperature=1.0, max_length=max_blind_len)
+    blind_samples_2 = self.batch_generate(
+        BLIND_SYSTEM, blind_prompts, blind_bs,
+        temperature=1.0, max_length=max_blind_len)
+
+    # Step 4: assemble the expanded query
+    alpha = self.config['query_repetition']
+    results = []
+    for i in range(n):
+        corpus_exps = [corpus_samples_1[i], corpus_samples_2[i]]
+        blind_exps  = [blind_samples_1[i],  blind_samples_2[i]]
+        all_exps    = corpus_exps + blind_exps
+
+        # Repeat the original query alpha times, then append all
+        # four generated passages. This is the expanded query that
+        # is passed to the BM25 second pass.
+        final = (queries[i] + ' ') * alpha + ' '.join(all_exps)
+
+        results.append({
+            'qid':                qids[i],
+            'original':           queries[i],
+            'retrieved_docids':   [d['docid'] for d in all_retrieved[i]],
+            'corpus_expansions':  corpus_exps,
+            'blind_expansions':   blind_exps,
+            'enhanced':           final,
+        })
+    return results
+\end{lstlisting}
+\end{codeblock}
+
+%======================================================================
+\section{CSQE Configuration}
+\label{app:code_config}
+%======================================================================
+
+The configuration below fixes every hyperparameter of the primary CSQE experiment
+reported in Section~\ref{sec:res_csqe}. The values correspond to those stated in
+Section~\ref{sec:meth_csqe}: a first pass of $k=5$ documents each truncated to 128
+tokens, two corpus-grounded and two blind samples, a repetition factor of
+$\alpha = 4$, and a generation temperature of 1.0 chosen to give diversity across
+the four samples.
+
+\begin{codeblock}
+\begin{lstlisting}[caption={Configuration for the primary CSQE experiment.},label={lst:config}]
+CONFIG = {
+    # BM25 first pass
+    'top_k_docs':            5,    # top-5 carry most of the signal and
+                                   # halve the corpus prompt length
+    'doc_truncation_tokens': 128,  # truncate each retrieved doc
+
+    # LLM generation
+    'model_name':          'CohereForAI/aya-expanse-8b',
+    'temperature':         1.0,    # diversity across multiple samples
+    'max_new_tokens':      128,
+    'top_p':               0.9,
+    'num_corpus_samples':  2,      # corpus-grounded expansions
+    'num_blind_samples':   2,      # blind (Query2Doc-style) expansions
+
+    # Query construction: alpha = num_corpus + num_blind = 4
+    'query_repetition':    4,
+
+    # Batching (cross-query batching on the A100)
+    'corpus_batch_size':        8,     # long prompts (~800-1000 tokens)
+    'blind_batch_size':         32,    # short prompts (~60-80 tokens)
+    'max_corpus_prompt_length': 2048,
+    'max_blind_prompt_length':  512,
+    'macro_batch_size':         200,   # queries per checkpoint cycle
+}
+\end{lstlisting}
+\end{codeblock}
+
+%======================================================================
+\section{Source Code Repository}
+\label{app:repo}
+%======================================================================
+
+The complete implementation is publicly available at:
+
+\begin{center}
+\url{https://github.com/Osmanoor/arabic-rag-query-enhancement}
+\end{center}
+
+\noindent The repository contains the components not reproduced above, including
+the BM25S and mDPR retrieval wrappers, the reciprocal rank fusion and convex
+combination implementations used for the hybrid experiments of
+Section~\ref{sec:res_hybrid}, the \texttt{pytrec\_eval} evaluation harness that
+produced every metric reported in Chapter~\ref{chap:results}, the per-model query
+generation notebooks, and the ablation and error-analysis notebooks.

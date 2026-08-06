@@ -2,7 +2,7 @@
 \chapter{Results and Discussion}
 \label{chap:results}
 
-This chapter presents the results of all experiments conducted in this research, following the zigzag structure with the methodology described in Chapter~\ref{chap:methodology}. Section~\ref{sec:res_baseline} reports the baseline retrieval performance. Section~\ref{sec:res_error} presents the error analysis findings that guided technique selection. Section~\ref{sec:res_query2doc} reports the initial Query2Doc results with both dense and sparse retrieval. Section~\ref{sec:res_model_comparison} presents the comprehensive model comparison across ten LLMs. Section~\ref{sec:res_key_findings} synthesises the key findings from the model comparison phase. The chapter then reports the expanded experimental results: the BM25 query repetition sweep (Section~\ref{sec:res_repetition}), hybrid retrieval fusion (Section~\ref{sec:res_hybrid}), CSQE (Section~\ref{sec:res_csqe}), CSQE combined with hybrid fusion (Section~\ref{sec:res_csqe_hybrid}), and a per-query error analysis decomposing the sources of improvement and regression (Section~\ref{sec:res_error_csqe}).
+This chapter presents the results of all experiments conducted in this research, following the zigzag structure with the methodology described in Chapter~\ref{chap:methodology}. Section~\ref{sec:res_baseline} reports the baseline retrieval performance. Section~\ref{sec:res_error} presents the error analysis findings that guided technique selection. Section~\ref{sec:res_query2doc} reports the initial Query2Doc results with both dense and sparse retrieval. Section~\ref{sec:res_model_comparison} presents the comprehensive model comparison across ten LLMs. Section~\ref{sec:res_key_findings} synthesises the key findings from the model comparison phase. The chapter then reports the expanded experimental results: the BM25 query repetition sweep (Section~\ref{sec:res_repetition}), hybrid retrieval fusion (Section~\ref{sec:res_hybrid}), CSQE (Section~\ref{sec:res_csqe}), CSQE combined with hybrid fusion (Section~\ref{sec:res_csqe_hybrid}), and a per-query error analysis decomposing the sources of improvement and regression (Section~\ref{sec:res_error_csqe}). Where a result is reported here in summary form, the corresponding full table is given in Appendix~\ref{app:tables}.
 
 %======================================================================
 \section{Baseline Results and Comparison}
@@ -53,7 +53,7 @@ The error analysis methodology described in Section~\ref{sec:meth_error} was app
 \subsection{Overall Failure Rate}
 \label{sec:res_error_rate}
 
-Table~\ref{tab:error_segmentation} presents the performance segmentation of all 2,896 queries.
+Before an enhancement technique could be chosen, it was necessary to establish how much room for improvement actually existed and where it was concentrated. A single aggregate score conceals this: NDCG@10 = 0.4993 is equally consistent with uniformly mediocre retrieval across every query and with a mixture of near-perfect successes and outright failures, and the two situations call for very different remedies. Segmenting the 2,896 development queries by their individual NDCG@10 scores separates the two cases and quantifies the population that QE could realistically address. Table~\ref{tab:error_segmentation} reports this segmentation.
 
 \begin{table}[htbp]
     \centering
@@ -70,19 +70,12 @@ Table~\ref{tab:error_segmentation} presents the performance segmentation of all 
     \end{tabular}
 \end{table}
 
-A notable finding was that 34\% of queries (982 out of 2,896) were classified as failed, of which 736 retrieved no relevant passage at all within the top-10. The remaining queries split almost evenly between the mediocre (33\%) and successful (33\%) bands. While the substantial failed and mediocre fractions establish a clear opportunity for QE, the analysis also shows that roughly a third of queries were already well served by the dense baseline. Figure~\ref{fig:failure_cliff} visualises this distribution on the cumulative per-query NDCG@10 curve.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{fig_4_2_failure_cliff_v1.pdf}
-  \caption[Failure cliff on baseline NDCG@10]{Cumulative distribution of per-query NDCG@10 on the mDPR baseline. The annotated threshold at 0.3 separates the failed queries from the remainder.}
-  \label{fig:failure_cliff}
-\end{figure}
+A notable finding was that 34\% of queries (982 out of 2,896) were classified as failed, of which 736 retrieved no relevant passage at all within the top-10. The remaining queries split almost evenly between the mediocre (33\%) and successful (33\%) bands. While the substantial failed and mediocre fractions establish a clear opportunity for QE, the analysis also shows that roughly a third of queries were already well served by the dense baseline. This bimodal split---visible directly in the per-query distribution of Figure~\ref{fig:per_query_dist}---carries a design implication that recurs throughout this chapter: any technique applied indiscriminately to all queries risks degrading the third that already succeed in order to rescue the third that fail.
 
 \subsection{Short Query Performance Gap}
 \label{sec:res_error_length}
 
-The analysis of retrieval performance by query length revealed a significant performance gap, as shown in Table~\ref{tab:query_length}.
+With the size of the failure population established, the next question was whether those failures cluster around any identifiable property of the query itself. Query length is the most direct candidate. A query of two or three words offers a lexical retriever very few terms to match and a dense encoder very little context to embed, and the QE literature reviewed in Chapter~\ref{chap:background} treats precisely this information poverty as the condition expansion is designed to relieve. Grouping the development set into the three length bands used throughout this thesis---1--3, 4--8, and 9+ words---exposes a clear gap, reported in Table~\ref{tab:query_length}.
 
 \begin{table}[htbp]
     \centering
@@ -111,7 +104,7 @@ Short queries achieved only 72\% of the performance of long queries (NDCG@10 = 0
 \subsection{Retrieval Coverage Analysis}
 \label{sec:res_error_coverage}
 
-The coverage analysis revealed an important distinction between retrieval and ranking:
+A low NDCG@10 can arise from two quite different underlying failures, and the distinction determines which remedy is appropriate. Either the retriever never surfaces a relevant passage at all, which is a recall failure that no amount of reordering can repair, or it does surface one but places it too low to be counted, which is a ranking failure that reordering can fix. Measuring the proportion of queries with at least one relevant passage at progressively deeper retrieval cut-offs separates the two, since the value at depth 100 bounds what any reranker could ever achieve while the value at depth 10 reflects what the retriever actually delivers. Table~\ref{tab:coverage} reports this coverage for the dense baseline.
 
 \begin{table}[htbp]
     \centering
@@ -129,14 +122,7 @@ The coverage analysis revealed an important distinction between retrieval and ra
     \end{tabular}
 \end{table}
 
-Even at depth 100, the dense retriever failed to surface any relevant passage for roughly 10\% of queries (coverage 90.1\%), and for a further $\sim$15\% it retrieved a relevant passage but ranked it outside the top-10 (coverage 74.6\% at depth 10). The first figure reflects a genuine \emph{recall ceiling}---relevant content the dense encoder never retrieves---while the second reflects a ranking problem. QE can address both: enriching the query representation improves ranking, while combining the dense retriever with a lexical retriever (hybrid fusion, Section~\ref{sec:res_hybrid}) directly raises the recall ceiling. The full Recall@$k$ curve for both baselines is plotted in Figure~\ref{fig:recall_curve}.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.85\textwidth]{fig_4_4_recall_curve.pdf}
-  \caption[Recall@k curve]{Mean Recall@$k$ for mDPR and BM25 on the MIRACL Arabic dev set, $k$ on a log axis.}
-  \label{fig:recall_curve}
-\end{figure}
+Even at depth 100, the dense retriever failed to surface any relevant passage for roughly 10\% of queries (coverage 90.1\%), and for a further $\sim$15\% it retrieved a relevant passage but ranked it outside the top-10 (coverage 74.6\% at depth 10). The first figure reflects a genuine \emph{recall ceiling}---relevant content the dense encoder never retrieves---while the second reflects a ranking problem. QE can address both: enriching the query representation improves ranking, while combining the dense retriever with a lexical retriever (hybrid fusion, Section~\ref{sec:res_hybrid}) directly raises the recall ceiling. Both remedies are pursued in the sections that follow, and the coverage figures reported here become the reference points against which their contributions are measured.
 
 \subsection{Technique Selection Rationale}
 \label{sec:res_error_rationale}
@@ -148,12 +134,12 @@ Manual inspection of the 20 worst-performing queries revealed recurring failure 
 \label{sec:res_query2doc}
 %======================================================================
 
-This section presents the results of the initial Query2Doc experiments using Qwen~2.5~3B~Instruct, evaluated on both dense and sparse retrieval.
+The error analysis of the preceding section identified information poverty in short queries and vocabulary mismatch as the two dominant failure patterns, and Query2Doc was selected because its pseudo-document mechanism addresses both. The first experiments put that reasoning to the test using a single deliberately modest model, Qwen~2.5~3B~Instruct, run against each retriever independently. Testing the two retrievers separately rather than in combination was essential: it is the only way to observe whether a technique interacts differently with lexical and semantic matching, and the answer proved to be the most consequential finding of this phase.
 
 \subsection{Dense Retrieval}
 \label{sec:res_q2d_dense}
 
-Table~\ref{tab:q2d_dense} presents the results of Query2Doc with dense retrieval.
+Dense retrieval was the first target because the error analysis had been conducted on the mDPR baseline, making it the setting in which the predicted benefit was most directly testable. If pseudo-documents genuinely relieve information poverty, the effect should appear most clearly where the query is consumed as a continuous embedding and additional context can only enrich that representation. Table~\ref{tab:q2d_dense} reports the outcome against the dense baseline.
 
 \begin{table}[htbp]
     \centering
@@ -180,7 +166,7 @@ The total runtime was approximately 40 minutes for 2,896 queries on a T4 GPU, ac
 \subsection{BM25 Retrieval}
 \label{sec:res_q2d_bm25}
 
-Table~\ref{tab:q2d_bm25} presents the results of Query2Doc with BM25S sparse retrieval.
+The identical pseudo-documents were then supplied to the BM25S sparse retriever. Because the generation step is unchanged and only the matching function differs, any divergence between this subsection and the last is attributable to the retrieval paradigm itself rather than to the quality of the expansion. The expectation drawn from the original Query2Doc paper was a gain of the same order as the dense result; the measured outcome, reported in Table~\ref{tab:q2d_bm25}, ran firmly in the opposite direction.
 
 \begin{table}[htbp]
     \centering
@@ -210,7 +196,7 @@ As noted in Section~\ref{sec:meth_q2d_bm25}, this experiment did not implement t
 \subsection{Comparison with the Original Query2Doc Paper}
 \label{sec:res_q2d_comparison}
 
-Table~\ref{tab:q2d_paper_comparison} compares the results of this implementation with those reported in the original Query2Doc paper \cite{wang_2023_query2doc}.
+Situating these two outcomes against the source publication clarifies which of them is anomalous. The original Query2Doc study \cite{wang_2023_query2doc} was conducted in English on MS~MARCO with a 175B-parameter model and few-shot prompting, whereas this implementation operates in Arabic on MIRACL with a 3B model and zero-shot prompting---a substantially harder configuration on every axis. Table~\ref{tab:q2d_paper_comparison} sets the two side by side.
 
 \begin{table}[htbp]
     \centering
@@ -239,12 +225,12 @@ The dense retrieval improvement (+8.9\%) exceeded the original paper's reported 
 \label{sec:res_model_comparison}
 %======================================================================
 
-Following the methodology described in Section~\ref{sec:meth_model_comparison}, ten open-source LLMs were evaluated using the identical Query2Doc pipeline. This section presents the results for both dense and sparse retrieval, including the analysis of dropped models.
+The single-model experiments left an obvious question unanswered. A +8.9\% dense gain and an $-$11.5\% sparse loss were both obtained with one 3B model, and neither figure indicates how much of the effect belongs to Query2Doc as a technique and how much to Qwen~2.5~3B as a generator. Ten open-source LLMs spanning 2B to 8B parameters were therefore run through an identical pipeline, following the methodology of Section~\ref{sec:meth_model_comparison}, with every component except the generator held constant. The subsections below report the dense and sparse leaderboards in turn, followed by the one model whose failure was severe enough to warrant separate treatment.
 
 \subsection{Dense Retrieval Leaderboard}
 \label{sec:res_mc_dense}
 
-Table~\ref{tab:dense_leaderboard} presents the complete dense retrieval results, ranked by NDCG@10.
+The single-model experiment established that Query2Doc helps dense retrieval, but not whether that benefit is a property of the technique or an artefact of the particular model generating the pseudo-documents. Holding the prompt, the retriever, the evaluation set, and the generation parameters fixed while varying only the LLM isolates the model's contribution. Table~\ref{tab:dense_leaderboard} ranks all ten models on the dense pipeline by NDCG@10, with ALLaM-7B listed separately for the reason given in Section~\ref{sec:res_dropped}.
 
 \begin{table}[htbp]
     \centering
@@ -279,21 +265,14 @@ All nine successfully evaluated models improved over the dense baseline, with im
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{fig_4_5_models_bar_v1.pdf}
-    \caption[Dense retrieval NDCG@10 across models]{Dense retrieval NDCG@10 for all evaluated LLMs on the Query2Doc pipeline, sorted descending. The dashed reference line marks the mDPR no-QE baseline (0.499); each model uses its consistent thesis colour, matching Figure~\ref{fig:repetition_sweep}.}
+    \caption[Dense retrieval NDCG@10 across models]{Dense retrieval NDCG@10 for the nine retained LLMs on the Query2Doc pipeline, sorted descending; the dropped ALLaM-7B is omitted so that it does not compress the scale. The dashed reference line marks the mDPR no-QE baseline (0.499); each model uses its consistent thesis colour, matching Figure~\ref{fig:repetition_sweep}.}
     \label{fig:dense_bar_chart}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{fig_4_5_models_grouped_v3.pdf}
-    \caption[Dense retrieval grouped multi-metric per model]{Grouped per-model bars for NDCG@10, Recall@10 and MRR on the Query2Doc dense pipeline; same model ordering as Figure~\ref{fig:dense_bar_chart}.}
-    \label{fig:dense_grouped}
 \end{figure}
 
 \subsection{BM25 Retrieval Results}
 \label{sec:res_mc_bm25}
 
-Table~\ref{tab:bm25_leaderboard} presents the BM25 retrieval results.
+Repeating the sweep on the sparse retriever tests whether the degradation observed with Qwen~2.5~3B in Section~\ref{sec:res_q2d_bm25} is a general property of pseudo-document expansion under BM25 or something specific to that one model. If term dilution is intrinsic to the scoring function, every model should degrade; if instead it depends on the vocabulary a model produces, the outcome should vary with the model's tokeniser and training mix. Table~\ref{tab:bm25_leaderboard} reports the same ten models scored on BM25S.
 
 \begin{table}[htbp]
     \centering
@@ -367,7 +346,7 @@ This suggests that larger models generate higher-quality pseudo-documents with r
 \subsection{Generational Improvement Within Model Families}
 \label{sec:res_finding_generation}
 
-The Qwen model family, with four models tested across two generations, provided a controlled comparison of generational improvements:
+Parameter count is only one of the axes along which the evaluated models differ. A second, harder to observe in a cross-model comparison, is the maturity of the training recipe itself. The Qwen family isolates this variable unusually well: four of the ten models belong to it, spanning two generations at two comparable parameter scales, with architecture and prompting held constant. Any difference between generations at matched scale is therefore attributable to the training data and recipe rather than to capacity. Table~\ref{tab:qwen_generations} pairs the generations at each scale.
 
 \begin{table}[htbp]
     \centering
@@ -423,7 +402,7 @@ This finding has direct implications for RAG system design: QE techniques must b
 \subsection{Model Selection Summary}
 \label{sec:res_finding_best}
 
-Across the ten models evaluated, the following performance profiles emerged:
+The preceding findings bear directly on a practical question: which model should a deployment actually use? No single model dominated on every axis, so the choice depends on which retriever is being served and what hardware is available. Consolidating the evidence from both leaderboards yields four profiles, the first of which determined the model carried forward into all subsequent experiments in this chapter.
 
 \begin{enumerate}
     \item \textbf{Strongest overall performance:} Aya Expanse 8B \cite{aya_2024}. It achieved the highest dense NDCG@10 (0.6164, +23.5\%) and the second-highest BM25 NDCG@10 (0.5046, +9.2\%), the only model with strong improvements on \emph{both} retrieval paradigms.
@@ -440,33 +419,9 @@ Across the ten models evaluated, the following performance profiles emerged:
 \label{sec:res_repetition}
 %======================================================================
 
-This section presents the results of the query repetition sweep described in Section~\ref{sec:meth_repetition}. All nine models from the model comparison were evaluated across eight repetition configurations to determine whether the BM25 term dilution identified in Section~\ref{sec:res_term_dilution} could be resolved without changing the underlying LLM.
+Six of the nine models degraded BM25 performance, and Section~\ref{sec:res_term_dilution} attributed this to term dilution rather than to any deficiency in the generated text. If that diagnosis is correct, the remedy need not involve changing the model at all: restoring weight to the original query terms should be sufficient. Query repetition does exactly this, prepending the query to its own expansion a number of times before scoring. The sweep described in Section~\ref{sec:meth_repetition} evaluates all nine models across eight repetition configurations---five fixed counts and three adaptive MuGI settings---and so tests both the diagnosis and its proposed remedy simultaneously.
 
-Table~\ref{tab:bm25_repetition} presents the full sweep results.
-
-\begin{table}[htbp]
-    \centering
-    \caption{BM25 NDCG@10 for nine models under query repetition. Columns $n \in \{1, 3, 5, 7, 10\}$ are fixed-count repetition (Query2Doc style); columns $\beta \in \{2, 4, 6\}$ are MuGI adaptive repetition where $n$ is computed per-query as $n = \max(1, \lfloor |d| / (|q| \cdot \beta) \rfloor)$. MIRACL Arabic dev (2,896 queries). Best value per model in bold.}
-    \label{tab:bm25_repetition}
-    \begin{tabular}{@{}lcccccccc@{}}
-        \toprule
-        \textbf{Model} & $n$\textbf{=1} & $n$\textbf{=3} & $n$\textbf{=5} & $n$\textbf{=7} & $n$\textbf{=10} & $\beta$\textbf{=2} & $\beta$\textbf{=4} & $\beta$\textbf{=6} \\
-        \midrule
-        BM25 alone (no QE) & 0.4621 & --- & --- & --- & --- & --- & --- & --- \\
-        Aya Expanse 8B & 0.5046 & 0.5652 & 0.5832 & 0.5849 & 0.5773 & \textbf{0.5855} & 0.5515 & 0.5256 \\
-        Jais-2 8B & 0.5122 & 0.5492 & 0.5529 & 0.5516 & 0.5436 & \textbf{0.5731} & 0.5521 & 0.5350 \\
-        Qwen3-8B & 0.4459 & 0.5181 & 0.5319 & \textbf{0.5328} & 0.5254 & 0.5254 & 0.4841 & 0.4591 \\
-        Qwen 2.5 7B & 0.4682 & 0.5294 & \textbf{0.5358} & 0.5331 & 0.5257 & 0.5320 & 0.4977 & 0.4774 \\
-        Qwen3-4B & 0.4145 & 0.5054 & 0.5239 & \textbf{0.5244} & 0.5188 & 0.5177 & 0.4678 & 0.4347 \\
-        Gemma 3 4B & 0.3447 & 0.4800 & 0.5178 & \textbf{0.5277} & 0.5239 & 0.4915 & 0.4184 & 0.3694 \\
-        Qwen 2.5 3B & 0.4090 & 0.5060 & \textbf{0.5185} & 0.5181 & 0.5116 & 0.5046 & 0.4551 & 0.4253 \\
-        Falcon-H1 3B & 0.4038 & 0.4881 & 0.5082 & 0.5112 & \textbf{0.5113} & 0.4979 & 0.4561 & 0.4266 \\
-        SILMA 2B & 0.4194 & 0.4783 & \textbf{0.4832} & 0.4829 & 0.4788 & 0.4494 & 0.4252 & 0.4203 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-Table~\ref{tab:bm25_best_config} presents the supplementary Recall and MRR values at each model's best configuration.
+The full nine-model by eight-configuration sweep is given as Table~\ref{tab:bm25_repetition} in Appendix~\ref{app:tab_repetition}; Figure~\ref{fig:repetition_sweep} plots its fixed-count columns, and Table~\ref{tab:bm25_best_config} below reports each model's best configuration with the supplementary Recall and MRR values.
 
 \begin{table}[htbp]
     \centering
@@ -522,11 +477,11 @@ Five key observations emerged from the repetition sweep:
 \label{sec:res_hybrid}
 %======================================================================
 
-This section presents the results of the hybrid fusion experiments described in Section~\ref{sec:meth_hybrid}. Table~\ref{tab:hybrid_results} reports the full CC $\alpha$-sweep and both RRF configurations.
+Every technique examined so far has operated on the query. The complementarity established in Section~\ref{sec:res_baseline_comparison}---mDPR ranking more accurately, BM25S recovering more relevant material overall---suggests an orthogonal route to the same goal: leave the query untouched and combine the two ranked lists instead. This matters for the interpretation of everything that follows, because a hybrid of two unenhanced retrievers is a far more demanding reference point than either retriever alone, and it is the bar any QE method must clear to justify its generation cost. The experiments described in Section~\ref{sec:meth_hybrid} evaluate both fusion strategies: convex combination across a full weight sweep, and reciprocal rank fusion at two values of $k$. Table~\ref{tab:hybrid_results} reports the baselines, the best convex-combination setting and both RRF settings; the complete nine-point sweep is given in Appendix~\ref{app:tab_hybrid}.
 
 \begin{table}[htbp]
     \centering
-    \caption{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries). CC scores are min-max normalised per query, with $\alpha$ controlling the Dense weight.}
+    \caption{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries). The best convex-combination setting and both RRF settings are shown; the full nine-point $\alpha$-sweep is given in Appendix~\ref{app:tab_hybrid}.}
     \label{tab:hybrid_results}
     \begin{tabular}{@{}lcccc@{}}
         \toprule
@@ -535,15 +490,7 @@ This section presents the results of the hybrid fusion experiments described in 
         BM25S alone & 0.4621 & 0.5964 & 0.8577 & 0.4836 \\
         mDPR alone & 0.4993 & 0.6156 & 0.8407 & 0.5328 \\
         \midrule
-        Hybrid CC $\alpha=0.1$ & 0.5248 & 0.6412 & 0.9333 & 0.5584 \\
-        Hybrid CC $\alpha=0.2$ & 0.5533 & 0.6683 & 0.9413 & 0.5861 \\
-        Hybrid CC $\alpha=0.3$ & 0.5830 & 0.7014 & 0.9449 & 0.6161 \\
-        Hybrid CC $\alpha=0.4$ & 0.6137 & 0.7392 & 0.9454 & 0.6426 \\
         \textbf{Hybrid CC $\alpha=0.5$} & \textbf{0.6266} & 0.7478 & 0.9458 & \textbf{0.6577} \\
-        Hybrid CC $\alpha=0.6$ & 0.6051 & 0.7289 & 0.9440 & 0.6355 \\
-        Hybrid CC $\alpha=0.7$ & 0.5743 & 0.6963 & 0.9439 & 0.6049 \\
-        Hybrid CC $\alpha=0.8$ & 0.5384 & 0.6634 & 0.9416 & 0.5678 \\
-        Hybrid CC $\alpha=0.9$ & 0.4996 & 0.6297 & 0.9350 & 0.5257 \\
         \midrule
         \textbf{Hybrid RRF $k=20$} & \textbf{0.6267} & \textbf{0.7597} & \textbf{0.9466} & 0.6517 \\
         Hybrid RRF $k=60$ & 0.6230 & 0.7553 & 0.9466 & 0.6490 \\
@@ -558,7 +505,7 @@ Five key observations were drawn from the hybrid fusion results:
 
     \item RRF $k=20$ (0.6267) and CC $\alpha=0.5$ (0.6266) were numerically indistinguishable on NDCG@10. RRF had the edge on Recall@10 (+0.0119), while CC had the edge on MRR (+0.0060). Because RRF requires no hyperparameter tuning, it was adopted as the primary hybrid baseline for all subsequent experiments.
 
-    \item The CC sweep was smooth and unimodal, peaking at $\alpha=0.5$ and degrading symmetrically toward either extreme. At $\alpha=0.9$ (almost pure Dense), the result (0.4996) was essentially the mDPR-alone baseline (0.4993); at $\alpha=0.1$ (almost pure BM25), the result (0.5248) exceeded BM25 alone; a possible explanation is that even a small Dense component contributed to document reranking. This confirmed that the two retrievers contributed roughly equally.
+    \item The CC sweep was smooth and unimodal, peaking at $\alpha=0.5$ and degrading symmetrically toward either extreme, as plotted in Figure~\ref{fig:hybrid_comparison} and tabulated in full in Appendix~\ref{app:tab_hybrid}. At $\alpha=0.9$ (almost pure Dense), the result (0.4996) was essentially the mDPR-alone baseline (0.4993); at $\alpha=0.1$ (almost pure BM25), the result (0.5248) exceeded BM25 alone; a possible explanation is that even a small Dense component contributed to document reranking. This confirmed that the two retrievers contributed roughly equally.
 
     \item RRF $k=20$ slightly outperformed $k=60$ (0.6267 vs. 0.6230 NDCG@10). The smaller $k$ gives more weight to top-ranked items, which benefits NDCG@10 but does not affect Recall@100 (both 0.9466).
 
@@ -577,12 +524,12 @@ Five key observations were drawn from the hybrid fusion results:
 \label{sec:res_csqe}
 %======================================================================
 
-This section presents the results of the CSQE experiments described in Section~\ref{sec:meth_csqe}. The results are organised into two subsections: main CSQE results and the component ablation.
+All the query enhancement reported so far has been \emph{blind}: the LLM sees only the query and writes from parametric memory, with no access to the corpus being searched. That design has a specific weakness, visible in the regression cases examined later in this chapter---when the model does not know the answer it produces a fluent and confident fabrication, and the retriever is then steered away from the very document it was meant to find. Corpus-steered query expansion, implemented as described in Section~\ref{sec:meth_csqe}, addresses this by grounding the expansion in passages the corpus actually contains. The results below first establish what CSQE achieves on each retriever, then decompose that effect into its corpus-grounded and blind components.
 
 \subsection{Main CSQE Results}
 \label{sec:res_csqe_main}
 
-Table~\ref{tab:csqe_main} compares the CSQE-enhanced retrieval results against the relevant baselines.
+The first question is whether corpus grounding delivers any advantage over the blind expansion it replaces, and whether that advantage behaves consistently across the two retrieval paradigms. Since blind QE had already proved to help dense retrieval while harming BM25 without repetition, CSQE was evaluated on both retrievers independently under the configuration fixed in Section~\ref{sec:meth_csqe}. Table~\ref{tab:csqe_main} places both results against their own baselines and against the no-QE hybrid.
 
 \begin{table}[htbp]
     \centering
@@ -608,7 +555,7 @@ BM25+CSQE achieved 0.6157 NDCG@10, representing a +33.2\% improvement over BM25 
 \subsection{Component Ablation}
 \label{sec:res_csqe_ablation}
 
-Table~\ref{tab:csqe_ablation} presents the ablation results isolating the contributions of corpus-grounded and blind expansion components.
+The CSQE configuration adopted here draws two corpus-grounded samples and two blind samples for every query, so the headline result above is a property of the mixture rather than of corpus grounding on its own. Establishing which component does the work---and whether the two are genuinely complementary or merely redundant---requires holding the total sample budget fixed at four and varying only their composition. Table~\ref{tab:csqe_ablation} compares the balanced 2+2 configuration against the two extremes.
 
 \begin{table}[htbp]
     \centering
@@ -653,12 +600,12 @@ Performance improved monotonically from $\alpha=1$ to $\alpha=4$, but the total 
 \label{sec:res_csqe_hybrid}
 %======================================================================
 
-This section presents the results of combining CSQE with hybrid BM25--Dense fusion, following the retriever-specific application methodology described in Section~\ref{sec:meth_csqe_config}.
+Two independent gains have now been established: hybrid fusion raises NDCG@10 to 0.6267 without touching the query, and CSQE raises BM25 to 0.6157 without a second retriever. Combining them is the obvious next step, but it raises a question the literature does not settle---which retriever should receive the expanded query. The intuitive answer is both, on the reasoning that a better query benefits any retriever. The evidence of Section~\ref{sec:res_csqe_main}, where the Dense retriever gained less from CSQE than BM25 did, suggests otherwise. Section~\ref{sec:res_csqe_configs} therefore evaluates all three assignments of the expanded query to the two retrievers, and Section~\ref{sec:res_progression} consolidates the resulting system against every configuration reported earlier in this chapter.
 
 \subsection{Fusion Configuration Comparison}
 \label{sec:res_csqe_configs}
 
-Table~\ref{tab:csqe_hybrid_configs} presents the results for all three CSQE application strategies combined with both fusion methods.
+The three possible assignments---expanding the BM25 side only, the Dense side only, or both---were each evaluated under both fusion methods, following the methodology of Section~\ref{sec:meth_csqe_config}. Because RRF combines ranks rather than scores, it rewards ranked lists that disagree with one another, which makes the assignment question genuinely open: an expansion that improves a retriever in isolation may still weaken the fused result if it makes the two lists converge. Table~\ref{tab:csqe_hybrid_configs} reports all six combinations against the no-QE hybrid.
 
 \begin{table}[htbp]
     \centering
@@ -721,16 +668,12 @@ Table~\ref{tab:config_a_alpha} presents the effect of the query repetition facto
     \end{tabular}
 \end{table}
 
-The $\alpha$ parameter was nearly flat for the final fused system: the $\alpha=1$ result (0.7123) was only 0.0014 below $\alpha=4$ (0.7137). This was consistent with Table~\ref{tab:alpha_sweep} (BM25-alone $\alpha$ sweep): once CSQE expansion was combined with a strong dense run via RRF, the $\alpha$ parameter had negligible effect. The $\alpha=4$ configuration was reported as the primary result because it matched the original CSQE experimental settings, but $\alpha=1$ would be preferable for a production deployment (one fewer token per expanded query). Figure~\ref{fig:progression} summarises the full progression from baselines to the best system.
+The $\alpha$ parameter was nearly flat for the final fused system: the $\alpha=1$ result (0.7123) was only 0.0014 below $\alpha=4$ (0.7137). This was consistent with Table~\ref{tab:alpha_sweep} (BM25-alone $\alpha$ sweep): once CSQE expansion was combined with a strong dense run via RRF, the $\alpha$ parameter had negligible effect. The $\alpha=4$ configuration was reported as the primary result because it matched the original CSQE experimental settings, but $\alpha=1$ would be preferable for a production deployment (one fewer token per expanded query).
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{fig_4_11_progression_v2_annot.pdf}
-  \caption[System progression to the best system]{Progression of NDCG@10 from the BM25 baseline (0.462) through intermediate query-enhancement steps to the best system, BM25-only-expanded with RRF fusion, at 0.714. Annotations on each bar report the gain over the best previous configuration.}
-  \label{fig:progression}
-\end{figure}
+\subsection{Overall System Progression}
+\label{sec:res_progression}
 
-Table~\ref{tab:delta_analysis} summarises the NDCG@10 improvements of BM25-expanded RRF over all prior systems.
+The BM25-expanded RRF configuration identified above is the final system of this thesis. Its standing is best judged not against a single baseline but against every intermediate configuration that preceded it, since each of those represents a design choice that could plausibly have been the endpoint: a stronger retriever, a better generator, blind expansion, fusion without expansion, or expansion without fusion. Quantifying the margin over each in turn shows how much of the total gain is attributable to which decision. Table~\ref{tab:delta_analysis} reports those margins.
 
 \begin{table}[htbp]
     \centering
@@ -754,33 +697,14 @@ Table~\ref{tab:delta_analysis} summarises the NDCG@10 improvements of BM25-expan
     }
 \end{table}
 
-All three CSQE fusion configurations exceeded the no-QE hybrid baseline. The +0.0870 improvement of BM25-expanded over the hybrid baseline (+13.9\%) isolated the contribution of CSQE beyond what hybrid fusion alone provides.
+All three CSQE fusion configurations exceeded the no-QE hybrid baseline, so the choice of assignment determines the size of the gain rather than whether one exists. The +0.0870 margin of BM25-expanded over that hybrid (+13.9\%) is the most informative single number in the table, because both systems fuse the same two retrievers over the same corpus and differ only in whether the BM25 side receives a corpus-steered query. It therefore isolates the contribution of CSQE from the contribution of fusion. Figure~\ref{fig:progression} places this final margin in the context of the whole development sequence.
 
-\subsection{Overall System Progression}
-\label{sec:res_progression}
-
-Table~\ref{tab:system_progression} summarises the NDCG@10 progression from the baseline through each stage of pipeline development.
-
-\begin{table}[htbp]
-    \centering
-    \caption{NDCG@10 progression from baseline to best system on the MIRACL Arabic dev set (2,896 queries). $\Delta$ cumulative measured from BM25S baseline.}
-    \label{tab:system_progression}
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{@{}llcc@{}}
-        \toprule
-        \textbf{Stage} & \textbf{System} & \textbf{NDCG@10} & \textbf{$\Delta$ cumul.} \\
-        \midrule
-        Baseline & BM25S alone & 0.4621 & --- \\
-        Baseline & mDPR alone & 0.4993 & --- \\
-        Blind QE & Best blind Dense (Aya 8B, $n=1$) & 0.6164 & +23.5\% over mDPR \\
-        Blind QE & Best blind BM25 (Aya 8B, $\beta=2$) & 0.5855 & +26.7\% over BM25 \\
-        Hybrid & Hybrid RRF $k=20$ (no QE) & 0.6267 & +35.6\% over BM25 \\
-        CSQE alone & BM25+CSQE & 0.6157 & +33.2\% over BM25 \\
-        \textbf{CSQE+Hybrid} & \textbf{BM25-expanded: BM25+CSQE + Dense RRF} & \textbf{0.7137} & \textbf{+54.5\% over BM25} \\
-        \bottomrule
-    \end{tabular}
-    }
-\end{table}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_4_11_progression_v2_annot.pdf}
+  \caption[System progression to the best system]{Progression of NDCG@10 from the BM25 baseline (0.462) through intermediate query-enhancement steps to the best system, BM25-only-expanded with RRF fusion, at 0.714. Annotations on each bar report the gain over the best previous configuration.}
+  \label{fig:progression}
+\end{figure}
 
 The progression demonstrated a consistent improvement through three stages of pipeline development. Blind QE improvements (Sections~\ref{sec:res_query2doc} and \ref{sec:res_repetition}) confirmed that LLM-generated pseudo-documents are effective for Arabic information retrieval. The hybrid baseline (Section~\ref{sec:res_hybrid}) established that lexical and semantic retrieval are complementary. CSQE (Section~\ref{sec:res_csqe}) introduced corpus grounding that outperformed blind QE on BM25. The final combination of corpus-steered expansion applied asymmetrically to hybrid retrieval (BM25-expanded RRF) achieved 0.7137 NDCG@10---a 54.5\% improvement over BM25 alone and a 42.9\% improvement over mDPR alone. Recall@100 = 0.9734 indicated that 97.3\% of relevant documents appeared within the top 100 candidates, establishing a strong upper bound for downstream reranking.
 
@@ -789,16 +713,16 @@ The progression demonstrated a consistent improvement through three stages of pi
 \label{sec:res_error_csqe}
 %======================================================================
 
-This section presents the per-query error analysis described in Section~\ref{sec:meth_error_csqe}, decomposing the CSQE improvement to identify where corpus-steered expansion helps and where it introduces regressions.
+Corpus-level metrics establish that the final system is better, but not why, nor for which queries, nor at what cost. A mean improvement of +0.1890 NDCG@10 could equally describe a method that lifts every query slightly or one that transforms a subset while damaging others. Because the two profiles imply different deployment risks and different directions for future work, the per-query analysis described in Section~\ref{sec:meth_error_csqe} decomposes the aggregate gain along four dimensions: the overall win and loss distribution, the conditions that modulate the size of the gain, the mechanism behind the largest wins, and the causes of the regressions.
 
 \subsection{Win/Loss Distribution}
 \label{sec:res_win_loss}
 
-Table~\ref{tab:error_distribution} presents the per-query win/loss distribution.
+A corpus-level gain of +0.1890 NDCG@10 is compatible with two very different underlying behaviours: a small uniform improvement spread evenly over every query, or a large improvement on some queries paid for partly by losses on others. The distinction matters for deployment, because a method that rescues many queries while damaging a few is not interchangeable with one that helps everything slightly. Comparing the final system against the blind baseline query by query separates these cases. Table~\ref{tab:error_distribution} reports the resulting win, loss, and tie counts.
 
 \begin{table}[htbp]
     \centering
-    \caption{Per-query comparison of the CSQE+Hybrid system (BM25-expanded RRF) against the Aya blind BM25 $n=1$ baseline (0.5046 NDCG@10) on 2,896 MIRACL Arabic dev queries. The system's per-query-mean NDCG@10 is 0.6936; this is computed over individual queries and differs slightly from the corpus-level headline of 0.7137 reported in Table~\ref{tab:system_progression}, which is produced by the official pooled evaluation.}
+    \caption{Per-query comparison of the CSQE+Hybrid system (BM25-expanded RRF) against the Aya blind BM25 $n=1$ baseline (0.5046 NDCG@10) on 2,896 MIRACL Arabic dev queries. The system's per-query-mean NDCG@10 is 0.6936; this is computed over individual queries and differs slightly from the corpus-level headline of 0.7137 reported in Table~\ref{tab:full_summary}, which is produced by the official pooled evaluation.}
     \label{tab:error_distribution}
     \begin{tabular}{@{}lcc@{}}
         \toprule
@@ -827,42 +751,7 @@ A total of 258 queries (8.9\%) were classified as failures (CSQE+Hybrid NDCG@10 
 \subsection{First-Pass Quality as the Largest Modulator}
 \label{sec:res_firstpass}
 
-Table~\ref{tab:error_patterns} presents the performance split by BM25 first-pass retrieval quality.
-
-\begin{table}[htbp]
-    \centering
-    \caption{System performance split by whether the BM25 first-pass retrieved a relevant document at rank~1 (top-1, qrel $\geq 1$).}
-    \label{tab:error_patterns}
-    \begin{tabular}{@{}lcccc@{}}
-        \toprule
-        \textbf{First-Pass Quality} & \textbf{$n$} & \textbf{Blind QE NDCG@10} & \textbf{CSQE+Hybrid NDCG@10} & $\Delta$ \\
-        \midrule
-        Relevant doc retrieved & 1,061 & 0.6684 & \textbf{0.8877} & +0.2193 \\
-        No relevant doc retrieved & 1,835 & 0.4100 & 0.5814 & +0.1714 \\
-        \midrule
-        \textbf{All queries} & \textbf{2,896} & \textbf{0.5046} & \textbf{0.6936} & \textbf{+0.1890} \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-Table~\ref{tab:query_length_split} presents the performance decomposition by query length.
-
-\begin{table}[htbp]
-    \centering
-    \caption{System performance decomposed by the number of words in the original MIRACL query, using the 1--3 / 4--8 / 9+ word buckets adopted throughout this thesis.}
-    \label{tab:query_length_split}
-    \begin{tabular}{@{}lccccc@{}}
-        \toprule
-        \textbf{Query Length} & \textbf{$n$} & \textbf{Blind QE} & \textbf{CSQE+Hybrid} & $\Delta$ abs & $\Delta$ rel \\
-        \midrule
-        Short (1--3 words) & 147 & 0.369 & 0.530 & +0.161 & +43.6\% \\
-        Medium (4--8 words) & 2,495 & 0.506 & 0.703 & +0.197 & +38.8\% \\
-        Long (9+ words) & 254 & 0.567 & 0.698 & +0.132 & +23.3\% \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-When first-pass retrieval succeeded (36.6\% of queries), CSQE+Hybrid achieved 0.8877 NDCG@10---near-ceiling retrieval. The first-pass quality gap (+0.3063 between the first-pass success and failure groups) was larger than the overall system advantage over blind QE (+0.1890), confirming that first-pass retrieval quality is the largest single modulator of CSQE effectiveness. Figure~\ref{fig:first_pass_split} visualises this split. The improvement holds across all query lengths (Table~\ref{tab:query_length_split}): short queries (1--3 words, $n=147$) gain the most \emph{proportionally} (+43.6\%), as they are the most underspecified and benefit from both vocabulary expansion and corpus grounding, while medium queries (4--8 words) gain the most in \emph{absolute} terms (+0.197). Long queries (9+ words, $n=254$) still gain (+0.132, +23.3\%) but least, because their greater information content already mitigates the information-poverty problem that motivates query expansion. Figure~\ref{fig:length_gain} shows the per-bucket comparison.
+CSQE grounds its expansion in the passages returned by a BM25 first pass, so the quality of that first pass is a plausible determinant of the quality of the expansion it produces. If the mechanism works as intended, queries whose first pass already surfaces a relevant document should benefit more than those whose first pass does not, and the size of that difference measures how much the method depends on its own starting conditions. Partitioning the development set on whether the top-ranked first-pass document is relevant tests this directly, as shown in Figure~\ref{fig:first_pass_split}.
 
 \begin{figure}[H]
     \centering
@@ -871,6 +760,10 @@ When first-pass retrieval succeeded (36.6\% of queries), CSQE+Hybrid achieved 0.
     \label{fig:first_pass_split}
 \end{figure}
 
+When first-pass retrieval succeeded---1,061 queries, or 36.6\% of the set---CSQE+Hybrid reached 0.8877 NDCG@10 against 0.6684 for blind QE, a gain of +0.2193 and effectively near-ceiling retrieval. For the remaining 1,835 queries the system still improved, from 0.4100 to 0.5814 (+0.1714), so a failed first pass degrades the method without disabling it. The gap of +0.3063 between the two groups' final scores exceeds the system's overall +0.1890 advantage over blind QE, which confirms that first-pass quality is the largest single modulator of CSQE effectiveness and identifies it as the most promising target for future improvement.
+
+The same decomposition applied to query length tests a different claim. Section~\ref{sec:res_error_length} established that the shortest queries are the worst served by the dense baseline, and information poverty was the motivation for adopting expansion in the first place; if that reasoning is sound, the shortest queries should be the ones expansion helps most. Figure~\ref{fig:length_gain} reports the comparison across the three length bands.
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{fig_4_14_lengthgain_v2_grouped.pdf}
@@ -878,32 +771,21 @@ When first-pass retrieval succeeded (36.6\% of queries), CSQE+Hybrid achieved 0.
     \label{fig:length_gain}
 \end{figure}
 
+Every bucket improved. Short queries (1--3 words, $n=147$) rose from 0.369 to 0.530, a relative gain of +43.6\% and the largest proportional improvement of the three, consistent with the information-poverty argument: these queries are the most underspecified and therefore have the most to gain from both added vocabulary and corpus grounding. Medium queries (4--8 words, $n=2{,}495$) gained most in absolute terms, from 0.506 to 0.703 (+0.197), and because they constitute 86\% of the set they dominate the corpus-level result. Long queries (9+ words, $n=254$) improved least, from 0.567 to 0.698 (+0.132, +23.3\%), since their greater intrinsic information content already mitigates the problem expansion is designed to solve. The technique therefore helps most precisely where the error analysis of Section~\ref{sec:res_error} predicted it would.
+
 \subsection{Big Wins: The Corpus Grounding Effect}
 \label{sec:res_bigwins}
 
-Among the 1,061 big-win queries ($\Delta > 0.3$), a recurring pattern was observed: in 463 the blind baseline scored 0.000 while CSQE recovered the query, and in 143 of these the recovery was complete (CSQE NDCG@10 = 1.000). In each such case, blind QE hallucinated a plausible but factually incorrect entity, while CSQE's first-pass corpus document anchored the expansion to the correct Wikipedia article. Table~\ref{tab:bigwin_examples} presents three representative examples.
+Among the 1,061 big-win queries ($\Delta > 0.3$), a recurring pattern was observed: in 463 the blind baseline scored 0.000 while CSQE recovered the query, and in 143 of these the recovery was complete (CSQE NDCG@10 = 1.000). In each such case, blind QE hallucinated a plausible but factually incorrect entity, while CSQE's first-pass corpus document anchored the expansion to the correct Wikipedia article.
 
-\begin{table}[htbp]
-    \centering
-    \caption{Representative big-win queries illustrating the corpus grounding effect. In all three cases, CSQE achieved NDCG@10 = 1.000 while the blind baseline achieved 0.000.}
-    \label{tab:bigwin_examples}
-    \begin{tabular}{@{}p{3.4cm}p{3.4cm}p{3.4cm}c@{}}
-        \toprule
-        \textbf{Query (gloss)} & \textbf{Blind QE generates} & \textbf{CSQE grounds to} & \textbf{CSQE} \\
-        \midrule
-        \<ما هو الرباط المنصوري؟> (``What is al-Ribat al-Mansuri?'') & A surgical ligature/suture used in operations & A Mamluk-era Sufi lodge (\emph{ribat}) endowed by Sultan al-Mansur Qalawun & 1.000 \\
-        \<ما هي الأسماء الخمسة؟> (``What are the Five Nouns?'') & A list of popular given names (Muhammad, Adam, Ibrahim, \ldots) & The Arabic grammatical category of the Five Nouns (\<أب>, \<أخ>, \<حم>, \<فو>, \<ذو>) & 1.000 \\
-        \<ما هو الفن الجزيري؟> (``What is Insular art?'') & Modern environmental / land art & Insular (Hiberno-Saxon) art of the post-Roman British Isles & 1.000 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+One such case is the query \<ما هو الرباط المنصوري؟> (``What is al-Ribat al-Mansuri?''), where blind QE generated a passage about a surgical ligature while the corpus-grounded expansion correctly anchored the query to a Mamluk-era Sufi lodge endowed by Sultan al-Mansur Qalawun; CSQE scored NDCG@10 = 1.000 against the blind baseline's 0.000. Two further examples of the same pattern, together with the generated content in each case, are given in Table~\ref{tab:bigwin_examples} in Appendix~\ref{app:tab_bigwin}.
 
 This pattern validated the corpus grounding hypothesis: for niche or ambiguous Arabic terms, blind QE confidently generated a common modern interpretation, while corpus grounding locked onto the actual Wikipedia entity. The impact on query expansion was direct: the corpus anchor supplied the correct Arabic vocabulary (e.g.\ \<رباط>، \<مملوكي>، \<قلاوون> for the first example, rather than the surgical terms produced by blind generation) that both BM25 and Dense scoring relied upon. Notably, for all three of these examples the bare query alone---with no expansion at all---already retrieved the correct article; the blind pseudo-document therefore actively \emph{poisoned} a query the retriever had already solved, whereas the corpus-grounded expansion stayed on target and preserved the hit.
 
 \subsection{Regression Analysis}
 \label{sec:res_regressions}
 
-Table~\ref{tab:regression_causes} presents the classification of the 367 regression queries.
+The gains documented above are averages, and 367 queries moved in the opposite direction, losing more than 0.1 NDCG@10 relative to blind expansion. These cases are more diagnostically useful than the wins, because they mark the conditions under which corpus steering is the wrong choice and therefore define the limits of the method. Manual inspection of the full set, cross-referenced against each query's BM25 baseline score, showed that the losses are not uniformly distributed but fall into three regimes separated by how well BM25 handled the query before any expansion was applied. Table~\ref{tab:regression_causes} reports that classification.
 
 \begin{table}[htbp]
     \centering
@@ -920,26 +802,6 @@ Table~\ref{tab:regression_causes} presents the classification of the 367 regress
     \end{tabular}
 \end{table}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\textwidth]{fig_4_15_regtype_v2_donut.pdf}
-    \caption[Regression type breakdown]{Type breakdown of the 367 queries that regress under CSQE+Hybrid ($\Delta < -0.1$). Type A (strong-BM25-hurt-by-expansion) accounts for 52\%, Type B (poisoned first-pass) for 36\%, and Type C (partial BM25) for 12\%.}
-    \label{fig:regression_pie}
-\end{figure}
-
-% Remaining placeholder block (kept for reference; safe to remove):
-\iffalse
-\begin{figure}[htbp]
-    \centering
-    \fbox{\parbox{0.85\textwidth}{\centering\vspace{2em}
-    \textbf{[Figure placeholder: Regression Root-Cause Pie Chart]}\\[0.5em]
-    \small Three-slice pie chart: Type A 52\%, Type B 36\%, Type C 12\%.
-    \vspace{2em}}}
-    \caption{Distribution of regression root causes across 367 queries where CSQE+Hybrid underperformed the blind baseline by more than 0.1 NDCG@10.}
-    \label{fig:regression_pie_old}
-\end{figure}
-\fi
-
 Type~A regressions (52\%, 191 queries) occurred when BM25 already handled the query well (baseline NDCG@10 $\geq 0.3$) and the CSQE expansion introduced Arabic vocabulary from the corpus document that diluted the original query terms. This was the same term-dilution effect observed in Section~\ref{sec:res_term_dilution}, but in reverse: here the expansion itself (rather than the pseudo-document) reduced BM25 precision for queries that were already well handled.
 
 Type~B regressions (36\%, 131 queries) share a common mechanism: the query is short or ambiguous and its surface form collides with an Arabic homonym, personal name, or near-topic entity, so BM25's first pass retrieves the \emph{wrong} entity. CSQE then grounds its expansion on those off-topic documents and the final query misses---even when the model's generation is otherwise clean---whereas blind expansion, which ignores the first pass, often answers correctly. The mode spans three sub-flavours. In a \emph{tokenisation/dialect homonym} (e.g.\ ``\<ماهو التطرف؟>'', ``what is extremism?''), four of the five first-pass documents match the token ``\<ماهو>'' and surface a southern-dialect article, a song, a novel, and an Iranian village rather than the extremism article, because ``\<ماهو>'' collides with a dialectal phrase rather than the intended interrogative ``\<ما هو>''. In a \emph{personal-name homonym} (e.g.\ ``\<متى ولد نجيب محفوظ؟>''), the first pass retrieves a different ``\<نجيب باشا محفوظ>''---a physician, not the novelist. In a \emph{wrong-entity / near-topic collision} (e.g.\ ``\<من هو مصمم موقع ويكيبيديا؟>''), the first pass returns an article on Wikipedia's ban in Turkey, leading the expansion to ground on an unrelated entity. In each case it is the first-pass error, not the generation, that drives the regression.
@@ -951,42 +813,6 @@ The remaining 12 per cent (Type~C) fall in an intermediate band in which the BM2
 \label{sec:res_summary}
 %======================================================================
 
-Table~\ref{tab:full_summary} provides a consolidated view of all experiments conducted in this research, gathered here so that the full progression can be read at a glance after the individual results have been presented.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and CSQE. Bold values indicate the best result for each metric across all experiments.}
-    \label{tab:full_summary}
-    \resizebox{\textwidth}{!}{%
-    \begin{tabular}{@{}llcccc@{}}
-        \toprule
-        \textbf{Model / Method} & \textbf{Retriever} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{MRR} & \textbf{Status} \\
-        \midrule
-        \multicolumn{6}{@{}l}{\textit{Baselines}} \\
-        None (baseline) & Dense & 0.4993 & 0.6156 & 0.5328 & Baseline \\
-        None (baseline) & BM25 & 0.4621 & 0.5964 & 0.4836 & Baseline \\
-        None (baseline) & BM25+Dense (RRF) & 0.6267 & 0.7597 & 0.6517 & Best no-QE \\
-        \midrule
-        \multicolumn{6}{@{}l}{\textit{Initial Query2Doc experiments}} \\
-        Qwen 2.5 3B & Dense & 0.5435 & 0.6608 & 0.5742 & OK \\
-        Qwen 2.5 3B & BM25 & 0.4090 & 0.5384 & 0.4342 & Degraded \\
-        Falcon-H1 3B & Dense & 0.5359 & 0.6484 & 0.5681 & OK \\
-        Jais-2 8B & Dense & 0.6018 & 0.7161 & 0.6356 & Good \\
-        Jais-2 8B & BM25 & 0.5122 & 0.6448 & 0.5397 & Best BM25 (n=1) \\
-        Qwen3-4B & Dense & 0.5691 & 0.6824 & 0.6015 & Good \\
-        ALLaM 7B & Dense & 0.2550 & 0.3335 & 0.2708 & Dropped \\
-        Aya 8B & Dense & 0.6164 & 0.7256 & 0.6493 & Best Dense (blind) \\
-        Aya 8B & BM25 & 0.5046 & 0.6284 & 0.5377 & Good \\
-        \midrule
-        \multicolumn{6}{@{}l}{\textit{Expanded experiments}} \\
-        Aya 8B ($\beta=2$) & BM25 & 0.5855 & 0.7128 & 0.6165 & Best BM25 (rep.) \\
-        Hybrid RRF $k=20$ & BM25+Dense & 0.6267 & 0.7597 & 0.6517 & Best no-QE hybrid \\
-        BM25+CSQE & BM25 & 0.6157 & 0.7447 & 0.6380 & Good \\
-        Dense+CSQE & Dense & 0.5915 & 0.7073 & 0.6225 & Good \\
-        \textbf{BM25-expanded RRF} & \textbf{BM25+Dense} & \textbf{0.7137} & \textbf{0.8363} & \textbf{0.7362} & \textbf{Best overall} \\
-        \bottomrule
-    \end{tabular}
-    }
-\end{table}
+The experiments in this chapter were reported in the order they were conducted, each one motivated by the outcome of the last. Read that way the argument is cumulative but dispersed, and the relative standing of any two configurations is not always adjacent on the page. Table~\ref{tab:full_summary} in Appendix~\ref{app:tab_summary} therefore gathers every experiment into a single view, grouped by phase, so that the full progression can be assessed at a glance now that the individual results and their reasoning have been established.
 
 The experimental results demonstrate a progression from individual retriever baselines through blind QE, hybrid fusion, and finally corpus-steered expansion combined with hybrid retrieval. The best system (BM25-expanded RRF: BM25+CSQE + Dense original query) achieved 0.7137 NDCG@10---a 54.5\% improvement over the BM25 baseline and a 13.9\% improvement over the no-QE hybrid system. The detailed results of each experiment were presented in Sections~\ref{sec:res_repetition}--\ref{sec:res_error_csqe} above.

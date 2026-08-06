@@ -2,6 +2,8 @@
 
 **Task:** D2 (Phase D), `research_decisions/THESIS_FINAL_SUBMISSION_TASKS.md`
 **Owner:** Osman · **Run:** 2026-08-02 · **Status:** analysis only — no `.tex`, notebook, or figure was modified.
+**REVIEWED AND DECIDED 2026-08-02 by Osman + Elhaj.** §0.5 below is the authoritative decision list and **overrides the recommendations in §2–§5 wherever they differ**. The original analysis is left intact as the record of why each call was on the table.
+**✅ EXECUTED 2026-08-02.** All decisions have been applied to the thesis — appendices A/B/C created, main-text moves and stubs done, build verified (0 errors, 0 undefined refs). See the D3 entry in `THESIS_FINAL_SUBMISSION_TASKS.md`. **Deviations from §0.5, on Osman's instruction:** no `License` column was added to Table 2.3 (⚠️-A declined); Table 4.22 was already deleted by the team, so Table 4.28 moved to Appendix B without a replacement inline (TAB-4a's second half is moot — the progression is carried by Figure~4.11).
 **Feeds:** D3 (build the code appendix), D5 (conciseness pass), D4 (clean repo), E3 (table audit).
 **Consumes:** `research_decisions/E1_FIGURE_TABLE_DUPLICATION_REPORT.md` (its keep/drop verdicts are taken as settled and are **not** re-litigated here).
 
@@ -17,9 +19,77 @@
 2. **Consequence:** D5 does *not* get to be gentle. E1's closing advice ("these cuts buy margin, they are not rescuing a violation") was based on a stale build and should be reversed. With a 5-page safety margin we need to free **≈10 pages**.
 3. **The single biggest lever is not a table — it is §2.4's per-model prose** (≈4.5 pages of "exhaustive per-model listings" for 10 models). It is the purest instance of what Dr. Tahani described, and Phase A already de-scoped model characteristics as a contribution (task A2 removed *"and what model characteristics determine effectiveness"* from the RQ). Moving the detail cards to an appendix is both a page win and a narrative fix. **≈3.5 pages net.**
 4. **Two live layout defects found while sizing tables** (§3.6): **Table 4.28 overflows the right text margin** — the `Status` column is clipped mid-word in the compiled PDF ("Baselin", "Droppe", "Best ove") — and it sits nearly alone on p.96 under half a page of whitespace. **Table 2.1's rules also run past the right margin** on p.14. Both are moot if the tables move, which is a further argument for moving them.
-5. **Code appendix: 8 snippets, ≈500 lines, ≈11–12 pages.** Recommended set covers exactly the five reproducibility claims named in the brief. Everything else — 11 near-identical generator notebooks, the plotting cells, the Colab plumbing, and ~520 lines of contrastive-HyDE code that **does not appear in the thesis at all** — stays repo-only.
-6. **One cross-report conflict to resolve before D3/D5 run:** E1 says drop Table 4.22 because Table 4.28 already carries it. This report proposes moving Table 4.28 to the appendix. Doing both silently would delete the system-progression numbers from the main text entirely. **Resolution proposed in TAB-4; needs an explicit yes.**
+5. ~~**Code appendix: 8 snippets, ≈500 lines, ≈11–12 pages.**~~ → **DECIDED: 4 snippets, ≈165–255 lines, ≈4–6 pages** (§0.5). The team excluded fusion, evaluation, retrieval and first-pass code; Appendix C now covers the CSQE prompts, config and assembly logic only. Everything else — 11 near-identical generator notebooks, the plotting cells, the Colab plumbing, and ~520 lines of contrastive-HyDE code that **does not appear in the thesis at all** — stays repo-only.
+6. ~~**One cross-report conflict to resolve before D3/D5 run**~~ → **RESOLVED: TAB-4a.** Table 4.28 moves to the appendix and **Table 4.22 stays inline**. ⚠️ **E1's action list contains `DELETE … tab:system_progression (Tab 4.22)` — that line must be SKIPPED when D5 executes it**, or Ch.4 loses the system-progression numbers entirely.
 7. **`\appendix` will not work out of the box.** `1-main.tex:40-45` hardcodes the chapter label as `Chapter \thechapter`, so appendices will render **"Chapter A"**, and `\chaptermark` (line 32) will put "Chapter A - …" in every running header. `listings` is not loaded either. Concrete fixes for D3 in §2.4.
+
+---
+
+## 0.5 DECISIONS APPLIED — 2026-08-02 (authoritative)
+
+Reviewed by both team members. This section supersedes §2–§5 where they differ.
+
+### Appendix structure — REORDERED (narrative flow, not the order proposed in §5.1)
+
+```
+Appendix A — Model Details            Table 2.4 + §2.4.1-2.4.2 prose + §3.5.4      ≈ 6 pp
+Appendix B — Extended Result Tables   Tables 4.12, 4.14 full sweep, 4.28, 4.26     ≈ 3 pp
+Appendix C — Implementation Code      4 snippets, CSQE + prompts only              ≈ 4-6 pp
+```
+
+### Tables and main-text cuts
+
+| ID | Decision | vs. report |
+|---|---|---|
+| **TAB-1** | Table 4.26 → **Appendix B**. Replace inline with a 1–2 sentence stub using the al-Ribat al-Mansuri example. | as recommended ✔ |
+| **TAB-2** | Table 4.12 → **Appendix B**. Fig 4.8 + Table 4.13 stay inline and carry §4.6. | as recommended ✔ |
+| **TAB-3** | Table 4.14 → 5-row inline stub (2 baselines, best CC α=0.5, RRF k=20, RRF k=60); full 13-row sweep → **Appendix B**. | as recommended ✔ |
+| **TAB-4a** | Table 4.28 → **Appendix B**; **Table 4.22 stays inline** in §4.9.2 so Ch.4 keeps the 0.4621 → 0.7137 progression. **Overrides E1's delete of Table 4.22.** | as recommended ✔ |
+| **TAB-5** | **REVERSED.** **Keep Table 2.3 inline**; move **Table 2.4** (full summary, licences, architecture) → **Appendix A**. | report recommended the opposite ✖ |
+| **MISC-1** | §2.4.1–2.4.2 per-model prose (~4.5 pp) → **Appendix A**. Leave a concise selection-criteria paragraph inline beside Table 2.3. | approved ✔ |
+| **MISC-2** | §3.5.4 model-specific technical issues → **Appendix A**. Leave a 2-sentence pointer inline. | approved ✔ |
+| **MISC-3** | §3.5.5 Quantisation Strategy **stays inline**. | as recommended ✔ |
+
+### Code appendix — REDUCED to four items
+
+**Included in Appendix C:**
+
+| ID | Item | Lines |
+|---|---|---|
+| **CODE-1** | CSQE system prompt + one-shot construction (`exp_013` cell 10) | ~62 |
+| **CODE-P** | **NEW** — Query2Doc/QE system prompt, *moved out of Ch.3* (see below) | ~15 |
+| **CODE-2** | CSQE core query-repetition and assembly logic (`exp_013` cell 12) | ~150, or ~60 trimmed — see ⚠️-C |
+| **CODE-3** | CSQE configuration and hyperparameters (`exp_013` cell 5) | ~28 |
+| | **Total** | **~255** (or ~165 trimmed) |
+
+**Now excluded** (were CODE-4 … CODE-9 in §2.1): first-pass retrieval + truncation, **hybrid fusion RRF/CC**, query-repetition helpers, the pytrec_eval evaluation harness, the BM25S/mDPR `search()` methods, and batched pseudo-document generation. Fusion was excluded by explicit decision.
+
+### New main-text cut (not in the original report)
+
+**CUT-P · Remove the system-prompt quote blocks from Chapter 3** → their content lives in Appendix C instead.
+- Two blocks exist, both `\begin{quote}`: **`chapter3.tex:198–200`** (§3.4.3 LLM Configuration — the Query2Doc prompt, *"You are asked to write a passage that answers the given query…"*) and **`chapter3.tex:444–446`** (§3.8.1 — the CSQE prompt, *"You are an information retrieval assistant…"*).
+- **Honest sizing: this saves ≈0.15 page, not more.** Each block is ~3 rendered lines plus float spacing. Its value is consolidating the prompts into Appendix C, not page budget. Recorded so nobody expects a page from it.
+- ⚠️ Keep at least a one-clause description of each prompt's *intent* inline — §3.8.1's surrounding argument (extract vs. generate freely) and the one-shot disclosure at `chapter3.tex:452` both depend on the reader knowing what the prompt asked for.
+
+### Verification outcomes
+
+- **Table 4.28 right-margin overflow** — resolved by the move to Appendix B, with width/formatting set appropriately there. (E3 need not fix it inline.)
+- **Table 2.1 (p. 14) overflow** — **confirmed**. Must be fixed inline with `tabularx` or a font-size reduction. → E3.
+- **Arabic `k-t-b` morphology rendering (§2.1.5)** — **checked in `1-main.pdf`: renders correctly** (`ك-ت-ب`). ⚠️-6 in §7 was a **false alarm from the page-image extraction, not a defect**. No fix needed. Struck below.
+
+### ⚠️ Three consequences of these decisions that D3 must handle
+
+**⚠️-A · Chapter 2 will assert a licence criterion with no licence evidence left inline.**
+`chapter2.tex:286` states models were selected partly on *"open weights under a licence permitting research use, whether permissive or non-commercial"*, and `chapter5.tex:51` raises Aya's CC-BY-NC as a named Challenge. **Table 2.4 is the only table carrying a License column** — and TAB-5 moves it to Appendix A. The per-model prose that states individual licences (`ch2:315` Apache 2.0, `ch2:324`, `ch2:341` Qwen Research License) is moved by MISC-1 in the same pass. After both, nothing inline supports either claim.
+**Cheapest fix: add a `License` column to Table 2.3** (which stays inline) when D3 executes TAB-5. One column, no page cost.
+
+**⚠️-B · Appendix C no longer contains the retrieval or fusion pipeline.**
+The meeting named *"the CSQE implementation **and the retrieval/fusion pipeline**"* as the code for the appendix; excluding fusion reverses that half. The resulting appendix documents how the expanded query is *built* but not how it is *scored or fused* — and RRF *k*=20 is what turns 0.6157 into the 0.7137 headline. Flagging once, not re-litigating: **the decision is applied as given.** If a committee member asks "where is the fusion code", the answer is the D4 repo link (Appendix C's closing section), which makes that link load-bearing rather than decorative.
+
+**⚠️-C · CODE-2's scope needs one word from you.** The decision names it *"Core Query Repetition & Assembly Logic"*, which is narrower than the §2.1 proposal (the whole `CSQEEnhancer` batch path, ~150 lines). Two readings:
+- **Narrow (~60 lines):** `batch_enhance()` only — prompt assembly, the four generation calls, and the `(query + ' ') * alpha + ' '.join(all_exps)` line. Matches the wording and keeps Appendix C tight.
+- **Full (~150 lines):** adds `get_retrieved_docs()` and `batch_generate()` — the batching/padding machinery.
+**Recommendation: narrow.** It contains the α=4 assembly that is the actual claim; the batching is engineering. D3 defaults to narrow unless told otherwise.
 
 ---
 
@@ -74,6 +144,8 @@ E1's already-approved high-confidence figure drops supply **≈3.2**. This repor
 ## 2. CODE appendix plan
 
 ### 2.1 Recommended snippets
+
+> **SUPERSEDED — see §0.5.** Only **CODE-1, CODE-2 (narrow), CODE-3** survived review, plus the new CODE-P. CODE-4 through CODE-9 were excluded and are repo-only. The table is kept as the record of what was considered and why.
 
 Ordered as they should appear (pipeline order). "Lines" = source lines now → estimated lines after stripping `print()` diagnostics, Colab paths, and banner comments.
 
@@ -137,7 +209,9 @@ Minimal setup for `1-main.tex` (goes **before** `hyperref`):
 3. **`\appendix` will print "Chapter A".** `1-main.tex:40-45` hardcodes the label: `\titleformat{\chapter}[block]{…}{Chapter \thechapter}{0pt}{…}`. After `\appendix`, `\thechapter` becomes `A`. D3 must re-issue `\titleformat` with `Appendix \thechapter` after the `\appendix` command, **and** redefine `\chaptermark` (line 32, currently `Chapter \thechapter\ - #1`) or every appendix running header will read "Chapter A - …".
 4. **Long lines exceed the 1-inch-margin text block.** `breaklines=true` is not optional here — `CONFIG` values and the `CSQE_ONE_SHOT` string both run long.
 
-### 2.4 Appendix A page estimate
+### 2.4 Appendix page estimate
+
+> **SUPERSEDED — see §0.5.** With only four snippets the code appendix is **≈4 pp (narrow CODE-2) or ≈6 pp (full)**, not 12. It is now **Appendix C**, not A. The line-per-page calibration below still holds and is what those figures are derived from.
 
 Text block is 700.5 pt tall. At `\footnotesize` (10 pt on a 12 pt baseline) with single spacing that is ~58 lines/page; allow ~50 after frames, section headings and the one-paragraph intro each snippet needs.
 
@@ -206,7 +280,9 @@ The meeting phrase maps to three different tables. Recommendation per candidate:
 
 **TAB-5 · Table 2.3 vs Table 2.4 — near-duplicate model tables** (pp. 21 and 27) → **merge, one goes**
 - Inherited from E1 §5.6 as a hand-off, not a verdict. Both list the same 10 models 6 pages apart in the same chapter; overlapping columns (params, Arabic focus, multilingual coverage). Table 2.4 additionally carries Developer, Architecture and Licence — including the CC-BY-NC flag that Ch. 5's licence caveat depends on.
-- **Recommendation: keep Table 2.4** (the superset, and the licence column is load-bearing), **drop Table 2.3**, and repoint `\ref{tab:models_used}` at §2.4's opening to Table 2.4. **Saving ≈0.30 page.**
+- ~~**Recommendation: keep Table 2.4** (the superset, and the licence column is load-bearing), **drop Table 2.3**~~
+- 🔄 **DECIDED — REVERSED (2026-08-02): keep Table 2.3 inline, move Table 2.4 → Appendix A.1.** Saving **≈0.35 page** (slightly more than the original recommendation, since Table 2.4 is the larger of the two).
+- ⚠️ **The licence column goes with it — see ⚠️-A in §0.5.** `chapter2.tex:286` asserts a licence selection criterion and `chapter5.tex:51` raises Aya's CC-BY-NC as a named Challenge; Table 2.4 is the only table carrying a `License` column, and MISC-1 simultaneously moves the per-model prose that states individual licences. **D3 must add a `License` column to Table 2.3** in the same edit. `\ref{tab:model_comparison}` (`chapter2.tex:394`) must be repointed at Appendix A.1; `\ref{tab:models_used}` is unaffected.
 - ⚠️ Table 2.1 (p. 14, QE papers reviewed) **also overflows the right margin** — its rules extend past the text block. Not an appendix candidate (13 rows of literature at `\scriptsize`, ≈0.45 page, and it is the evidence for §2.5's gap claim) — but it needs a width fix in E3.
 
 ### 3.3 Tables explicitly NOT recommended for the appendix
@@ -245,113 +321,126 @@ The meeting phrase maps to three different tables. Recommendation per candidate:
 
 ## 5. Final recommendation
 
-### 5.1 Proposed appendix structure
+### 5.1 Appendix structure — AS DECIDED
 
 ```
-Appendix A — Implementation Code                                  ≈ 12 pp
-  A.1  Corpus-Steered Query Expansion: prompt construction        CODE-1
-  A.2  CSQE generation and query assembly                         CODE-2
-  A.3  CSQE experimental configuration                            CODE-3
-  A.4  First-pass retrieval and document truncation               CODE-4
-  A.5  Hybrid fusion: reciprocal rank fusion and convex comb.     CODE-5
-  A.6  Query repetition (fixed and MuGI-adaptive)                 CODE-6
-  A.7  Evaluation harness (pytrec_eval)                           CODE-7
-  A.8  Retrieval baselines: BM25S and mDPR                        CODE-8
-  A.9  Batched pseudo-document generation  [optional]             CODE-9
-  A.10 Source code repository                                     → D4 link
+Appendix A — Model Details                                        ≈ 6 pp
+  A.1  Summary of language models        (Table 2.4)      [TAB-5, reversed]
+  A.2  Per-model descriptions            (§2.4.1-2.4.2)   [MISC-1]
+  A.3  Model-specific technical issues   (§3.5.4)         [MISC-2]
 
-Appendix B — Extended Result Tables                               ≈ 2 pp
-  B.1  BM25 query repetition: full 9 x 8 sweep       (Table 4.12)
-  B.2  Hybrid fusion: full CC alpha-sweep            (Table 4.14 rows)
+Appendix B — Extended Result Tables                               ≈ 3 pp
+  B.1  BM25 query repetition: full 9 x 8 sweep       (Table 4.12)  [TAB-2]
+  B.2  Hybrid fusion: full CC alpha-sweep            (Table 4.14)  [TAB-3]
   B.3  Summary of all experiments                    (Table 4.28)  [TAB-4a]
-  B.4  Representative big-win queries                (Table 4.26)
+  B.4  Representative big-win queries                (Table 4.26)  [TAB-1]
 
-Appendix C — Model Details                                        ≈ 5 pp
-  C.1  Per-model descriptions                        (§2.4.1-2.4.2)  [MISC-1]
-  C.2  Model-specific technical issues               (§3.5.4)        [MISC-2]
+Appendix C — Implementation Code                                  ≈ 4-6 pp
+  C.1  CSQE system prompt and one-shot construction   CODE-1   ~62 L
+  C.2  Query expansion system prompt                  CODE-P   ~15 L   [CUT-P]
+  C.3  CSQE query repetition and assembly logic       CODE-2   ~60 L (narrow)
+  C.4  CSQE configuration and hyperparameters         CODE-3   ~28 L
+  C.5  Source code repository                         -> D4 link  [load-bearing, see WARN-B]
 ```
 
-### 5.2 Projected core page count
+*Appendix C at ~165 lines (narrow CODE-2) ≈ 4 pp; at ~255 lines (full CODE-2) ≈ 6 pp.*
+
+### 5.2 Projected core page count — AS DECIDED
 
 | Stage | Δ | Core |
 |---|---|---|
 | **Now** | | **105.0** |
-| E1 high-confidence figure drops (already agreed, minus Tab 4.22 — see TAB-4a) | −2.9 | 102.1 |
+| E1 high-confidence figure drops — **minus the Table 4.22 delete, which TAB-4a cancels** | −2.90 | 102.1 |
 | TAB-1 Table 4.26 → B.4 | −0.40 | 101.7 |
 | TAB-2 Table 4.12 → B.1 | −0.42 | 101.3 |
-| TAB-3 Table 4.14 shrink → B.2 | −0.24 | 101.1 |
-| TAB-4a Table 4.28 → B.3 (keeping 4.22 inline) | −0.50 | 100.6 |
-| TAB-5 drop Table 2.3 | −0.30 | 100.3 |
-| MISC-1 §2.4 per-model prose → C.1 | −3.50 | 96.8 |
-| MISC-2 §3.5.4 → C.2 | −0.80 | **96.0** |
-| E1 medium-confidence set (Fig 4.3, Table 4.4 → prose) | −0.66 | **95.3** |
+| TAB-3 Table 4.14 shrink → B.2 | −0.24 | 101.0 |
+| TAB-4a Table 4.28 → B.3 (Table 4.22 kept inline) | −0.50 | 100.5 |
+| **TAB-5 (reversed)** Table 2.4 → A.1, Table 2.3 kept inline | −0.35 | 100.2 |
+| MISC-1 §2.4 per-model prose → A.2 | −3.50 | 96.7 |
+| MISC-2 §3.5.4 → A.3 | −0.80 | 95.9 |
+| **CUT-P** prompt quote blocks → C.1/C.2 | −0.15 | **95.7** |
+| E1 medium-confidence set (Fig 4.3; Table 4.4 → prose) | −0.66 | **95.1** |
 | **D5 conciseness pass** | not estimated here | **< 95** |
 
-**≈ 96 pages after D2 + E1 alone — 4 under the limit before D5 does any work.** With D5, a 6–8 page margin is realistic.
+**≈ 95.7 pages after D2 + E1 — 4.3 under the limit before D5 does any work.** With D5, a 6–8 page margin is realistic.
 
-### 5.3 Minimum set — "do these first"
+*Arithmetic note: TAB-5's reversal is worth slightly more than the original recommendation (Table 2.4 ≈0.35 page vs Table 2.3 ≈0.30), so the projection improved from 96.0 to 95.7 despite nothing else changing. E1's medium set is counted as 0.66, not its stated 1.3 — its other two items (Tables 4.12 and 4.14) are already counted as TAB-2/TAB-3 and must not be double-counted.*
 
-If we want the least disruption that still lands safely under 100:
+### 5.3 Execution order for D3
 
-| # | Item | Δ | Running |
-|---|---|---|---|
-| 1 | **E1 high-confidence figure drops** — already analysed and agreed, zero new decisions | −2.9 | 102.1 |
-| 2 | **MISC-1 §2.4 per-model prose → Appendix C** — one move, biggest payoff, also fixes Phase-A framing | −3.5 | 98.6 |
-| 3 | **TAB-4a Table 4.28 → Appendix B** — also fixes the margin overflow | −0.5 | 98.1 |
-| 4 | **TAB-2 Table 4.12 → Appendix B** — E1 already flagged it | −0.42 | 97.7 |
-| 5 | **TAB-1 Table 4.26 → Appendix B** — explicitly named in the meeting | −0.40 | **97.3** |
+All items are approved, so this is a sequencing aid rather than a triage list. Front-loaded by payoff and by how many other edits each one touches:
 
-**Five actions → ≈97.3 pages.** Everything else (TAB-3, TAB-5, MISC-2, E1's medium set) becomes margin rather than necessity.
+| # | Item | Δ | Running | Note |
+|---|---|---|---|---|
+| 1 | **E1 high-confidence figure drops** | −2.90 | 102.1 | Already analysed; **skip E1's Table 4.22 delete** — TAB-4a keeps it |
+| 2 | **MISC-1** §2.4 prose → A.2 | −3.50 | 98.6 | Biggest single move; do with TAB-5 (same section) |
+| 3 | **TAB-5** Table 2.4 → A.1 | −0.35 | 98.3 | **Add a License column to Table 2.3 in the same edit** (⚠️-A) |
+| 4 | **TAB-4a** Table 4.28 → B.3 | −0.50 | 97.8 | Fix the width when placing it in the appendix |
+| 5 | **TAB-2** Table 4.12 → B.1 | −0.42 | 97.3 | |
+| 6 | **TAB-1** Table 4.26 → B.4 | −0.40 | 96.9 | Write the al-Ribat al-Mansuri stub |
+| 7 | **MISC-2** §3.5.4 → A.3 | −0.80 | 96.1 | Leave the ALLaM pointer — §4.4.3 depends on it |
+| 8 | **TAB-3** Table 4.14 → 5-row stub | −0.24 | 95.9 | Repoint §4.7 observation (c) at Fig 4.10 + B.2 |
+| 9 | **CUT-P** prompt blocks → C.1/C.2 | −0.15 | **95.7** | Keep a one-clause description of each prompt's intent |
 
-If MISC-1 is rejected, the minimum set cannot reach 100 on table moves alone — the remaining table candidates total only ≈1.9 pages against a 5-page deficit, and **D5 would have to find ≈3 pages of pure prose cuts.** That dependency is the single most important thing to decide first.
+**We are under 100 after step 2.** Steps 3–9 are margin.
 
 ---
 
-## 6. Sign-off sheet
+## 6. Sign-off sheet — CLOSED 2026-08-02
 
-Approve or reject line by line. Nothing is applied until both team members initial.
+All items reviewed by Osman + Elhaj. ✅ = approved as proposed · 🔄 = approved with modification · ❌ = rejected.
 
 **Code appendix (→ D3)**
 
-| ID | Item | Osman | Elhaj |
-|---|---|---|---|
-| CODE-1 | CSQE prompts + one-shot example (~62 L) | ☐ | ☐ |
-| CODE-2 | `CSQEEnhancer`, batch path only (~150 L) | ☐ | ☐ |
-| CODE-3 | CSQE `CONFIG` block (~28 L) | ☐ | ☐ |
-| CODE-4 | First-pass + truncation (~40 L), with the caching caveat handled | ☐ | ☐ |
-| CODE-5 | RRF + CC fusion (~70 L) | ☐ | ☐ |
-| CODE-6 | Query repetition assembly (~25 L) | ☐ | ☐ |
-| CODE-7 | `RetrievalEvaluator` / pytrec_eval (~70 L) | ☐ | ☐ |
-| CODE-8 | BM25S + mDPR `search()` (~80 L) | ☐ | ☐ |
-| CODE-9 | `enhance_batch_parallel()` — optional (~65 L) | ☐ | ☐ |
-| CODE-X | Accept the exclusion list in §2.2 | ☐ | ☐ |
-| CODE-L | `listings` + the four fixes in §2.3 | ☐ | ☐ |
+| ID | Item | Outcome |
+|---|---|---|
+| CODE-1 | CSQE prompts + one-shot example (~62 L) | ✅ → C.1 |
+| CODE-P | **NEW** Query expansion system prompt, moved out of Ch.3 (~15 L) | ✅ → C.2 |
+| CODE-2 | CSQE query repetition + assembly logic | 🔄 → C.3 — **narrow reading (~60 L)**, see ⚠️-C |
+| CODE-3 | CSQE `CONFIG` block (~28 L) | ✅ → C.4 |
+| CODE-4 | First-pass + truncation | ❌ repo-only |
+| CODE-5 | RRF + CC fusion | ❌ repo-only — **reverses the meeting's "retrieval/fusion pipeline", see ⚠️-B** |
+| CODE-6 | Query repetition helpers | ❌ repo-only |
+| CODE-7 | `RetrievalEvaluator` / pytrec_eval | ❌ repo-only |
+| CODE-8 | BM25S + mDPR `search()` | ❌ repo-only |
+| CODE-9 | `enhance_batch_parallel()` | ❌ repo-only |
+| CODE-X | Exclusion list in §2.2 | ✅ (now larger — CODE-4…9 join it) |
+| CODE-L | `listings` + the four fixes in §2.3 | ✅ — all four still apply |
 
 **Table moves (→ D3 / D5)**
 
-| ID | Item | Δ pg | Osman | Elhaj |
-|---|---|---|---|---|
-| TAB-1 | Table 4.26 → Appendix B.4, one example kept in prose | −0.40 | ☐ | ☐ |
-| TAB-2 | Table 4.12 → Appendix B.1 | −0.42 | ☐ | ☐ |
-| TAB-3 | Table 4.14 → 5-row stub, sweep to B.2 | −0.24 | ☐ | ☐ |
-| TAB-4a | Table 4.28 → Appendix B.3, **keep Table 4.22 inline** *(overrides E1)* | −0.50 | ☐ | ☐ |
-| TAB-4b | *Alternative:* keep E1 as written, fix 4.28's overflow in place | −0.30 | ☐ | ☐ |
-| TAB-5 | Drop Table 2.3, keep Table 2.4, repoint the `\ref` | −0.30 | ☐ | ☐ |
+| ID | Item | Δ pg | Outcome |
+|---|---|---|---|
+| TAB-1 | Table 4.26 → B.4, stub example kept in prose | −0.40 | ✅ |
+| TAB-2 | Table 4.12 → B.1 | −0.42 | ✅ |
+| TAB-3 | Table 4.14 → 5-row stub, sweep to B.2 | −0.24 | ✅ |
+| TAB-4a | Table 4.28 → B.3, **keep Table 4.22 inline** *(overrides E1)* | −0.50 | ✅ **adopted** |
+| TAB-4b | *Alternative:* keep E1 as written | −0.30 | ❌ not taken |
+| TAB-5 | ~~Drop Table 2.3, keep Table 2.4~~ | −0.35 | 🔄 **REVERSED — keep Table 2.3 inline, move Table 2.4 → A.1.** See ⚠️-A |
+| CUT-P | **NEW** — prompt quote blocks out of Ch.3 → C.1/C.2 | −0.15 | ✅ |
 
 **Other material (→ D3 / D5)**
 
-| ID | Item | Δ pg | Osman | Elhaj |
-|---|---|---|---|---|
-| MISC-1 | §2.4.1–2.4.2 per-model prose → Appendix C.1 | −3.50 | ☐ | ☐ |
-| MISC-2 | §3.5.4 → Appendix C.2, pointer left inline | −0.80 | ☐ | ☐ |
+| ID | Item | Δ pg | Outcome |
+|---|---|---|---|
+| MISC-1 | §2.4.1–2.4.2 per-model prose → A.2 | −3.50 | ✅ |
+| MISC-2 | §3.5.4 → A.3, pointer left inline | −0.80 | ✅ |
+| MISC-3 | §3.5.5 Quantisation Strategy | — | ✅ stays inline |
 
 ---
 
-## ⚠️ Needs a team or supervisor decision
+## 7. Open questions — RESOLVED 2026-08-02
 
-1. **What did "the full model-comparison table" mean?** (Elhaj — you were in the meeting too.) This report reads it as **Table 4.12** and recommends keeping Tables 4.8/4.9 inline. If it meant 4.8/4.9, say so — but note E1 deletes Figs 4.5/4.6 precisely because Table 4.8 is the better artefact, so moving 4.8 out would leave §4.4.1 with no artefact at all.
-2. **TAB-4a vs TAB-4b — Table 4.22 / Table 4.28.** E1 says drop 4.22 (redundant with 4.28); this report proposes moving 4.28 out. Doing both would strip the progression numbers from Ch. 4. Net page difference is 0.2 — decide on narrative grounds. **Recommendation: TAB-4a.**
-3. **MISC-1 needs Dr. Tahani.** Moving 4.5 pages of per-model prose to an appendix is a bigger step than moving tables, and her directive named code / proofs / raw data tables rather than background prose. It is also 35% of the total page saving. Recommend asking her explicitly: *"do the per-model description sections in the background chapter count as appendix material?"* If she says no, D5 must absorb ≈3 pages of prose cuts instead.
-4. **The page-count record must be corrected.** D1's task entry states 103 and E1's states 97; the number is **105**. Both entries should be annotated so the next person does not plan against a stale figure — and the rule "measure from the PDF, never from `.toc`" recorded.
-5. **Two margin-overflow defects for E3** (found while sizing, not D2's remit to fix): **Table 4.28**'s `Status` column and **Table 2.1**'s rules both run past the right text margin in the compiled PDF. Moving 4.28 resolves the first; 2.1 needs a `tabularx` width fix regardless.
-6. **Possible third defect, unverified:** on p. 14 the Arabic root letters in the morphology example (`k-t-b`, `chapter2.tex` §2.1.5) appear to render as blank/dashes in the compiled PDF, while Arabic renders correctly elsewhere (e.g. Table 4.26 on p. 93). Worth a look during E3 — noted here only because it surfaced during page rendering.
+1. ~~**What did "the full model-comparison table" mean?**~~ **RESOLVED.** Read as **Table 4.12**; Tables 4.8/4.9 stay inline. Table 4.28 moves on independent grounds (TAB-4a).
+2. ~~**TAB-4a vs TAB-4b**~~ **RESOLVED: TAB-4a.** Table 4.28 → Appendix B, Table 4.22 stays inline in §4.9.2 so Ch.4 keeps the 0.4621 → 0.7137 progression. **E1's `DELETE tab:system_progression` line must be skipped when D5 runs its action list.**
+3. ~~**MISC-1 needs Dr. Tahani**~~ **RESOLVED by team decision** — the per-model prose moves to Appendix A. *Recorded for transparency: this was flagged as a question for the supervisor because it moves background prose rather than code/proofs/data tables; the team took the call. Worth a one-line mention at the next supervision rather than a separate approval request.*
+4. **The page-count record must be corrected — STILL OPEN.** D1's task entry states 103 and E1's states 97; the real number is **105**. Both entries should be annotated so nobody plans against a stale figure, and the rule "measure from the compiled PDF, never from `.toc`" recorded. *(Noted in D2's task entry; the D1 and E1 entries themselves are untouched.)*
+5. **Margin overflows → E3.** **Table 4.28** — resolved by the move to Appendix B (set the width there). **Table 2.1 (p. 14)** — **confirmed overflow, still needs an inline `tabularx` or font-size fix.**
+6. ~~**Possible third defect: Arabic `k-t-b` renders blank on p. 14**~~ — **FALSE ALARM, closed.** Verified in `1-main.pdf` §2.1.5: the root letters render correctly (`ك-ت-ب`). The blanks were an artefact of the page-image extraction used for sizing, not a defect in the thesis. **No fix needed.**
+
+### Carried forward to D3
+
+- **⚠️-A** — add a `License` column to Table 2.3 when TAB-5 is executed, or Ch.2/Ch.5's licence claims lose their inline evidence.
+- **⚠️-B** — Appendix C's repo link (C.5) is now the only route to the retrieval/fusion code. It must be a real, working URL before submission (depends on **D4**).
+- **⚠️-C** — CODE-2 defaults to the narrow (~60-line) reading unless Elhaj says otherwise.
+- **CUT-P** — keep a one-clause statement of each prompt's intent inline; §3.8.1's extract-vs-generate argument and the one-shot disclosure at `chapter3.tex:452` depend on it.

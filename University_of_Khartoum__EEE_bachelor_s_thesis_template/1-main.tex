@@ -77,6 +77,26 @@
 \usepackage{algpseudocode}
 \usepackage{amsmath}
 
+% Source code listings (Appendix C)
+\usepackage{listings}
+\lstdefinestyle{thesiscode}{
+  language=Python,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape,
+  stringstyle=\normalfont\ttfamily,
+  numbers=left, numberstyle=\tiny, numbersep=6pt,
+  breaklines=true, breakatwhitespace=true,
+  showstringspaces=false,
+  frame=single, framerule=0.3pt,
+  aboveskip=1em, belowskip=1em,
+  columns=fullflexible, upquote=true,
+  xleftmargin=1.5em,
+}
+\lstset{style=thesiscode}
+% Listings inherit the global 1.5 line spacing; \codeblock resets it to single.
+\newenvironment{codeblock}{\begin{spacing}{1}}{\end{spacing}}
+
 % Tables
 \usepackage{xcolor}
 \usepackage{colortbl}
@@ -155,10 +175,31 @@
 \include{Chapters/chapter3}
 \include{Chapters/chapter4}
 \include{Chapters/chapter5}
-\bibliographystyle{IEEEtran} 
+\bibliographystyle{IEEEtran}
 % Choose a citation style (e.g., IEEE, APA, plain, etc.)
 \bibliography{References}
 % This should match your .bib file name
+
+% ─────────────────────────────────────────────────────────────────────
+% Appendices (task D3, from research_decisions/D2_APPENDIX_CANDIDATES_REPORT.md).
+% \appendix switches \thechapter to A, B, C. The chapter title format and the
+% running header both hardcode the word "Chapter", so both are redefined here —
+% otherwise Appendix A renders as "Chapter A".
+% ─────────────────────────────────────────────────────────────────────
+\appendix
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries\centering}
+  {Appendix \thechapter}
+  {0pt}
+  {\vspace{1em} \\}
+\renewcommand{\chaptermark}[1]{\markboth{Appendix \thechapter\ - #1}{}}
+% List each appendix in the ToC as a single line (like the Bibliography), with no
+% section-level breakdown. \addtocontents defers the change into the .toc file so
+% it takes effect at the appendices and not retroactively for Chapters 1-5.
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+\include{Chapters/appendixA}
+\include{Chapters/appendixB}
+\include{Chapters/appendixC}
 
 \end{document}
 

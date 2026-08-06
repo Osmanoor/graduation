@@ -28,7 +28,7 @@ All experiments were conducted on Google Colab, utilising two GPU configurations
     \item \textbf{NVIDIA A100 (40\,GB VRAM):} Used for models requiring 4-bit quantisation or exceeding 7 billion parameters, and for batch sizes larger than 8.
 \end{itemize}
 
-The software environment consisted of Python 3.10, PyTorch 2.0+, the Hugging Face Transformers library (v4.30+), Pyserini (v0.22.1) for index access, and FAISS for dense vector search. For models exceeding GPU memory in native precision, NF4 quantisation was applied using the \texttt{bitsandbytes} library \cite{dettmers_2023_qlora}, following the Quantised Low-Rank Adaptation (QLoRA) quantisation scheme.
+The software environment consisted of Python 3.10, PyTorch 2.0+, the Hugging Face Transformers library (v4.30+), Pyserini (v0.22.1) for index access, and FAISS for dense vector search. The complete implementation, including the experiment notebooks and the retrieval, fusion and evaluation modules, is publicly available; the repository is given in Appendix~\ref{app:repo}, and the key components of the CSQE pipeline are reproduced in Appendix~\ref{app:code}. For models exceeding GPU memory in native precision, NF4 quantisation was applied using the \texttt{bitsandbytes} library \cite{dettmers_2023_qlora}, following the Quantised Low-Rank Adaptation (QLoRA) quantisation scheme.
 
 \subsection{Evaluation Metrics}
 \label{sec:meth_metrics}
@@ -193,11 +193,7 @@ Several modifications were made to adapt Query2Doc for this research context:
 \subsection{LLM Configuration}
 \label{sec:meth_q2d_llm}
 
-The initial Query2Doc experiment used Qwen~2.5~3B~Instruct (described in Section~\ref{sec:qwen25_3b}) as the generation model. The following system prompt was used across all experiments:
-
-\begin{quote}
-    \textit{``You are asked to write a passage that answers the given query. Do not ask the user for further clarification. Respond in Arabic only.''}
-\end{quote}
+The initial Query2Doc experiment used Qwen~2.5~3B~Instruct (described in Appendix~\ref{app:model_details}) as the generation model. A single system prompt was used across all experiments: it instructs the model to write a passage answering the given query, forbids it from asking the user for clarification, and requires the response to be in Arabic. The prompt is reproduced verbatim in Appendix~\ref{app:code_prompts}.
 
 The generation parameters were configured as follows:
 
@@ -327,17 +323,7 @@ Temperature was not fixed at a single value across all models. Two consideration
 \subsection{Model-Specific Technical Issues}
 \label{sec:meth_model_issues}
 
-Several models required specific engineering workarounds, documented here for reproducibility:
-
-\begin{enumerate}
-    \item \textbf{Falcon-H1-3B:} The hybrid Mamba2-Transformer architecture (described in Section~\ref{sec:falcon_h1}) contains a batching bug in the attention mask extension logic. When left-padded batches are used, the 4D causal attention mask is not extended as new tokens are generated, causing a shape mismatch. The workaround was to force \texttt{batch\_size=1}, resulting in significantly longer generation times but correct outputs.
-
-    \item \textbf{Jais-2-8B:} This model requires BF16 precision rather than FP16 due to its Squared-ReLU activation function, which produces values that overflow FP16 range. Additionally, the \texttt{token\_type\_ids} parameter must be excluded from the model inputs, and the padding token must be explicitly set to the end-of-sequence token.
-
-    \item \textbf{Qwen3-4B and Qwen3-8B:} The Qwen3 generation includes ``thinking'' tokens (internal chain-of-thought reasoning) that must be stripped from the output. The parameter \texttt{enable\_thinking=False} was passed during generation. Greedy decoding must not be used, as it causes infinite repetition loops.
-
-    \item \textbf{ALLaM-7B:} As a preview-stage model, ALLaM exhibited a sentencepiece tokenizer artefact where the Unicode character ``\texttt{\char"2581}'' (lower one-eighth block) leaked into decoded outputs. This special character, used internally by the sentencepiece tokenizer to denote word boundaries, contaminated the pseudo-documents. The impact on retrieval performance is discussed in Section~\ref{sec:res_dropped}.
-\end{enumerate}
+Four of the ten models required model-specific engineering workarounds before they could be run under the standardised protocol: a batching bug in Falcon-H1-3B's hybrid architecture, a precision and input-signature constraint in Jais-2-8B, reasoning-token suppression in the Qwen3 models, and a tokenizer artefact in ALLaM-7B. Each workaround, and the reason it was necessary, is documented in Appendix~\ref{app:model_issues}; the ALLaM tokenizer artefact in particular is revisited in Section~\ref{sec:res_dropped}, where its effect on retrieval performance is quantified.
 
 \subsection{Quantisation Strategy}
 \label{sec:meth_quantisation}
@@ -430,7 +416,7 @@ The CSQE pipeline distinguishes itself from standard (blind) Query2Doc through a
 
 \noindent where $c_i$ denotes corpus-grounded expansion samples, $b_i$ denotes blind expansion samples, $\alpha$ is the query repetition factor (Equation~\ref{eq:query_repetition}), and each expansion sample appears exactly once ($k=1$ in MuGI notation).
 
-The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU. Figure~\ref{fig:csqe_pipeline} illustrates the three-stage CSQE pipeline alongside a worked example.
+The routine that assembles the expanded query from the four generated samples is reproduced in Appendix~\ref{app:code_assembly}, and the full set of hyperparameters is listed in Appendix~\ref{app:code_config}. The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU. Figure~\ref{fig:csqe_pipeline} illustrates the three-stage CSQE pipeline alongside a worked example.
 
 \begin{figure}[H]
   \centering
@@ -439,11 +425,7 @@ The configuration used for the primary CSQE experiment was: $k=5$ first-pass doc
   \label{fig:csqe_pipeline}
 \end{figure}
 
-For corpus-grounded generation, the model was given a system prompt distinct from the blind Query2Doc prompt of Section~\ref{sec:meth_q2d_llm}, instructing it to \emph{extract} content grounded in the retrieved passages rather than to generate freely:
-
-\begin{quote}
-    \textit{``You are an information retrieval assistant. You will examine retrieved documents and extract key sentences relevant to the query. The documents are in Arabic. Respond in Arabic only.''}
-\end{quote}
+For corpus-grounded generation, the model was given a system prompt distinct from the blind Query2Doc prompt of Section~\ref{sec:meth_q2d_llm}. Where the blind prompt asks the model to \emph{write} a passage from its own parametric knowledge, the corpus-grounded prompt casts it as an information-retrieval assistant whose task is to \emph{examine} the retrieved documents and \emph{extract} the key sentences relevant to the query, responding in Arabic. This extract-rather-than-generate framing is what ties the expansion to the corpus. Both prompts are reproduced verbatim in Appendix~\ref{app:code_prompts}.
 
 \noindent The accompanying user message presented the original query followed by the numbered first-pass documents and a closing instruction to ``begin by examining the initially retrieved documents and identifying the ones that are relevant, even partially, to the query \ldots\ then extract the key sentences from each document that contribute to their relevance.'' A single English worked example (a query about warm-blooded sharks, taken from the original CSQE paper \cite{lei_2024_csqe}) was prepended as a one-shot demonstration---the sole exception to the zero-shot protocol of Section~\ref{sec:meth_q2d_modifications}; Aya Expanse, being multilingual, transfers this pattern to Arabic queries while still producing Arabic output. The blind-expansion branch reused the Query2Doc system prompt of Section~\ref{sec:meth_q2d_llm} verbatim.
 
