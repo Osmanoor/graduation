@@ -186,17 +186,24 @@
 % running header both hardcode the word "Chapter", so both are redefined here —
 % otherwise Appendix A renders as "Chapter A".
 % ─────────────────────────────────────────────────────────────────────
+% \clearpage first: every bibliography page must be shipped out while \thepage is
+% still numeric. \appendix resets the chapter counter to 0, and the redefinition
+% below would expand \Alph{0} on any page shipped before the first appendix chapter.
+% \clearpage first: every bibliography page must be shipped out while \thepage is
+% still numeric. \appendix resets the chapter counter to 0, and the redefinition
+% below would expand \Alph{0} on any page shipped before the first appendix chapter.
+\clearpage
 \appendix
+% The appendices are not part of the numbered manuscript, so they use their own
+% per-appendix pagination: A-1, A-2, ..., B-1, B-2, ..., C-1, ...
+% Each appendix file resets the page counter to 1 immediately after its \chapter.
+\renewcommand{\thepage}{\thechapter-\arabic{page}}
 \titleformat{\chapter}[block]
   {\normalfont\huge\bfseries\centering}
   {Appendix \thechapter}
   {0pt}
   {\vspace{1em} \\}
 \renewcommand{\chaptermark}[1]{\markboth{Appendix \thechapter\ - #1}{}}
-% List each appendix in the ToC as a single line (like the Bibliography), with no
-% section-level breakdown. \addtocontents defers the change into the .toc file so
-% it takes effect at the appendices and not retroactively for Chapters 1-5.
-\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 \include{Chapters/appendixA}
 \include{Chapters/appendixB}
 \include{Chapters/appendixC}
