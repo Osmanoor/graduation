@@ -107,7 +107,7 @@ These QE techniques operate as modular layers that can be added to existing RAG 
 
 \begin{table}[H]
   \centering
-  \caption{Query-enhancement papers reviewed for this thesis, with method, evaluation dataset, and headline result.}
+  \caption[Query-enhancement papers reviewed]{Query-enhancement papers reviewed for this thesis, with method, evaluation dataset, and headline result.}
   \label{tab:reviewed_qe}
   \scriptsize
   \input{../thesis_figures/output/pdf/table_2_1.tex}
@@ -252,7 +252,7 @@ The choice of evaluation benchmark is central to a QE study, because QE is only 
 
 \begin{table}[H]
     \centering
-    \caption{Arabic retrieval and QA datasets surveyed for benchmark selection. ``Suitability'' refers to fitness for studying QE for retrieval.}
+    \caption[Arabic retrieval and QA datasets surveyed]{Arabic retrieval and QA datasets surveyed for benchmark selection. ``Suitability'' refers to fitness for studying QE for retrieval.}
     \label{tab:datasets_surveyed}
     \small
     % Natural width was 520.9pt against a 451.3pt text block (69.6pt of the
@@ -296,7 +296,7 @@ The ten models divide into two groups. The \textbf{Arabic-specialized} group---F
 
 \begin{table}[H]
   \centering
-  \caption{Open-source LLMs evaluated for Arabic QE in this thesis, ordered by parameter count.}
+  \caption[LLMs evaluated for Arabic QE]{Open-source LLMs evaluated for Arabic QE in this thesis, ordered by parameter count.}
   \label{tab:models_used}
   \footnotesize
   \input{../thesis_figures/output/pdf/table_2_2.tex}
@@ -396,24 +396,3 @@ Specifically, the following questions remain unanswered:
 
 These questions are addressed in this thesis through a staged experimental programme on the MIRACL Arabic benchmark, progressing from independent sparse and dense baselines and their error analysis, through a standardised comparison of openly available LLMs (2--8 billion parameters) as expansion generators and a query-repetition sweep for sparse retrieval, to a hybrid sparse--dense fusion baseline and finally the adaptation of CSQE to Arabic and its placement within the hybrid pipeline, as described in the following chapter. Answering these questions additionally requires independent sparse and dense baselines, a diagnostic error analysis of their failures, and a hybrid fusion reference established without enhancement; these are treated as prerequisite objectives rather than as gaps in the literature.
 
-%======================================================================
-\section{Chapter Summary}
-\label{sec:chapter_summary}
-%======================================================================
-
-This chapter established the theoretical and empirical foundations for the research presented in this thesis. The key points are summarised as follows:
-
-\begin{itemize}
-    \item RAG systems address the hallucination and knowledge staleness limitations of LLMs by incorporating external knowledge retrieval (Section~\ref{sec:rag}), but their effectiveness is bounded by retrieval quality.
-    \item Information retrieval can be performed via sparse methods (BM25), dense methods (DPR), or their combination, each with distinct strengths (Section~\ref{sec:ir_methods}).
-    \item QE techniques---particularly LLM-based generative expansion---offer a modular approach to improving retrieval effectiveness without modifying the index or generator (Section~\ref{sec:qe_techniques}).
-    \item Arabic presents unique challenges for information retrieval due to morphological richness, diglossia, and orthographic variations (Section~\ref{sec:arabic_challenges}).
-    \item The mathematical models for BM25 scoring, cosine similarity, the hybrid fusion functions, and the evaluation metrics Recall@$k$, NDCG@$k$, and MRR were formulated (Section~\ref{sec:math_models}).
-    \item The MIRACL Arabic benchmark was selected for evaluation after surveying candidate Arabic retrieval and QA datasets against retrieval-suitability criteria (Section~\ref{sec:dataset_selection}).
-    \item Ten language models spanning Arabic-specialized and multilingual architectures were described for use in the comparative evaluation (Section~\ref{sec:models_used}).
-    \item Recent literature has established that openly available LLMs of 7--8 billion parameters are capable expansion generators for English, but LLM-based QE has not been evaluated for monolingual Arabic retrieval, and the question of which retriever within a hybrid should receive the expansion remains unaddressed (Section~\ref{sec:related_work}).
-    \item Corpus-steered expansion has been evaluated only for English, and the placement of the expansion within a heterogeneous hybrid sparse--dense pipeline has not been evaluated in any language (Section~\ref{sec:research_gap}).
-    \item A research gap therefore exists at the intersection of LLM-based QE and Arabic information retrieval, which is addressed in this thesis by evaluating blind and corpus-steered expansion across sparse, dense, and hybrid retrieval on the MIRACL Arabic benchmark (Section~\ref{sec:research_gap}).
-\end{itemize}
-
-The following chapter presents the methodology employed to address this research gap, describing the dataset and experimental environment, the baseline and error-analysis procedures, the adaptation of Query2Doc for Arabic, the model comparison protocol, the query-repetition and hybrid-fusion methodologies, and the CSQE pipeline together with its ablation and retriever-assignment designs, concluding with the per-query error-analysis methodology.

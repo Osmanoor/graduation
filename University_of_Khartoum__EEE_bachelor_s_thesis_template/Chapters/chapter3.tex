@@ -195,11 +195,11 @@ Several modifications were made to adapt Query2Doc for this research context:
 
 The initial Query2Doc experiment used Qwen~2.5~3B~Instruct (described in Appendix~\ref{app:model_details}) as the generation model. A single system prompt was used across all experiments: it instructs the model to write a passage answering the given query, forbids it from asking the user for clarification, and requires the response to be in Arabic. The prompt is reproduced verbatim in Appendix~\ref{app:code_prompts}.
 
-The generation parameters were configured as follows:
+The generation parameters were configured as summarised in Table~\ref{tab:q2d_params}.
 
 \begin{table}[htbp]
     \centering
-    \caption{LLM generation parameters for the initial Query2Doc experiment.}
+    \caption[Initial Query2Doc generation parameters]{LLM generation parameters for the initial Query2Doc experiment.}
     \label{tab:q2d_params}
     \begin{tabular}{@{}ll@{}}
         \toprule
@@ -274,7 +274,7 @@ Table~\ref{tab:model_configs} summarises the configuration used for each model.
 
 \begin{table}[htbp]
     \centering
-    \caption{Model configurations for the Query2Doc comparison experiments. All models used \texttt{max\_new\_tokens}~=~128 and \texttt{top\_p}~=~0.9, with the exception of Qwen3-4B, which used the Qwen3 non-thinking sampling recommendation of \texttt{top\_p}~=~0.8 and \texttt{top\_k}~=~20.}
+    \caption[Model configurations for the Query2Doc comparison]{Model configurations for the Query2Doc comparison experiments. All models used \texttt{max\_new\_tokens}~=~128 and \texttt{top\_p}~=~0.9, with the exception of Qwen3-4B, which used the Qwen3 non-thinking sampling recommendation of \texttt{top\_p}~=~0.8 and \texttt{top\_k}~=~20.}
     \label{tab:model_configs}
     \begin{tabular}{@{}llcccc@{}}
         \toprule
@@ -495,9 +495,5 @@ Regression queries ($\Delta_i < -0.1$) were manually inspected and classified in
     \item \textbf{Type C (Partial BM25):} The BM25 baseline achieved NDCG@10 between 0.1 and 0.3; a mixed-quality scenario where the expansion may have helped or hurt depending on specific query characteristics.
 \end{itemize}
 
-%======================================================================
-\section{Chapter Summary}
-\label{sec:ch3_summary}
-%======================================================================
+This classification, together with the aggregate comparison and the query-length and first-pass splits defined above, forms the interpretive framework applied to the final system in Chapter~\ref{chap:results}.
 
-This chapter has described the experimental methodology adopted throughout the thesis. The Arabic subset of the MIRACL benchmark was established as the evaluation corpus, and independent dense (mDPR) and sparse (BM25S) baselines were implemented and evaluated under a common protocol. A quantitative and qualitative error analysis of those baselines was then defined in order to identify the failure modes that QE must address. The Query2Doc technique was adapted for Arabic zero-shot application, together with the batching, quantisation and two-notebook arrangements required to execute it on freely available cloud GPUs, and a standardised protocol was specified for comparing the candidate generators. Finally, the chapter set out the query repetition scheme devised to counter term dilution in sparse retrieval, the hybrid fusion methods, the CSQE pipeline with its component ablation and retriever-specific application strategies, and the per-query error analysis used to interpret the behaviour of the final system.

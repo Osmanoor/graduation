@@ -106,6 +106,71 @@ QE and `توسيع` for the expansion itself is correct, and the text already ma
 
 ---
 
+## 2c. Blind judging round — 2026-08-08 — AND A METHODOLOGY WARNING
+
+Elhaj objected, correctly, that Claude had been the sole judge of the three drafts. So both models
+were made judges too: each was given all three Arabic drafts **anonymised as أ / ب / ج, with the
+labels shuffled**, told the authors were independent and unknown, and asked to rank them, score
+naturalness, pick a winner per technical term, and then merge.
+
+### The result: both judges ranked Claude's draft first
+
+| Judge | 1st | 2nd | 3rd |
+|---|---|---|---|
+| Gemini 3.1 Pro | **Claude (9/10 natural)** | GPT (6/10) | Gemini's own (5/10) |
+| GPT-5.6-terra | **Claude (7/10 natural)** | Gemini (6.5/10) | GPT's own (5/10) |
+
+**Each model ranked its own draft last without knowing it was its own.** The same held for the
+English drafts, where both judges independently ranked Claude 1st, GPT 2nd, Gemini 3rd. The
+blinding worked.
+
+### ⚠️ The warning: §2b's expert review was a leading prompt
+
+The expert review in §2b asked the models to *"quote **every** phrase that gives it away."* That
+instruction forces a model to find faults whether or not they exist. Compare:
+
+| Same Arabic text | §2b expert review | §2c blind judging |
+|---|---|---|
+| Naturalness, per Gemini | **6.5/10**, "يصرخ ترجمة آلية" | **9/10**, best of three |
+
+Gemini also **reversed itself on three terms** between the two rounds — in §2b it called `المُطبَّع`
+a *خطأ فادح*; judging blind it picked `المُطبَّع` as the winner. Trust the blind comparison over the
+fault-finding prompt: it is the better-designed measurement.
+
+### What changed as a result
+
+**Reverted** (blind judging contradicted §2b):
+
+| Term | §2b changed it to | Reverted to | Vote |
+|---|---|---|---|
+| NDCG *normalised* | المُعيَّر | **المُطبَّع** | both judges picked مُطبَّع |
+| pipeline | النظام الهجين | **المسار الهجين** | both judges backed مسار |
+| term dilution | تخفيف أوزان | **إضعاف أوزان** | both judges called `إضعاف وزن` scientifically the most precise of the three drafts; the plural `أوزان` fix from §2b was kept |
+
+**Held** (3 of 4 opinions, so §2b's change survives): `احتكارية` for proprietary, `الأعمى` for
+blind. Note both are **split 1–1 among the blind judges** — Gemini's judge preferred `مملوكة` and
+`غير الموجَّه`, calling `احتكارية` an economic term and `أعمى` a grave error. These two rows are
+genuinely contested; if Dr. Tahani has a preference, take hers without argument.
+
+**Newly applied**, from GPT-5.6's judging: BM25S was described as `المسترجع المتناثر`, but it is an
+*implementation* of the BM25 algorithm, not a retriever paradigm. Now reads
+`وBM25S، وهو تطبيق لخوارزمية BM25، للاسترجاع المتناثر` — matching how the English abstract already
+put it.
+
+**Both judges flagged** the `34\%` in the source. That is the required LaTeX escape and renders as
+`34%`; no action needed.
+
+### English abstract — the one change the judging produced
+
+Both judges ranked Claude's English draft first overall but both named GPT's **conclusion** the
+best of the three. The part that made it better was `rather than applied uniformly`, which turns a
+vague qualifier into a concrete one. It was added without dropping `across all three paradigms`,
+so the claim still matches Chapter 5:
+
+> …provided that its form and placement are adapted to the retriever **rather than applied uniformly.**
+
+---
+
 ## 3. Compliance with her stated rules
 
 | Rule | Status |
@@ -128,5 +193,11 @@ QE and `توسيع` for the expansion itself is correct, and the text already ma
 
 ## 4. Build verification
 
-Full `xelatex` run on `1-main.tex`: **0 errors, 125 pages.**
-p5 English abstract (1 page) → p6 المستخلص (1 page) → p7 Contents.
+Full `xelatex` run on `1-main.tex`, **three passes to convergence: 0 errors, 135 pages** — the same
+page count as the committed baseline, so neither abstract changed the document's length.
+p5 English abstract (1 page, 331 words) → p6 المستخلص (1 page, 77% of the text block) → p7 Contents.
+
+⚠️ **A single `xelatex` pass reports 125 pages and is wrong.** It reuses a stale `.toc`/`.lof`/`.lot`
+and has not converged. Always run to convergence before quoting a page count — the 100-page limit
+in `THESIS_FINAL_SUBMISSION_TASKS.md` is measured on the core chapters, not this figure, but a
+10-page error in either direction would matter to any decision based on it.

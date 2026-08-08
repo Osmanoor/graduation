@@ -15,7 +15,11 @@
 \setdefaultlanguage{english}
 \setotherlanguage{arabic}
 \newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Arial}
-\usepackage[none]{hyphenat}
+% Hyphenation must stay ENABLED. The [none] option was disabling it document-wide,
+% which combined with \justifying below pushed long unbreakable words past the right
+% margin on 93 of 135 pages (three of them off the paper edge entirely). See
+% research_decisions/E3_figures_tables_review.md §1.
+\usepackage{hyphenat}
 \usepackage{ragged2e}
 \justifying
 

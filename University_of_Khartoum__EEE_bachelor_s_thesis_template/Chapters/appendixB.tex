@@ -16,7 +16,7 @@ model's best configuration with all four metrics.
 
 \begin{table}[htbp]
     \centering
-    \caption{BM25 NDCG@10 for nine models under query repetition. Columns $n \in \{1, 3, 5, 7, 10\}$ are fixed-count repetition (Query2Doc style); columns $\beta \in \{2, 4, 6\}$ are MuGI adaptive repetition where $n$ is computed per-query as $n = \max(1, \lfloor |d| / (|q| \cdot \beta) \rfloor)$. MIRACL Arabic dev (2,896 queries). Best value per model in bold.}
+    \caption[BM25 NDCG@10 under query repetition, full sweep]{BM25 NDCG@10 for nine models under query repetition. Columns $n \in \{1, 3, 5, 7, 10\}$ are fixed-count repetition (Query2Doc style); columns $\beta \in \{2, 4, 6\}$ are MuGI adaptive repetition where $n$ is computed per-query as $n = \max(1, \lfloor |d| / (|q| \cdot \beta) \rfloor)$. MIRACL Arabic dev (2,896 queries). Best value per model in bold.}
     \label{tab:bm25_repetition}
     % Natural width was 459.9pt against a 451.3pt text block. Nine columns at
     % \tabcolsep=4pt give 427.9pt, so the table fits at full body size and needs
@@ -35,7 +35,7 @@ model's best configuration with all four metrics.
         Gemma 3 4B & 0.3447 & 0.4800 & 0.5178 & \textbf{0.5277} & 0.5239 & 0.4915 & 0.4184 & 0.3694 \\
         Qwen 2.5 3B & 0.4090 & 0.5060 & \textbf{0.5185} & 0.5181 & 0.5116 & 0.5046 & 0.4551 & 0.4253 \\
         Falcon-H1 3B & 0.4038 & 0.4881 & 0.5082 & 0.5112 & \textbf{0.5113} & 0.4979 & 0.4561 & 0.4266 \\
-        SILMA 2B & 0.4194 & 0.4783 & \textbf{0.4832} & 0.4829 & 0.4788 & 0.4494 & 0.4252 & 0.4203 \\
+        SILMA 2B & 0.4277 & 0.4733 & 0.4770 & \textbf{0.4786} & 0.4752 & 0.4520 & 0.4312 & 0.4278 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -50,7 +50,7 @@ Figure~\ref{fig:hybrid_comparison} plots all four metrics across the full sweep.
 
 \begin{table}[htbp]
     \centering
-    \caption{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries), full convex-combination $\alpha$-sweep. CC scores are min-max normalised per query, with $\alpha$ controlling the Dense weight.}
+    \caption[Hybrid fusion, full convex-combination sweep]{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries), full convex-combination $\alpha$-sweep. CC scores are min-max normalised per query, with $\alpha$ controlling the Dense weight.}
     \label{tab:hybrid_results_full}
     \begin{tabular}{@{}lcccc@{}}
         \toprule
@@ -78,12 +78,16 @@ Figure~\ref{fig:hybrid_comparison} plots all four metrics across the full sweep.
 \section{Summary of All Experiments}
 \label{app:tab_summary}
 
-Table~\ref{tab:full_summary} consolidates every experiment reported in this thesis,
-grouped by phase. Section~\ref{sec:res_summary} discusses the progression it records.
+The experiments were reported in Chapter~\ref{chap:results} in the order they were conducted, each
+one motivated by the outcome of the last. Read that way the argument is cumulative but dispersed,
+and the relative standing of any two configurations is not always adjacent on the page.
+Table~\ref{tab:full_summary} therefore gathers every experiment into a single view, grouped by
+phase, so that the full progression can be assessed at a glance now that the individual results and
+their reasoning have been established.
 
 \begin{table}[htbp]
     \centering
-    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and CSQE. Bold values indicate the best result for each metric across all experiments.}
+    \caption[Summary of all experiments]{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and CSQE. Bold values indicate the best result for each metric across all experiments.}
     \label{tab:full_summary}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}llcccc@{}}
@@ -126,7 +130,7 @@ achieved NDCG@10 = 1.000 while the blind baseline achieved 0.000.
 
 \begin{table}[htbp]
     \centering
-    \caption{Representative big-win queries illustrating the corpus grounding effect. In all three cases, CSQE achieved NDCG@10 = 1.000 while the blind baseline achieved 0.000.}
+    \caption[Representative big-win queries]{Representative big-win queries illustrating the corpus grounding effect. In all three cases, CSQE achieved NDCG@10 = 1.000 while the blind baseline achieved 0.000.}
     \label{tab:bigwin_examples}
     \begin{tabular}{@{}p{3.4cm}p{3.4cm}p{3.4cm}c@{}}
         \toprule
