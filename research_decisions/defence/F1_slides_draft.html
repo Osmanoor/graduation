@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Defence Deck — 22 slides + script</title>
+<style>
+/* ============================================================
+   DESIGN PLAN
+   Ground  #F3F5F6  cool paper, slight blue bias (chosen, not white)
+   Ink     #101820  near-black, blue bias
+   Muted   #55666F
+   Signal  #0B6E7F  deep teal  — grounded / corpus / correct
+   Drift   #A85916  ochre      — hallucinated / ungrounded / failure
+   Type    Georgia (display, scholarly) + Segoe UI (data, labels)
+           Arabic: Segoe UI / Tahoma, set larger, RTL isolated
+   Layout  True 16:9 (13.333in x 7.5in). Slide page = one idea,
+           vertically centred, ~12 words max. Script on the facing
+           page. Deliberately single-theme: a deck commits.
+   ============================================================ */
+:root{
+  --ground:#F3F5F6; --ink:#101820; --mut:#55666F; --faint:#8A9AA3;
+  --signal:#0B6E7F; --signal-bg:#E4EFF1;
+  --drift:#A85916;  --drift-bg:#F8EFE6;
+  --rule:#D3DBDF; --paper:#FFF;
+  --disp:Georgia,"Times New Roman",serif;
+  --ui:"Segoe UI",-apple-system,Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+body{margin:0; background:#8d9aa2; font-family:var(--ui); color:var(--ink)}
+.ar{font-family:"Segoe UI",Tahoma,"Traditional Arabic",serif; direction:rtl; unicode-bidi:isolate}
+
+/* ---------------- 16:9 page ---------------- */
+.pg{
+  width:13.333in; height:7.5in; margin:0 auto 0.25in; position:relative;
+  background:var(--ground); overflow:hidden; box-shadow:0 2px 14px rgba(0,0,0,.28);
+}
+.pg--note{background:var(--paper)}
+
+.top{
+  position:absolute; top:.42in; left:.72in; right:.72in;
+  display:flex; justify-content:space-between; align-items:baseline;
+  font-size:11.5pt; letter-spacing:.16em; text-transform:uppercase; font-weight:600;
+}
+.top .lab{color:var(--signal)}
+.top .no{color:var(--faint); font-variant-numeric:tabular-nums; letter-spacing:.08em}
+.rule{position:absolute; top:.78in; left:.72in; right:.72in; height:1px; background:var(--rule)}
+
+.body{
+  position:absolute; top:1.15in; left:.72in; right:.72in; bottom:.6in;
+  display:flex; flex-direction:column; justify-content:center;
+}
+
+/* ---------------- slide type ---------------- */
+.eyebrow{font-size:12.5pt; letter-spacing:.11em; text-transform:uppercase; color:var(--mut); font-weight:600; margin-bottom:.2in}
+h1{font-family:var(--disp); font-size:44pt; line-height:1.14; margin:0; letter-spacing:-.012em; text-wrap:balance; font-weight:400}
+h1.sm{font-size:34pt}
+h1 em{font-style:normal; color:var(--signal)}
+h1 .bad{color:var(--drift)}
+.lede{font-size:19pt; line-height:1.45; color:var(--mut); margin:.28in 0 0; max-width:10in}
+.lede b{color:var(--ink); font-weight:600}
+
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:.55in; margin-top:.34in}
+.cols3{display:grid; grid-template-columns:repeat(3,1fr); gap:.4in; margin-top:.34in}
+.blk{border-top:2px solid var(--rule); padding-top:.16in}
+.blk.on{border-top-color:var(--signal)}
+.blk.off{border-top-color:var(--drift)}
+.blk h3{font-family:var(--ui); font-size:14pt; margin:0 0 .1in; font-weight:600}
+.blk p{font-size:13.5pt; line-height:1.45; color:var(--mut); margin:0}
+
+.flow{display:flex; align-items:stretch; gap:.16in; margin-top:.3in}
+.step{flex:1; background:var(--paper); border:1px solid var(--rule); padding:.2in .18in; font-size:13pt; line-height:1.35; text-align:center; display:flex; align-items:center; justify-content:center}
+.step.on{border-color:var(--signal); border-width:2px; background:var(--signal-bg); font-weight:600}
+.tick{align-self:center; color:var(--faint); font-size:17pt}
+
+.stats{display:flex; gap:.75in; margin-top:.36in}
+.st .v{font-family:var(--disp); font-size:52pt; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.st .k{font-size:12.5pt; color:var(--mut); margin-top:.09in; line-height:1.35}
+.v--sig{color:var(--signal)} .v--bad{color:var(--drift)} .v--mut{color:var(--faint)}
+
+table.d{width:100%; border-collapse:collapse; margin-top:.3in; font-size:17pt}
+table.d td{padding:.15in .12in; border-bottom:1px solid var(--rule)}
+table.d td.n{text-align:right; font-variant-numeric:tabular-nums; font-family:var(--disp); font-size:21pt; width:2.5in}
+table.d td.note{font-family:var(--ui); font-size:12.5pt; color:var(--mut); width:3.8in}
+table.d td.verdict{font-family:var(--ui); font-size:13pt; letter-spacing:.1em; text-transform:uppercase; text-align:right; width:1.5in; color:var(--faint); font-weight:600}
+table.d tr.win td{background:var(--signal-bg); font-weight:600}
+table.d tr.win td.n, table.d tr.win td.verdict{color:var(--signal)}
+table.d tr.lose td.n{color:var(--drift)}
+
+.quote{font-family:var(--disp); font-size:26pt; line-height:1.4; border-left:3px solid var(--signal); padding-left:.34in; margin:.1in 0 0; font-style:italic}
+.arq{font-size:32pt; line-height:1.7; font-weight:600; margin:0}
+.gen{background:var(--drift-bg); border-left:4px solid var(--drift); padding:.22in .3in; margin-top:.26in}
+.grn{background:var(--signal-bg); border-left:4px solid var(--signal); padding:.22in .3in; margin-top:.26in}
+.tag{display:inline-block; align-self:flex-start; margin-top:.32in; padding:.09in .24in; background:var(--signal); color:#fff; font-size:12pt; letter-spacing:.09em; text-transform:uppercase; font-weight:600}
+
+ul.pts{margin:.3in 0 0; padding:0; list-style:none}
+ul.pts li{font-size:17pt; line-height:1.5; padding:.13in 0 .13in .42in; border-bottom:1px solid var(--rule); position:relative}
+ul.pts li:before{content:"—"; position:absolute; left:0; color:var(--signal)}
+ul.pts li b{font-weight:600}
+ul.pts.sm li{font-size:14.5pt; padding:.11in 0 .11in .42in}
+
+.center{text-align:center; align-items:center}
+.center .lede{margin-left:auto; margin-right:auto}
+.big{font-family:var(--disp); font-size:38pt; line-height:1.28; letter-spacing:-.012em}
+
+.cover .k{font-size:12.5pt; letter-spacing:.18em; text-transform:uppercase; color:var(--signal); font-weight:600}
+.cover h1{font-size:40pt; margin:.28in 0}
+.cover .by{font-size:15pt; color:var(--mut); line-height:1.6}
+
+/* ---------------- notes page ---------------- */
+.nhead{position:absolute; top:.45in; left:.8in; right:.8in; border-bottom:1px solid var(--rule); padding-bottom:.12in;
+  display:flex; justify-content:space-between; align-items:baseline}
+.nhead .t{font-family:var(--disp); font-size:17pt}
+.nhead .n{font-size:10.5pt; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:600}
+.nbody{position:absolute; top:1.1in; left:.8in; right:.8in; bottom:.5in; column-count:2; column-gap:.6in; column-rule:1px solid var(--rule)}
+.nbody p{font-size:12pt; line-height:1.62; margin:0 0 .13in; break-inside:avoid}
+.nbody p.dir{color:var(--signal); font-style:italic; font-size:11pt}
+.nbody b.hit{border-bottom:2px solid var(--signal)}
+.nbody .flag{border-left:3px solid var(--drift); background:var(--drift-bg); padding:.12in .16in; margin:.14in 0; break-inside:avoid}
+.nbody .flag p{font-size:11pt; margin:0}
+.nbody .flag .h{font-size:9.5pt; letter-spacing:.12em; text-transform:uppercase; color:var(--drift); font-weight:700; margin-bottom:.05in}
+.nbody .flag.ok{border-left-color:var(--signal); background:var(--signal-bg)}
+.nbody .flag.ok .h{color:var(--signal)}
+
+@media print{
+  body{background:#fff}
+  .pg{margin:0; box-shadow:none; break-after:page; page-break-after:always}
+  .pg:last-child{break-after:auto; page-break-after:auto}
+}
+@page{ size:13.333in 7.5in; margin:0 }
+</style>
+</head>
+<body>
+
+<!-- ═══════ 01 ═══════ -->
+<div class="pg">
+  <div class="body cover center">
+    <div class="k">B.Sc. Thesis Defence · University of Khartoum · EEE</div>
+    <h1>Corpus-Steered Query Expansion<br>for Arabic Retrieval</h1>
+    <div class="by">Mohammed Elhaj &nbsp;·&nbsp; Osman<br>Supervisor: [name] · 2026</div>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Cover</span><span class="n">Script · 01 / 22</span></div>
+  <div class="nbody">
+    <p class="dir">[Do not read the title aloud. Say your names, then go straight to slide 2. The first thing out of your mouth should be something they recognise — not a technical title.]</p>
+    <p>Good morning. I'm Mohammed, this is Osman, and this is our final year project.</p>
+    <p>Before I tell you what we built, I want to spend a few minutes on <em>why</em> it needed building — starting from something everyone in this room has already used.</p>
+    <div class="flag ok"><div class="h">Deck map · ~30 minutes</div>
+      <p>Slides 2–5 build the problem · 6–10 diagnose it · 11–18 the solution · 19–22 results and limits. Twenty-two slides, roughly 80 seconds each.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 02 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Where we start</span><span class="no">02</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">You have all used one of these</div>
+    <h1>A language model is frozen.<br>Ask outside what it knows and it<br>does not say <em>“I don’t know.”</em></h1>
+    <p class="lede">It answers. <b>Fluent. Confident. Wrong.</b></p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">A language model is frozen</span><span class="n">Script · 02 / 22</span></div>
+  <div class="nbody">
+    <p>Everyone here has used ChatGPT, or Claude, or Gemini. So let me start there.</p>
+    <p>A large language model is trained once, on a fixed body of text, up to a fixed date. After that it is frozen. Everything it knows sits in its weights. It is not looking anything up.</p>
+    <p>And it has never seen your organisation's private documents — your hospital's records, your archives. It was not trained on them, and retraining it every time your data changes costs millions and takes weeks.</p>
+    <p>Now, the frozen part creates one specific problem, and I want to be precise about it.</p>
+    <p>If you ask a language model something outside what it was trained on, it does not stop and say "I don't know." It produces an answer. Fluent, well-structured, confidently phrased — and wrong. We call this hallucination.</p>
+    <p class="dir">[Pause. This is a payload — you fire it on slide 14.]</p>
+    <p>Hold onto the <em>shape</em> of that failure. <b class="hit">The failure is not silence. The failure is confident, well-formed error.</b></p>
+    <div class="flag ok"><div class="h">Why this slide exists</div>
+      <p>Planted so that on slide 14, when our own system hallucinates, you can say "this is the failure I asked you to hold onto — except now it is inside our pipeline." That callback turns an anecdote into a promise kept.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 03 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">RAG</span><span class="no">03</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">The industry’s answer</div>
+    <h1 class="sm">Don’t retrain the model. <em>Give it the documents.</em></h1>
+    <div class="flow">
+      <div class="step">Question</div><span class="tick">→</span>
+      <div class="step on">Search the library</div><span class="tick">→</span>
+      <div class="step">Paste the passages<br>next to the question</div><span class="tick">→</span>
+      <div class="step">Model answers<br>from the text</div>
+    </div>
+    <p class="lede" style="font-size:16pt; margin-top:.26in">Two ways to search a library: <b>match the words</b>, or <b>match the meaning</b>.<br>Remember there are two.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Don’t retrain — give it the documents</span><span class="n">Script · 03 / 22</span></div>
+  <div class="nbody">
+    <p>So the industry needed a way to give a frozen model knowledge it was never trained on. The answer it converged on is called Retrieval-Augmented Generation — RAG.</p>
+    <p>One sentence: <b class="hit">do not retrain the model — give it the documents.</b></p>
+    <p>Four steps. One, the user asks a question. Two, we take that question and <em>search a library of documents</em> for the passages related to it. Three, we paste those passages next to the question. Four, the model answers from the text in front of it, instead of from memory.</p>
+    <p>You can see why industry adopted it: no retraining cost, private data stays private, every answer traces back to a source, and when the documents change the system's knowledge changes with them.</p>
+    <p class="dir">[Point at box 2. You turn the spotlight on it next slide.]</p>
+    <p>One detail about step two, and it will matter enormously later. There are <em>two</em> ways to search a library. You can match the <b>words</b> — find documents containing the same terms. Or match the <b>meaning</b> — represent question and documents as mathematical objects and find the ones that sit close together, even with no shared words. Both are used. Please remember there are two.</p>
+    <div class="flag"><div class="h">Trap · the biggest one in the deck</div>
+      <p>Do <em>not</em> say "vector database." If the jury learns "RAG = vectors," slide 18 — our actual contribution — has no vocabulary to land in and you must retract your own setup mid-talk. Ten seconds here buys the entire ending.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 04 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The problem</span><span class="no">04</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Notice what that architecture just did</div>
+    <h1>Everything now rests on step 2.</h1>
+    <div class="stats">
+      <div class="st"><div class="v v--sig">2M</div><div class="k">passages in the library</div></div>
+      <div class="st"><div class="v v--sig">1–2</div><div class="k">of them answer a given question</div></div>
+      <div class="st"><div class="v v--sig">&lt;1s</div><div class="k">to find them</div></div>
+    </div>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Everything rests on step 2</span><span class="n">Script · 04 / 22</span></div>
+  <div class="nbody">
+    <p>Notice what this architecture has done. It has <em>moved the burden</em>. The whole system now rests on step two. So the question we should ask is: what happens if step two brings back the wrong passages?</p>
+    <p>Let me make the scale physical. In our work the library holds <b class="hit">two million passages</b>. For any given question, perhaps <b class="hit">one or two</b> of them contain the answer. Step two has to find those two, out of two million, in under a second.</p>
+    <p class="dir">[Say "two million" slowly. It is the number that makes this feel real instead of academic.]</p>
+    <p><b>Imagine</b> a clinical assistant built this way. A doctor asks about a drug interaction. If step two fetches a passage about a <em>different</em> drug, the model does what it always does: it reads what is in front of it and writes a fluent, confident answer. Based on the wrong passage.</p>
+    <p>And it has no way to know. It cannot detect that it was handed the wrong document. Everything downstream inherits that error — invisibly.</p>
+    <div class="flag"><div class="h">Trap · say “imagine”</div>
+      <p>We evaluated on Arabic Wikipedia, not medical data. The clinical scenario is the best way to make "wrong passage = real harm" concrete — but the word <em>Imagine</em> must be audible. If a slide implies we tested on clinical data, that is the one thing here that could fairly be called dishonest.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 05 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The problem</span><span class="no">05</span></div><div class="rule"></div>
+  <div class="body center">
+    <h1 class="sm">A RAG system’s answer can never be better<br>than what its retrieval stage found.</h1>
+    <p class="lede">If the right passage never arrives,<br>no model — however large — can recover it.</p>
+    <p class="big" style="color:var(--signal); margin-top:.4in">Retrieval sets the ceiling.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Retrieval sets the ceiling</span><span class="n">Script · 05 / 22</span></div>
+  <div class="nbody">
+    <p class="dir">[Slow right down. This is the load-bearing slide of the entire defence. If they take one sentence away, it is this one.]</p>
+    <p><b class="hit">A RAG system's answer can never be better than what its retrieval stage found.</b> If the right passage never arrives, no model — however large, however capable, however expensive — can recover it. Retrieval sets the ceiling for everything after it.</p>
+    <p class="dir">[Beat. Then make it personal.]</p>
+    <p>I want to be direct about something, because it is the first thing people ask us. Our project does not build a chatbot. We did not work on the answer-writing part. We worked on step two — the retrieval.</p>
+    <p>That is deliberate, and it is exactly the reason I just gave you. Step two is the ceiling. Improving the part <em>below</em> the ceiling changes nothing. Raising the ceiling changes everything above it.</p>
+    <p>This field has a name — <em>information retrieval</em>. Given a question, return the passages that actually answer it. That is our problem. And specifically, that problem in Arabic.</p>
+    <div class="flag ok"><div class="h">This is the answer to “where is the generation?”</div>
+      <p>Deliver it here, unprompted, on your terms. A prepared answer given <em>before</em> the question reads as confidence. The same answer given after reads as an excuse.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 06 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">What we built</span><span class="no">06</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Two baselines — one of each kind</div>
+    <div class="cols">
+      <div class="blk on"><h3>BM25 · match the words</h3><p>Counts how many query terms appear in a passage, weighting rare terms higher. Thirty years old. Still the standard.</p></div>
+      <div class="blk on"><h3>mDPR · match the meaning</h3><p>A neural network maps text to a vector. Close meanings land close together, even with no shared words.</p></div>
+    </div>
+    <div class="cols" style="margin-top:.42in">
+      <div class="blk"><h3>MIRACL Arabic</h3><p>2,896 questions · 2.06M Wikipedia passages · human relevance judgements</p></div>
+      <div class="blk"><h3>NDCG@10</h3><p>Did the right passage come back — <em>and how high up?</em> Rank 1 counts for more than rank 10. Scored 0 to 1.</p></div>
+    </div>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">What we built, and how we score it</span><span class="n">Script · 06 / 22</span></div>
+  <div class="nbody">
+    <p>So the first thing we did was build baselines — one of each of the two kinds of search I just mentioned.</p>
+    <p>The word-matcher is <b>BM25</b>. It counts how many of the query's terms appear in each passage, weighting rare terms more heavily than common ones. It is almost thirty years old and it is still the standard everything gets measured against.</p>
+    <p>The meaning-matcher is <b>mDPR</b> — a neural network that maps text into a vector, so passages whose meaning is close to the question land close to it in that space, even when they share no words. It is multilingual, and Arabic is one of its languages.</p>
+    <p>We evaluated on <b>MIRACL Arabic</b>: 2,896 questions over 2.06 million Wikipedia passages, with <em>human</em> judgements of which passages are relevant. That last part matters — the ground truth is human, not automatic.</p>
+    <p>And the score is <b>NDCG at 10</b>. It asks not just whether the right passage came back, but <em>how high up</em>. Rank one is worth more than rank ten. Zero to one, higher is better.</p>
+    <p>That is the right measure here, because it is not enough for the passage to be somewhere in the list. It has to be near the top, where the language model will actually read it.</p>
+    <p class="dir">[If the room looks comfortable, cut this to thirty seconds. If not, spend the time — every number for the next twenty minutes depends on it.]</p>
+  </div>
+</div>
+
+<!-- ═══════ 07 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">What we measured</span><span class="no">07</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">We ran it over all 2,896 questions and analysed every one</div>
+    <div class="stats">
+      <div class="st"><div class="v v--bad">34%</div><div class="k">failed outright<br>nothing useful returned</div></div>
+      <div class="st"><div class="v v--mut">33%</div><div class="k">mediocre</div></div>
+      <div class="st"><div class="v v--sig">33%</div><div class="k">successful</div></div>
+    </div>
+    <p class="lede">And allowing it the <b>top 100</b> passages — for about <b>10%</b> of questions the correct passage was not in there at all.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">A third of questions fail</span><span class="n">Script · 07 / 22</span></div>
+  <div class="nbody">
+    <p>Now, I could simply assert that Arabic retrieval is difficult. Instead we measured it.</p>
+    <p>We ran the baseline over all 2,896 questions and analysed the outcome of every single one. <b class="hit">Thirty-four percent failed outright</b> — nothing useful returned. Another thirty-three percent were mediocre. Only thirty-three percent were genuinely successful.</p>
+    <p>And there is a second finding I find more troubling. Even letting the system return its top <em>hundred</em> passages — a hundred, not ten — for about ten percent of questions the correct passage was not in there at all. Not ranked badly. Absent.</p>
+    <p class="dir">[Beat.]</p>
+    <p>A third of questions fail. That is the problem, measured on our own data — not quoted from a paper.</p>
+    <div class="flag"><div class="h">Provenance · know this if pushed</div>
+      <p>These are from the <em>dense</em> (mDPR) baseline error analysis, corrected against the canonical run. If asked "which retriever," say mDPR. Do not present them as combined or as BM25.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 08 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The diagnosis</span><span class="no">08</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">A third of questions fail. So where is the fault?</div>
+    <table class="d">
+      <tr><td><b>The search engine?</b></td><td class="note">Both kinds fail at ~0.5 — and on <em>different</em> questions</td><td class="verdict">acquitted</td></tr>
+      <tr><td><b>The library?</b></td><td class="note">Audited. Every required passage is present</td><td class="verdict">acquitted</td></tr>
+      <tr class="win"><td><b>The question?</b></td><td class="note">Shortest questions score <b>0.345</b> — the worst group</td><td class="verdict">guilty</td></tr>
+    </table>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Where is the fault? Three suspects</span><span class="n">Script · 08 / 22</span></div>
+  <div class="nbody">
+    <p class="dir">[★ This slide and the next two are the transition from problem to solution. Do not rush them. If this works, the solution feels inevitable rather than invented.]</p>
+    <p>A third of our questions fail. The obvious next question — and it is the question that organised the entire project — is: <b class="hit">where is the fault?</b> There are only three places it can be. We tested all three.</p>
+    <p><b>Suspect one, the search engine.</b> We tested both kinds. Word matching scored 0.4621, meaning matching 0.4993. Both stuck around one half. But here is the informative part — they do not fail on the <em>same</em> questions. Merge their two result lists and the score jumps to 0.6267, far above either alone. Each finds what the other misses.</p>
+    <p>So: two independent algorithms, one statistical and thirty years old, one neural — both stuck at one half. That is not a bug in one method. Something limits both from outside. <b>Acquitted.</b></p>
+    <p><b>Suspect two, the library.</b> Maybe the answers simply are not there. We audited the corpus against the benchmark's own answer key. Every required passage is present. And for ninety percent of questions the right passage <em>is</em> reachable if we look a hundred deep. The knowledge is in the library — the system just cannot reach it. <b>Acquitted.</b></p>
+    <p><b>Suspect three, the question.</b> We sorted every question by length. The shortest — one to three words — scored <b>0.345</b>, far below every other group. <b>Guilty.</b></p>
+    <div class="flag"><div class="h">Trap · do not say “longer is better”</div>
+      <p>Not monotonic: 4–8 words scores 0.511 but 9+ drops back to 0.476. Only "short questions are the worst group" is supported — and 0.345 carries the argument alone.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 09 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The diagnosis</span><span class="no">09</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Four words, to separate one passage from two million</div>
+    <h1 class="sm">The fault is not in the search engine.<br><em>It is in the question.</em></h1>
+    <div class="cols3">
+      <div class="blk off"><h3>Morphology</h3><p>One root, dozens of surface forms. The question uses one, the document another. To a word-matcher: unrelated strings.</p></div>
+      <div class="blk off"><h3>Orthography</h3><p><span class="ar">أ / ا / إ</span> · <span class="ar">ة / ه</span> · <span class="ar">ى / ي</span><br>Same word, both spellings valid, different bytes.</p></div>
+      <div class="blk off"><h3>Diglossia</h3><p>People ask in dialect. Encyclopedias are written in Modern Standard Arabic.</p></div>
+    </div>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">The fault is in the question</span><span class="n">Script · 09 / 22</span></div>
+  <div class="nbody">
+    <p>And once you look at what we are actually asking the system to do, it stops being surprising.</p>
+    <p>A typical question is four words. Four words, to distinguish one passage from two million. And the passage that answers it is a hundred words, written by somebody who never saw the question, using their own vocabulary, for their own purposes, possibly decades ago.</p>
+    <p class="dir">[Beat.]</p>
+    <p><b class="hit">The fault is not in the search engine. It is in the question.</b> It is too poor to search with.</p>
+    <p>This has a name — <b>vocabulary mismatch</b>. The question and the document describe the same thing in different words. And Arabic makes it worse in three specific ways.</p>
+    <p><b>Morphology.</b> Arabic is built on roots and patterns — one root generates dozens of surface forms. The user writes one; the document uses another form of the same root. To a system matching words, those are unrelated strings.</p>
+    <p><b>Orthography.</b> Alif with hamza, alif without, alif with hamza below. Ta marbuta and ha. Alif maqsura and ya. The same word, both spellings acceptable, two different byte sequences. No match.</p>
+    <p><b>Diglossia.</b> People ask questions the way they speak — in dialect. Encyclopedias are written in Modern Standard Arabic. A systematic gap between how questions are asked and how knowledge is written down.</p>
+    <p class="dir">[This is a free slide with this jury — they are Arabic speakers. One real Arabic example per point if you have time; skip them if running long.]</p>
+  </div>
+</div>
+
+<!-- ═══════ 10 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The diagnosis</span><span class="no">10</span></div><div class="rule"></div>
+  <div class="body center">
+    <div class="eyebrow">So the fix is forced</div>
+    <h1 class="sm">Repair the question before it reaches the search engine.<br>It needs <em>the document’s words.</em></h1>
+    <p class="big" style="color:var(--drift); margin-top:.45in">Except we don’t know which document it is.</p>
+    <p class="lede" style="margin-top:.2in">Finding it <b>is the entire problem.</b> It is circular.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">The circle</span><span class="n">Script · 10 / 22</span></div>
+  <div class="nbody">
+    <p>That diagnosis determines the fix. It is not a choice we made — it is forced by where the fault is. If the defect is in the question, repair the question, <em>before</em> it reaches the search engine. Not the retriever. Not the index.</p>
+    <p>And that has a practical consequence worth stating: the fix becomes a module you place <em>in front of</em> an existing system. Nothing downstream is touched, nothing retrained, two million passages not re-indexed. You can add it to a running system and remove it again.</p>
+    <p>So — what does repairing the question mean, concretely? If the problem is that question and document use different words, then it means one thing precisely: <b class="hit">the question needs to contain the document's words.</b> Not more words in general. Not better-phrased words. The words the answering document actually uses.</p>
+    <p class="dir">[Pause here — two full seconds. Some of the room will spot the contradiction themselves, and if they do the next line lands twice as hard.]</p>
+    <p>Except — we do not know which document it is.</p>
+    <p class="dir">[Beat.]</p>
+    <p>Finding that document is the entire problem. To repair the question we would need to already know the answer. To get the answer we need the repaired question. <b class="hit">It is circular.</b></p>
+    <div class="flag ok"><div class="h">The pivot of the whole talk</div>
+      <p>Everything before this is the problem; everything after is the solution. Both of our contributions are different ways of breaking this one circle. Say the word "circular" clearly, then stop.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 11 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Query expansion</span><span class="no">11</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Breaking the circle — attempt 1</div>
+    <h1 class="sm">We don’t need the real document.<br>We need a <em>plausible</em> one.</h1>
+    <div class="flow">
+      <div class="step">4-word question</div><span class="tick">→</span>
+      <div class="step on">LLM writes the answer<br>it <em>thinks</em> is right</div><span class="tick">→</span>
+      <div class="step">question + that text<br>≈ 80 words</div><span class="tick">→</span>
+      <div class="step">Search</div>
+    </div>
+    <p class="lede" style="font-size:16pt">Nobody ever reads the generated text. It is not an answer — it is <b>vocabulary</b>.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">A plausible document — Query2Doc</span><span class="n">Script · 11 / 22</span></div>
+  <div class="nbody">
+    <p>Here is how the literature breaks that circle. It is a genuinely clever move, and it is not ours.</p>
+    <p><b class="hit">We do not need the real document. We need a plausible one.</b></p>
+    <p>Think about what we actually need. We need the <em>vocabulary</em> the answering document uses — not the document itself. And a language model that has read enormous quantities of Arabic can write what such a document would probably say. Its guess will share vocabulary with the real one, even when it gets details wrong.</p>
+    <p>So the model does not have to be right. It only has to produce the right <em>kind</em> of words.</p>
+    <p>The technique is called <b>Query2Doc</b>. Before searching, ask the model to write the answer it thinks is correct, glue that text onto the original question, and search with both. Four words becomes eighty, and many of the extra words are the ones the real document uses.</p>
+    <p>And be clear about one thing, because it surprises people: <b class="hit">nobody ever reads that generated text.</b> It is not shown to a user. It is not an answer. It is raw vocabulary, and it goes straight into the search box.</p>
+    <div class="flag ok"><div class="h">Structural note</div>
+      <p>The circle is broken here by <em>guessing</em> a document. On slide 16, CSQE breaks the same circle by <em>fetching real ones</em>. Same circle, two breaks, the second better — that symmetry is the backbone of the talk.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 12 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The gap</span><span class="no">12</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Query2Doc · HyDE · GRF — all built on English, with 175B proprietary models</div>
+    <h1 class="sm">Arabic is badly underrepresented<br>in this literature.</h1>
+    <p class="big" style="color:var(--signal); margin-top:.38in">Can we take these techniques off the shelf,<br>apply them to Arabic — and will they work?</p>
+    <p class="lede" style="font-size:16pt">Our constraint: <b>openly available models, 2–8B parameters, free cloud GPUs.</b> We tested ten.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">The gap, and our research question</span><span class="n">Script · 12 / 22</span></div>
+  <div class="nbody">
+    <p>So the technique exists and it works. But look carefully at where all of it was built.</p>
+    <p>Query2Doc, HyDE, Generative Relevance Feedback — the foundational techniques — were all developed and validated on <b>English</b> benchmarks, using <b>proprietary</b> models of 175 billion parameters or more, behind paid APIs.</p>
+    <p class="dir">[Beat.]</p>
+    <p><b class="hit">Arabic is badly underrepresented in this literature.</b> Nobody has established whether any of it transfers — not to Arabic, and not to models small enough that an ordinary research group can run them.</p>
+    <p>Which is the gap this thesis sits in. So our research question is: <b class="hit">can we take these English techniques off the shelf, apply them to Arabic, and will they work?</b></p>
+    <p>And we added a constraint deliberately: openly available models between two and eight billion parameters, on free cloud GPUs. No commercial API.</p>
+    <p>That constraint is not just about our budget. If this only works with a proprietary model that costs money per query, it is not a result a university or a hospital in this country can use. We wanted to know whether it works at a scale that is actually reachable here. We tested ten such models.</p>
+    <div class="flag ok"><div class="h">The answer is not a simple yes</div>
+      <p>Naive transfer <em>fails</em>; three adaptations were required. That is the shape of slide 20. Say it plainly there: if they had transferred unchanged, there would be no thesis.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 13 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Adaptation 1</span><span class="no">13</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">First answer — and it splits in two</div>
+    <table class="d">
+      <tr class="win"><td>Meaning-matcher <span style="color:var(--mut); font-size:13pt">· helped, every viable model</span></td><td class="n">0.4993 → 0.6164</td></tr>
+      <tr class="lose"><td>Word-matcher <span style="color:var(--mut); font-size:13pt">· made <b>worse</b>, 6 of 9 models</span></td><td class="n" style="font-size:17pt">term dilution</td></tr>
+    </table>
+    <p class="lede">80 generated words drown a 4-word question.<br><b>Our fix: repeat the question inside the expansion.</b> It recovered all nine.</p>
+    <span class="tag">Adaptation 1 · query repetition</span>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">It helped one retriever and harmed the other</span><span class="n">Script · 13 / 22</span></div>
+  <div class="nbody">
+    <p>The first answer was encouraging. On the meaning-matching retriever, query expansion took us from <b>0.4993</b> to <b>0.6164</b>. A large improvement, from an eight-billion-parameter open model on a free GPU. It held for every viable model we tested.</p>
+    <p>But on the word-matching retriever we got the <em>opposite</em> result. Expansion made it worse — for six of the nine models.</p>
+    <p>The reason is dilution. BM25 scores by term overlap. Add eighty generated words to a four-word question, and the original four — the ones that carried the meaning — are now a small fraction of the query. Their weight in the scoring collapses. The expansion drowns the question.</p>
+    <p>Our fix was simple: repeat the original question several times inside the expanded query, to restore its weight. That worked, and it recovered all nine models.</p>
+    <p class="dir">[Beat — then flag the deeper finding.]</p>
+    <p>But hold onto the finding itself, because it is the first sign of something bigger: <b class="hit">the two ways of searching did not respond to expansion the same way.</b> One was helped. One was harmed. I will come back to that.</p>
+    <p>And note what has already happened to our research question. Taking the English technique and applying it directly <em>did not work</em>. It needed an adaptation. That is the first of three.</p>
+  </div>
+</div>
+
+<!-- ═══════ 14 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The catch</span><span class="no">14</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">One question from our test set · and what our model generated for it</div>
+    <p class="ar arq">ما هي الأسماء الخمسة في اللغة العربية؟</p>
+    <div class="gen">
+      <p class="ar" style="font-size:19pt; line-height:1.75; margin:0">فئة خاصة من الأسماء الأكثر شيوعًا واستخدامًا، ولها قواعد نحوية خاصة:<br>١. محمد &nbsp; ٢. آدم &nbsp; ٣. إبراهيم &nbsp; ٤. إسماعيل …</p>
+    </div>
+    <p class="lede" style="font-size:17pt">It listed the most popular boys’ names in the Arab world.<br><b>Fluent. Structured. Confident. Completely wrong.</b></p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">The Five Nouns</span><span class="n">Script · 14 / 22</span></div>
+  <div class="nbody">
+    <p>So far this is a good story. Expansion works, we adapted it for Arabic, the numbers went up. Now I want to show you a single question from our test set, because it changed how we thought about the entire approach.</p>
+    <p class="dir">[Say the Arabic aloud. Then stop for three full seconds. Everyone in the room will silently answer it — this is school grammar. Let that happen. Do not fill the silence.]</p>
+    <p>Notice the question says <span class="ar">في اللغة العربية</span>. The subject is stated explicitly. This is a question about Arabic grammar, and the answer is <span class="ar">أب، أخ، حم، فو، ذو</span>.</p>
+    <p>Here is what our language model generated. Real output, word for word — I have not edited it.</p>
+    <p class="dir">[Read the Arabic. The list of names does the work; do not editorialise.]</p>
+    <p>It listed the most popular boys' names in the Arab world.</p>
+    <p class="dir">[Beat.]</p>
+    <p>An eight-billion-parameter model, trained with Arabic as a priority, given a question that <em>explicitly states</em> the subject is the Arabic language — and it produced a numbered list of first names. It even invented a definition for the category. Fluent. Well-structured. Confident. Completely wrong.</p>
+    <p class="dir">[Now fire the payload from slide 2.]</p>
+    <p><b class="hit">That is the failure I asked you to hold onto at the very beginning.</b> Not silence — confident, well-formed error. Except now it is not in a chatbot. It is inside our own pipeline.</p>
+  </div>
+</div>
+
+<!-- ═══════ 15 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The catch</span><span class="no">15</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">That text goes straight into the search box. Nobody reads it.</div>
+    <table class="d">
+      <tr class="win"><td>The bare question — no model, no expansion, nothing</td><td class="n">1.000</td></tr>
+      <tr class="lose"><td>The question <b>plus our help</b></td><td class="n">0.000</td></tr>
+    </table>
+    <h1 class="sm" style="margin-top:.45in">We took a question the system had<br>already solved — and <span class="bad">broke it.</span></h1>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">1.000 → 0.000</span><span class="n">Script · 15 / 22</span></div>
+  <div class="nbody">
+    <p>Remember what happens to that generated text. Nobody reads it. It goes straight into the search box, attached to the original question.</p>
+    <p>So the search engine is now hunting for an article about famous men named Muhammad and Adam. The correct article — the grammar one — contains none of those words. It never comes back. Not at rank one, not anywhere in the top ten. <b>Score: zero.</b></p>
+    <p>And here is the part that stopped us. Before we added anything at all — the bare four-word question — the system had <em>already found</em> the correct article. Rank one. A perfect score.</p>
+    <p class="dir">[Beat. Slow.]</p>
+    <p><b class="hit">Our improvement took a question the system had already solved, and broke it.</b></p>
+    <p class="dir">[Long pause. This is the emotional centre of the presentation. Do not talk over it and do not soften it — the fact that it is uncomfortable is what makes it credible.]</p>
+    <p>Now, how common is this? It is the fair question, so let me answer it before it is asked. Perfect reversals like this occur in about <b>143 of our 2,896 questions</b>. I am not showing it because it is typical — I am showing it because it makes the mechanism <em>visible</em>. The quieter version is far more widespread, and I will give you that number at the end.</p>
+    <p>But the lesson generalises: <b class="hit">a confident wrong guess is worse than no guess at all.</b></p>
+    <div class="flag ok"><div class="h">Why volunteer the 143</div>
+      <p>It is exactly what stops the example looking cherry-picked. Wait to be asked and the same number sounds like a concession. Said first, it sounds like rigour.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 16 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">CSQE</span><span class="no">16</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Breaking the circle — attempt 2</div>
+    <p class="quote">A standard LLM is like a <b>layperson</b> —<br>it tries to answer generatively.</p>
+    <div class="cols">
+      <div class="blk off"><h3>The layperson</h3><p>Answers from what he remembers. He sounds certain. He may be badly wrong — and he sounds the same either way.</p></div>
+      <div class="blk on"><h3>The mufti</h3><p>Takes the book off the shelf and <b>quotes its wording</b> before he rules. Not more intelligent. One extra step: <b>he looks before he speaks.</b></p></div>
+    </div>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">The mufti</span><span class="n">Script · 16 / 22</span></div>
+  <div class="nbody">
+    <p>So what should it have done instead? <b class="hit">It answered from memory. It should have looked first.</b></p>
+    <p>Our supervisor's consultant gave us an analogy for exactly this, and it fits so well I want to use his own words: <em>a standard language model is like a layperson — it tries to answer generatively.</em></p>
+    <p>Ask a layperson a question of fiqh and he answers from what he remembers. He sounds certain. He may be right, he may be badly wrong, and he sounds the same either way.</p>
+    <p>Ask a mufti and he does something different. His general knowledge tells him roughly where the answer lives — but he does not rule from memory. He takes the book off the shelf, finds the passage, and <em>quotes its actual wording</em> before he gives the ruling. <b class="hit">He is not more intelligent. He has one extra step: he looks before he speaks.</b></p>
+    <p>And we did not simply accept that analogy because it came from a consultant. We turned it into a research question and tested it — and the analogy has <em>two halves</em>.</p>
+    <p>The first half is "know which chapter to open" — teach the system the structure of the library. We surveyed eight research directions, about twenty-five papers, three families of method in depth. Every method that does this is an <em>index-time</em> method: it requires rebuilding the index over all two million passages, with no incremental path. Contextual Retrieval, three to twenty thousand dollars. RAPTOR, two hundred and sixteen — affordable, but its gains are on multi-hop questions and ours are factoid. Title prepending, cheap, but it lost 11.6% on one dataset. We ruled that half out on cost and risk, and we documented the cost.</p>
+    <p>The second half — "open the book instead of guessing" — costs one extra retrieval pass and nothing else. <b class="hit">That is the half we built.</b></p>
+    <div class="flag"><div class="h">Trap · we took half the analogy</div>
+      <p>If Rashad or anyone from that meeting is in the room, say "we took one half of your analogy, and here is the cost table that killed the other half." Far stronger than hoping nobody notices. And if asked "why not RAPTOR" — the answer is <em>scope</em>, not complexity.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 17 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Adaptation 2</span><span class="no">17</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Corpus-Steered Query Expansion</div>
+    <ul class="pts">
+      <li><b>Look.</b> Search once with the bare question. Take the top 5 documents — a cheap first glance, not the answer.</li>
+      <li><b>Read.</b> Extract the sentences that genuinely match the question.</li>
+      <li><b>Expand.</b> Use <em>those</em> sentences — words <b>copied</b> from real documents, not invented.</li>
+    </ul>
+    <div class="grn">
+      <p class="ar" style="font-size:19pt; line-height:1.7; margin:0">الأسماء الخمسة المعروفة في اللغة العربية هي <b>(أب، أخ، حم، فو، ذو)</b></p>
+    </div>
+    <p class="lede" style="font-size:17pt">Same question. <b style="color:var(--signal)">0.000 → 1.000.</b></p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">CSQE — three steps</span><span class="n">Script · 17 / 22</span></div>
+  <div class="nbody">
+    <p>The method is called <b>Corpus-Steered Query Expansion</b> — CSQE — and it is three steps.</p>
+    <p><b>One: look.</b> Search once with the bare question and take back the top five documents. These are not the answer. This is a cheap first glance, and some of them will be wrong.</p>
+    <p><b>Two: read.</b> Extract from those five the sentences that genuinely match the question.</p>
+    <p><b>Three: expand.</b> Use <em>those</em> sentences as the expansion — words <b>copied</b> from documents actually in our library, not words invented by a model.</p>
+    <p>Back to our question. Here is what the first glance returned: the real grammar article, from our corpus, containing <span class="ar">أب، أخ، حم، فو، ذو</span>. The expansion now carries the correct vocabulary — not because the model knew it, but because it was <b class="hit">copied from a document that had it</b>. Score: one point zero. Rank one.</p>
+    <p>Which gives the difference in two lines. <b class="hit">Blind expansion asks the model: what do you think this is? Corpus-steered expansion asks the library: what do you actually have?</b></p>
+    <p class="dir">[Beat. This is the most quotable moment in the talk. Say it slowly and add nothing after it.]</p>
+    <p>And the library cannot hallucinate. It only contains what it contains.</p>
+    <div class="flag"><div class="h">Precision · have this ready</div>
+      <p>CSQE does not throw the model away — four samples, <b>two copied from the corpus, two still blind</b>. Ablation: corpus-only 0.5381, blind-only 0.5752, the mixture <b>0.6157</b>. The mix beats both halves. The claim is not that generation is useless — it is that generation must be <em>anchored</em>. That is adaptation two.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 18 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Adaptation 3 · placement</span><span class="no">18</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Same technique · same fusion · the only variable is which retriever gets the expansion</div>
+    <table class="d">
+      <tr><td>Merged retrievers, <b>no expansion at all</b></td><td class="n">0.6267</td></tr>
+      <tr class="lose"><td>Expansion on the meaning-matcher only</td><td class="n">0.6474</td></tr>
+      <tr class="lose"><td>Expansion on <b>both</b></td><td class="n">0.6936</td></tr>
+      <tr class="win"><td>Expansion on the <b>word-matcher only</b></td><td class="n">0.7137</td></tr>
+    </table>
+    <span class="tag">Adaptation 3 · asymmetric placement</span>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Placement — the contribution</span><span class="n">Script · 18 / 22</span></div>
+  <div class="nbody">
+    <p>Now I come back to the detail I planted at the beginning: there are two ways to search a library, and they fail on <em>different</em> questions. So the natural move is to run both and merge. That scored <b>0.6267</b> — with no expansion of any kind. Far above either alone. We set that as the number we had to beat: not the weak baseline, the strong one.</p>
+    <p>Then we did the obvious thing. We had a technique that improves retrieval and two retrievers, so we gave the expansion to both.</p>
+    <p class="dir">[Beat. Deadpan.]</p>
+    <p>It made things worse. Same technique, same fusion, same models. <b class="hit">The only variable is which retriever receives the expansion.</b> Meaning-matcher only: 0.6474. Both: 0.6936. Word-matcher only, withholding it from the meaning-matcher entirely: <b>0.7137</b>.</p>
+    <p>Why — and this room will recognise the mechanism faster than most. The word-matcher scores by counting term hits: more terms, more chances to hit. The meaning-matcher compresses the whole input into a <em>single</em> representation — one average meaning. Bolt eighty generated words onto a four-word question and the question no longer dominates that average.</p>
+    <p>It behaves like a <b class="hit">matched filter</b>: best when the reference is a clean template of the signal you want. Padding the reference with generated text is adding noise to the template, and the match degrades. And notice — this is the same asymmetry from slide 13. It was there from the start; we just did not understand it yet.</p>
+    <p>But there is a deeper reason, and it is the one to remember. <b class="hit">Fusion only pays off while the two retrievers remain different.</b> Their entire value is that they fail on different questions. Feed the same eighty words into both and they start to look alike — same documents, same mistakes. The complementarity we were merging for disappears.</p>
+    <p>So the finding is not "expansion is good" or "expansion is bad." It is that <em>expansion has a place, and the place matters</em> — apply it to the sparse retriever and withhold it from the dense one, precisely to protect the difference between them.</p>
+    <div class="flag"><div class="h">Number discipline</div>
+      <p>All three placement figures must be the <b>RRF</b> numbers — do not mix in the CC values. And <b>0.6936</b> means two things in the thesis: the both-expanded result, and coincidentally the per-query mean of the best system. Here it means both-expanded only.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 19 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Results</span><span class="no">19</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">The whole thing, in two numbers</div>
+    <div class="stats">
+      <div class="st"><div class="v v--mut">0.4621</div><div class="k">standard Arabic keyword search</div></div>
+      <div class="st"><div class="v v--sig">0.7137</div><div class="k">our final system</div></div>
+      <div class="st"><div class="v v--sig">+54.5%</div><div class="k">and +13.9% over the strongest<br>baseline with no expansion</div></div>
+    </div>
+    <p class="lede">One 8B open model · free cloud GPUs · no commercial API · no re-indexing · no change to either retriever.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Results</span><span class="n">Script · 19 / 22</span></div>
+  <div class="nbody">
+    <p>Let me put the whole thing in two numbers. Standard Arabic keyword search — the established baseline — scores <b>0.4621</b>. Our final system scores <b>0.7137</b>. An improvement of <b class="hit">54.5%</b>.</p>
+    <p>And against the harder comparison, the one I said we would hold ourselves to — the merged retriever at 0.6267, with no expansion at all — we are <b>13.9%</b> ahead.</p>
+    <p>What it cost is part of the result. One openly available eight-billion-parameter model. Free cloud GPUs. No commercial API, no 175-billion-parameter model. No re-indexing of two million passages, and no modification to either retriever. The whole intervention sits in front of an existing system.</p>
+    <p>And this is the number I promised you when I showed that single example. Across all 2,896 questions our final method improved <b>56.8%</b>, left <b>26.6%</b> unchanged, and made <b>16.6%</b> worse. Average gain per question, <b>+0.189</b>.</p>
+    <p class="dir">[Beat — this closes the cherry-picking question for good.]</p>
+    <p>So the dramatic example I showed you is the visible edge of something happening, much more quietly, on the <em>majority</em> of questions.</p>
+    <div class="flag"><div class="h">Do not let a slide imply CSQE alone reached 0.7137</div>
+      <p>CSQE on BM25 alone is <b>0.6157</b> — just <em>below</em> the 0.6267 hybrid baseline. The 0.7137 required CSQE <em>plus</em> the placement finding. A jury member with Chapter 4 open can do that subtraction, so if it comes up: "the method alone did not clear the hybrid baseline; the placement decision is what carried it."</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 20 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">The research question</span><span class="no">20</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Do English query-expansion techniques transfer to Arabic?</div>
+    <h1 class="sm">Yes — <em>but not unmodified.</em></h1>
+    <ul class="pts sm">
+      <li><b>1 · Query repetition.</b> Expansion diluted the sparse retriever, making it worse for 6 of 9 models.</li>
+      <li><b>2 · Corpus grounding.</b> Blind generation hallucinated on Arabic-specific terms.</li>
+      <li><b>3 · Asymmetric placement.</b> Expanding both retrievers destroyed the complementarity fusion depends on.</li>
+    </ul>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Yes — but not unmodified</span><span class="n">Script · 20 / 22</span></div>
+  <div class="nbody">
+    <p>So let me answer the question I set at the beginning. Can we take these English techniques off the shelf, apply them to Arabic, and will they work?</p>
+    <p><b class="hit">Yes — but not unmodified.</b> Applied directly, off the shelf, they failed. Three adaptations were required, and each came out of a failure we measured.</p>
+    <p><b>One: query repetition.</b> Expansion diluted the sparse retriever and made it <em>worse</em> for six of nine models. Repeating the original question inside the expanded query restored its weight.</p>
+    <p><b>Two: corpus grounding.</b> Blind generation hallucinated on Arabic-specific terms — you saw it do exactly that. Grounding the expansion in retrieved documents made it reliable.</p>
+    <p><b>Three: asymmetric placement.</b> Expanding both retrievers destroyed the complementarity fusion depends on. The expansion belongs on the sparse retriever only.</p>
+    <p class="dir">[Beat, then land the meta-point.]</p>
+    <p>And I would put it this way: <b class="hit">if these techniques had transferred unchanged, there would have been no thesis here.</b> The fact that they did not is the finding.</p>
+    <div class="flag"><div class="h">Novelty · say the narrow version only</div>
+      <p>Closest prior art is <b>Exp4Fuse</b> (Liu et al., ACL 2025 Findings) — QE on a single sparse retriever, then fusion. Our claim survives only as <em>monolingual MSA Arabic, dense–sparse hybrid</em>. If asked whether this is new, cite Exp4Fuse yourself, then state the narrow claim.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 21 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Limits</span><span class="no">21</span></div><div class="rule"></div>
+  <div class="body">
+    <div class="eyebrow">Stated by us, not found by you</div>
+    <ul class="pts sm">
+      <li>One benchmark, Arabic Wikipedia. <b>Modern Standard Arabic only</b> — no dialect, though diglossia was one of the three problems we named.</li>
+      <li>One retriever pair, one language. We have not shown these findings transfer further.</li>
+      <li>We measured <b>retrieval quality, not final answer quality</b>. Deliberate — but not demonstrated downstream.</li>
+      <li>Our best generator, Aya Expanse, is <b>CC-BY-NC</b>. Fine for research; rules out commercial deployment.</li>
+      <li>CSQE costs an <b>extra retrieval pass</b> per query. And when the first glance is poisoned, the expansion is grounded in the wrong thing — <b>131 questions</b>, 4.5%.</li>
+    </ul>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Limits</span><span class="n">Script · 21 / 22</span></div>
+  <div class="nbody">
+    <p>Finally, I want to state the limits of this work myself, rather than leave them to be found.</p>
+    <p>We evaluated on one benchmark — Arabic Wikipedia — in Modern Standard Arabic only. We did not test dialect, and given that diglossia was one of the three problems I named at the start, that is a real gap.</p>
+    <p>We used one pair of retrievers and one language. We have not shown these findings transfer further.</p>
+    <p>We measured retrieval quality, not final answer quality. That was deliberate — retrieval is the ceiling — but it does mean we have not demonstrated the downstream improvement directly.</p>
+    <p>Our best generator, Aya Expanse, is licensed CC-BY-NC. Fine for research; it rules out commercial deployment without a different model.</p>
+    <p>CSQE costs an extra retrieval pass for every query. It is not free.</p>
+    <p>And it has a failure mode we can name precisely: when the first glance returns poisoned documents, the expansion is grounded in the wrong thing and the query gets worse. That happened to <b>131 questions</b> — about 4.5%. We measured it, and it is the clearest direction for future work.</p>
+    <div class="flag ok"><div class="h">Read this slide slowly</div>
+      <p>A prepared limitation is a strength in a defence. Rushing signals discomfort; reading steadily signals you already thought about everything they were about to ask.</p></div>
+  </div>
+</div>
+
+<!-- ═══════ 22 ═══════ -->
+<div class="pg">
+  <div class="top"><span class="lab">Close</span><span class="no">22</span></div><div class="rule"></div>
+  <div class="body center">
+    <h1>Thank you.</h1>
+    <p class="lede">Questions.</p>
+  </div>
+</div>
+<div class="pg pg--note">
+  <div class="nhead"><span class="t">Prepared answers — rehearse, do not improvise</span><span class="n">Script · 22 / 22</span></div>
+  <div class="nbody">
+    <p><b>“Where is the generation? This is only half a RAG system.”</b><br>A RAG system's answer is bounded by what it retrieves. If the right passage never comes back, no generator can recover it. We worked on the ceiling. <span class="dir">(Already delivered on slide 5 — this is the fallback.)</span></p>
+    <p><b>“Why didn't you evaluate final answer quality?”</b><br>It would measure the generator, not our contribution. Answer quality depends on the model, the prompt and the judge. Retrieval metrics isolate what we changed. Our supervisor's guidance was explicit: get retrieval right and generation follows.</p>
+    <p><b>“Why only Modern Standard Arabic?”</b><br>The benchmark we needed — human relevance judgements at this scale — exists only in MSA. MIRACL gave us 2,896 judged questions over 2.06M passages. No dialect equivalent exists. Building one is future work.</p>
+    <p><b>“Isn't this just prompt engineering?”</b><br>The prompt is one component. The findings are not about prompts: that expansion dilutes sparse retrieval and repetition repairs it; that grounding beats generation; that placement changes the result by 0.066. None is a prompt choice, and they hold across ten models.</p>
+    <p><b>“Why not RAPTOR / the structure-aware approach?”</b><br>Scope, not complexity. RAPTOR costs about $216 — affordable. But its gains are on multi-hop questions and MIRACL is mostly factoid. Every structure-aware method also requires rebuilding the index over 2M passages with no incremental path.</p>
+    <p><b>“Is this actually new?”</b><br>Closest prior art is Exp4Fuse, ACL 2025 Findings — QE on a single sparse retriever, then fusion. Our claim is the narrow one: monolingual MSA Arabic, dense–sparse hybrid.</p>
+    <p><b>“How do you know the example wasn't cherry-picked?”</b><br>It was chosen to be clear, and I said so when I showed it. The claim rests on the aggregate: 56.8% of 2,896 questions improved, mean +0.189.</p>
+    <p><b>“Does a bigger model always do better?”</b><br>No — and be careful. Chapter 5 qualifies this heavily. Do not claim a clean relationship in either direction.</p>
+  </div>
+</div>
+
+</body>
+</html>

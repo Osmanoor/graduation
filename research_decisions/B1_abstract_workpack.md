@@ -283,3 +283,35 @@ does not spill past one page. Five paragraphs cost four `\parskip` breaks; if it
 merge ¶1 and ¶2.
 
 **Feeds B2:** Osman's Arabic abstract must be re-derived from this text, not from the old one.
+
+---
+
+## 10. SUPERSEDED 2026-08-08 by task B2
+
+The §9 text above is **no longer what is in `5-Abstract.tex`.** It was factually clean but Elhaj
+and Osman both found it hard to read: too many numbers, and CSQE explained in a way that taught a
+non-specialist nothing. B2 revised it for readability only — no fact changed, and it still passes
+all ten traps in §3.
+
+| | §9 version | Current (B2) |
+|---|---|---|
+| Words | 315 (one paragraph, after the 5-paragraph version was merged) | **327** |
+| Numbers | 15 | **9** |
+| Headline | 0.7137 + two percentages, no starting point | **0.4621 → 0.7137 = +54.5%**, one sentence |
+| Placement evidence | 0.6267 / 0.6936 / 0.6474 as decimals | same comparison, expressed in words |
+| CSQE | "grounds the expansion in first-pass retrieved documents" | "first retrieves a few documents from the collection and builds the expansion from the wording found in them, not from the model's own memory" |
+| Model counts | "all nine viable models … six of them" | "Ten … of which nine proved viable" |
+
+**Dropped:** 175-billion, 2–8 billion, the three placement decimals, 0.6267.
+**Added:** 0.4621, the missing "before" number.
+
+Second opinions were re-run for this revision (Gemini 3.1 Pro, 319 words; GPT-5.5, 322 words),
+each given the same brief without seeing the others. All three passed the §3 fact-check. **All
+three independently wrote the CSQE gloss the same way** — retrieve real passages first, build the
+expansion from their wording — which is the main evidence that the new phrasing is right. Gemini's
+draft was not used as the base because it kept 175-billion and 2–8 billion, failing the very
+complaint that prompted the revision; both external drafts also dropped the placement evidence and
+the +13.9% comparison, which were kept deliberately.
+
+**One-page fit re-verified** by building the real front matter, not by word count: `1-main.pdf`
+p5, one page, followed by المستخلص on p6.

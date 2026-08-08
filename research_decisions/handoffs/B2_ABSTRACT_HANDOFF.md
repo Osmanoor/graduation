@@ -4,6 +4,30 @@
 **Owner:** Elhaj · **Created:** 2026-08-06
 **Scope:** TWO tasks, in this order. The English revision comes first and gates the translation.
 
+> ## ✅ BOTH JOBS DONE — 2026-08-08
+>
+> **Job 1:** `5-Abstract.tex` revised. 327 words, numbers cut from 15 to 9, headline is now
+> `0.4621 → 0.7137 = +54.5%` in one sentence, CSQE explained in plain words. Approved by Elhaj.
+> **Job 2:** `6-ARAbstract.tex` re-derived from it. **2 pages → 1 page, 77% of the text block.**
+>
+> Second opinions ran as §2 asks: Gemini 3.1 Pro and GPT-5.5, English and Arabic, each blind to
+> the others. All three English drafts passed the §5 fact-check with no invented numbers.
+>
+> Build verified: `xelatex 1-main.tex`, **0 errors, 125 pages**, p5 abstract → p6 المستخلص →
+> p7 Contents, one page each.
+>
+> **Still open — the human gate:** the 12 Arabic terminology judgement calls in
+> `research_decisions/B2_arabic_terminology_calls.md` need Elhaj and Osman to read them.
+> Elhaj chose (2026-08-08) to ship the AI-assisted Arabic draft and review it, rather than have
+> Osman rewrite it in his own voice. See the ⚠️ note on B2 in `THESIS_FINAL_SUBMISSION_TASKS.md`.
+>
+> Superseded record of the previous English abstract: `B1_abstract_workpack.md` §10.
+>
+> **Note for whoever writes .tex files with a Python heredoc through the Bash tool:** `\\` is
+> collapsed to `\` in transit, so `"\\begin{...}"` reaches Python as `\begin` and becomes a
+> literal backspace character. It corrupted `6-ARAbstract.tex` once here. Use the Write tool for
+> `.tex` content, or raw strings.
+
 ---
 
 ## 1. The prompt (paste this into the new chat)
