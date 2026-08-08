@@ -2,7 +2,7 @@
 \chapter{Theoretical Background and Literature Review}
 \label{chap:background}
 
-This chapter establishes the theoretical foundations and reviews the current state-of-the-art relevant to the research presented in this thesis. Section~\ref{sec:theoretical} introduces the core concepts of LLMs, RAG systems, information retrieval methods, QE techniques, and the specific challenges posed by the Arabic language. Section~\ref{sec:math_models} presents the mathematical formulations underlying the retrieval and evaluation methods employed. Section~\ref{sec:dataset_selection} surveys candidate Arabic retrieval benchmarks and motivates the selection of the MIRACL Arabic dataset. Section~\ref{sec:models_used} provides detailed descriptions of all models utilized in the experimental work. Finally, Section~\ref{sec:related_work} surveys the related literature and identifies the research gap addressed by this thesis.
+This chapter establishes the theoretical foundations and reviews the current state-of-the-art relevant to the research presented in this thesis. Section~\ref{sec:theoretical} introduces the core concepts of LLMs, RAG systems, information retrieval methods, QE techniques, and the specific challenges posed by the Arabic language. Section~\ref{sec:math_models} presents the mathematical formulations underlying the retrieval and evaluation methods employed. Section~\ref{sec:dataset_selection} surveys candidate Arabic retrieval benchmarks and motivates the selection of the MIRACL Arabic dataset. Section~\ref{sec:models_used} introduces the models utilized in the experimental work, with their full descriptions given in Appendix~\ref{app:model_details}. Finally, Section~\ref{sec:related_work} surveys the related literature and identifies the research gap addressed by this thesis.
 
 %======================================================================
 \section{Theoretical Background}
@@ -283,7 +283,9 @@ MIRACL covers only MSA over Wikipedia and therefore does not exercise dialectal 
 \label{sec:models_used}
 %======================================================================
 
-This section describes all language models employed in the experimental work of this thesis. The models were selected based on three primary criteria: (1) strong Arabic language support, either through specialized Arabic training or robust multilingual coverage; (2) compatibility with consumer-grade GPU hardware, specifically the NVIDIA T4 (15\,GB of video random-access memory, VRAM) available through Google Colab and the NVIDIA A100 (40\,GB VRAM); and (3) open weights under a licence permitting research use, whether permissive or non-commercial, to ensure reproducibility \cite{song_2024_a}. Models are organized into Arabic-specialized, multilingual, and experimental categories. Table~\ref{tab:models_used} summarises the ten LLMs evaluated; the remainder of this section describes each in detail.
+This section describes the language models employed in the experimental work of this thesis. The models were selected based on three primary criteria: (1) strong Arabic language support, either through specialized Arabic training or robust multilingual coverage; (2) compatibility with consumer-grade GPU hardware, specifically the NVIDIA T4 (15\,GB of video random-access memory, VRAM) available through Google Colab and the NVIDIA A100 (40\,GB VRAM); and (3) open weights under a licence permitting research use, whether permissive or non-commercial, to ensure reproducibility \cite{song_2024_a}. Table~\ref{tab:models_used} summarises the ten LLMs evaluated.
+
+The ten models divide into two groups. The \textbf{Arabic-specialized} group---Falcon-H1-Arabic-3B, Jais-2-8B, ALLaM-7B and SILMA Kashif-2B---comprises models whose developers list Arabic as a primary training language, whether through an Arabic-centric vocabulary, Arabic-weighted pre-training, or task-specific optimisation for Arabic retrieval. The \textbf{multilingual} group---Qwen~2.5~3B and 7B, Qwen3-4B and 8B, Gemma~3~4B-IT and Aya Expanse 8B---comprises general-purpose models that support Arabic among many other languages without special emphasis on it. Including both groups allows the thesis to test whether Arabic specialisation confers an advantage for QE over broad multilingual coverage, a question addressed in Section~\ref{sec:res_finding_arabic}. Full descriptions of each model---architecture, training data, benchmark scores, licence and VRAM footprint---are given in Appendix~\ref{app:model_details}, and Table~\ref{tab:model_comparison} in Appendix~\ref{app:model_summary} sets the ten models side by side with their developer, architecture and licence.
 
 \begin{table}[H]
   \centering
@@ -292,86 +294,6 @@ This section describes all language models employed in the experimental work of 
   \footnotesize
   \input{../thesis_figures/output/pdf/table_2_2.tex}
 \end{table}
-
-\subsection{Arabic-Specialized Models}
-\label{sec:arabic_models}
-
-\subsubsection{Falcon-H1-Arabic-3B}
-\label{sec:falcon_h1}
-
-Falcon-H1-Arabic-3B is a 3.15 billion parameter language model developed by the Technology Innovation Institute (TII), Abu Dhabi \cite{falcon_h1_2025}. Unlike conventional Transformer-based LLMs, Falcon-H1 employs a hybrid Mamba2-Transformer architecture that combines State Space Model (SSM) layers \cite{gu_2024_mamba} with standard multi-head attention layers and Swish-Gated Linear Unit (SwiGLU) activation functions. The model contains 32 layers with a hidden size of 2,560, utilizing 32 Mamba heads alongside 10 attention heads with Grouped Query Attention (GQA, 2 key-value heads).
-
-The hybrid architecture was designed to combine the linear-time sequence processing efficiency of SSMs with the strong in-context learning capabilities of attention mechanisms. The model supports a context length of 128K tokens and was purpose-built for Arabic, listing it as a primary language alongside 17 additional languages.
-
-On the Open Arabic LLM Leaderboard (OALL v2), Falcon-H1-Arabic-3B achieved an average score of approximately 62\%, roughly 10 points ahead of competing models at the same parameter count. The model was released in May 2025 under an open license. In 16-bit floating-point (FP16) precision, the model requires approximately 10--11\,GB of VRAM including SSM state buffers, fitting on both T4 and A100 GPUs without quantization.
-
-\subsubsection{Jais-2-8B}
-\label{sec:jais2}
-
-Jais-2-8B-Chat is an 8.09 billion parameter Arabic-centric language model developed collaboratively by Inception (G42), Mohamed bin Zayed University of Artificial Intelligence (MBZUAI), and Cerebras \cite{sengupta_2023_jais}. The model employs a standard decoder-only Transformer architecture with Rotary Position Embeddings (RoPE), squared Rectified Linear Unit (Squared-ReLU) activation, and LayerNorm. It contains 32 layers with a hidden size of 3,328 and 26 attention heads.
-
-A distinguishing feature of Jais-2 is its Arabic-centric vocabulary of 150,272 tokens, trained from scratch to optimize Arabic tokenization efficiency. The model was pre-trained on 2.6 trillion tokens---6.6 times more data than its predecessor Jais-1---with substantial Arabic and English representation. The instruction-tuned variant was refined through a three-stage alignment pipeline comprising large-scale SFT on Arabic and English prompt-response pairs, followed by DPO, and finally Group Relative Policy Optimization (GRPO).
-
-On the AraGen-12-24 benchmark, Jais-2-8B-Chat achieved an overall 3C3H score of 58.64\%, outperforming Fanar-1-9B and ALLaM-7B. The model was released in December 2024 under Apache 2.0 license (gated access). It requires 16-bit brain floating-point (BF16) precision due to Squared-ReLU activation overflow in FP16, using approximately 16.6\,GB of VRAM on the A100.
-
-\subsubsection{ALLaM-7B}
-\label{sec:allam}
-
-ALLaM-7B-Instruct-preview is a 7 billion parameter Arabic-English language model developed by the National Center for Artificial Intelligence (NCAI) at the Saudi Data and Artificial Intelligence Authority (SDAIA) \cite{bari2025allam}. Published at the International Conference on Learning Representations (ICLR) 2025, ALLaM employs the LlamaForCausalLM architecture with an expanded vocabulary of 64,000 tokens (doubled from Llama-2's 32K to accommodate Arabic).
-
-The model was trained from scratch in two phases: (1) a foundation phase on 4 trillion English tokens, followed by (2) continued pre-training on 1.2 trillion mixed Arabic-English tokens at a 45\%/45\%/10\% Arabic/English/code ratio, totaling 5.2 trillion training tokens. A substantial share of the Arabic pre-training data was derived from machine-translated English sources. Instruction tuning and DPO-based alignment were subsequently applied.
-
-On the Arabic Massive Multitask Language Understanding (MMLU) benchmark, ALLaM achieved a 0-shot score of 67.78. The model was released in February 2025 under Apache 2.0 license. Notably, the publicly available version carries ``preview'' (alpha) status, indicating that it may not fully reflect the capabilities described in the published paper. The model requires approximately 14.5\,GB of VRAM in FP16 on the A100.
-
-\subsubsection{SILMA Kashif-2B}
-\label{sec:silma}
-
-SILMA Kashif-2B-Instruct is a 2 billion parameter language model developed by SILMA AI, an Arabic artificial intelligence (AI) startup, with a specific focus on Arabic RAG applications \cite{silma_2024}. The model was optimized for extractive QA in Arabic, achieving a RAG Question Answering (RAGQA) benchmark score of 0.3478, which placed it at the top of the 3--9 billion parameter range on this benchmark.
-
-The model supports a context length of 12K tokens and operates in FP16 precision, requiring approximately 4--5\,GB of VRAM. Its small size makes it the most computationally efficient model in the comparison, suitable for deployment on consumer-grade hardware without quantization.
-
-\subsection{Multilingual Models}
-\label{sec:multilingual_models}
-
-\subsubsection{Qwen 2.5 3B}
-\label{sec:qwen25_3b}
-
-Qwen 2.5-3B-Instruct is a 3.09 billion parameter multilingual language model developed by the Qwen Team at Alibaba Cloud \cite{qwen2_5_2024}. The model employs a standard decoder-only Transformer architecture with GQA (16 query heads, 2 key-value heads), Root Mean Square Normalization (RMSNorm), Sigmoid Linear Unit (SiLU) activation, and a vocabulary of 151,936 tokens. It was pre-trained on approximately 18 trillion tokens spanning 29 or more languages, with Arabic included as a supported language.
-
-Qwen 2.5-3B-Instruct was released in September 2024 under the Qwen Research License (non-commercial use). The model requires approximately 6\,GB of VRAM in FP16, fitting comfortably on the T4 GPU. In the context of this thesis, Qwen 2.5-3B served as the reference model for the first Query2Doc experiment, establishing the initial QE baseline.
-
-\subsubsection{Qwen 2.5 7B}
-\label{sec:qwen25_7b}
-
-Qwen 2.5-7B-Instruct is the 7 billion parameter variant in the same model family \cite{qwen2_5_2024}. It shares the same architecture and tokenizer as the 3B variant but with a wider hidden dimension and more attention heads, resulting in stronger performance across multilingual benchmarks (MMLU: 74.2). The model requires 4-bit quantization to fit on the T4 GPU but operates in full FP16 precision on the A100. Pre-quantized versions are available from both the Qwen team and the Unsloth community.
-
-\subsubsection{Qwen3-4B}
-\label{sec:qwen3_4b}
-
-Qwen3-4B is a 4.0 billion parameter (3.6 billion non-embedding) next-generation language model from the Qwen Team \cite{qwen3_2025}. Released in May 2025, it represents a significant architectural evolution over Qwen 2.5: the number of supported languages and dialects was expanded from 29 to 119 (with broader Arabic coverage), training data was doubled to approximately 36 trillion tokens, and attention capacity was increased to 32 query heads with 8 key-value heads.
-
-A notable feature of Qwen3 is its built-in \textit{thinking mode}, which generates internal reasoning within special tags before producing the final answer. For query expansion tasks, this thinking mode must be explicitly disabled to prevent reasoning artifacts from contaminating the generated pseudo-documents. The model also requires sampling-based decoding; greedy decoding causes performance degradation and repetitive output.
-
-Qwen3-4B matches or exceeds Qwen 2.5-7B on many benchmarks despite having fewer parameters, achieving an MMMLU (multilingual MMLU) score of 71.42. It operates in FP16 precision requiring approximately 8.5\,GB of VRAM.
-
-\subsubsection{Qwen3-8B}
-\label{sec:qwen3_8b}
-
-Qwen3-8B is the 8 billion parameter variant of the Qwen3 family \cite{qwen3_2025}, sharing the same architectural innovations as Qwen3-4B including 119-language support, thinking mode, and 36 trillion training tokens. As the larger variant, it provides stronger language understanding and generation capabilities. Like Qwen3-4B, thinking tags must be stripped from generated output when used for query expansion. The model operates in FP16 on the A100 GPU.
-
-\subsubsection{Gemma 3 4B-IT}
-\label{sec:gemma3}
-
-Gemma 3 4B-IT is a 4 billion parameter instruction-tuned language model developed by Google DeepMind \cite{gemma3_2025}. Released in March 2025, it supports over 140 languages and features a context length of 128K tokens. The model employs a standard dense Transformer architecture with multimodal capabilities (vision and text), though only the text modality was used in this thesis.
-
-Despite its broad language coverage, Gemma 3 exhibited the weakest Arabic performance among the tested models, scoring approximately 10 points below Falcon-H1-Arabic-3B on the OALL benchmark. It serves as a lower-bound comparison point in the model evaluation, representing a general-purpose multilingual model without Arabic-specific optimization.
-
-\subsubsection{Aya Expanse 8B}
-\label{sec:aya}
-
-Aya Expanse 8B is an 8 billion parameter multilingual language model developed by Cohere Labs (CohereForAI), covering 23 languages with Arabic among the explicitly supported languages \cite{aya_2024}. The model was trained using a data-centric approach that emphasizes high-quality multilingual training data, and its developers report that it outperforms comparable open-weight models, including Llama-3.1-8B-Instruct, on multilingual evaluations.
-
-Aya Expanse employs a standard Transformer architecture and was loaded with 4-bit NormalFloat (NF4) quantization in the experiments due to its 8 billion parameter size. Despite the quantization, it demonstrated strong Arabic generation quality, suggesting that architecture and training data quality outweigh precision for this task. The model is distributed under a CC-BY-NC-4.0 (non-commercial) license.
 
 \subsection{Retrieval Models}
 \label{sec:retrieval_models}
@@ -387,37 +309,6 @@ mDPR \cite{karpukhin_2020_dense} is a bi-encoder dense retrieval model based on 
 BM25S \cite{bm25s_2024} is a Python-native implementation of the BM25 algorithm that eliminates the Java dependencies required by traditional implementations such as Pyserini. In this thesis, BM25S was configured with $k_1 = 0.9$ and $b = 0.4$, matching the Pyserini default configuration used in the official MIRACL benchmark to ensure comparability. (The BM25S library defaults are $k_1 = 1.5$, $b = 0.75$.) BM25S was selected over Pyserini for its simpler deployment pipeline and faster iteration speed, achieving 96\% of the Pyserini BM25 baseline performance on the MIRACL Arabic evaluation set.
 
 Throughout the remainder of this thesis, the term ``BM25'' refers to the BM25S implementation with the configuration above ($k_1 = 0.9$, $b = 0.4$), unless explicitly stated otherwise.
-
-\subsection{Model Comparison Summary}
-\label{sec:model_summary}
-
-Table~\ref{tab:model_comparison} presents a comparative summary of all language models used in the experiments. The models span a range of parameter counts from 2 billion to 8 billion, encompassing Arabic-specialized and multilingual architectures.
-
-\begin{table}[htbp]
-\caption{Summary of language models used in the experiments.}
-\label{tab:model_comparison}
-\centering
-\small
-\begin{tabularx}{\textwidth}{@{}l l r l l l@{}}
-\toprule
-\textbf{Model} & \textbf{Developer} & \textbf{Params} & \textbf{Architecture} & \textbf{Arabic Focus} & \textbf{License} \\
-\midrule
-\multicolumn{6}{@{}l}{\textit{Arabic-Specialized}} \\
-Falcon-H1-3B & TII & 3.15B & Hybrid Mamba2-Trans. & Primary & Open \\
-Jais-2-8B & MBZUAI/Inception & 8.09B & Decoder-only Trans. & Primary & Apache 2.0 \\
-ALLaM-7B & SDAIA & 7.0B & LlamaForCausalLM & Primary & Apache 2.0 \\
-SILMA Kashif-2B & SILMA AI & 2.0B & Decoder-only Trans. & Primary & Open \\
-\midrule
-\multicolumn{6}{@{}l}{\textit{Multilingual}} \\
-Qwen 2.5 3B & Alibaba & 3.09B & Decoder-only Trans. & 29+ langs & Qwen Research \\
-Qwen 2.5 7B & Alibaba & 7.0B & Decoder-only Trans. & 29+ langs & Apache 2.0 \\
-Qwen3-4B & Alibaba & 4.0B & Decoder-only Trans. & 119 langs & Apache 2.0 \\
-Qwen3-8B & Alibaba & 8.0B & Decoder-only Trans. & 119 langs & Apache 2.0 \\
-Gemma 3 4B & Google DeepMind & 4.0B & Decoder-only Trans. & 140+ langs & Gemma TOU \\
-Aya Expanse 8B & Cohere Labs & 8.0B & Decoder-only Trans. & 101 langs & CC-BY-NC \\
-\bottomrule
-\end{tabularx}
-\end{table}
 
 %======================================================================
 \section{Related Work}

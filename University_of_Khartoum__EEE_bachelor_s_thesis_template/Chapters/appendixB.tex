@@ -1,0 +1,136 @@
+% !TEX root = ../1-main.tex
+\chapter{Extended Result Tables}
+\label{app:tables}
+
+This appendix collects the full result tables whose complete form is reference
+material rather than argument. In each case the main text carries the rows or the
+figure that support its claims, and the exhaustive version is reproduced here.
+
+\section{BM25 Query Repetition: Full Sweep}
+\label{app:tab_repetition}
+
+Table~\ref{tab:bm25_repetition} gives the complete nine-model by eight-configuration
+repetition sweep summarised in Section~\ref{sec:res_repetition}. Figure~\ref{fig:repetition_sweep}
+plots the fixed-count columns and Table~\ref{tab:bm25_best_config} reports every
+model's best configuration with all four metrics.
+
+\begin{table}[htbp]
+    \centering
+    \caption{BM25 NDCG@10 for nine models under query repetition. Columns $n \in \{1, 3, 5, 7, 10\}$ are fixed-count repetition (Query2Doc style); columns $\beta \in \{2, 4, 6\}$ are MuGI adaptive repetition where $n$ is computed per-query as $n = \max(1, \lfloor |d| / (|q| \cdot \beta) \rfloor)$. MIRACL Arabic dev (2,896 queries). Best value per model in bold.}
+    \label{tab:bm25_repetition}
+    \begin{tabular}{@{}lcccccccc@{}}
+        \toprule
+        \textbf{Model} & $n$\textbf{=1} & $n$\textbf{=3} & $n$\textbf{=5} & $n$\textbf{=7} & $n$\textbf{=10} & $\beta$\textbf{=2} & $\beta$\textbf{=4} & $\beta$\textbf{=6} \\
+        \midrule
+        BM25 alone (no QE) & 0.4621 & --- & --- & --- & --- & --- & --- & --- \\
+        Aya Expanse 8B & 0.5046 & 0.5652 & 0.5832 & 0.5849 & 0.5773 & \textbf{0.5855} & 0.5515 & 0.5256 \\
+        Jais-2 8B & 0.5122 & 0.5492 & 0.5529 & 0.5516 & 0.5436 & \textbf{0.5731} & 0.5521 & 0.5350 \\
+        Qwen3-8B & 0.4459 & 0.5181 & 0.5319 & \textbf{0.5328} & 0.5254 & 0.5254 & 0.4841 & 0.4591 \\
+        Qwen 2.5 7B & 0.4682 & 0.5294 & \textbf{0.5358} & 0.5331 & 0.5257 & 0.5320 & 0.4977 & 0.4774 \\
+        Qwen3-4B & 0.4145 & 0.5054 & 0.5239 & \textbf{0.5244} & 0.5188 & 0.5177 & 0.4678 & 0.4347 \\
+        Gemma 3 4B & 0.3447 & 0.4800 & 0.5178 & \textbf{0.5277} & 0.5239 & 0.4915 & 0.4184 & 0.3694 \\
+        Qwen 2.5 3B & 0.4090 & 0.5060 & \textbf{0.5185} & 0.5181 & 0.5116 & 0.5046 & 0.4551 & 0.4253 \\
+        Falcon-H1 3B & 0.4038 & 0.4881 & 0.5082 & 0.5112 & \textbf{0.5113} & 0.4979 & 0.4561 & 0.4266 \\
+        SILMA 2B & 0.4194 & 0.4783 & \textbf{0.4832} & 0.4829 & 0.4788 & 0.4494 & 0.4252 & 0.4203 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Hybrid Fusion: Full Convex-Combination Sweep}
+\label{app:tab_hybrid}
+
+Table~\ref{tab:hybrid_results_full} gives the complete convex-combination
+$\alpha$-sweep together with both RRF configurations. Section~\ref{sec:res_hybrid}
+reports the baselines, the best CC setting and both RRF settings inline;
+Figure~\ref{fig:hybrid_comparison} plots all four metrics across the full sweep.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Hybrid retrieval fusion results on the MIRACL Arabic dev set (2,896 queries), full convex-combination $\alpha$-sweep. CC scores are min-max normalised per query, with $\alpha$ controlling the Dense weight.}
+    \label{tab:hybrid_results_full}
+    \begin{tabular}{@{}lcccc@{}}
+        \toprule
+        \textbf{Method} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{Recall@100} & \textbf{MRR} \\
+        \midrule
+        BM25S alone & 0.4621 & 0.5964 & 0.8577 & 0.4836 \\
+        mDPR alone & 0.4993 & 0.6156 & 0.8407 & 0.5328 \\
+        \midrule
+        Hybrid CC $\alpha=0.1$ & 0.5248 & 0.6412 & 0.9333 & 0.5584 \\
+        Hybrid CC $\alpha=0.2$ & 0.5533 & 0.6683 & 0.9413 & 0.5861 \\
+        Hybrid CC $\alpha=0.3$ & 0.5830 & 0.7014 & 0.9449 & 0.6161 \\
+        Hybrid CC $\alpha=0.4$ & 0.6137 & 0.7392 & 0.9454 & 0.6426 \\
+        \textbf{Hybrid CC $\alpha=0.5$} & \textbf{0.6266} & 0.7478 & 0.9458 & \textbf{0.6577} \\
+        Hybrid CC $\alpha=0.6$ & 0.6051 & 0.7289 & 0.9440 & 0.6355 \\
+        Hybrid CC $\alpha=0.7$ & 0.5743 & 0.6963 & 0.9439 & 0.6049 \\
+        Hybrid CC $\alpha=0.8$ & 0.5384 & 0.6634 & 0.9416 & 0.5678 \\
+        Hybrid CC $\alpha=0.9$ & 0.4996 & 0.6297 & 0.9350 & 0.5257 \\
+        \midrule
+        \textbf{Hybrid RRF $k=20$} & \textbf{0.6267} & \textbf{0.7597} & \textbf{0.9466} & 0.6517 \\
+        Hybrid RRF $k=60$ & 0.6230 & 0.7553 & 0.9466 & 0.6490 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Summary of All Experiments}
+\label{app:tab_summary}
+
+Table~\ref{tab:full_summary} consolidates every experiment reported in this thesis,
+grouped by phase. Section~\ref{sec:res_summary} discusses the progression it records.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Summary of all experiments grouped by phase: baselines, initial Query2Doc experiments, and expanded experiments covering query repetition, hybrid fusion, and CSQE. Bold values indicate the best result for each metric across all experiments.}
+    \label{tab:full_summary}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}llcccc@{}}
+        \toprule
+        \textbf{Model / Method} & \textbf{Retriever} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{MRR} & \textbf{Status} \\
+        \midrule
+        \multicolumn{6}{@{}l}{\textit{Baselines}} \\
+        None (baseline) & Dense & 0.4993 & 0.6156 & 0.5328 & Baseline \\
+        None (baseline) & BM25 & 0.4621 & 0.5964 & 0.4836 & Baseline \\
+        None (baseline) & BM25+Dense (RRF) & 0.6267 & 0.7597 & 0.6517 & Best no-QE \\
+        \midrule
+        \multicolumn{6}{@{}l}{\textit{Initial Query2Doc experiments}} \\
+        Qwen 2.5 3B & Dense & 0.5435 & 0.6608 & 0.5742 & OK \\
+        Qwen 2.5 3B & BM25 & 0.4090 & 0.5384 & 0.4342 & Degraded \\
+        Falcon-H1 3B & Dense & 0.5359 & 0.6484 & 0.5681 & OK \\
+        Jais-2 8B & Dense & 0.6018 & 0.7161 & 0.6356 & Good \\
+        Jais-2 8B & BM25 & 0.5122 & 0.6448 & 0.5397 & Best BM25 (n=1) \\
+        Qwen3-4B & Dense & 0.5691 & 0.6824 & 0.6015 & Good \\
+        ALLaM 7B & Dense & 0.2550 & 0.3335 & 0.2708 & Dropped \\
+        Aya 8B & Dense & 0.6164 & 0.7256 & 0.6493 & Best Dense (blind) \\
+        Aya 8B & BM25 & 0.5046 & 0.6284 & 0.5377 & Good \\
+        \midrule
+        \multicolumn{6}{@{}l}{\textit{Expanded experiments}} \\
+        Aya 8B ($\beta=2$) & BM25 & 0.5855 & 0.7128 & 0.6165 & Best BM25 (rep.) \\
+        Hybrid RRF $k=20$ & BM25+Dense & 0.6267 & 0.7597 & 0.6517 & Best no-QE hybrid \\
+        BM25+CSQE & BM25 & 0.6157 & 0.7447 & 0.6380 & Good \\
+        Dense+CSQE & Dense & 0.5915 & 0.7073 & 0.6225 & Good \\
+        \textbf{BM25-expanded RRF} & \textbf{BM25+Dense} & \textbf{0.7137} & \textbf{0.8363} & \textbf{0.7362} & \textbf{Best overall} \\
+        \bottomrule
+    \end{tabular}
+    }
+\end{table}
+
+\section{Representative Big-Win Queries}
+\label{app:tab_bigwin}
+
+Table~\ref{tab:bigwin_examples} gives the three worked examples of the corpus
+grounding effect discussed in Section~\ref{sec:res_bigwins}. In all three cases CSQE
+achieved NDCG@10 = 1.000 while the blind baseline achieved 0.000.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Representative big-win queries illustrating the corpus grounding effect. In all three cases, CSQE achieved NDCG@10 = 1.000 while the blind baseline achieved 0.000.}
+    \label{tab:bigwin_examples}
+    \begin{tabular}{@{}p{3.4cm}p{3.4cm}p{3.4cm}c@{}}
+        \toprule
+        \textbf{Query (gloss)} & \textbf{Blind QE generates} & \textbf{CSQE grounds to} & \textbf{CSQE} \\
+        \midrule
+        \<ما هو الرباط المنصوري؟> (``What is al-Ribat al-Mansuri?'') & A surgical ligature/suture used in operations & A Mamluk-era Sufi lodge (\emph{ribat}) endowed by Sultan al-Mansur Qalawun & 1.000 \\
+        \<ما هي الأسماء الخمسة؟> (``What are the Five Nouns?'') & A list of popular given names (Muhammad, Adam, Ibrahim, \ldots) & The Arabic grammatical category of the Five Nouns (\<أب>, \<أخ>, \<حم>, \<فو>, \<ذو>) & 1.000 \\
+        \<ما هو الفن الجزيري؟> (``What is Insular art?'') & Modern environmental / land art & Insular (Hiberno-Saxon) art of the post-Roman British Isles & 1.000 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
