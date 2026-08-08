@@ -77,7 +77,80 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 - [x] **H3 — Table 3.2 caption may misstate top_p for Qwen3-4B** — **RESOLVED 2026-08-06** (`d889bd9`). **The CSV was wrong, not the earlier agent.** `Query_generator_qwen3_4b.ipynb` cell 9 sets `TOP_P = 0.8`, `TOP_K = 20` (commented “Qwen3 non-thinking recommendation (vs 0.9 in exp_003/005)”) and cells 11/13 pass it to generation; the 0.9 hits are comments. CSV corrected to 0.8 and the caption now names Qwen3-4B as the exception. — **Owner: Osman** (S) — **UNRESOLVED, needs notebook check**
   The caption says "top_p = 0.9 unless otherwise noted". The investigating agent reports Qwen3-4B actually used `top_p=0.8, top_k=20` (the Qwen3 developer-recommended sampling settings), but the feeder CSV records `0.9` for Qwen3-4B. **Agent and CSV disagree** — resolve by reading `Query_generator_qwen3_4B.ipynb` before changing anything. If the agent is right, both the CSV and the caption need correcting. Low impact: sampling detail only, no metric changes.
 
-- [ ] **H1 — SILMA temperature mix-up in the repetition sweep** — **Owner: Osman** (S) — **HANDED TO OSMAN 2026-07-29 by Elhaj**
+- [x] **H1 — SILMA temperature mix-up in the repetition sweep** — **DONE 2026-08-08 (Option A, re-run executed).** — **Owner: Osman** (S) — **HANDED TO OSMAN 2026-07-29 by Elhaj**
+
+  **Resolution: Option A. SILMA's 8 repetition configs were re-run from `silma_2b_temp01.pkl`.** The thesis is now on temperature 0.1 end to end for SILMA.
+
+  **How it was run.** The prebuilt BM25S index was pulled from Drive (`colab_data/bm25s_index`, 603 MB, byte-exact) rather than rebuilt, so the retrieval side is the *same index* that produced Table 4.7 and the original sweep. `bm25s` was pinned to **0.2.14** to match the `version` field in the index's own `params.index.json`. Query construction was copied verbatim from `phase4_quick_wins (1).ipynb` cell 8, and metric aggregation matches `src/evaluation/metrics.py`. Run on Windows/CPU, ~5 min per config.
+
+  **Two gates were required to pass before any `.tex` was touched:**
+  1. *Baseline, raw queries* → reproduced **0.46209464085012597** against Osman's stored `exp_002_metrics.json` value of `0.46209464085012736` — identical to 13 d.p., with 98.99% top-100 document overlap against the stored TREC run. This proves the Windows environment (Python 3.12, NLTK 754-word Arabic stopword list, PyStemmer) reproduces Colab exactly.
+  2. *SILMA temp-0.1 n=1* → **0.4277** (delta +0.00004). Recall@10 came out **0.5550** and MRR **0.4485**, which are the other two values in Table 4.7's SILMA row — neither was given to the script, which only ever checked NDCG@10. Three independent numbers from the model-comparison run reproduced from the temp-0.1 pickle, confirming the diagnosis end to end.
+
+  **New numbers (temp 0.1), vs the old temp-0.7 row:**
+
+  | Config | old (temp 0.7) | new (temp 0.1) |
+  |---|---|---|
+  | $n=1$ | 0.4194 | **0.4277** |
+  | $n=3$ | 0.4783 | 0.4733 |
+  | $n=5$ | **0.4832** ← old best | 0.4770 |
+  | $n=7$ | 0.4829 | **0.4786** ← new best |
+  | $n=10$ | 0.4788 | 0.4752 |
+  | $\beta=2$ | 0.4494 | 0.4520 |
+  | $\beta=4$ | 0.4252 | 0.4312 |
+  | $\beta=6$ | 0.4203 | 0.4278 |
+
+  ⚠️ **The optimum moved: $n=5$ → $n=7$.** The bold moved with it. Best config metrics: NDCG@10 **0.4786**, R@10 **0.6141**, R@100 **0.8613**, MRR **0.5019**, **Δ = +0.0509** (was +0.0639).
+
+  **Note the direction of the change.** Temp 0.1 is *better* at $n=1$ (+0.0083) but *worse* at every $n\geq3$; the best config drops 0.4832 → 0.4786. This is a real result, not an error — it just means SILMA's higher-temperature expansions responded better to repetition. Nothing in the thesis depended on the old value.
+
+  **Edits applied** (note: the handoff's line numbers were stale — Table 4.11 had already moved to Appendix B under task E1b):
+  - `Chapters/appendixB.tex:38` — the 8-value grid row (`tab:bm25_repetition`), bold moved to $n=7$.
+  - `Chapters/chapter4.tex:446` — the best-config row (`tab:bm25_best_config`). Row order unchanged: 0.4786 is still below Falcon-H1's 0.5113, so SILMA remains last.
+  - `CLAUDE.md` — repetition-baselines table row + the ⚠️ warning note, now marked resolved.
+  - **Not changed:** Table 4.7 (`chapter4.tex:292`, 0.4277) and the "Avg improvement BM25 −5.5%" cell (`chapter4.tex:391`) — both were already computed on temp 0.1 and are unaffected.
+
+  **Claims re-verified against the new numbers:**
+  - `chapter4.tex:454` (obs. 1) ✅ **survives.** SILMA's $n=1$ 0.4277 is still below 0.4621, so "only three of nine at $n=1$" holds; its optimum 0.4786 still clears it, so "all nine at optimum" holds.
+  - `chapter4.tex:462` (obs. 5) ✅ **survives.** Gemma's Δ=+0.1831 is still the largest recovery; SILMA's Δ is now the *smallest* (+0.0509) but no prose claims a smallest.
+  - `chapter4.tex:456` (obs. 2) ✅ **unaffected by SILMA** — $n=7$ sits inside the sentence's stated "$n=5$–7" band.
+
+  ⚠️ **Two PRE-EXISTING errors found in `chapter4.tex:456` while verifying — NOT caused by H1, NOT fixed, needs a decision.** The sentence says the 8B models "(Aya, Jais-2, Qwen3-8B) performed best with MuGI adaptive repetition ($\beta=2$)" and "the 3–4B models plateaued at fixed $n=5$–7". Both are contradicted by the thesis's own tables: **Qwen3-8B peaks at $n=7$** (0.5328 vs 0.5254 at $\beta=2$ — and its Table 4.12 row already prints `$n=7$`), and **Falcon-H1 3B peaks at $n=10$** (0.5113), outside the 5–7 band. Only Aya and Jais-2 actually peak at $\beta=2$.
+
+  **Raw metrics + provenance:** `arabic-rag-query-enhancement/results/exp_11b_silma_temp01/silma_temp01_metrics.json` (all 8 configs at full precision, plus the baseline, `bm25s` version, stopword count, and per-config wall times). Per-config checkpoints in `_checkpoints/`.
+
+  **Thesis rebuilt:** `xelatex` ×2, 135 pages, **0 errors**. 121 `acro:*` hyperlink warnings remain in the List of Abbreviations — verified pre-existing by building with the edits stashed and getting the identical count (121/0). No undefined `\ref` or `\cite` anywhere.
+
+  ---
+
+  ### H1b — figures and figure data (done 2026-08-08, same session, **on Elhaj's explicit instruction**)
+
+  Originally deferred to Osman under the figures/tables split; Elhaj directed that it be completed here so the chapter is internally consistent.
+
+  **Naming warning:** the thesis numbers these **Figure 4.5** and **Figure 4.6**. The `fig_4_7_*` / `fig_4_8_*` filenames are legacy from before the E1b float drops and no longer match the printed numbers. Do not rename — `chapter4.tex` includes them by filename.
+
+  **Figure 4.6 (`fig_4_8_gains_v1`) was NOT regenerated, deliberately.** It reads only the `n1_ndcg10` column, which was already the correct temperature-0.1 value 0.4277, so it was never wrong. It is also now produced by `regen_fig_4_9_gains.py`, which supersedes notebook 03 cell 14 and fixes a slug join that silently dropped SILMA. **Re-running notebook 03 would undo that fix** — it would overwrite Fig 4.6 with the 8-model version and also clobber Fig 4.5's variants. Use the standalone regen scripts, never the whole notebook.
+
+  **Data corrected:**
+  - `thesis_figures/data/raw/exp11_ndcg10.csv` — SILMA row → all 8 temp-0.1 values, `best_config` `n=5`→`n=7`, Δ `0.0639`→`0.0509`. This is what Figure 4.5 plots.
+  - `thesis_figures/data/raw/exp11_recall10.csv` — SILMA row → temp-0.1 Recall@10 values, `best_config`→`n=7`. Feeds no thesis float; corrected so the raw data is not left half-right.
+  - `thesis_figures/data/raw/model_comparison_bm25.csv:3` — `best_config`/`best_ndcg10`/`delta_vs_n1` → `n=7` / `0.4786` / `0.0509`. **This also fixes the long-standing Δ=0.0555 defect**: the row previously paired temp-0.1 $n{=}1$ metrics with a temp-0.7 best config, giving a Δ that matched neither table. It is now one run at one temperature, and 0.4786 − 0.4277 = 0.0509 checks out.
+  - ⚠️ **`n1_recall100` deliberately left at 0.8115.** The re-run measured **0.8111**. NDCG@10, Recall@10 and MRR reproduced Osman's model-comparison run exactly; Recall@100 differs by 0.0004 because ~1% of rank-90–100 documents swap on score ties, and R@100 is the metric most exposed to that. The 0.8115 is the canonical published value and **no thesis table prints SILMA's Recall@100 at $n{=}1$**, so it was not overwritten with a different run's number.
+
+  **New script:** `thesis_figures/regen_fig_4_7_repetition.py` — standalone regenerator for Fig 4.5's three variants plus `output/pdf/table_4_3.tex`, following the `regen_fig_4_9_gains.py` pattern. It carries an assertion that SILMA's $n{=}1$ is 0.4277 and fails loudly if the CSV ever reverts to the temp-0.7 row.
+
+  **Regenerated:** `fig_4_7_repetition_v1` (the one the thesis includes), `_v2`, `_v3_heat`, and `table_4_3.tex`.
+
+  **Verified after regeneration:**
+  - Figure 4.5's caption still holds — exactly six of nine models start below 0.4621 at $n{=}1$ (SILMA's 0.4277 is still below it), and all nine clear it at their optimum.
+  - Automated cross-check over all 27 SILMA values across `appendixB.tex`, `chapter4.tex`, both figure CSVs and the re-run JSON: **all consistent**, including that Table 4.7's 0.4277 equals the re-run's $n{=}1$.
+  - **Formatting unchanged.** Built with the edits stashed and again with them applied: **135 pages, 0 errors, 121 undefined, 291 overfull hbox, 24 underfull hbox — identical both ways.** Moving the bold from the $n{=}5$ to the $n{=}7$ column does not change Table B.1's natural width, so the `\tabcolsep=4pt` no-`\resizebox` tuning still holds. Both pages inspected in the rendered PDF (printed pp. 71, 110): rows aligned, nothing in the right margin.
+
+  **Nothing outstanding for Osman on H1.**
+
+  ℹ️ **Left alone by design:** `arabic-rag-query-enhancement/experiments/exp_11_bm25_repetition/` (`exp11_all_metrics.json`, `exp11_ndcg10.csv`, `exp11_recall10.csv`, and its three PNGs) still holds the original temp-0.7 SILMA row. That directory is the historical record of the Exp 1.1 run as it was actually executed; the corrected numbers live in `results/exp_11b_silma_temp01/`. Only the `thesis_figures/data/raw/` copies — the ones that feed the thesis — were corrected.
+
+  ⚠️ **`data_manifest.yaml` repointed — this was a latent regression risk, now closed.** The manifest declared `data/raw/exp11_ndcg10.csv` and `exp11_recall10.csv` as copies of the files in `experiments/exp_11_bm25_repetition/`, and `00_pull_drive_data.ipynb` restores `local_source → local_path` with `shutil.copy2`. It only fills in *missing* files, so nothing reverted on its own — but deleting either CSV and re-syncing would have silently restored the temperature-0.7 SILMA row and put Figure 4.5 back out of step with Table B.1, with no error anywhere. Fixed by writing the corrected full nine-model tables to `results/exp_11b_silma_temp01/exp11_ndcg10_corrected.csv` and `exp11_recall10_corrected.csv`, repointing both `local_source` entries at them, filling in the previously-null `size_bytes` (1975 / 1727) so the integrity check is live, and adding a comment warning against pointing them back. A simulated re-sync confirms it now restores `n=1 = 0.4277, best_config = n=7`, byte-identical to `data/raw`, while the historical record still reads 0.4194. `model_comparison_bm25` is `source: hand_compiled` with no `local_source`, so it was never exposed.
 
   > **Handover note (Elhaj → Osman).** Two separate things are involved here; please keep them apart when you look at it:
   > 1. **The temperature *decision* for SILMA.** Elhaj's position is that this was made deliberately and is correct — and the evidence agrees with him: your `Query_generator_silma_2B.ipynb:510` hard-codes `TEMPERATURE = 0.1`, and `OSMAN_MODEL_COMPARISON_RESULTS.md:18-31` records "Decision: Use temperature 0.1 for all subsequent experiments". `thesis_figures/data/raw/table_3_2_gen_hyperparams.csv:2` carries your own note: *"temp 0.1 chosen empirically over 0.7 (+2.5%)"*. **Nothing here is being questioned.**
@@ -368,8 +441,39 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   Meeting: "في حاجات محتاجة مراجعة الـ Graphs دي" (video 2 14:10). Combine with the known carry-over from the old list: **Fig 4.2 / 4.3 / 4.4 must be regenerated from the canonical post-WS1 data** (text is ahead of them: 34% failure rate, word buckets 0.345/0.511/0.476, coverage 90.1%@100). Then verify every referenced `fig_*` PDF is the current version.
   **Partly closed by E1b:** the `Δ`-mojibake + redesign of the dense-vs-BM25 gain figure is done. **Also note the two figures E2 was chartered to regenerate no longer exist** — old Fig 4.2 and Fig 4.4 were dropped by the review meeting, so only old Fig 4.3 (query-length box plot, now **Fig 4.2**) remains in scope, and E1 verified its buckets already match Table 4.3.
 
-- [ ] **E3 — Dead labels + Ch.4 table audit (carry-over, figure-gated)** — **Owner: Elhaj** `[AI]` (S)
+- [x] **E3 — Dead labels + Ch.4 table audit (carry-over, figure-gated)** — **Owner: Elhaj** `[AI]` (S) — **DONE 2026-08-08.** Full report: `research_decisions/E3_figures_tables_review.md`. Approved by Elhaj + Osman; applied.
   Old tasks 4.16 + 5.C.5: once figures/tables are final (after E1/E2/D2 moves), check every table/figure label is referenced and every Ch.4 table is accurate and doesn't overflow pages.
+
+  **The headline finding was not tables — it was prose.** `1-main.tex:18` carried `\usepackage[none]{hyphenat}`, which disabled hyphenation document-wide; with `\justifying` this pushed long unbreakable words past the right margin on **93 of 135 pages (313 lines)**, and on three pages — including printed page 1 — words ran off the paper edge and were cut in half. J3 and J3b missed it because both audited `booktabs` rule widths / table warnings only; this audit measured ink position on every rendered page instead.
+
+  | | Before | After |
+  |---|---|---|
+  | Pages with ink past the right margin | 93 | **30** |
+  | Overflowing lines | 313 | **42** |
+  | Worst overflow | 72.0 pt | **30.7 pt** |
+  | Pages cut off at the paper edge | 3 | **0** |
+  | `Overfull \hbox` | 291 | 41 |
+
+  **Applied:**
+  - `1-main.tex:18` — `[none]` removed from `hyphenat`, with a comment explaining why it must stay off.
+  - Deleted the stale untracked root `1-main.pdf` (it was two figure-generations behind and was being reviewed from by mistake).
+  - **Short captions added to all 32 tables.** Every figure already had one; no table did, so the List of Tables printed whole multi-sentence captions, cross-references and a full formula. Longest LoT entry: 57 words → **10**.
+  - **Four dead labels closed** by adding a prose reference: Figure 4.3 (its only reference was inside another figure's caption), Figure 4.6 and Figure 4.9 (never referenced at all), Table 3.1.
+  - **The two colour cross-references removed** from the Fig 4.3 / Fig 4.5 captions ("each model uses its consistent thesis colour, matching Figure 4.5" / "Colours match Figure 4.3"). They were circular and described a production decision rather than the data. Also dropped "so that it does not compress the scale". The three remaining caption cross-references (Tables 4.1, 4.13, 4.21) were kept — pointing at where fuller data lives is legitimate.
+  - Table 4.13's caption no longer repeats the sentence printed two lines above it.
+  - Figure short captions now use `$\alpha$` / `$\Delta$` and "nine" rather than spelled-out symbols and a numeral.
+  - Filename↔figure-number map added to `thesis_figures/README.md` — the file numbers are obsolete and already caused one mix-up (H1's "Figs 4.7 and 4.8" are Figures 4.5 and 4.6).
+
+  **Rebuilt** `xelatex → bibtex → xelatex ×2`: **136 pages, 0 errors, 0 undefined references, 0 undefined citations.** Core Ch.1–5 = pages 1–97. Note this build already had Ch.1–5 at 96 before the edits, **not the 101 that J11 still records** — J11's "1 over the limit" premise is stale by ~5 pages and should be re-read before spending effort on D2's appendix moves.
+
+  **Deliberately NOT applied (Elhaj's decision, 2026-08-08):**
+  - **§4b** — softening the interpretive clauses in the Fig 4.2 / Fig 4.10 captions. Left as written.
+  - **§4d** — the Figure 3.3 caption says "245 Arabic stopwords" and `chapter3.tex:89` says "245+ words", but NLTK's Arabic list actually has **754** entries and H1's exact-reproduction run used that list. **Held pending a search of the notebooks and code** to find where 245 came from. The caption and the body must at least be made to agree once that is settled.
+  - **§6 (SILMA figure)** — already closed by Osman in a separate session; `exp11_ndcg10.csv`, `model_comparison_bm25.csv`, `table_4_3.tex` and `fig_4_7_repetition_v1.pdf` are all updated.
+
+  ⚠️ **Concurrent-write hazard, observed live.** While these edits were being applied, another Claude session working the SILMA fix overwrote `chapter4.tex` and `appendixB.tex` and silently discarded the edits already written to them. They were detected and re-applied, and the final state contains both sets of changes — but **do not run two sessions against the same `.tex` files at once.** Verify with `git diff` after any parallel work.
+
+  **Still open — remaining 42 overflowing lines.** None are cut off and the worst is 30.7 pt into a 72 pt margin. They are almost all tokens TeX cannot hyphenate: terms that already contain a hyphen (`English-centric`, `Mamba2-Transformer`, `Swish-Gated`), tokens with digits or symbols (`NDCG@10`, `BM25+CSQE`, `Falcon-H1-3B`, `3C3H`, `AraGen-12-24`), and one Arabic inline switch. Adding **`\emergencystretch=3em`** to the preamble was tested in a scratch build: it takes `Overfull \hbox` from **41 to 0** and margin ink to **9 lines at ≤2.9 pt** (all inside Appendix C's code listings, which ignore it), with **pagination completely unchanged** — Ch.5 still p.89, Bibliography still p.98, 136 pages. It trades margin overflow for slightly looser word spacing on ~36 lines. **One line, reversible, page-neutral — awaiting Elhaj's go-ahead.**
 
 ---
 
