@@ -149,7 +149,18 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
   ⚠️ **Table A.1 was `\begin{tabularx}{\textwidth}` with no `X` column**, so the width argument did nothing and the `License` column printed into the margin ("Qwen Research" reached 571 pt on a page whose text stops at 523 pt). Converted to plain `tabular`.
   **Pagination:** p.38 and p.122 (the two `\resizebox` pages) had 1.1 pt and ~0 pt of vertical slack, so a wrapping `p{}` rebuild would have pushed a line over and re-flowed the rest of the thesis. `\resizebox` shrinks height as well as width, so it is page-neutral or page-negative. The two `\tabcolsep`-only fixes change no heights at all.
-  ⚠️ **Not yet rebuilt** — the container this ran in had no TeX (CTAN and apt blocked by the egress policy). Predicted widths after the fix: 439.7 / 451.3 / 438.4 / 427.9 pt, all ≤ 451.28. Rebuild `1-main.pdf` on Overleaf and re-measure before submission.
+  **REBUILT AND VERIFIED 2026-08-08** (MiKTeX on Elhaj's Windows box, `xelatex → bibtex → xelatex ×2`, 0 errors). Measured widths match the predictions to 0.1 pt:
+
+  | Table | Predicted | Measured | Clearance | Effective font |
+  |---|---|---|---|---|
+  | 2.2 (p.37) | 451.3 (scaled) | 451.3 | 0.0 | 9.8 pt |
+  | 4.12 (p.89) | 438.4 | 438.5 | +6.4 pt | **12 pt** |
+  | B.1 (p.128) | 427.9 | 428.0 | +11.6 pt | **12 pt** |
+  | A.1 (p.121) | 451.3 (scaled) | 451.3 | 0.0 | 10.3 pt |
+
+  Re-scanned all 43 table bands in the rebuilt PDF: **zero over the margin.** Figures: zero. Confirmed visually on all four pages, not just by measurement. Undefined references are 60 `acro:*` hyper-links in the List of Abbreviations — pre-existing, no undefined `\ref` or `\cite`.
+
+  ⚠️ **THE REBUILD IS 135 PAGES, NOT 136 — AND THE TABLE FIXES ARE NOT WHY.** The lost page is the **Arabic abstract**, which spanned pp.6–7 in the committed build and fits on p.6 alone here. The `-1` offset starts at p.7, before any table, and holds consistently to p.127; the four table fixes are exactly page-neutral as designed. Cause: `\newfontfamily\arabicfont[Script=Arabic,Scale=1.2]{Arial}` in `1-main.tex` — this machine has real Arial, Overleaf does not and substitutes something wider. **Latin text is unaffected** (Times New Roman ↔ TeX Gyre Termes are metrically identical), so the table measurements above hold on any machine, but **the page count does not**. Decide before submission which machine produces the deliverable, and re-measure the abstract against the ¾-page rule (voice note 8) on that machine — see J1/J5.
 
 - [x] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Rebuilt with `xelatex → bibtex → xelatex ×2` and committed in `1780284`. 126 pages, 0 errors, 0 undefined refs/cites. The committed PDF now matches the committed sources.
   The committed PDF was built *before* the source reverts in its own commit (`14533f2`) and still renders text that commit removed. Anyone measuring pages or checking layout from it is off by ~1 page and reading reverted text. Either rebuild-and-commit, or drop the PDF from version control. *(Found independently by both the C5 and C10 audits.)*
