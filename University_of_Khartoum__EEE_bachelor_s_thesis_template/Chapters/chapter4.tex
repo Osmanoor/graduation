@@ -427,6 +427,10 @@ The full nine-model by eight-configuration sweep is given as Table~\ref{tab:bm25
     \centering
     \caption{BM25 retrieval metrics at each model's best repetition configuration. $\Delta$ NDCG is the improvement from $n=1$ (no repetition) to the best configuration.}
     \label{tab:bm25_best_config}
+    % Natural width was 462.4pt against a 451.3pt text block. Seven columns at
+    % \tabcolsep=4pt give 438.4pt, so the table fits at full body size and needs
+    % no \resizebox.
+    \setlength{\tabcolsep}{4pt}
     \begin{tabular}{@{}llccccc@{}}
         \toprule
         \textbf{Model} & \textbf{Best Config} & \textbf{NDCG@10} & \textbf{Recall@10} & \textbf{Recall@100} & \textbf{MRR} & \textbf{$\Delta$NDCG} \\

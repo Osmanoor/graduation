@@ -255,6 +255,12 @@ The choice of evaluation benchmark is central to a QE study, because QE is only 
     \caption{Arabic retrieval and QA datasets surveyed for benchmark selection. ``Suitability'' refers to fitness for studying QE for retrieval.}
     \label{tab:datasets_surveyed}
     \small
+    % Natural width was 520.9pt against a 451.3pt text block (69.6pt of the
+    % Suitability column printed into the right margin). Tighter column
+    % separation plus \resizebox brings it to exactly \textwidth; the effective
+    % body size lands at ~9.9pt, in line with the other scaled tables.
+    \setlength{\tabcolsep}{4pt}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}llllll@{}}
         \toprule
         \textbf{Dataset} & \textbf{Ar. queries} & \textbf{Variety} & \textbf{Query origin} & \textbf{Primary challenge} & \textbf{Suitability} \\
@@ -266,7 +272,8 @@ The choice of evaluation benchmark is central to a QE study, because QE is only 
         Mintaka \cite{sen_2022_mintaka} & $\sim$20{,}000 & MSA (transl.) & Translated & Multi-hop reasoning & Medium \\
         ARCD \cite{mozannar_2019_arabic} & $\sim$1{,}400 & MSA & Crowd & Small scale & Low \\
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
 \end{table}
 
 \subsection{Selected Benchmark}
