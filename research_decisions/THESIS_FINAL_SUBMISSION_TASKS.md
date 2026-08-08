@@ -350,8 +350,24 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
 
 ## Phase F — Presentation prep (parallel track, not thesis-blocking)
 
-- [ ] **F1 — Intuitive project explanation** — **Owner: JOINT** `[AI]` (M)
+- [x] **F1 — Intuitive project explanation** — **Owner: JOINT** `[AI]` (M) — **NARRATIVE + SCRIPT DONE 2026-08-08; SLIDES ARE A DRAFT**
   Flagged as "critical, especially for the presentation" (video 2 18:45–21:00): we still struggle to explain the project simply (it reads as "half a RAG" — retrieval-only). Build with Claude: a simple narrative + analogy for (a) the retrieval-recall problem, (b) HyDE/Query2Doc intuition (already lands well), (c) **CSQE intuition** (not yet crafted), (d) why hybrid + asymmetric expansion. Output feeds the defense slides.
+
+  **Done — everything lives in `research_decisions/defence/`:**
+  | File | What it is |
+  |---|---|
+  | `F1_slides_draft.html` | **22 slides at true 16:9** + a facing script page for each. Open in Chrome → Ctrl+P → Margins *None*, Background graphics *on*. |
+  | `F1_defence_script.md` | the spoken script in prose form (11 acts) |
+  | `F1_narrative_outline.md` | order of ideas + the 8 traps, one place |
+  | `F1_csqe_example.md` | the الأسماء الخمسة worked example, in full |
+  | `F1_csqe_decision_chain.md` | how we got to CSQE, with honesty guards |
+
+  **The narrative spine** (this is what fixed the "half a RAG" problem): LLMs are frozen → RAG's answer is bounded by what it retrieves, so **retrieval sets the ceiling** → a third of Arabic queries fail → elimination: not the retriever, not the corpus, **it's the query** → repairing it needs the document's words → **but finding that document is the whole problem. It's circular.** → Query2Doc breaks the circle by *guessing* a document; CSQE breaks it by *fetching real ones*. Framed throughout as: *do English QE techniques transfer to Arabic?* Answer: **yes, but not unmodified** — three adaptations (repetition, grounding, placement).
+
+  **Still open, for tomorrow:**
+  - Slides are a **starter**. Next pass: turn script beats into **illustrations and diagrams**, and pull in the real thesis figures (4.5, 4.8, 4.9) instead of leaning on one worked example.
+  - Delivery language not decided — currently English with Arabic examples. If it's Arabic, the script needs rewriting, not translating on the day (slides 10, 15 and 17 are built on pauses).
+  - Example A still unbuilt: a query where *blind* expansion clearly helped. Per-query scores exist only in the Colab error-analysis notebook; miner cell is in `WS4_TASK_4.12_BIGWIN_EXAMPLES.md` §5.
 
 ---
 
