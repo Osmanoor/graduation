@@ -137,6 +137,20 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   Fix = wrap each `tabular` in `\resizebox{\textwidth}{!}{…}`. Page-neutral or page-negative, no prose risk.
   ⚠️ Was sheltering under **E3**'s figure gate. It is independent of the figure work and should not wait.
 
+- [x] **J3b — Four more tables still overflowed after J3** — **Owner: Osman** (S) — **DONE 2026-08-08.**
+  J3 audited the `Overfull \hbox` warnings in the build log. That list is both over- and under-inclusive: `\resizebox` typesets at natural width before scaling, so tables that render correctly still warn, and a table can print into the margin without the warning firing. Re-audited instead by **measuring the committed `1-main.pdf` geometry directly** — every `booktabs` rule is exactly as wide as its `tabular`, so the rule width *is* the table width. All 32 tables measured against the 451.28 pt text block; figures checked the same way and all fit.
+
+  | Over by | Table | Location | Fix |
+  |---|---|---|---|
+  | 69.6 pt | `tab:datasets_surveyed` (Table 2.2) | `chapter2.tex:253` | `\tabcolsep` 4 pt + `\resizebox` → ~9.9 pt effective |
+  | 47.7 pt | `tab:model_comparison` (Table A.1) | `appendixA.tex:19` | `tabularx`→`tabular` + `\tabcolsep` 4 pt + `\resizebox` → ~10.3 pt |
+  | 11.1 pt | `tab:bm25_best_config` (Table 4.12) | `chapter4.tex:426` | `\tabcolsep` 4 pt only — fits at full 12 pt |
+  | 8.6 pt | `tab:bm25_repetition` (Table B.1) | `appendixB.tex:17` | `\tabcolsep` 4 pt only — fits at full 12 pt |
+
+  ⚠️ **Table A.1 was `\begin{tabularx}{\textwidth}` with no `X` column**, so the width argument did nothing and the `License` column printed into the margin ("Qwen Research" reached 571 pt on a page whose text stops at 523 pt). Converted to plain `tabular`.
+  **Pagination:** p.38 and p.122 (the two `\resizebox` pages) had 1.1 pt and ~0 pt of vertical slack, so a wrapping `p{}` rebuild would have pushed a line over and re-flowed the rest of the thesis. `\resizebox` shrinks height as well as width, so it is page-neutral or page-negative. The two `\tabcolsep`-only fixes change no heights at all.
+  ⚠️ **Not yet rebuilt** — the container this ran in had no TeX (CTAN and apt blocked by the egress policy). Predicted widths after the fix: 439.7 / 451.3 / 438.4 / 427.9 pt, all ≤ 451.28. Rebuild `1-main.pdf` on Overleaf and re-measure before submission.
+
 - [x] **J4 — Committed `1-main.pdf` does not match the committed sources** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Rebuilt with `xelatex → bibtex → xelatex ×2` and committed in `1780284`. 126 pages, 0 errors, 0 undefined refs/cites. The committed PDF now matches the committed sources.
   The committed PDF was built *before* the source reverts in its own commit (`14533f2`) and still renders text that commit removed. Anyone measuring pages or checking layout from it is off by ~1 page and reading reverted text. Either rebuild-and-commit, or drop the PDF from version control. *(Found independently by both the C5 and C10 audits.)*
 

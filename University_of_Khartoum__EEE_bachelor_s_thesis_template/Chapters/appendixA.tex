@@ -21,7 +21,13 @@ models used in the experiments. The models span a range of parameter counts from
 \label{tab:model_comparison}
 \centering
 \small
-\begin{tabularx}{\textwidth}{@{}l l r l l l@{}}
+% Was tabularx{\textwidth} with no X column, so the width argument did nothing
+% and the natural 499.0pt table ran 47.7pt past the 451.3pt text block (the
+% License column printed into the margin). Plain tabular, tighter column
+% separation and \resizebox pin it to \textwidth at ~10.3pt effective size.
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}l l r l l l@{}}
 \toprule
 \textbf{Model} & \textbf{Developer} & \textbf{Params} & \textbf{Architecture} & \textbf{Arabic Focus} & \textbf{License} \\
 \midrule
@@ -39,7 +45,8 @@ Qwen3-8B & Alibaba & 8.0B & Decoder-only Trans. & 119 langs & Apache 2.0 \\
 Gemma 3 4B & Google DeepMind & 4.0B & Decoder-only Trans. & 140+ langs & Gemma TOU \\
 Aya Expanse 8B & Cohere Labs & 8.0B & Decoder-only Trans. & 101 langs & CC-BY-NC \\
 \bottomrule
-\end{tabularx}
+\end{tabular}%
+}
 \end{table}
 
 %======================================================================

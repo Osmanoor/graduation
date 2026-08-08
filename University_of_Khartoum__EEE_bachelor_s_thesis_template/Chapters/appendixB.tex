@@ -18,6 +18,10 @@ model's best configuration with all four metrics.
     \centering
     \caption{BM25 NDCG@10 for nine models under query repetition. Columns $n \in \{1, 3, 5, 7, 10\}$ are fixed-count repetition (Query2Doc style); columns $\beta \in \{2, 4, 6\}$ are MuGI adaptive repetition where $n$ is computed per-query as $n = \max(1, \lfloor |d| / (|q| \cdot \beta) \rfloor)$. MIRACL Arabic dev (2,896 queries). Best value per model in bold.}
     \label{tab:bm25_repetition}
+    % Natural width was 459.9pt against a 451.3pt text block. Nine columns at
+    % \tabcolsep=4pt give 427.9pt, so the table fits at full body size and needs
+    % no \resizebox.
+    \setlength{\tabcolsep}{4pt}
     \begin{tabular}{@{}lcccccccc@{}}
         \toprule
         \textbf{Model} & $n$\textbf{=1} & $n$\textbf{=3} & $n$\textbf{=5} & $n$\textbf{=7} & $n$\textbf{=10} & $\beta$\textbf{=2} & $\beta$\textbf{=4} & $\beta$\textbf{=6} \\
