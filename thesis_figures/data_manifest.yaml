@@ -116,18 +116,25 @@ datasets:
     size_bytes: ~
     consumed_by: [table_4_1]
 
+  # ⚠️ REPOINTED 2026-08-08 (task H1). The original Exp 1.1 sweep loaded SILMA's
+  # temperature-0.7 expansions by mistake, so the SILMA row in
+  # experiments/exp_11_bm25_repetition/*.csv is superseded. SILMA's eight configs
+  # were re-run at temperature 0.1; the *_corrected.csv files below are the full
+  # nine-model tables with only that row replaced. The old directory is kept as
+  # the historical record of the run as executed — do NOT point these back at it,
+  # or fig_4_7 (printed as Figure 4.5) will disagree with Table B.1 again.
   - name: exp11_ndcg10
     source: local
-    local_source: arabic-rag-query-enhancement/experiments/exp_11_bm25_repetition/exp11_ndcg10.csv
+    local_source: arabic-rag-query-enhancement/results/exp_11b_silma_temp01/exp11_ndcg10_corrected.csv
     local_path: data/raw/exp11_ndcg10.csv
-    size_bytes: ~
+    size_bytes: 1975
     consumed_by: [fig_4_7, table_4_3]
 
   - name: exp11_recall10
     source: local
-    local_source: arabic-rag-query-enhancement/experiments/exp_11_bm25_repetition/exp11_recall10.csv
+    local_source: arabic-rag-query-enhancement/results/exp_11b_silma_temp01/exp11_recall10_corrected.csv
     local_path: data/raw/exp11_recall10.csv
-    size_bytes: ~
+    size_bytes: 1727
     consumed_by: [fig_4_7_alt]
 
   - name: exp12_cc_sweep

@@ -2,6 +2,47 @@
 
 Single source of truth for every figure and table in the thesis. Each entry links: chapter section, claim, data source, the notebook that produces it, and the output file. The thesis `.tex` should `\includegraphics` from `output/pdf/` exclusively.
 
+---
+
+## ⚠️ READ FIRST — filenames do NOT match the printed figure numbers
+
+Figures were added and removed while the chapters were being written, so the numbers baked
+into the **filenames** are obsolete. The number a reader sees in the PDF comes from the order
+of `\begin{figure}` in the chapter, not from the filename. **Always confirm against
+`1-main.lof` before discussing a figure by number.**
+
+This has already caused real confusion once: task H1's handover note asks for "Figs 4.7 and
+4.8" to be regenerated, meaning the *files* — which print as Figures **4.5** and **4.6**.
+
+| Prints as | Filename in `output/pdf/` |
+|---|---|
+| Figure 3.2 | `fig_3_4_mdpr.pdf` |
+| Figure 3.3 | `fig_3_3_bm25s.pdf` |
+| Figure 3.5 | `fig_3_7_hybrid.pdf` |
+| Figure 3.6 | `fig_3_8_csqe_aigen_v4_boosted.png` |
+| Figure 3.7 | `fig_3_9_best_system.pdf` |
+| Figure 4.1 | `fig_4_1_ndcg_hist_v1.pdf` |
+| Figure 4.2 | `fig_4_3_length_box_v1.pdf` |
+| Figure 4.3 | `fig_4_5_models_bar_v1.pdf` |
+| Figure 4.4 | `fig_4_6_size_v2_labelled.pdf` |
+| Figure 4.5 | `fig_4_7_repetition_v1.pdf` |
+| Figure 4.6 | `fig_4_8_gains_v1.pdf` |
+| Figure 4.7 | `fig_4_9_alpha_sweep_v2_all.pdf` |
+| Figure 4.8 | `fig_4_11_progression_v2_annot.pdf` |
+| Figure 4.9 | `fig_4_12_delta_hist_v1.pdf` |
+| Figure 4.10 | `fig_4_13_firstpass_v2_annot.pdf` |
+| Figure 4.11 | `fig_4_14_lengthgain_v2_grouped.pdf` |
+
+Files are **deliberately not being renamed** before submission — the names are referenced by
+`data_manifest.yaml`, the `regen_*.py` scripts and the chapter `.tex` files, and renaming
+them buys nothing at this stage.
+
+Note also that older sections of this README (below) use the **old** numbering throughout.
+
+*(Recorded 2026-08-08 by task E3 — see `research_decisions/E3_figures_tables_review.md` §7.)*
+
+---
+
 ## Quickstart
 
 ```bash

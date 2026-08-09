@@ -53,10 +53,36 @@ Two problems, both created by work done after the proposal:
 | **C** | Corpus-Steered Query Enhancement for Arabic Retrieval-Augmented Generation | 9 | Shortest and most modern-sounding. Drops "Improving", so it reads as a method paper rather than a project. |
 | **D** | Query Enhancement for Arabic Information Retrieval: Blind and Corpus-Steered Expansion | 11 | Mirrors the research question most closely. The colon makes it feel like a paper, not a B.Sc. thesis. |
 
-**Recommendation: A.** It is the only option that is *continuous with the registered
-proposal* — Dr. Tahani will recognise it as the same project — while fixing the metric error
-and naming what the thesis actually contributes. It is also plainly readable, which was the
-stated requirement.
+**DECIDED 2026-08-08 by Elhaj — none of A–D. Option E, added below. No subtitle.**
+
+| # | Title | Words | Notes |
+|---|---|---|---|
+| **E** | **Improving Retrieval Quality in Arabic RAG Systems via LLM-Based Query Enhancement** | 12 | **CHOSEN.** Keeps the proposal's exact shape. Two changes: Recall→Quality, +LLM-Based. |
+
+**Why A was rejected.** A's *"via Corpus-Steered Query Enhancement"* narrows the thesis to its
+final experiment. CSQE is objective 8 of 9 (`chapter1.tex:28-44`); the title said nothing about
+the baselines, the error analysis, the Query2Doc adaptation, the ten-model comparison, the
+repetition sweep, the hybrid fusion baseline, or the placement finding.
+
+**Why "Enhancement" and not "Expansion".** Elhaj also considered *"Enhancing Arabic Information
+Retrieval for RAG Systems Using LLM-Based Query Expansion"*. Rejected on the thesis's own
+terminology: **QE is defined as Query *Enhancement*, the umbrella intervention**
+(`chapter1.tex:9`, `5-Abstract.tex`, `7-ListofAbbreviations.tex:48`), while *query expansion*
+is used throughout for the specific mechanism — CSQE, Query2Doc, the generated text (33
+occurrences, all in that narrower sense). "Expansion" in the title would therefore have been
+the *narrower* word, the opposite of the intent. It also broke proposal continuity three ways
+(Improving→Enhancing, Retrieval Quality→Information Retrieval, via→Using).
+
+⚠️ **Known inconsistency, not fixed here:** the body prose favours "query expansion" while the
+abbreviation list defines QE as "Query Enhancement". The title now follows the abbreviation
+list. If D5 standardises the body, the two must stay aligned.
+
+**A subtitle was drafted and dropped.** *"A Comparative Study of Models, Retrievers, and
+Corpus-Steered Expansion"* was built and rendered, then removed — Elhaj preferred a clean
+single title. The breadth argument it carried is satisfied by "LLM-Based Query Enhancement"
+being the umbrella term.
+
+**Applied:** `1-main.tex:136-151`, 20 pt bold, two lines, `xelatex`-verified to fit one page.
 
 ⚠️ **Check before deciding:** if the title is **formally registered** with the department, it
 may not be changeable, and the proposal title must be used as-is.

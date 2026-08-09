@@ -168,7 +168,7 @@ When Mohammed asks to work on a new model for the model comparison experiments, 
 | Qwen3-4B | 0.4145 | n=7 | 0.5244 | +0.1098 |
 | Qwen 2.5-3B | 0.4090 | n=5 | 0.5185 | +0.1095 |
 | Falcon-H1-3B | 0.4038 | n=10 | 0.5113 | +0.1074 |
-| SILMA 2B | 0.4194 | n=5 | 0.4832 | +0.0639 |
+| SILMA 2B | 0.4277 | n=7 | 0.4786 | +0.0509 |
 
 ### Reference Baselines — Hybrid Fusion (Exp 1.2, 2026-04-04)
 | Method | NDCG@10 | Recall@10 | Recall@100 | MRR |
@@ -210,7 +210,7 @@ Alpha sweep (Config A RRF): α=1→0.7123, α=2→0.7121, α=3→0.7130, α=4→
 - Baseline (mDPR, no QE) by bucket: 1-3 words 0.345 (n=147) | 4-8 words 0.511 (n=2,495) | 9+ words 0.476 (n=254)
 - CSQE+Hybrid gain by bucket: 1-3 words +0.161 (+43.6%) | 4-8 words +0.197 (+38.8%) | 9+ words +0.132 (+23.3%)
 - Regressions (367): Type A 191 (52%, strong BM25 hurt by expansion), Type B 131 (36%, poisoned first-pass), Type C 45 (12%)
-- ⚠️ SILMA 2B BM25 n=1: canon is **0.4277** (temp 0.1, ch4 Table 4.7). The 0.4194 in the repetition sweep is a temp-0.7 artefact — see task H1 in THESIS_FINAL_SUBMISSION_TASKS.md.
+- ✅ SILMA 2B BM25 n=1 = **0.4277** everywhere (temp 0.1). The old 0.4194 temp-0.7 artefact is gone: task H1 re-ran SILMA's 8 repetition configs from `silma_2b_temp01.pkl` on 2026-08-08. Best config moved n=5 → **n=7 (0.4786, Δ +0.0509)**. Raw metrics: `arabic-rag-query-enhancement/results/exp_11b_silma_temp01/silma_temp01_metrics.json`.
 
 ### Reference Baselines — CSQE + Hybrid Fusion (Exp 2.1, 2026-04-10)
 | Method | Fusion | nDCG@10 | Recall@10 | Recall@100 | MRR |
