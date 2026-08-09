@@ -1,0 +1,81 @@
+% Fig 2.3 — Taxonomy of query-enhancement techniques.
+%
+% REDESIGN (not a restore) of archive/system_diagrams_dropped/fig_2_2_qe_taxonomy.tex,
+% 2026-08-09. Renamed 2_2 -> 2_3 to match the printed number (chapter2.tex order: taxonomy, then placement).
+%
+% WHY A REDESIGN. The archived figure split QE into "lexical/statistical" vs
+% "LLM-based generative". §2.1.4 was since rewritten around Song and Zheng's FOUR
+% atomic operations — expansion, decomposition, disambiguation, abstraction
+% (chapter2.tex:84, \cite{song_2024_a}), each with its own \subsubsection. Restoring
+% the old figure would have put a figure and its own section in contradiction.
+%
+% Osman's edit carried forward (FIGURE_NOTES_MOHAMMED.md §2): the in-image
+% "built on in this thesis" annotation is deleted; it is stated in the caption.
+%
+% Every leaf matches a technique named in chapter2.tex:86-104 and §2.5.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\input{_style.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+    root/.style={thBase, draw=thHiS, fill=thHiF, minimum width=46mm,
+                 minimum height=9mm, line width=0.9pt, font=\small},
+    family/.style={thBase, fill=thDataF, draw=thDataS, minimum width=30mm,
+                   minimum height=9mm, font=\footnotesize},
+    sub/.style={thBase, fill=white, draw=thMuted, minimum width=26mm,
+                minimum height=8mm, font=\scriptsize},
+    leaf/.style={thBase, fill=white, draw=thMuted, minimum width=26mm,
+                 minimum height=8mm, font=\scriptsize},
+    ours/.style={thBase, draw=thHiS, fill=thHiF, minimum width=26mm,
+                 minimum height=8mm, line width=0.9pt, font=\scriptsize}
+]
+
+  % ─── Root ──────────────────────────────────────────────────────────────
+  \node[root] (root) at (0,0) {\thIconStar~Query Enhancement};
+
+  % ─── Four atomic operations (Song and Zheng) ───────────────────────────
+  \node[family] (exp)   at (-52mm, -18mm) {Expansion};
+  \node[family] (dec)   at ( -1mm, -18mm) {Decomposition};
+  \node[family] (dis)   at ( 33mm, -18mm) {Disambiguation};
+  \node[family] (abs)   at ( 67mm, -18mm) {Abstraction};
+
+  \draw[thArrow] (root) -- (exp);
+  \draw[thArrow] (root) -- (dec);
+  \draw[thArrow] (root) -- (dis);
+  \draw[thArrow] (root) -- (abs);
+
+  % Single representative technique under the three non-expansion families
+  \node[leaf, below=7mm of dec] (rqrag)   {RQ-RAG '24};
+  \node[leaf, below=7mm of dis] (rewrite) {Rewrite-Retrieve\\-Read '23};
+  \node[leaf, below=7mm of abs] (stepback){Step-back '23};
+  \draw[thArrow] (dec) -- (rqrag);
+  \draw[thArrow] (dis) -- (rewrite);
+  \draw[thArrow] (abs) -- (stepback);
+
+  % ─── Expansion splits again: lexical vs LLM-based ──────────────────────
+  \node[sub] (lex) at (-80mm, -36mm) {lexical};
+  \node[sub] (gen) at (-38mm, -36mm) {LLM-based};
+  \draw[thArrow] (exp) -- (lex);
+  \draw[thArrow] (exp) -- (gen);
+
+  \node[leaf, below=6mm of lex] (prf) {PRF, RM3};
+  \draw[thArrow] (lex) -- (prf);
+
+  % The four LLM-based techniques are SIBLINGS, not a chain. Chaining them
+  % hyde -> q2d -> grf -> csqe would read as "HyDE is the parent of Query2Doc",
+  % which is false. They hang off a shared spine, the standard tree idiom.
+  \node[leaf,  below=8mm of gen]      (hyde) {HyDE '22};
+  \node[ours,  below=4mm of hyde]     (q2d)  {Query2Doc '23};
+  \node[leaf,  below=4mm of q2d]      (grf)  {GRF '23};
+  \node[ours,  below=4mm of grf]      (csqe) {CSQE '24};
+
+  \coordinate (spine) at ($(gen.south)+(0,-3mm)$);
+  \draw[thArrow, -] (gen.south) -- (spine);
+  \draw[thArrow, -] (spine) -- ($(spine -| csqe.west)+(-4mm,0)$)
+                    -- ($(csqe.west)+(-4mm,0)$);
+  \foreach \n in {hyde,q2d,grf,csqe}{%
+    \draw[thArrow] ($(\n.west)+(-4mm,0)$) -- (\n.west);}
+
+\end{tikzpicture}
+\end{document}

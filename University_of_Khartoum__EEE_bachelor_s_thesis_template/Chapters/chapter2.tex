@@ -47,8 +47,8 @@ The quality of the final generated answer is fundamentally bounded by the qualit
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.85\textwidth]{fig_2_1_rag_arch.pdf}
-  \caption[RAG system architecture]{High-level architecture of a RAG system. A user query is sent to a retriever that consults the corpus and returns the top-$k$ passages, which are passed alongside the query to an LLM to produce a context-augmented answer.}
+  \includegraphics[width=\textwidth]{fig_2_1_rag_pipeline.png}
+  \caption[RAG system architecture]{The three stages of a RAG system. Indexing is performed once, offline; retrieval and generation run per question. The worked example follows a single retrieved chunk from the corpus into the prompt: the highlighted chunk returned by the retriever is injected verbatim between the instruction and the question, and the generated answer is grounded in it. The retriever's output therefore bounds everything downstream---a relevant chunk that is not retrieved cannot be recovered by the generator, which is what motivates the query-side interventions studied in this thesis. Structure adapted from Gao et al.\ \cite{gao_2024_ragsurvey}.}
   \label{fig:rag_arch}
 \end{figure}
 
@@ -76,7 +76,14 @@ While dense retrieval captures semantic relationships that sparse methods miss, 
 \subsubsection{Hybrid Retrieval}
 \label{sec:hybrid_retrieval}
 
-Hybrid retrieval combines sparse and dense methods to leverage their complementary strengths. Sparse retrieval excels at exact matching and handles rare terms well, while dense retrieval captures semantic similarity and handles paraphrasing. Two fusion strategies are employed in this thesis: Reciprocal Rank Fusion (RRF) \cite{bruch_2023_rrf}, which combines ranked lists by summing inverse rank scores and requires no score normalisation, and score-level interpolation (Convex Combination, CC), which computes a weighted sum of min-max normalised sparse and dense scores. The formal definitions of both fusion functions are given with the other scoring functions in Section~\ref{sec:hybrid_math}.
+Hybrid retrieval combines sparse and dense methods to leverage their complementary strengths. Sparse retrieval excels at exact matching and handles rare terms well, while dense retrieval captures semantic similarity and handles paraphrasing. Two fusion strategies are employed in this thesis: Reciprocal Rank Fusion (RRF) \cite{bruch_2023_rrf}, which combines ranked lists by summing inverse rank scores and requires no score normalisation, and score-level interpolation (Convex Combination, CC), which computes a weighted sum of min-max normalised sparse and dense scores. The formal definitions of both fusion functions are given with the other scoring functions in Section~\ref{sec:hybrid_math}. Figure~\ref{fig:sparse_vs_dense} contrasts the two retrieval families whose fusion this section describes.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.62\textwidth]{fig_2_2_sparse_vs_dense.pdf}
+  \caption[Sparse and dense retrieval compared]{Sparse and dense retrieval compared. The two families fail on different inputs---BM25 on vocabulary mismatch, dense retrieval on rare terms and named entities---and their complementary strengths, BM25's broader coverage against mDPR's stronger ranking, are what make hybrid fusion worthwhile; the fusion functions themselves are defined in Section~\ref{sec:hybrid_math}.}
+  \label{fig:sparse_vs_dense}
+\end{figure}
 
 \subsection{QE Techniques}
 \label{sec:qe_techniques}
@@ -101,9 +108,23 @@ Query disambiguation reformulates an ambiguous or poorly phrased query into a cl
 \subsubsection{Query Abstraction}
 Query abstraction steps back from a specific query to a more general question whose answer is easier to retrieve and which then guides retrieval for the original query. Zheng et al. \cite{zheng_2023_take} introduced \textit{step-back prompting}, in which the model first derives a higher-level concept or principle before answering, improving retrieval and reasoning on knowledge-intensive tasks.
 
-Among these four families, query expansion is adopted in this thesis because it directly addresses the dominant Arabic retrieval failure modes (vocabulary mismatch and short, information-poor queries) while remaining model-agnostic and requiring no task-specific training.
+Among these four families, query expansion is adopted in this thesis because it directly addresses the dominant Arabic retrieval failure modes (vocabulary mismatch and short, information-poor queries) while remaining model-agnostic and requiring no task-specific training. Figure~\ref{fig:qe_taxonomy} locates the four families and their principal techniques within a single taxonomy.
 
-These QE techniques operate as modular layers that can be added to existing RAG systems without modifying the retriever index or the generator, making them particularly attractive for practical deployment. Table~\ref{tab:reviewed_qe} summarises the query-enhancement literature reviewed for this thesis, organised by method family.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{fig_2_3_qe_taxonomy.pdf}
+  \caption[Taxonomy of query-enhancement techniques]{Taxonomy of query-enhancement techniques, following the four atomic operations identified by Song and Zheng \cite{song_2024_a}. The expansion family divides further into lexical methods, which draw expansion terms from pseudo-relevant documents, and LLM-based methods, which generate them. The two highlighted techniques, Query2Doc and CSQE, are the ones this thesis builds on.}
+  \label{fig:qe_taxonomy}
+\end{figure}
+
+These QE techniques operate as modular layers that can be added to existing RAG systems without modifying the retriever index or the generator, making them particularly attractive for practical deployment. Figure~\ref{fig:qe_layer} shows this placement: the query is rewritten before it reaches the retriever, and every component downstream is left untouched. Table~\ref{tab:reviewed_qe} summarises the query-enhancement literature reviewed for this thesis, organised by method family.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{fig_2_4_qe_layer.pdf}
+  \caption[Placement of the query-enhancement layer]{Query enhancement as a modular pre-retrieval layer. The user query $q$ is rewritten to $q'$ before it reaches the retriever; the index, the retriever and the generator are all unchanged, which is what makes the technique deployable on an existing retrieval system without reindexing or retraining.}
+  \label{fig:qe_layer}
+\end{figure}
 
 \begin{table}[H]
   \centering
@@ -122,7 +143,7 @@ The Arabic language presents several characteristics that compound the retrieval
 Arabic employs a root-and-pattern morphological system in which words are derived from typically tri-consonantal roots through templatic patterns and extensive affixation. A single root can yield dozens of surface forms through prefixes, suffixes, infixes, and clitics. For example, the root \textit{k-t-b} (\text{ك-ت-ب}, ``to write'') generates forms such as \textit{kitaab} (book), \textit{kaatib} (writer), \textit{maktaba} (library), and \textit{maktuub} (written). This morphological productivity creates a severe vocabulary mismatch problem, as queries and relevant documents may use different inflected forms of the same root.
 
 \subsubsection{Diglossia}
-Arabic exhibits a diglossic situation in which MSA is used in formal writing, education, and media, while various regional dialects (Egyptian, Levantine, Gulf, Maghrebi, and others) are used in daily speech and informal written communication. Knowledge bases are predominantly composed of MSA text, whereas user queries---particularly in conversational settings---may be formulated in dialectal Arabic, creating a systematic gap between query and document vocabularies \cite{elbeltagysamhaar_2024_exploring}.
+Arabic exhibits a diglossic situation in which MSA is used in formal writing, education, and media, while various regional dialects (Egyptian, Levantine, Gulf, Sudanese, Maghrebi, and others) are used in daily speech and informal written communication. Knowledge bases are predominantly composed of MSA text, whereas user queries---particularly in conversational settings---may be formulated in dialectal Arabic, creating a systematic gap between query and document vocabularies \cite{elbeltagysamhaar_2024_exploring}.
 
 \subsubsection{Orthographic Variations}
 Arabic script permits multiple orthographic representations for certain characters, leading to inconsistencies even within MSA. Common variations include the different forms of Hamza (\text{ء، أ، إ، ؤ، ئ}), Alif (\text{ا، آ، ٱ}), and Ya/Alif Maqsura (\text{ي، ى}). These variations can cause both sparse and dense retrieval methods to treat orthographic variants as distinct terms.
@@ -130,7 +151,14 @@ Arabic script permits multiple orthographic representations for certain characte
 \subsubsection{Diacritical Marks}
 Arabic diacritics (\textit{tashkeel}) disambiguate pronunciation and meaning but are typically omitted in modern texts. This omission increases lexical ambiguity, as identical consonantal skeletons may correspond to multiple words with different meanings.
 
-These characteristics collectively create what may be termed a ``morphological gap'' between user queries and knowledge base documents, which is distinct from and often more severe than the vocabulary mismatch observed in English information retrieval.
+These characteristics collectively create what may be termed a ``morphological gap'' between user queries and knowledge base documents, which is distinct from and often more severe than the vocabulary mismatch observed in English information retrieval. Figure~\ref{fig:arabic_challenges} summarises the four properties and the single consequence they share.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{fig_2_5_arabic_challenges.pdf}
+  \caption[Arabic properties that break lexical retrieval]{Four properties of Arabic that break lexical retrieval. In the first, second and fourth, a single concept is spread across many surface forms, so the relevant passage is missed; in the third, a single undiacritised form stands for several distinct words, so irrelevant passages are matched instead. The orthographic example is drawn from the failure analysis of this thesis's own baseline (Section~\ref{sec:res_error_rationale}).}
+  \label{fig:arabic_challenges}
+\end{figure}
 
 %======================================================================
 \section{Mathematical Models}

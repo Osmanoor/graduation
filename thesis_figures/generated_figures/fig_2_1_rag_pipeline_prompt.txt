@@ -1,0 +1,62 @@
+Retrieval-Augmented Generation (RAG) system architecture — a general, textbook explanation
+of how RAG works, for the theoretical background chapter of an engineering thesis.
+
+THE SINGLE MOST IMPORTANT THING THIS FIGURE MUST COMMUNICATE: that a retrieved chunk of text
+is physically INJECTED into the prompt that is sent to the language model. The reader must be
+able to see the actual chunk text travel from the corpus, into the prompt, and into the answer.
+Make that injection visually unmistakable.
+
+The figure has THREE NUMBERED STAGES arranged top to bottom, each with a clear stage header.
+
+STAGE 1 — INDEXING. Labelled "offline — performed once". A horizontal flow of four boxes:
+  Documents (the corpus)  ->  Split into chunks  ->  Encode  ->  Index
+The final box is labelled "Index (sparse, dense, or hybrid)". Draw the "Split into chunks" box
+so that it visibly produces several small stacked chunk cards, to establish that a "chunk" is
+a short piece of text. Draw this whole stage in a muted grey so it reads as background.
+An arrow leaves the Index box downward into Stage 2.
+
+STAGE 2 — RETRIEVAL. Labelled "per query". A horizontal flow:
+  User question  ->  Retriever  ->  Top-k chunks
+"Top-k chunks" must be drawn as a small stack of THREE labelled chunk cards, "Chunk 1",
+"Chunk 2", "Chunk 3". Chunk 2 is highlighted with a coloured border and a small tag reading
+"most relevant" — this is the chunk that will be injected. Beneath the Retriever there is an
+annotation reading: "Retrieval bottleneck — a relevant chunk not returned here cannot be
+recovered by the generator."
+An arrow carries the highlighted Chunk 2 downward into Stage 3.
+
+STAGE 3 — GENERATION. This stage is dominated by a single large box titled "Prompt sent to the
+LLM", drawn as an actual prompt template with three stacked parts, one above the other, each
+visibly a separate slot inside the prompt box:
+  part 1, labelled "instruction":  Answer the question using only the context below.
+  part 2, labelled "INJECTED CHUNK": a nested, clearly outlined and coloured inner box holding
+          the real chunk text: "...the college was founded in 1902 as Gordon Memorial College;
+          it became the University of Khartoum in 1956..."
+          This inner box must use the same colour as the highlighted Chunk 2 in Stage 2, so the
+          reader sees it is the same object that was retrieved.
+  part 3, labelled "question": When was the University of Khartoum founded?
+An arrow leaves the prompt box to a box labelled "LLM", and from there to a box labelled
+"Answer" containing: "It was founded in 1902 as Gordon Memorial College and became the
+University of Khartoum in 1956." The Answer box is annotated "grounded in the injected chunk".
+A small side note near the LLM reads: "without the injected chunk the model must answer from
+parametric memory alone, and may hallucinate".
+
+STYLE REQUIREMENTS.
+- Clean, flat, academic vector-style diagram for a printed black-and-white-safe thesis.
+- Rounded rectangles, thin coloured strokes, very light fills.
+- Muted professional palette: blue for the question, green for retrieval and for the chunk,
+  purple for the LLM, grey for the corpus and the indexing stage, teal for the final answer.
+- Serif typeface for all labels, consistent sizes, generous white space.
+- Thin arrows with small solid arrowheads.
+- ALL TEXT IN ENGLISH. No other script. Every label spelled exactly as written above.
+- No photographs, no 3D, no drop shadows, no clip-art mascots.
+- Landscape orientation, wider than tall.
+
+CRITICAL CORRECTNESS REQUIREMENTS.
+1. The index must NOT be drawn as a vector database only and retrieval must NOT be described as
+   semantic similarity only. RAG does not require dense retrieval; the index may be sparse
+   (inverted index), dense (vector), or hybrid. Keep the box labelled exactly
+   "Index (sparse, dense, or hybrid)".
+2. The chunk inside the prompt box must contain readable text, not placeholder scribble or
+   grey lorem-ipsum bars. The words must be legible and spelled correctly.
+3. The arrow from the retrieved chunks must terminate at the PROMPT box, not at the LLM box —
+   chunks are assembled into the prompt before inference.

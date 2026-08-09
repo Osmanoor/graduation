@@ -1,0 +1,57 @@
+% Fig 2.2 — Sparse vs dense retrieval, side by side.
+%
+% Restored 2026-08-09 from archive/system_diagrams_dropped/fig_2_3_dense_vs_sparse.tex
+% (archived 2026-06-01, reinstated on Dr. Tahani's August note that Chapter 2 needs figures).
+%
+% Renamed 2_3 -> 2_2 to match the printed figure number under CH2_FIGURES_SPEC.md.
+%
+% Two changes from the archived version:
+%   1. The "complementary strengths" annotation used to sit between the two columns and
+%      collided with the box borders. It has moved into the caption in chapter2.tex.
+%   2. A failure note is added under each column. The CONTRAST is the point of this figure,
+%      and §2.1.3 states both weaknesses in prose (chapter2.tex:65 and :74).
+%
+% "768-d" verified against chapter3.tex:70 (castorini/mdpr-tied-pft-msmarco).
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\input{_style.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+    header/.style={font=\bfseries\small},
+    failnote/.style={font=\footnotesize\itshape, color=thMuted,
+                     align=center, text width=38mm}
+]
+  % ─── Sparse column (left) ────────────────────────────────────────────
+  % Icons take the header colour: the shared \thIcon* macros carry their own palette
+  % colour, which left a grey gear over orange text and a purple brain over green.
+  \node[header, color=thFusionS] (sparseH) at (-25mm, 5mm) {\textcolor{thFusionS}{\faCog}~Sparse (BM25)};
+  \node[thQuery, minimum width=34mm, below=2mm of sparseH] (sq) {Query terms};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of sq] (stok) {Tokenise + stem};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of stok] (sscore) {Term-frequency\\scoring};
+  \node[thBase, minimum width=34mm, fill=thFusionF, draw=thFusionS, below=of sscore] (sidx) {Inverted index};
+  \node[thOut, minimum width=34mm, below=of sidx] (sout) {Top-$k$ passages};
+
+  \draw[thArrow] (sq) -- (stok);
+  \draw[thArrow] (stok) -- (sscore);
+  \draw[thArrow] (sscore) -- (sidx);
+  \draw[thArrow] (sidx) -- (sout);
+
+  \node[failnote, below=4mm of sout] {fails on\\vocabulary mismatch};
+
+  % ─── Dense column (right) ────────────────────────────────────────────
+  \node[header, color=thRetS] (denseH) at (25mm, 5mm) {\textcolor{thRetS}{\faBrain}~Dense (mDPR)};
+  \node[thQuery, minimum width=34mm, below=2mm of denseH] (dq) {Query text};
+  \node[thRet, minimum width=34mm, below=of dq] (denc) {Encoder\\$\to$ 768-d vector};
+  \node[thRet, minimum width=34mm, below=of denc] (dscore) {Inner-product\\with passages};
+  \node[thRet, minimum width=34mm, below=of dscore] (didx) {FAISS index};
+  \node[thOut, minimum width=34mm, below=of didx] (dout) {Top-$k$ passages};
+
+  \draw[thArrow] (dq) -- (denc);
+  \draw[thArrow] (denc) -- (dscore);
+  \draw[thArrow] (dscore) -- (didx);
+  \draw[thArrow] (didx) -- (dout);
+
+  \node[failnote, below=4mm of dout] {fails on rare terms\\and named entities};
+\end{tikzpicture}
+\end{document}

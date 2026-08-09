@@ -2,6 +2,16 @@
 \chapter{Introduction}
 \label{chap:introduction}
 
+%======================================================================
+% Dr. Tahani (voice note 2): the opening text of Chapter 1 must carry its own side
+% heading — "ما في كلام بيتكتب ساي بدون عنوان جانبي ... تسموه preamble أو preface".
+% Problem Definition therefore moves from 1.1 to 1.2, and so on.
+% Chapter 2's opening paragraph is explicitly EXEMPT (voice note 4: it is short, so
+% it stays unnumbered and Chapter 2's numbering is left untouched).
+\section{Preamble}
+\label{sec:preamble}
+%======================================================================
+
 The rapid growth of digital Arabic content has intensified the need for intelligent information retrieval systems capable of accurately locating relevant information within large corpora. Retrieval-Augmented Generation (RAG) has emerged as the dominant paradigm for grounding Large Language Model (LLM) outputs in external knowledge, mitigating hallucination by retrieving relevant passages before generation. However, the quality of a RAG system's final output is fundamentally bounded by the quality of its retrieval component: if the retriever fails to surface relevant documents, the generator cannot compensate for this deficiency regardless of its capabilities.
 
 Arabic information retrieval faces challenges that compound this retrieval bottleneck. The Arabic language employs a root-and-pattern morphological system in which a single root can yield dozens of surface forms, creating severe vocabulary mismatch between queries and documents. Orthographic variations in characters such as Hamza and Alif introduce further inconsistencies, while the diglossic nature of Arabic---where Modern Standard Arabic (MSA) is used in formal text but regional dialects dominate informal communication---creates a systematic gap between how users formulate queries and how knowledge bases are written. These linguistic characteristics amplify the retrieval failure rate beyond what is observed for English and other morphologically simpler languages.
@@ -24,7 +34,10 @@ Arabic information retrieval systems fail on a substantial proportion of individ
 
 In pursuit of the central research question stated in Section~\ref{sec:problem_definition}, the objectives of this thesis are as follows:
 
-\begin{enumerate}[label=\arabic*.]
+% Dr. Tahani (voice note 3): no Arabic numerals inside a numbered section — "1" already
+% means Chapter 1. Roman numerals are used rather than bullets so that each objective
+% keeps an identity that the conclusions in Chapter 5 can be checked against.
+\begin{enumerate}[label=\roman*.]
     \item To establish independent dense and sparse retrieval baselines on the Arabic subset of the Multilingual Information Retrieval Across a Continuum of Languages (MIRACL) benchmark, quantifying the effectiveness of each paradigm and the complementarity between them using standard retrieval metrics---Normalised Discounted Cumulative Gain (NDCG), Recall, and Mean Reciprocal Rank (MRR).
 
     \item To conduct a systematic error analysis of the baseline results---quantifying the overall failure rate, the effect of query length, and retrieval coverage, and characterising the linguistic failure patterns arising from Arabic morphological, orthographic and lexical variation---in order to identify the failure modes that QE must address and to guide the selection of the enhancement technique.

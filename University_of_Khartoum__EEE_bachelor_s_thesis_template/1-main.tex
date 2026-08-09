@@ -46,6 +46,17 @@
 % Table of Contents, Bibliography, and Lists
 \usepackage{tocbibind}
 \usepackage{tocloft}
+% Dr. Tahani (voice note 1): "Contents, List of Figures, List of Tables, List of
+% Abbreviations — كل العناوين تخلوها centered". The \chapter* headings (Dedication,
+% Acknowledgments, Abstract, List of Abbreviations) are already centred by the
+% \titleformat{\chapter} rule below, but tocloft sets its own three titles and
+% left-aligns them, so they are centred here and matched to the 18 pt chapter size.
+\renewcommand{\cfttoctitlefont}{\hfill\normalfont\fontsize{18}{22}\selectfont\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\normalfont\fontsize{18}{22}\selectfont\bfseries}
+\renewcommand{\cftafterloftitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\normalfont\fontsize{18}{22}\selectfont\bfseries}
+\renewcommand{\cftafterlottitle}{\hfill}
 
 % Titles Formatting
 \usepackage{titlesec}
@@ -116,8 +127,12 @@
 \usepackage[acronym]{glossaries}
 
 % Hyperlinks — must come LAST (after bidi/polyglossia)
+% `hidelinks` removes the red rectangles hyperref draws around every internal link.
+% Dr. Tahani (voice note 1): "شيلوا الـ red boxes الموجودة في الـ contents دي"، and
+% again for Chapters 3-4: "الـ red boxes بتاعت الأرقام دي ... ما تنسوها". The links
+% themselves still work in the PDF; only the borders are suppressed.
 \usepackage[xetex,bookmarks=true,bookmarksdepth=2,breaklinks=true,
-            hyperfootnotes=false,pdfencoding=auto]{hyperref}
+            hyperfootnotes=false,pdfencoding=auto,hidelinks]{hyperref}
 
 % Compatibility: map arabtex \<text> to polyglossia \textarabic{text}
 \def\<#1>{\textarabic{#1}}
@@ -134,19 +149,30 @@
         \vspace*{-0.05cm} % Lift the content up
         \includegraphics[width=0.2\textwidth]{Figures/Fig_logo.jpg}\\[1cm]  % Adjusted spacing
         % TITLE — 20 pt bold per Dr. Tahani (voice note 1, [01:47]).
-        % PENDING ELHAJ'S CONFIRMATION: option A from research_decisions/REMAINING_WORK_PLAN.md §2.
-        % The registered proposal title was "Improving Retrieval Recall in Arabic RAG Systems
-        % via Query Enhancement" — confirm whether the department allows it to change.
-        {\fontsize{20}{24}\selectfont\textbf{Improving Retrieval Quality in Arabic RAG Systems\\[0.2cm] via Corpus-Steered Query Enhancement}}\\[0.5cm]
+        % CONFIRMED BY ELHAJ 2026-08-08. No subtitle.
+        % The registered proposal title was "Improving Retrieval Recall in Arabic RAG Systems via
+        % Query Enhancement". Two changes were made to it:
+        %   Recall -> Quality      — the headline metric is NDCG@10 (0.4621 -> 0.7137), not recall.
+        %   + "LLM-Based"          — every expansion in the thesis is LLM-generated.
+        % "Corpus-Steered" was REMOVED (it was here briefly): CSQE is objective 8 of the 9 in
+        % chapter1.tex:28-44, so naming it in the title narrowed the thesis to its final
+        % experiment and hid the baselines, error analysis, Query2Doc adaptation, ten-model
+        % comparison, repetition sweep, hybrid fusion and placement finding.
+        % Term choice: "Query Enhancement", NOT "Query Expansion". The thesis defines QE =
+        % Query Enhancement as the umbrella intervention (chapter1.tex:9, 5-Abstract.tex,
+        % 7-ListofAbbreviations.tex:48) and reserves "query expansion" for the specific
+        % mechanism (CSQE, Query2Doc, the generated text). Enhancement is the wider term here.
+        % ⚠️ Confirm the department allows the registered title to change.
+        {\fontsize{20}{24}\selectfont\textbf{Improving Retrieval Quality in Arabic RAG Systems\\[0.2cm] via LLM-Based Query Enhancement}}\\[0.5cm]
         {\large \textit{A thesis submitted in partial fulfillment of the requirements of the B.Sc. degree in Electrical and Electronic Engineering}}\\[1.5cm]
         \begin{spacing}{1.5}  % Set line spacing to 1.5
         \textbf{Submitted by:}\\[0.5cm]
-        % TODO(Elhaj): replace INDEX with the real index numbers, and confirm both full names.
-        {\textbf{Mohammed Elhaj Sami (INDEX)}}\\
-        {\textbf{Osman Bashir (INDEX)}}\\[1cm]
+        % Full names and index numbers supplied by Elhaj 2026-08-08.
+        {\textbf{Mohammed Elhaj Sami Abdelrahman Mohammed (184075)}}\\
+        {\textbf{Osman Bashir Ali Abdelkreem (184051)}}\\[1cm]
         \textbf{Supervised by:}\\[0.5cm]
-        % TODO(Elhaj): full name and academic title; confirm the spelling "Tahani".
-        {\textbf{Dr. Tahani}}\\[1cm]
+        % Full name confirmed by Elhaj 2026-08-08. "Tahani" spelling verified.
+        {\textbf{Dr. Tahani Abdalla Attia}}\\[1cm]
         \textbf{To}\\[0.5cm]
         {\textbf{Department of Electrical and Electronic Engineering}}\\
         {\textbf{Faculty of Engineering}}\\

@@ -193,7 +193,8 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   **2026-08-05 — cover-page audit is now UNBLOCKED.** The earlier Speechmatics transcript garbled this passage; the Gemini re-transcription recovers the full spec. Audit against: project title **20 pt TNR bold** · submission phrase in *italic* · student names **and index numbers** · supervisor name · *"submitted to Department of Electrical and Electronic Engineering, Faculty of Engineering, University of Khartoum"* · date · university logo. She is explicit that you must **not** design one yourself (*"ما بتعمل صفحة غلاف من راسك"*) — use the department template, and a coordinator-circulated template overrides it. Also confirm the cover carries **no visible page number** while still counting as page `i`.
   *(Source: `meetings/2026-07_supervisor_voice_notes_transcripts.md` Note 1. Cite by quoted phrase — the timestamps changed when the file was re-transcribed and Gemini's are model-estimated.)*
 
-- [x] **J3 — Six tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Table 2.1 rebuilt structurally (dropped the raw-BibTeX `Cite key` column and the `Family` column, ragged-right `p{}` wrapping, caption corrected); five Ch.4 tables wrapped in `esizebox`. Verified in the rendered PDF, not the log. ⚠️ Cite keys were **not** converted to `\cite` — that would renumber the whole bibliography and void C6.
+- [x] **J3 — Six tables overflow the text block and print with columns cut off** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Table 2.1 rebuilt structurally (dropped the raw-BibTeX `Cite key` column and the `Family` column, ragged-right `p{}` wrapping, caption corrected); five Ch.4 tables wrapped in `
+esizebox`. Verified in the rendered PDF, not the log. ⚠️ Cite keys were **not** converted to `\cite` — that would renumber the whole bibliography and void C6.
   **Re-measured 2026-08-04 from a clean full build (xelatex → bibtex → xelatex ×2) after J1.** The font change shrank every overflow but removed none. 285 `Overfull \hbox` warnings total; the ones that are actual tables:
 
   | Too wide | Table | Location |
@@ -267,11 +268,19 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   ⚠️ **Cut to fit one page** (in priority order, restorable if something else goes): the dense-gain range/average; the Arabic-specialised-vs-multilingual finding (`chapter4.tex:389`); the named best models (Aya Expanse 8B, Jais-2 8B); the "3B beats GPT-3 175B" comparison.
   ⚠️ **Note on Dr. Tahani's numbers:** her "250–350 words ≈ 3/4 page" is calibrated to Times New Roman 12 / 1.5 spacing (`meetings/17.3.2026.md:143` — *"لأنو إحنا بنكتب بـ 12 Times New Roman، 1.5 Line spacing"*). It did not hold while the thesis was in Latin Modern — see **J1**. At 315 words in Times the abstract fills one page, slightly more than 3/4.
 
-- [~] **J10 — Front matter** — **MOSTLY DONE 2026-08-06** (`d889bd9`, `9e7a8fc`). Title page filled (20 pt bold title, both names, Dr. Tahani, August 2026); Declaration of Authorship written with two signature blocks; **C8 page-numbering conflict closed** — roman numerals now begin with the title page, so the Declaration prints as ii. ⚠️ **STILL BLOCKED ON ELHAJ:** (1) confirm the title — option A is in the file pending his decision; (2) both index numbers (`(INDEX)` placeholders); (3) both full names as they appear on university records; (4) Dr. Tahani's full name + spelling; (5) whether the department mandates declaration wording. **Acknowledgments still empty** — to be written personally by Elhaj and Osman in a dedicated session. — **Owner: Elhaj** (S) — **BLOCKS SUBMISSION**
-  `1-main.tex:104-116` still carries the template placeholders: *“This is the Thesis Title”*, *“Student Name (Index)”* ×2, *“Supervisor name”*, *“September 2024”*.
-  Needed: the exact thesis title, both students' names + index numbers, Dr. Tahani's full title and name, and the real submission month/year.
-  ⚠️ **Formatting is specified**, not free: Dr. Tahani, voice note 1 [01:47] — project name in **Times New Roman 20 bold**; [02:22] — the cover page has a department standard and recent years place the university logo at the top. `2026-07_supervisor_voice_notes_transcripts.md`. Current title uses `\Large` (≈17.3 pt), not 20 pt.
-  ⚠️ Also confirm whether the coordinator (“المنسقة”) has circulated a fixed template — [02:22] says to follow it if so.
+- [~] **J10 — Front matter** — **NO LONGER BLOCKS SUBMISSION as of 2026-08-08; only the Acknowledgments text is outstanding.** (`d889bd9`, `9e7a8fc`). Title page filled (20 pt bold title, both names, Dr. Tahani, August 2026); Declaration of Authorship written with two signature blocks; **C8 page-numbering conflict closed** — roman numerals now begin with the title page, so the Declaration prints as ii. **Title CONFIRMED 2026-08-08 (closes T1):** *"Improving Retrieval Quality in Arabic RAG Systems via LLM-Based Query Enhancement"* — **no subtitle**. Option A was rejected as too narrow: *"via Corpus-Steered Query Enhancement"* names only the final experiment, while `chapter1.tex:28-44` declares nine objectives spanning baselines, error analysis, Query2Doc, the ten-model comparison, repetition, hybrid fusion, CSQE and placement. Two changes from the registered proposal title: **Recall → Quality** (headline metric is NDCG@10, 0.4621 → 0.7137) and **+ LLM-Based**. "Query **Enhancement**" was kept over "Query Expansion" because the thesis defines QE as the umbrella intervention (`chapter1.tex:9`, `5-Abstract.tex`, `7-ListofAbbreviations.tex:48`) and reserves *expansion* for the specific mechanism. Applied at `1-main.tex:136-151`, 20 pt bold, two lines; verified by `xelatex` build to fit one page. Full reasoning: `REMAINING_WORK_PLAN.md` §2.
+  **ALL DATA SUPPLIED BY ELHAJ 2026-08-08 AND APPLIED.** Every placeholder is gone from the title page and the Declaration:
+  - **Title change permitted** — Elhaj confirmed the department allows the registered proposal title to change. This was the gate on T1; it is now closed.
+  - **Mohammed Elhaj Sami Abdelrahman Mohammed (184075)** and **Osman Bashir Ali Abdelkreem (184051)** — full names as on university records, printed on both the title page and the Declaration.
+  - **Dr. Tahani Abdalla Attia** — full name confirmed; the "Tahani" spelling used throughout the repo is correct.
+  - **August 2026** submission date, **20 pt bold** title per voice note 1 [01:47], university logo at the top — all already in place.
+  - Declaration signature blocks restructured: the five-word names overflowed the old single-row `tabular`, so each block now prints the name and index on its own line above the Signature/Date row. Verified — **no overfull hbox in either front-matter file**.
+  - `xelatex` build clean, 135 pages; title page fits one page, Declaration prints as **ii**.
+
+  ⚠️ **REMAINING (2 items, both small):**
+  1. **Acknowledgments — placeholder only.** `4-Acknowledgements.tex` now carries an italic bracketed placeholder and a DO-NOT-SUBMIT comment so it cannot be missed. To be written personally by Elhaj and Osman.
+  2. **Declaration wording** — still unconfirmed whether the department mandates its own text. Ours is generic and safe, but worth one question.
+  ⚠️ Also confirm whether the coordinator (“المنسقة”) has circulated a fixed cover-page template — voice note 1 [02:22] says to follow it if so. — **Owner: Elhaj** (S)
 
 - [ ] **J11 — Apply D2's approved appendix moves** — **Owner: JOINT** (M)
   D2 is complete **as an analysis only** — its report states nothing has been applied and carries a per-item sign-off sheet (§6). The moves themselves are unstarted.
@@ -289,6 +298,163 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   ⚠️ **THE `[AI]` TAG CONFLICTS WITH AN EXPLICIT INSTRUCTION (found 2026-08-05).** Voice note 13: *"الترجمة حاولوا بقدر الإمكان ما تكون ترجمة **Google** ولا ترجمة **AI**، حاولوا استخدموا الـ terminologies المستخدمة عندنا في اللغة العربية الصحيحة، ده في ترجمة المستخلص."* The earlier Speechmatics transcript rendered this as *"ولا ترجمة أي"* and the AI clause was lost entirely; the Gemini re-transcription recovers it.
   **Reading:** her target is Arabic that *reads* machine-translated, not a ban on tooling. Defensible route — **Osman writes the Arabic himself**, uses AI only to check terminology against standard equivalents, and both of us review for fluency. What must not happen is pasting the English abstract into a model and shipping the output.
   ⚠️ **B2 IS ON THE CRITICAL PATH, NOT IN A LATER WAVE.** Voice note 13: *"أهم من ديل كلهم الـ abstract بالعربي والإنجليزي **لازم أشوفهم، لازم أشوفهم قبل التسليم**."* She rates the abstracts above Ch.1 and Ch.5, says it twice, and is unavailable around her daughter's wedding on **1/8** (note 13) with submission in the first days of August (note 14). B1 is done; B2 is the last piece of the artefact she must personally review. **She will read this abstract herself — machine-translated Arabic is recognisable on sight.**
+
+---
+
+## Phase K — Supervisor feedback, August round (NEW, 2026-08-09)
+
+> **Source:** Dr. Tahani's seven voice notes on the submitted draft, transcribed by Mohammed
+> into the conversation of 2026-08-09. Her verdict on Chapters 3 and 4: *"3 و 4 perfect، ما
+> عندي عليهم أي ملاحظات"*; on references and appendices: *"ممتازة"*. Everything below is
+> front matter, Chapter 1, Chapter 2, or Chapter 5.
+
+- [x] **K1 — Red link boxes throughout the document** — (S) — **DONE 2026-08-09**
+  Note 1: *"شيلوا الـ red boxes الموجودة في الـ contents دي"*; note 6, on Chapters 3–4:
+  *"الـ red boxes بتاعت الأرقام دي، أنا ما عارفة في النهاية بعد تخلصوا خالص مش بتتشال؟ ما تنسوها."*
+  Cause: `hyperref` was loaded without `hidelinks`, so it drew its default red border around
+  every internal link — ToC entries, `\ref`, `\cite`. **Fix:** added `hidelinks` at
+  `1-main.tex:125-129`. Links still work; only the borders are gone. One-line fix, whole
+  document, both her complaints closed at once.
+
+- [x] **K2 — Front-matter headings not centred** — (S) — **DONE 2026-08-09**
+  Note 1: *"العناوين زي الـ contents, list of figures, list of tables, list of abbreviations
+  دي كلها تعملوا ليها توسيط."* Of the four she named, **only three were actually wrong.**
+  `List of Abbreviations` is a `\chapter*` and was already centred by the
+  `\titleformat{\chapter}` rule, as were Dedication, Acknowledgements and both abstracts.
+  Contents / List of Figures / List of Tables are set by `tocloft`, which overrides that rule
+  and left-aligns them at `\huge`. **Fix:** `\cft*titlefont` / `\cftafter*title` redefined at
+  `1-main.tex:47-58` to centre all three and drop them to the 18 pt chapter size, so the front
+  matter is now uniform.
+
+- [x] **K3 — Chapter 1 opening text had no side heading** — (S) — **DONE 2026-08-09**
+  Note 2: *"مافي كلام بيتكتب ساي بدون عنوان جانبي ... تسموه preamble أو preface أو كده."*
+  **Fix:** `\section{Preamble}` added at `chapter1.tex:5`; the four funnel paragraphs now sit
+  under 1.1. Problem Definition 1.1 → **1.2**, Objectives → **1.3**, Thesis Layout → **1.4**.
+  Name chosen from her own two suggestions.
+  ⚠️ **Chapter 2 is explicitly exempt** — note 4: *"في chapter 2، لو بديتوا تغيروا الترقيم
+  حتلخبط ليكم الشغلانة كلها. خلوه، الـ preface ده خلوه بدون ترقيم لأنه صغير."* Chapter 2's
+  opening paragraph stays unnumbered and its numbering was **not touched**. Chapters 3–5 open
+  the same way and she raised no objection, so they were left alone too.
+
+- [x] **K4 — Restarted Arabic numbering inside numbered sections** — (S) — **DONE 2026-08-09**
+  Note 3: *"مافي ترقيم جوا ترقيم ... لما أقول 1 معناها chapter 1"*; note 7 repeats it for
+  Chapter 5 and offers the remedy: *"يا bullets يا نرقمها أي ترقيم تاني، Roman ممكن."*
+  Exactly **four** lists in the whole thesis were affected — every other `enumerate` already
+  inherits `label=\alph*.` from `1-main.tex:77`:
+  `chapter1.tex:27` (Objectives, 9 items) · `chapter5.tex:14` (Conclusions, 12) ·
+  `:36` (Challenges, 8) · `:61` (Recommendations, 9).
+  **Fix:** all four changed `label=\arabic*.` → `label=\roman*.`
+  **Roman, not bullets, deliberately:** the objectives are checked off one-for-one in the
+  Chapter 5 conclusions (tasks A4/A7/A8 built that mapping and the committee evaluates on it).
+  Bullets would destroy the identity that mapping depends on.
+
+- [x] **K5 — Dedication and Acknowledgements were blank/placeholder** — (S) — **DONE 2026-08-09**
+  Notes 1 and 7: *"ما تنسوا تكملوا الحاجات الفاضية اللي هي الـ dedication والـ acknowledgments"*,
+  *"ما تنسوا الصفحات الأولى عندكم صفحات فاضية."* `3-Dedication.tex` was a bare `\chapter*`
+  with no body; `4-Acknowledgements.tex` carried an explicit DO-NOT-SUBMIT placeholder.
+  **This closes the last item left open under J10.**
+  Dedication: Sudan and the war first, then families, friends and batch, the university and its
+  teachers. Acknowledgements: Dr. Tahani, the department, fellow students, the open research
+  community (every model, the MIRACL benchmark and the compute were free — the reason two
+  undergraduates could run this at all), and families.
+  Heading spelled **"Acknowledgements"** (British), matching the file name and the thesis-wide
+  British spelling (`summarised`, `normalised`, `characterising`).
+
+- [x] **K6 — Chapter 2 has no figures** — (L) — **DONE 2026-08-09. Chapter 2 now has six figures (was one).**
+
+  | Fig | § | What | Route |
+  |---|---|---|---|
+  | 2.1 | 2.1.2 | RAG, three stages, chunk traced into the prompt | **PaperBanana** (raster PNG) |
+  | 2.2 | 2.1.3 | Sparse vs dense retrieval | restored from archive + 2 fixes |
+  | 2.3 | 2.1.4 | QE taxonomy, four families | redesigned from archive |
+  | 2.4 | 2.1.4 | Where the QE layer goes (before/after) | new TikZ |
+  | 2.5 | 2.1.5 | Arabic properties that break lexical retrieval | new TikZ |
+
+  **Build: 137 pages (was 135), 0 errors, 0 undefined refs or cites, no missing files.** All five
+  appear in the List of Figures. Every page checked in the rendered PDF, not the log — all
+  figures sit inside the margins.
+
+  **Elhaj's review round, applied 2026-08-09:**
+  - **Fig 2.6 (three metrics on one ranking) was DELETED** — *"it is not intuitive at all and i
+    didn't understand them."* Source, generator and outputs archived with a post-mortem at
+    `thesis_figures/archive/system_diagrams_dropped/ch2_metrics/`. §2.2.4's equations stand
+    alone again, as before. This is why the count is five, not six, and the page total dropped
+    138 → 137.
+  - **Fig 2.1 regenerated (v2)** to make the chunk injection explicit: the retriever now returns
+    a labelled `Chunk 1/2/3` stack with Chunk 2 highlighted, and Stage 3 shows a
+    `Prompt sent to the LLM` box with three labelled slots — instruction, **INJECTED CHUNK**
+    (same colour as Chunk 2, holding real text), question. Caption updated to match.
+  - **Fig 2.5 panel 3**: diacritic example changed from `المَثَانةُ`/`المثانة` (the bladder,
+    from `chapter4.tex:130`) to `الشَّمْس`/`الشمس` (the sun) — *"this is not a good word."*
+    ⚠️ The caption was corrected accordingly: it now claims only the **orthographic** example
+    comes from the Chapter 4 failure analysis.
+  - **Fig 2.5 panel 4**: diglossia now shows one question in MSA plus five varieties
+    (Sudanese, Egyptian, Levantine, Gulf, Maghrebi). `Sudanese` was added to the dialect list at
+    `chapter2.tex:125` to match.
+    ⚠️ **A factual error was caught and fixed during this work:** the panel first claimed *"no
+    dialect form shares a term with the MSA corpus"*, which is false — the Gulf form
+    `شنو هذا؟` shares `هذا` with MSA `ما هذا؟`. Replaced with the accurate and sharper claim
+    that the **interrogative** differs in every variety and none matches MSA `ما`.
+
+  **Decisions made during the work:**
+  - The proposed encoder-vs-decoder Transformer figure was **dropped** by Elhaj; §2.1.1 stays text-only.
+  - Fig 2.1 was scoped by Elhaj as a **general, English-only** RAG explanation "like top papers" —
+    no Arabic, no MIRACL, no QE. Follows the three-stage structure of Gao et al.
+    (`gao_2024_ragsurvey`, **added to `References.bib`** — first new entry since C6; safe, nothing
+    hardcodes citation numbers).
+  - **Deliberate deviation from the canonical RAG figure:** the index is drawn generically as
+    "sparse, dense, or hybrid" rather than as a vector database, because RAG does not require
+    dense retrieval and §2.1.3 gives BM25 equal billing. Preserve this if the figure is ever
+    regenerated.
+  - Fig 2.5 reuses the *exact* Arabic examples Chapter 4's error analysis found empirically
+    (`chapter4.tex:130`), so Chapter 2 predicts what Chapter 4 measures.
+  - Fig 2.6's arithmetic was emitted by a generator script with assertions; the figure was
+    later deleted (see the review round above), so this no longer applies.
+
+  ⚠️ **Fig 2.1 is the only raster figure in the thesis** and the only one that cannot be edited —
+  only regenerated, non-reproducibly. Its **first iteration printed "What was the University of
+  Khartoum founded?"**; PaperBanana's own critic caught it and iteration 2 fixed it. Never ship a
+  generated figure without reading every word. Prompt, run metadata and the rejected iteration
+  are preserved in `thesis_figures/generated_figures/`. The 1902/1956 founding facts in its
+  worked example were verified against external sources.
+
+  ⚠️ **Three follow-ups, none blocking:**
+  1. **Style delta.** Fig 2.1 is visibly heavier and more saturated than the TikZ figures beside
+     it — different fills, subtle shading, non-Times font. It is the first figure in the chapter,
+     so it sets the tone. If it looks foreign in print, the spec is complete enough to rebuild it
+     in TikZ.
+  2. **p.14 has ~half a page of whitespace** below Fig 2.4, because the `[H]` float leaves too
+     little room for Table 2.1. Consistent with the thesis-wide `[H]` convention; fold into any
+     later float-placement pass rather than changing convention for one figure.
+  3. **Regenerating Fig 2.1 is no longer cheap.** The v2 run took **46 minutes** for one image on
+     the same account that produced v1 in ~30 s. Do not plan a regeneration close to the
+     submission deadline.
+
+  <details><summary>Original task description</summary>
+  Note 5: *"ما شايفة ولا صورة ولا أي حاجة! ... دايماً الـ figures بتشرح الجزء الصعب فهمه أكتر
+  ... ممكن من الـ literature طبعاً ما بترسموها من أول وجديد."*
+  Chapter 2 is 25 pages with one figure; Chapters 3 and 4 average one per three pages.
+  ⚠️ **Two Chapter 2 figures were built and then deleted by us** in commit `7c11c7a`
+  (2026-06-01) on Osman's note *"clear concepts should not have diagrams"* — a principle she
+  has now overruled. Both are intact in `thesis_figures/archive/system_diagrams_dropped/`.
+  **Approved set + full design spec: `research_decisions/CH2_FIGURES_SPEC.md`** (why and
+  approach: `CH2_FIGURES_PLAN.md`). Chapter 2 goes **1 figure → 6**: RAG rebuilt with a worked
+  example, sparse-vs-dense restored, QE-layer placement, QE taxonomy redesigned, Arabic
+  retrieval challenges, and the three metrics on one worked example.
+  **Elhaj's calls (2026-08-09):** the proposed encoder-vs-decoder Transformer figure is
+  **dropped** (§2.1.1 stays text-only); the RAG figure is to be rebuilt with **PaperBanana**
+  (`llmsresearch/paperbanana`, installed v0.1.2).
+  ⚠️ **PaperBanana emits raster PNG from an image model** — everything else in the thesis is
+  vector PDF, image models misspell labels, and the figure carries an Arabic example. The spec
+  defines a five-point accept/reject gate and a TikZ fallback built from the same spec, so
+  neither route wastes work. **Blocked on Elhaj setting the Gemini API key** (`paperbanana
+  setup`, interactive).
+  Arabic-inside-TikZ feasibility proven 2026-08-09; the Fig 2.6 arithmetic is verified.
+  </details>
+
+**Build after K1–K5:** `xelatex` ×2, **135 pages, 0 errors** — page count unchanged. Verified
+in the rendered PDF, not the log: no red boxes in the ToC, Contents/LoF/LoT centred, ToC shows
+1.1 Preamble → 1.4 Thesis Layout, objectives and all three Chapter 5 lists print as i, ii, iii.
 
 ---
 
@@ -320,7 +486,8 @@ Still figure-gated from the old list: **4.16** (dead labels) + **5.C.5** (Ch.4 t
   ⚠️ **Build noise (pre-existing, not from these tasks):** ~128 `Hyper reference 'acro:X' undefined` warnings — `acronym`+`hyperref` link list entries to targets only `\ac{}` creates, and the thesis never uses `\ac{}`. Verified the original placeholder file produced the same warning. One-line fix if wanted: `\usepackage[nohyperlinks]{acronym}` (`1-main.tex:78`).
   ℹ️ **Related but much milder — abstract running head.** `\chapter*` never sets a running head, so the English abstract's *continuation* page (currently p. v) shows a **blank** left header instead of "ABSTRACT". Unlike C2's case this is not a *wrong* header, just a missing one — the first page of any `\chapter*` uses `\thispagestyle{plain}` and correctly shows no header at all. **Left alone deliberately:** B1 shrinks the abstract to ≈3/4 page, which removes the continuation page and the issue with it. Only worth a `\markboth` if the abstract still runs to 2 pages after B1.
 
-- [x] **C4 — Thesis Layout §1.3 → one single paragraph** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Four `	extbf{Chapter~ef{}}` wrappers deleted and the paragraphs joined. Pure markup, no rewording.
+- [x] **C4 — Thesis Layout §1.3 → one single paragraph** — **Owner: Elhaj** (S) — **DONE 2026-08-04.** Four `	extbf{Chapter~
+ef{}}` wrappers deleted and the paragraphs joined. Pure markup, no rewording.
   Currently one paragraph *per chapter*; must become **one single continuous paragraph** ("Chapter 2 establishes… Chapter 3 details… Chapter 4 reports…"). *(Report §6; video 2 03:37–04:20. Closes old 5.E.4.)*
 
 - [x] **C5 — Promote bold inline headings to numbered sub-headings** — **Owner: Elhaj** (M) — **DONE 2026-08-04**, widened thesis-wide. §2.1.4→2.1.4.1-4, §2.1.5→2.1.5.1-4, §2.3→2.3.1-3, §3.6→3.6.1-4, §3.9→3.9.1-4. §5.1's twelve conclusions became a numbered `enumerate` matching §5.2/§5.3 (Elhaj's call — cost ≈+0.1 page instead of +0.88 for subsections). Full rationale: `BOLD_HEADINGS_DECISIONS.md`.

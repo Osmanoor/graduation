@@ -1,0 +1,76 @@
+% Fig 2.4 — Where the query-enhancement layer goes.
+%
+% New figure, 2026-08-09, for §2.1.4 near chapter2.tex:106.
+% Requested by Osman, thesis_figures/FIGURE_NOTES_MOHAMMED.md §1.
+% Spec: research_decisions/CH2_FIGURES_SPEC.md
+%
+% The one job of this figure: §2.1.4 claims QE is MODULAR — retriever-agnostic, no
+% reindexing, deployable incrementally. That claim is why the thesis chose QE over
+% the alternatives, and it is currently made in prose only.
+%
+% Deliberately much lighter than Fig 2.1. Fig 2.1 answers "what is RAG"; this answers
+% "what single thing does this thesis change". The retrievers are aligned vertically
+% so the reader can see the right-hand half is identical in both rows.
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\input{_style.tex}
+
+\begin{document}
+\begin{tikzpicture}[
+    node distance=6mm and 6mm,
+    box/.style={thBase, minimum width=20mm, minimum height=9mm, font=\footnotesize},
+    rowlab/.style={font=\bfseries\footnotesize, color=thMuted, align=right}
+]
+
+  % ─── Row 2 (bottom): with query enhancement. Built first because it is longer. ──
+  \node[thQuery, box]              (q2)  at (0,0)        {$q$};
+  \node[thHi, box, right=of q2]    (qe)                  {QE layer};
+  \node[thRet, box, right=of qe]   (r2)                  {Retriever};
+  % Plain rectangle, not the thData cylinder: top-k is a set of retrieved passages,
+  % not a store. Must match the row-1 node or the two rows stop being comparable.
+  \node[thBase, box, right=of r2, draw=thDataS, fill=thDataF] (t2) {top-$k$};
+  \node[thLLM, box, right=of t2]   (l2)                  {LLM};
+  \node[thOut, box, right=of l2]   (a2)                  {Answer};
+
+  \draw[thArrow] (q2) -- (qe);
+  \draw[thArrow] (qe) -- (r2) node[thLabel, midway, above=0.5mm] {$q'$};
+  \draw[thArrow] (r2) -- (t2);
+  \draw[thArrow] (t2) -- (l2);
+  \draw[thArrow] (l2) -- (a2);
+
+  % generator that produces the expansion
+  \node[thLLM, box, below=6mm of qe, minimum width=14mm, minimum height=7mm, font=\scriptsize] (gen) {LLM};
+  \draw[thArrow] (gen) -- (qe);
+
+  % ─── Row 1 (top): baseline. Retriever aligned with the row below. ──────────────
+  \node[thRet, box]  (r1) at (r2 |- 0,32mm)  {Retriever};
+  \node[thQuery, box, left=of r1]  (q1) {$q$};
+  \node[thBase, box, right=of r1, draw=thDataS, fill=thDataF] (t1) {top-$k$};
+  \node[thLLM, box, right=of t1]   (l1) {LLM};
+  \node[thOut, box, right=of l1]   (a1) {Answer};
+
+  \draw[thArrow] (q1) -- (r1);
+  \draw[thArrow] (r1) -- (t1);
+  \draw[thArrow] (t1) -- (l1);
+  \draw[thArrow] (l1) -- (a1);
+
+  % ─── Shared index, one per row ────────────────────────────────────────────────
+  \node[thData, above=6mm of r1, minimum width=18mm, minimum height=8mm, font=\scriptsize] (i1) {Index};
+  \draw[thArrow] (i1) -- (r1);
+  \node[thData, above=6mm of r2, minimum width=18mm, minimum height=8mm, font=\scriptsize] (i2) {Index};
+  \draw[thArrow] (i2) -- (r2);
+
+  % ─── Row labels ───────────────────────────────────────────────────────────────
+  \node[rowlab, left=6mm of q1] {Baseline\\RAG};
+  \node[rowlab, left=6mm of q2] {With query\\enhancement};
+
+  % ─── The modularity claim ─────────────────────────────────────────────────────
+  \begin{scope}[on background layer]
+    \node[draw=thMuted, dashed, rounded corners=3pt, line width=0.7pt,
+          fit=(i2)(r2)(a2), inner sep=3pt] (unchanged) {};
+  \end{scope}
+  \node[thLabel, below=1.5mm of unchanged.south, anchor=north]
+        {unchanged --- same index, same retriever, same generator};
+
+\end{tikzpicture}
+\end{document}
