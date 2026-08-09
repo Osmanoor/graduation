@@ -404,7 +404,7 @@ The CSQE pipeline distinguishes itself from standard (blind) Query2Doc through a
 
 \begin{enumerate}
     \item \textbf{First-pass retrieval.} BM25S retrieves the top-$k=5$ documents using the original query $q$.
-    \item \textbf{Corpus-grounded expansion.} Each retrieved document $d_i$ is concatenated with $q$ and passed to the LLM with a CSQE-specific system prompt instructing the extraction of topically relevant Arabic vocabulary grounded in the retrieved passage.
+    \item \textbf{Corpus-grounded expansion.} All five retrieved documents are numbered and placed in a \emph{single} prompt alongside $q$, under a CSQE-specific system prompt instructing the extraction of the key sentences that make each document relevant. Two samples are drawn from this prompt at temperature 1.0.
     \item \textbf{Blind expansion.} The same query $q$ is passed to the LLM without any retrieved context, following the standard Query2Doc procedure.
     \item \textbf{Expansion assembly.} The corpus-grounded and blind samples are combined with a repeated original query:
 \end{enumerate}
@@ -416,12 +416,12 @@ The CSQE pipeline distinguishes itself from standard (blind) Query2Doc through a
 
 \noindent where $c_i$ denotes corpus-grounded expansion samples, $b_i$ denotes blind expansion samples, $\alpha$ is the query repetition factor (Equation~\ref{eq:query_repetition}), and each expansion sample appears exactly once ($k=1$ in MuGI notation).
 
-The routine that assembles the expanded query from the four generated samples is reproduced in Appendix~\ref{app:code_assembly}, and the full set of hyperparameters is listed in Appendix~\ref{app:code_config}. The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU. Figure~\ref{fig:csqe_pipeline} illustrates the three-stage CSQE pipeline alongside a worked example.
+The routine that assembles the expanded query from the four generated samples is reproduced in Appendix~\ref{app:code_assembly}, and the full set of hyperparameters is listed in Appendix~\ref{app:code_config}. The configuration used for the primary CSQE experiment was: $k=5$ first-pass documents, 2 corpus-grounded samples, 2 blind samples, $\alpha=4$, temperature 1.0, \texttt{max\_new\_tokens}~=~128 per sample, using Aya Expanse 8B (Section~\ref{sec:aya}) in BF16 precision on an A100 GPU. Figure~\ref{fig:csqe_pipeline} illustrates the four-stage CSQE pipeline.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{fig_3_8_csqe_aigen_v4_boosted.png}
-  \caption[CSQE pipeline]{CSQE pipeline. Stage 1: BM25 retrieves the top-$k_1=5$ first-pass passages. Stage 2: Aya Expanse 8B is invoked four times ($\alpha=4$, temp~$=1.0$): two corpus-grounded calls ($c_1$, $c_2$) extract key sentences from the retrieved passages; two blind calls ($b_1$, $b_2$) generate from parametric knowledge. Stage 3: the original query (repeated $\alpha$ times) is concatenated with all four pseudo-documents and fed to a BM25 second pass, yielding NDCG@10~$=0.616$.}
+  \includegraphics[width=0.95\textwidth]{fig_3_8_csqe_aigen_v5a.png}
+  \caption[CSQE pipeline]{CSQE pipeline. \textbf{Stage 1:} BM25 retrieves the top-$k_1=5$ passages $D_1 \ldots D_5$ for query $q$. \textbf{Stage 2:} Aya Expanse 8B generates two independent, parallel branches at temperature 1.0 (128 tokens each) --- a \emph{blind} branch that sees $q$ only and generates $b_1, b_2$ from parametric knowledge, and a \emph{corpus-grounded} branch that sees $D_1 \ldots D_5$ and extracts $c_1, c_2$. \textbf{Stage 3:} plain string concatenation (no scoring or re-ranking) assembles $q_{\text{CSQE}} = q\,q\,q\,q + c_1 + c_2 + b_1 + b_2$, with $q$ repeated $\alpha=4$ times to counter BM25 term dilution. \textbf{Stage 4:} $q_{\text{CSQE}}$ drives a fresh BM25 pass over the full corpus, yielding NDCG@10~$=0.616$ (BM25 with raw $q$: $0.462$).}
   \label{fig:csqe_pipeline}
 \end{figure}
 
@@ -459,8 +459,8 @@ For each configuration, both RRF ($k=20$) and CC ($\alpha$ swept over $\{0.1, \l
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.95\textwidth]{fig_3_9_best_system.pdf}
-  \caption[Best system architecture]{Architecture of the thesis's best-performing system. CSQE-expanded queries are fed to BM25 while the original short queries are fed to mDPR; the two ranked lists are fused with RRF ($k=20$), yielding the headline NDCG@10 of 0.714.}
+  \includegraphics[width=0.95\textwidth]{fig_3_9_best_system_aigen_v2a.png}
+  \caption[Best system architecture]{Architecture of the thesis's best-performing system. The full CSQE-expanded query, $q_{\text{CSQE}} = q\times4 + c_1 + c_2 + b_1 + b_2$ (Equation~\ref{eq:csqe_query}), is fed to BM25, while the original, unexpanded query is fed to mDPR; the two ranked lists are fused with RRF ($k=20$), yielding the headline NDCG@10 of 0.714.}
   \label{fig:best_system}
 \end{figure}
 
