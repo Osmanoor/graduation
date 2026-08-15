@@ -1,4 +1,4 @@
-===slide_03_llm===
+﻿===slide_03_llm===
 The header reads exactly: section label "INTRODUCTION", then a dot, then the title "A LANGUAGE MODEL IS FROZEN IN TIME".
 
 PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
@@ -49,17 +49,18 @@ PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
 
 LEFT PANEL: a white rounded card spanning from 4% to 47% of the slide width and from 26% to 90% of the slide height. Inside it leave a COMPLETELY EMPTY BLANK WHITE RECTANGLE filling the ENTIRE card interior. Draw absolutely nothing inside — no diagram, no boxes, no arrows, no labels, no text. Entirely blank white with no heading strip.
 
-RIGHT COLUMN, from 50% to 96% of the slide width, containing two stacked elements:
+RIGHT PANEL, from 50% to 96% of the slide width: a white rounded card containing a DISTANCE DIAGRAM. It has two horizontal rows, one above the other, and the contrast between the two arrow lengths is the entire point of the slide.
 
-UPPER: a dark navy rounded card styled like a code or terminal panel, with three small coloured dots in its top-left corner and a small teal tag at its top-right reading exactly "SYSTEM PROMPT". Inside, in a light monospace typeface on the dark background, three lines reading exactly:
-"You are asked to write a passage"
-"that answers the given query."
-"Respond in Arabic only."
+UPPER ROW: at the far left of the row, a small teal rounded card labelled beneath it exactly "Query". At the far right of the row, a larger emerald rounded card labelled beneath it exactly "Real document". Between them, spanning the ENTIRE gap, a very LONG double-headed OCHRE arrow, with a bold ochre label sitting above its middle reading exactly:
+"Large language gap"
 
-LOWER: a white rounded card with a circular gradient icon badge and bold text reading exactly:
+LOWER ROW: at the far left, the same small teal "Query" card. Immediately beside it, touching it, a teal-bordered card labelled beneath exactly "Pseudo-document". From the right edge of that card, a very SHORT double-headed EMERALD arrow reaches the emerald "Real document" card at the far right of the row, with a bold emerald label above it reading exactly:
+"Small gap"
+
+Draw the two rows so the ochre arrow is dramatically longer than the emerald arrow — the length difference must be obvious at a glance. Align both "Real document" cards in the same vertical column.
+
+Beneath the diagram, ONE bold caption line reading exactly:
 "The guess may be factually wrong. Its vocabulary still matches the corpus."
-and beneath that, in smaller slate grey, reading exactly:
-"Zero-shot · ten open models · 2 to 8 billion parameters"
 
 TEXT RULE: no other words anywhere on the slide.
 

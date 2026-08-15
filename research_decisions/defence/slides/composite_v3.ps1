@@ -87,12 +87,15 @@ foreach ($stem in $order) {
         $note += "logo"
     }
 
-    # --- faint watermark, top-right, every slide
+    # --- faint watermark, top-right. Skipped on the title slide, which already
+    # carries the full-strength crest top-left.
+    if ($stem -ne "slide_01_title") {
     $wh = [int]($H * 0.085)
     $ww = [int]($logoSrc.Width * ($wh / $logoSrc.Height))
     $faded = New-FadedImage $logoSrc 0.22
     $g.DrawImage($faded, ($W - $ww - [int]($W * 0.028)), [int]($H * 0.045), $ww, $wh)
     $faded.Dispose()
+    }
 
     # --- page number pill, bottom right
     $fontSize = [float]($H * 0.020)
