@@ -83,13 +83,27 @@ for raw in md.splitlines():
 flush(block, cur)
 
 # ---------- images ----------
-W, H = 2560, 1440
+# Two sets from the same 5504x3072 masters:
+#   HI  3840x2160 q95  -> embedded in the PPTX and the PDF. PowerPoint renders a
+#                         13.333in slide, so 3840px gives ~288 DPI and it never
+#                         has to interpolate on a 4K display. The earlier 2560px
+#                         set was being upscaled, which is what looked soft.
+#   WEB 1920x1080 q88  -> deck_images/, the git-tracked preview set only.
+HI_W, HI_H   = 3840, 2160
+WEB_W, WEB_H = 1920, 1080
+WEB = BASE / "slides" / "deck_images"
+WEB.mkdir(exist_ok=True)
+
 small = []
 for stem in ORDER:
-    im = Image.open(SRC / f"{stem}.png").convert("RGB").resize((W, H), Image.LANCZOS)
+    master = Image.open(SRC / f"{stem}.png").convert("RGB")
+    hi = master.resize((HI_W, HI_H), Image.LANCZOS)
     q = TMP / f"{stem}.jpg"
-    im.save(q, "JPEG", quality=90, optimize=True)
-    small.append((q, im))
+    hi.save(q, "JPEG", quality=95, subsampling=0, optimize=True)
+    small.append((q, hi))
+    master.resize((WEB_W, WEB_H), Image.LANCZOS).save(
+        WEB / f"{stem}.jpg", "JPEG", quality=88, optimize=True)
+    master.close()
 
 # ---------- PPTX with notes ----------
 prs = Presentation()
@@ -119,5 +133,6 @@ print(f"PPTX  {p1.stat().st_size/1024/1024:.1f} MB   notes on {attached}/22 slid
 # ---------- PDF ----------
 pages = [im for _, im in small]
 p2 = OUT / "Defence_Presentation.pdf"
-pages[0].save(str(p2), save_all=True, append_images=pages[1:], resolution=150.0, quality=90)
+pages[0].save(str(p2), save_all=True, append_images=pages[1:],
+              resolution=288.0, quality=95, subsampling=0)
 print(f"PDF   {p2.stat().st_size/1024/1024:.1f} MB  {len(pages)} pages")
