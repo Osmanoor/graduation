@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>ملاحظات العرض — الجزء الأول والثاني (محمد)</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --card-bg: #ffffff;
+    --text: #2b2420;
+    --muted: #7a6f63;
+    --accent: #a9481f;
+    --accent-soft: #f2e4da;
+    --border: #e6ddd2;
+    --num-bg: #2b2420;
+    --num-text: #faf8f5;
+    --stage: #1f6f6b;
+    --stage-bg: #e6f0ef;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Tahoma, "Traditional Arabic", "Noto Naskh Arabic", sans-serif;
+    line-height: 2;
+    margin: 0;
+    padding: 40px 20px 80px;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 3px solid var(--accent);
+  }
+  header h1 { font-size: 1.6rem; margin: 0 0 8px; color: var(--accent); }
+  header p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .slide {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .slide-num {
+    position: absolute;
+    top: -14px;
+    right: 24px;
+    background: var(--num-bg);
+    color: var(--num-text);
+    font-family: Consolas, monospace;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  .maps {
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    color: var(--muted);
+    font-size: 0.72rem;
+    font-family: Consolas, monospace;
+    background: var(--bg);
+    padding: 2px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .slide p { margin: 6px 0 0; font-size: 1.05rem; text-align: justify; }
+  .en {
+    font-family: Consolas, "Courier New", monospace;
+    direction: ltr; unicode-bidi: isolate;
+    color: var(--accent); font-weight: 600; font-size: 0.95em; padding: 0 2px;
+  }
+  .num {
+    font-family: Consolas, monospace;
+    direction: ltr; unicode-bidi: isolate;
+    color: var(--accent); font-weight: 600;
+  }
+  .stage {
+    background: var(--stage-bg);
+    border-right: 3px solid var(--stage);
+    color: var(--stage);
+    font-size: 0.92rem;
+    font-style: italic;
+    padding: 8px 14px;
+    margin: 14px 0 4px;
+    border-radius: 4px;
+    line-height: 1.8;
+  }
+  .new {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.68rem;
+    letter-spacing: .08em;
+    padding: 2px 9px;
+    border-radius: 10px;
+    margin-right: 8px;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 30px; }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1815; --card-bg: #262019; --text: #ece5db; --muted: #a89a8a;
+      --accent: #e08a4f; --accent-soft: #3a2c20; --border: #3a3128;
+      --num-bg: #e08a4f; --num-text: #1c1815;
+      --stage: #6fc5bf; --stage-bg: #1e302f;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>ملاحظات العرض — الجزء الأول والثاني</h1>
+    <p>محمد الحاج · الشرائح <span class="num">1–9</span> · مبنية على مسودّة <span class="en">Parts 1+2</span></p>
+  </header>
+
+  <div class="slide">
+    <span class="slide-num">1</span>
+    <span class="maps">cover</span>
+    <p>السلام عليكم ورحمة الله. أنا محمد الحاج، ومعاي زميلي عثمان بشير. اليوم حنقدم ليكم مشروع تخرجنا: تحسين جودة الـ <span class="en">Retrieval</span> في أنظمة الـ <span class="en">RAG</span> العربية باستخدام الـ <span class="en">LLM-based Query Enhancement</span>، بإشراف الدكتورة تهاني عبدالله.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">2</span>
+    <span class="maps">شريحة جديدة</span>
+    <p><span class="new">جديدة</span> خلونا نبدأ بنظرة سريعة على محتوى العرض. حنبدأ بتعريف المشكلة — ليه الـ <span class="en">Arabic retrieval</span> بيفشل. بعدها أهدافنا. بعدها الـ <span class="en">methodology</span>، يعني الشغل الإحنا عملناهو بالظبط. بعدها النتائج والمناقشة. ونختم بالخلاصة والـ <span class="en">future work</span>. العرض عشر دقايق، وعثمان حيستلم مني في النص.</p>
+    <div class="stage">الدكتورة تهاني نصّت على شريحة الـ agenda تحديداً في التوجيهات — «الصفحة التانية لازم يكون فيها الـ agenda». ما تتجاوزها.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">3</span>
+    <span class="maps">كانت 2</span>
+    <p>زي ما عارفين، الـ <span class="en">AI</span> في <span class="en">boom</span> كبير. لكن الـ <span class="en">LLMs</span> عندها مشكلة جوهرية: الذاكرة بتاعتها <span class="en">parametric</span> — بتعرف بس الحاجات الاتدربت عليها، ومحفوظة جوه الـ <span class="en">weights</span>، مش قاعدة تفتش في حتة. ولو سألتها حاجة برة التدريب، ما بتقول ليك «ما عارف» — بتجاوب. بطلاقة، وبثقة، وبغلط.</p>
+    <p>وظهر الـ <span class="en">RAG</span> كحل للمشكلة دي. والفكرة في جملة واحدة: بدل ما نعيد تدريب الموديل، بندي ليهو الدوكيومنتات.</p>
+    <div class="stage">هنا تعرض السستم لأول مرة. دي نجمة العرض — الشاشة دي حترجع ليها في كل شريحة جاية، ونفس الرسمة ما بتتحرك من مكانها.</div>
+    <p>ودي منظومة الـ <span class="en">RAG</span> بأبسط صورة: عندنا الـ <span class="en">query</span> من المستخدم، بنمشي بيها نفتش في الـ <span class="en">corpus</span>، بنجيب الـ <span class="en">passages</span> المناسبة، بنلزقها جنب السؤال، وبنودي الاتنين للـ <span class="en">LLM</span> يجاوب من النص القدامو — مش من ذاكرتو.</p>
+    <p>لكن لاحظوا الـ <span class="en">RAG</span> عمل شنو بالظبط: ما حل المشكلة — نقلها. النظام كلو بقى قايم على خطوة واحدة، خطوة الـ <span class="en">retrieval</span>. ولو الـ <span class="en">retriever</span> ما جاب الدوكيومنت الصح، الـ <span class="en">generator</span> ما بيقدر يعوض مهما كان قوي. يعني الـ <span class="en">retrieval</span> هو الـ <span class="en">ceiling</span> بتاع النظام كلو — وده بالظبط الـ <span class="en">bottleneck</span> البنشتغل عليهو.</p>
+    <div class="stage">قول «نفتش في الـ corpus» — ما تقول «vector database». النتيجة الرئيسية بتاعتنا على الـ BM25، وما فيهو vectors أصلاً. لو الجنة استوعبت إنو RAG = vectors، شريحة الـ placement في آخر العرض ما حتلقى مكان تقع فيهو.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">4</span>
+    <span class="maps">كانت 3</span>
+    <p>والمشكلة دي بتتضاعف في اللغة العربية، لتلاتة أسباب محددة. أول حاجة الـ <span class="en">morphology</span>: العربي <span class="en">root-and-pattern</span>، الجذر الواحد بيطلع منو عشرات الصيغ — المستخدم بيكتب صيغة، والدوكيومنت مكتوب بصيغة تانية، وبالنسبة لنظام بيقارن كلمات ديل نصّين مختلفين تماماً. تاني حاجة الـ <span class="en">orthographic variation</span>: الهمزة والألف، التاء المربوطة والهاء، الألف المقصورة والياء — نفس الكلمة، إملاءين مقبولين، وبايتات مختلفة. وتالت حاجة الـ <span class="en">diglossia</span>: الناس بتسأل بالطريقة البتتكلم بيها، والمعرفة مكتوبة بالفصحى.</p>
+    <p>الليتريتشر الإنجليزي عندو حل للـ <span class="en">bottleneck</span> ده اسمو الـ <span class="en">Query Enhancement</span> — نصلح السؤال قبل ما يوصل للـ <span class="en">retriever</span>. وهو <span class="en">validated</span> كويس جداً — لكن على الإنجليزي، وبموديلات مقفولة زي <span class="en">GPT-3</span> بـ <span class="num">175</span> مليار باراميتر. أما العربي، فالليتريتشر فيهو فقير جداً في الجانب ده.</p>
+    <p>وسؤالنا البحثي بالظبط: إلى أي مدى تقنيات الـ <span class="en">Query Enhancement</span> دي بتنطبق على اللغة العربية، وإلى أي مدى بتحسّن الـ <span class="en">information retrieval</span> فعلاً — باستخدام موديلات مفتوحة صغيرة من <span class="num">2</span> لـ <span class="num">8</span> مليار؟</p>
+    <p>ونوضح نقطة مهمة من هسي: إحنا ما داعين نصلح اللغة العربية نفسها. التحديات دي هي <em>سبب</em> الفشل الإحنا قسناهو، مش الحاجة الإحنا بنعالجها. إحنا بنعوّض طبقة فوق — عند الـ <span class="en">query</span>.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">5</span>
+    <span class="maps">كانت 4</span>
+    <p>وعشان نجاوب على السؤال ده حددنا أهداف واضحة — تسعة، لكن بتتلمّوا في تلاتة.</p>
+    <p>أولاً <span class="en">Diagnose</span>: نبني <span class="en">baselines</span> قوية للـ <span class="en">sparse</span> والـ <span class="en">dense</span>، ونعمل ليها <span class="en">error analysis</span> نعرف بيهو وين وليه بتفشل.</p>
+    <p>ثانياً <span class="en">Adapt</span>: نكيّف تقنية <span class="en">Query2Doc</span> للعربي، ونقارن عشرة موديلات مفتوحة.</p>
+    <p>وثالثاً <span class="en">Ground and place</span>: نأسّس الـ <span class="en">expansion</span> على الـ <span class="en">corpus</span> ذاتو، ونحدد المكان الأمثل ليهو جوه الـ <span class="en">hybrid pipeline</span>.</p>
+    <p>والتلاتة ديل حنرجع ليهم بالظبط في الختام.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">6</span>
+    <span class="maps">كانت 5</span>
+    <div class="stage">نفس الرسمة، نفس المكان — لكن الكومبوننتس بتتملا بالتفاصيل بتاعتنا. دي أول مرة يشوفوا فيها «السستم العام» بيتحول لـ «السستم بتاعنا».</div>
+    <p>طيب نرجع للسستم. نفس الشاشة، نفس الكومبوننتس — لكن هسي حنملاها بالتفاصيل بتاعتنا.</p>
+    <p>الـ <span class="en">corpus</span> بقى <span class="en">MIRACL Arabic</span>: <span class="num">2</span> مليون <span class="en">passage</span> من ويكيبيديا العربية، و<span class="num">2,896</span> كويري — وأهم حاجة إنو الـ <span class="en">relevance judgments</span> بتاعتها <span class="en">human</span>، مش آلية.</p>
+    <p>وخطوة الـ <span class="en">retrieval</span> — ودي الكومبوننت الإحنا حنكبّرها هسي — فيها نوعين، وبنيناهم الاتنين منفصلين. الـ <span class="en">BM25</span>، وده <span class="en">sparse</span>، بيشتغل بالـ <span class="en">term matching</span>: بيعدّ كم كلمة من السؤال ظهرت في الـ <span class="en">passage</span>. والـ <span class="en">Dense</span>، وعندنا <span class="en">mDPR</span>، بيحوّل النص لـ <span class="en">vector</span> وبيمسك المعنى حتى لو الكلمات مختلفة تماماً.</p>
+    <p>وما حنغوص في الـ <span class="en">embeddings</span> والـ <span class="en">vectorization</span> — الزمن ما بيسمح، والفكرة واضحة.</p>
+    <p>والنقطة المهمة: كل واحد فيهم بيفشل في <em>نوع مختلف</em> من الأسئلة. يعني هم <span class="en">complementary</span>. خلّوا الفكرة دي في بالكم، لأنها أساس الشغل كلو في آخر العرض.</p>
+    <p>وبنيناهم الاتنين منفصلين تماماً لحدي هسي — موضوع دمجهم حنرجع ليهو بعدين.</p>
+    <p>والقياس بتاعنا <span class="en">NDCG@10</span>: هل الـ <span class="en">passage</span> الصح رجع، وقدر شنو قريب من فوق.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">7</span>
+    <span class="maps">كانت 6</span>
+    <p>وقبل ما نغيّر أي حاجة، مشينا بصورة <span class="en">rigorous</span>: أعدنا بناء الـ <span class="en">baselines</span> المنشورة، عشان نتأكد إنو الـ <span class="en">pipeline</span> بتاعنا صاح — وعشان أي تحسّن بعد داك يكون بسببنا إحنا، مش بسبب اختلاف في الـ <span class="en">setup</span>.</p>
+    <p>والنتيجة: الـ <span class="en">mDPR</span> جاب <span class="num">0.4993</span> — طابق الرقم الرسمي المنشور بالظبط. والـ <span class="en">BM25</span> جاب <span class="num">0.4621</span>، يعني <span class="num">96%</span> من الرقم الرسمي بتاع <span class="en">Pyserini</span>، والفرق بسبب اختلاف الـ <span class="en">implementation</span>.</p>
+    <p>بعد داك عملنا <span class="en">error analysis</span> على كل الـ <span class="num">2,896</span> كويري. لقينا <span class="num">34%</span> منها فاشلة تماماً. ولقينا حوالي واحد من كل عشرة ما لقى ولا <span class="en">passage</span> صحيح حتى في أول <span class="num">100</span> نتيجة — وده <span class="en">recall ceiling</span>، يعني تحسين الترتيب لوحدو ما بيحلّو.</p>
+    <p>والأهم من ده كلو: الكويريز القصيرة — من كلمة لتلاتة كلمات — أداءها كان الأضعف، <span class="num">0.345</span>.</p>
+    <p>يعني العطل مش في الـ <span class="en">retriever</span>، ومش في الـ <span class="en">corpus</span>. العطل في السؤال نفسو — تلاتة كلمات ما بيكفوا عشان تفرّق <span class="en">passage</span> واحد من وسط <span class="num">2</span> مليون.</p>
+    <p>والاستنتاج ده هو اللي حدد لينا مكان الحل: لازم يقعد <em>قدام</em> الـ <span class="en">retriever</span>، قبل ما السؤال يوصلو. ما بنغيّر الـ <span class="en">retriever</span>، وما بنعيد فهرسة الـ <span class="num">2</span> مليون <span class="en">passage</span>.</p>
+    <div class="stage">أرقام بس على الشريحة، من غير رسم بياني. علاقة الطول بالأداء مش خطية (١–٣ كلمات ٠٫٣٤٥، ٤–٨ كلمات ٠٫٥١١، ٩+ ٠٫٤٧٦) — والرسمة بتفتح سؤال «يعني الأطول أحسن؟» والإجابة لأ. الرسمة موجودة في الـ backup لو سألوا.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">8</span>
+    <span class="maps">كانت 7</span>
+    <div class="stage">هنا الـ Query Enhancement layer بتدخل جوه الرسمة — نفس السستم، كومبوننت جديدة بتظهر في النص. بعد ما تدخل، كبّرها واشرح جواها.</div>
+    <p>فأضفنا للسستم <span class="en">layer</span> جديدة: الـ <span class="en">Query Enhancement</span>. واخترنا تقنية <span class="en">Query2Doc</span> تحديداً، لأنها بتعالج بالظبط المشكلة الشخّصناها — فقر المعلومات في السؤال القصير.</p>
+    <p>والفكرة فيها حاجة ظريفة: كلنا عارفين إنو الـ <span class="en">LLMs</span> بتهلوس. لكن في التقنية دي، الهلوسة مش مشكلة — هي ذاتها الحل.</p>
+    <p>بنقول للموديل: اكتب لي الـ <span class="en">passage</span> اللي بتعتقد إنو بيجاوب السؤال ده. الموديل بيطلّع لينا <span class="en">hypothetical document</span>. المعلومات الفيهو ممكن تكون غلط تماماً — لكن الستايل والـ <span class="en">vocabulary</span> والصياغة بتكون قريبة جداً من الدوكيومنتات الحقيقية الموجودة في الـ <span class="en">corpus</span>. فبتقرّب المسافة اللغوية بين السؤال والإجابة. ودي قوّتها.</p>
+    <p>وده الـ <span class="en">prompt</span> الاستخدمناهو — بسيط جداً، <span class="en">zero-shot</span>، من غير أي أمثلة.</p>
+    <p>والسؤال الكان أربع كلمات بقى تمانين كلمة — وكتير من الكلمات الزايدة دي هي بالظبط الكلمات الموجودة في الدوكيومنت الحقيقي.</p>
+    <p>والـ <span class="en">constraint</span> بتاعنا كان واضح من البداية: موديلات مفتوحة من <span class="num">2</span> لـ <span class="num">8</span> مليار بس، على <span class="en">Colab</span> مجاني، من غير أي <span class="en">API</span> مدفوع.</p>
+    <div class="stage">الـ prompt يكون ظاهر على الشريحة في ركن صغير — لكن ما تقراهو. وجوده بيمنع سؤال «انتو استخدمتو أي prompt؟»، وقراءتو بتاكل عشرين ثانية.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">9</span>
+    <span class="maps">كانت 8</span>
+    <p>طبّقنا الفكرة أول مرة على موديل واحد، <span class="en">Qwen 2.5</span> بـ <span class="num">3</span> مليار — وهنا طلعت أول مفاجأة.</p>
+    <p>على الـ <span class="en">Dense</span>، التحسّن كان واضح: من <span class="num">0.4993</span> لـ <span class="num">0.5435</span>، يعني <span class="num">+8.9%</span>. لكن على الـ <span class="en">BM25</span>، وبنفس الـ <span class="en">pseudo-documents</span> بالظبط، النتيجة <em>نزلت</em> من <span class="num">0.4621</span> لـ <span class="num">0.4090</span> — تدهور بـ <span class="num">11.5%</span>.</p>
+    <p>نفس التقنية، نفس النص المولّد، <span class="en">retriever</span> اتنين — ونتيجتين في اتجاهين متعاكسين. من أول تجربة.</p>
+    <p>فقلنا الحاجة دي ما ممكن نبني عليها بموديل واحد، لازم نتأكد. فعملنا <span class="en">comparison</span> موسّعة بين عشرة موديلات، من <span class="en">2B</span> لـ <span class="en">8B</span>، فيها موديلات <span class="en">Arabic-centric</span> وموديلات <span class="en">multilingual</span>، وكلها بنفس البرومبت ونفس الـ <span class="en">pipeline</span>.</p>
+    <p>والنتيجة أكّدت الانقسام: على الـ <span class="en">Dense</span>، الموديلات التسعة الشغالة كلها اتحسّنت — أحسنها <span class="en">Aya Expanse</span> بـ <span class="num">+23.5%</span>. لكن على الـ <span class="en">BM25</span>، ستة من تسعة بقى أداءها أسوأ من الـ <span class="en">baseline</span> ذاتو.</p>
+    <p>والسبب لقيناهو الـ <span class="en">term dilution</span>: الـ <span class="en">BM25</span> بيحسب بالـ <span class="en">term overlap</span>، فلما تضيف تمانين كلمة مولّدة على سؤال من أربع كلمات، الأربع كلمات الأصلية — اللي هي أساساً حاملة المعنى — وزنها في المعادلة بيضيع.</p>
+    <p>والحل كان بسيط: <span class="en">query repetition</span>. نكرر السؤال الأصلي كذا مرة جوه الكويري الموسّعة عشان نرجّع ليهو وزنو. أعدنا كل التجارب، وكل الموديلات التسعة بقت فوق الـ <span class="en">baseline</span>. وأحسن نتيجة كانت <span class="en">Aya</span> بـ <span class="num">0.5855</span> — تحسّن <span class="num">26.7%</span> فوق الـ <span class="en">BM25 baseline</span>.</p>
+    <p>فلحدي هنا الـ <span class="en">blind expansion</span> شغّال. لكن خلّوا في بالكم الحاجة الأهم من الرقم: نفس التقنية، <span class="en">retriever</span> اتنين، واحد استفاد وواحد اتضرّر. الحاجة دي حترجع لينا في آخر العرض.</p>
+    <p>وهنا أسلّم الكلام لزميلي عثمان، يوريكم المشكلة دي وكيف حليناها. اتفضل يا عثمان.</p>
+    <div class="stage">جملة التسليم دي بالذات — قولها بنفس الصيغة في كل بروفة. د. تهاني قالت الانتقال بين الطالبين نقطة تقييم.</div>
+  </div>
+
+  <footer>محمد الحاج — الشرائح <span class="num">1–9</span> · إشراف د. تهاني عبدالله</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,264 @@
+﻿===slide_01_title===
+A TITLE slide. No section-label header band.
+
+LEFT SIDE, about 55% width, vertically centred:
+- At the very top, LEAVE A COMPLETELY EMPTY BLANK SQUARE AREA, about 260 by 260 pixels, of plain untouched background. Draw absolutely NOTHING inside it — no logo, crest, emblem, shield, badge, icon or placeholder mark of any kind. It must be pure empty background.
+- Below that empty square, a small uppercase letterspaced label in teal reading exactly:
+"UNIVERSITY OF KHARTOUM  ·  FACULTY OF ENGINEERING  ·  ELECTRICAL & ELECTRONIC ENGINEERING"
+- Below it, the main title in very large heavy bold across three lines, emerald-to-teal-to-blue gradient fill, reading exactly:
+"Improving Arabic RAG Retrieval Quality with LLM-based Query Enhancement"
+- Below the title a short thick gradient bar.
+- Below that, three lines in slate grey reading exactly:
+"Mohammed Elhaj  ·  Osman Bashir"
+"Supervisor: Dr. Tahani Abdalla"
+"2026"
+
+RIGHT SIDE, about 45% width: a rich flat-vector illustration with NO text. A rounded emerald badge at the left emits a luminous emerald-to-teal beam fanning rightward into a deep perspective field of many small document cards. Most are pale mint; exactly TWO cards sitting squarely in the beam glow solid emerald, larger, with a soft halo and small sparkle accents.
+
+===slide_02_agenda===
+The header contains ONLY the single word "AGENDA" and nothing else. Do not add a second title, a dot, or any other word beside it. Write AGENDA exactly once on the whole slide.
+
+SIX numbered items in TWO COLUMNS OF THREE. Each item is a white rounded card with a soft shadow, containing ONLY a gradient rounded-square number badge on the left and ONE line of bold dark navy text to its right. There is NO subtitle, NO caption, NO description line and NO empty reserved space beneath any label — the card contains the number and the single line of text and nothing else. Size the cards tightly to that content.
+
+Reading exactly, left column top to bottom then right column top to bottom:
+"01" "Introduction"
+"02" "Problem & Research Question"
+"03" "Objectives"
+"04" "Methodology"
+"05" "Results & Discussion"
+"06" "Conclusion & Future Work"
+
+Each card also carries a small circular gradient icon badge with a simple white line icon.
+
+===slide_04_rag===
+Section label "INTRODUCTION", title "DON'T RETRAIN THE MODEL. GIVE IT THE DOCUMENTS."
+Small subtitle in slate grey reading exactly: "Retrieval-Augmented Generation"
+
+TWO horizontal bands, PERFECTLY ALIGNED in four equal columns.
+
+UPPER band: a warm flat-vector library story in four scenes, each in a soft rounded panel, drawn in teal and emerald line work with minimal geometric figures and no faces: (1) a person with a speech bubble holding a question mark; (2) a librarian beside tall bookshelves; (3) the librarian carrying three books; (4) the person reading an open book. NO TEXT of any kind inside the upper band.
+
+LOWER band: four white rounded cards, one directly beneath each scene, connected left to right by gradient arrows. Each card contains a circular gradient icon badge and EXACTLY ONE short label and NOTHING ELSE. The four labels, left to right, are exactly and only:
+"Query"
+"Retrieve"
+"Passages"
+"Answer"
+
+ABSOLUTE TEXT RULE FOR THIS SLIDE: apart from the section label, the title, the subtitle, and those four one-word labels, there must be NO other words, letters, captions, descriptions, sub-labels or filler text anywhere on the slide. Do not add explanatory sentences under the cards. Do not invent any additional wording.
+
+Between the bands, four faint vertical dotted connectors in pale teal link each scene to the card beneath it, with exact vertical alignment.
+
+===slide_06_literature===
+Section label "THE GAP", title "RICH IN ENGLISH. ALMOST EMPTY IN ARABIC."
+Subtitle in slate grey reading exactly: "Query Enhancement — repair the query before it reaches the retriever"
+
+LEFT PANEL: a white rounded card occupying from 4% to 59% of the slide width and from 32% to 90% of the slide height. Inside it leave a COMPLETELY EMPTY BLANK WHITE RECTANGLE filling the ENTIRE card interior from edge to edge. Draw absolutely nothing inside — no tree, no diagram, no boxes, no lines, no labels, no heading, no text at all. It must be entirely blank white with no heading strip.
+
+RIGHT PANEL, from 62% to 96% of the slide width: a white rounded card illustrating RESEARCH LITERATURE — NOT a library and NOT bookshelves. Draw two vertical stacks of ACADEMIC PAPERS side by side: each paper is a small white page with a coloured header bar, several thin grey text lines, and a tiny chart block, clearly reading as a research publication.
+The LEFT stack is very TALL and dense — many papers piled high in emerald, teal and blue, some fanned out, with small floating citation nodes connected by thin lines around it.
+The RIGHT stack is nearly EMPTY — only two lone papers lying flat, with a large amount of empty space above them.
+Bold labels beneath each stack reading exactly and only:
+"English"
+"Arabic"
+Small captions beneath those, reading exactly:
+"Dozens of published techniques"
+"Almost nothing for Arabic"
+
+TEXT RULE: no other words anywhere. Never write the phrase "lonely socks" or any similar nonsense. Every word on this slide must be one of the strings specified above.
+
+===slide_07_arabic===
+Section label "THE GAP", title "BUT ARABIC IS NOT ENGLISH".
+
+FOUR equal white cards in a single row across the slide, each with a circular gradient icon badge at the top, a bold heading, a large Arabic example, and a small caption. The Arabic must dominate each card and be the largest text on it.
+
+CARD 1 heading exactly "MORPHOLOGY". Arabic on one line, large, right-to-left, exactly:
+"كتب · كاتب · مكتوب · كتاب"
+Caption exactly: "One root, dozens of surface forms"
+
+CARD 2 heading exactly "ORTHOGRAPHY". Two Arabic lines, large, right-to-left, exactly:
+"مكتبة / مكتبه"
+"إسلام / اسلام"
+Caption exactly: "Same word, two accepted spellings"
+
+CARD 3 heading exactly "DIACRITICS". Two Arabic lines, large, right-to-left, exactly:
+"كَتَبَ / كُتِبَ"
+"عِلْم / عَلَم"
+Caption exactly: "Same letters, different word"
+
+CARD 4 heading exactly "DIGLOSSIA". Two Arabic lines separated by a short gradient rule, the upper tinted ochre, the lower tinted emerald, exactly:
+"عايز أعرف شروط التأجيل"
+"ما هي شروط تأجيل الدراسة"
+Caption exactly: "People ask in dialect, knowledge is written in MSA"
+
+===slide_10_system===
+Section label "METHODOLOGY", title "THE SYSTEM WE BUILT".
+
+Draw a proper ARCHITECTURE DIAGRAM of a retrieval system — a real connected system schematic in the style of an engineering thesis figure, NOT a plain row of rectangles. It must look like a system, with distinct component shapes, flow arrows, and a clear left-to-right pipeline.
+
+Components, laid out as a connected schematic:
+- On the LEFT, a rounded input node with a magnifier icon, labelled exactly "Query" with a small caption exactly "2,896 questions".
+- Feeding from BELOW, a proper 3D CYLINDER DATABASE shape in emerald gradient with stacked document icons beside it, labelled exactly "MIRACL Arabic" with captions exactly "2M Wikipedia passages" and "human relevance judgments".
+- In the CENTRE, a large rounded module panel labelled exactly "Retriever", drawn as a container box that visibly holds THREE sub-blocks stacked inside it, labelled exactly "BM25", "Dense (mDPR)", "Hybrid". Arrows run from the query node and from the corpus cylinder into this module.
+- On the RIGHT, an output node showing a small ranked result list of three stacked bars, labelled exactly "Ranked passages".
+- Far right, an evaluation node with a gauge icon labelled exactly "NDCG@10".
+
+Use curved gradient connector arrows between components, small dashed detail lines, and subtle drop shadows so it reads as a designed system schematic. Beneath the diagram, two small tinted pills reading exactly:
+"BM25 — matches the words"
+"Dense — matches the meaning"
+
+===slide_12_query2doc===
+The header reads exactly: section label "METHODOLOGY", then a dot, then the title "QUERY2DOC - HALLUCINATION AS A FEATURE". Both parts MUST be rendered and clearly visible.
+
+Keep this slide VISUAL and LOW ON TEXT. It has one job: show that the pseudo-document closes the language gap between the query and the real document.
+
+MAIN ILLUSTRATION, centred and large: a horizontal DISTANCE diagram.
+- At the far LEFT, a small teal rounded card labelled beneath exactly "Query".
+- At the far RIGHT, a large emerald rounded card labelled beneath exactly "Real document".
+- Between them, drawn along a horizontal axis, a LONG double-headed ochre arrow spanning the full gap, labelled above it in bold ochre exactly:
+"Large language gap"
+- BELOW that axis, a second shorter arrangement: the same query card on the left, then immediately beside it a teal-bordered card labelled beneath exactly "Pseudo-document", and from that card a SHORT double-headed emerald arrow reaching the real document card, labelled above it in bold emerald exactly:
+"Small gap"
+
+The visual contrast between the LONG ochre arrow and the SHORT emerald arrow is the entire point — make the length difference dramatic and obvious.
+
+Beneath the diagram, ONE single bold caption line reading exactly:
+"The model's guess may be wrong, but its wording matches the corpus"
+
+TEXT RULE: apart from the section label, the title, the five short card labels, the two arrow labels and that one caption, there must be NO other text on this slide. Do not add a pipeline strip. Do not add explanatory paragraphs.
+
+===slide_13_densevsbm25===
+Section label "RESULTS", title "SAME EXPANSION. OPPOSITE EFFECT."
+
+TWO very large white rounded cards side by side, filling most of the slide.
+The LEFT card spans from 4% to 49% of the slide width, and from 26% to 94% of the slide height.
+The RIGHT card spans from 51% to 96% of the slide width, and from 26% to 94% of the slide height.
+
+Each card contains ONLY a short bold heading strip at its very top, then a COMPLETELY EMPTY BLANK WHITE AREA filling all the remaining space inside the card. Draw absolutely nothing in that empty area — no chart, no bars, no axes, no gridlines, no numbers, no labels, no placeholder marks. It must be entirely blank white.
+
+LEFT card heading, exactly: "Dense — every model improved"
+RIGHT card heading, exactly: "BM25 — six of nine got worse"
+
+TEXT RULE: no caption beneath the cards, no other text anywhere on the slide besides the section label, the title and those two headings.
+
+===slide_14_repetition===
+The header reads exactly: section label "RESULTS", then a dot, then the title "QUERY REPETITION RESTORES THE ORIGINAL QUERY WEIGHT". Spell every letter correctly - the word QUERY begins with the letter Q, never the letter O.
+
+LEFT COLUMN, narrow, from 4% to 33% of the slide width: three slim stacked tinted rows, each with a small gradient number badge and ONE short line of bold text, reading exactly:
+"01" "Expansion diluted the original query"
+"02" "We repeat the query inside it"
+"03" "The optimum differs per model"
+Beneath those, one small emerald-tinted result pill with a large bold gradient number reading exactly "0.5855" and a caption reading exactly "all nine models above baseline".
+
+RIGHT AREA, large, a white rounded card spanning from 36% to 96% of the slide width and from 26% to 94% of the slide height. It contains ONLY a short bold heading strip at its very top reading exactly:
+"Repetition sweep across nine models"
+and beneath it a COMPLETELY EMPTY BLANK WHITE AREA filling the rest of the card. Draw absolutely nothing in it — no chart, no bars, no axes, no numbers, no labels. Entirely blank white.
+
+TEXT RULE: no other text anywhere on the slide.
+
+===slide_16_csqe===
+Section label "OUR METHOD", title "CORPUS-STEERED QUERY EXPANSION".
+
+This slide is dominated by ONE large figure area.
+
+A single white rounded card spanning from 4% to 96% of the slide width and from 24% to 90% of the slide height. Inside it, leave a COMPLETELY EMPTY BLANK WHITE AREA filling the entire card. Draw absolutely nothing inside — no diagram, no boxes, no arrows, no icons, no labels, no text, no placeholder marks of any kind. It must be entirely blank white.
+
+Apart from the header band and that one empty card, the slide carries NO other content — no bullet lists, no side panels, no captions, no numbers. Keep the background decoration as specified in the style.
+
+===slide_18_journey===
+Section label "RESULTS", title "THE FULL JOURNEY".
+
+LEFT COLUMN, narrow, from 4% to 30% of the slide width: a white rounded card showing a circular loop diagram of four stages connected by curved gradient arrows forming a continuous cycle, each stage a small gradient badge with a short label, reading exactly:
+"Analyse"  "Identify weakness"  "Design a fix"  "Measure"
+Bold caption beneath reading exactly: "Our method, repeated"
+Beneath that card, three small stacked metric pills, each with a bold gradient number and a short caption, reading exactly:
+"0.7137" caption "final system"
+"+54.5%" caption "over BM25"
+"+13.9%" caption "over no-QE hybrid"
+
+RIGHT AREA, large, a white rounded card spanning from 33% to 96% of the slide width and from 24% to 94% of the slide height. It contains ONLY a short bold heading strip at its very top reading exactly:
+"Baseline to final system"
+and beneath it a COMPLETELY EMPTY BLANK WHITE AREA filling the rest of the card. Draw absolutely nothing in it — no chart, no bars, no axes, no numbers, no labels. Entirely blank white.
+
+===slide_20_conclusions===
+The header contains ONLY the single word "CONCLUSIONS" and nothing else. Write it exactly once on the whole slide. Do not add a second title or a dot beside it.
+
+TOP: one wide card with an emerald gradient left edge and bold text reading exactly:
+"Query enhancement transfers to Arabic — and the mechanisms we found are not Arabic-specific"
+
+MIDDLE: SEVEN slim white rounded rows in TWO COLUMNS — four in the left column, three in the right. Each row has a small gradient number badge and ONE line of bold dark navy text. Every row is styled IDENTICALLY — same fill, same weight, same size. Do NOT highlight, colour-fill or emphasise any row differently from the others.
+
+Each of the seven statements appears EXACTLY ONCE on the slide. Never repeat a statement anywhere. Reading exactly:
+"01" "Baselines established and error-analysed"
+"02" "Query2Doc transfers to Arabic zero-shot"
+"03" "Ten open LLMs compared under one protocol"
+"04" "Dense and sparse respond differently to expansion"
+"05" "Query repetition resolves sparse degradation"
+"06" "Corpus grounding validated"
+"07" "Retriever-specific query representation is critical"
+
+BOTTOM: one wide tinted banner with a circular gradient icon badge and bold text reading exactly:
+"First systematic validation of LLM-based query enhancement for Arabic retrieval — ten open models, free hardware, fully reproducible. A paper is in preparation."
+
+===slide_21_futurework===
+The header contains ONLY the two words "FUTURE WORK" and nothing else. Write that phrase exactly once on the whole slide. Do not add a second title, a dot, or any other word beside it.
+
+THREE large white cards side by side, each with a big circular gradient icon badge at the top, a bold heading, and a short caption beneath. Reading exactly:
+
+CARD 1 heading "Dialectal Arabic" — caption "Evaluate query enhancement on regional Arabic varieties beyond Modern Standard Arabic"
+CARD 2 heading "First-pass quality gate" — caption "Fall back to blind expansion when the first retrieval pass is poor"
+CARD 3 heading "Stronger embedding models" — caption "Test whether the gains hold over more capable Arabic retrievers"
+
+Each card carries a subtle forward-pointing gradient arrow motif at its base.
+
+===slide_09_objectives===
+The header contains ONLY the single word "OBJECTIVES" and nothing else. Write it exactly once on the whole slide. Do not add a second title, a dot, or any other word beside it.
+
+NINE compact rows arranged in TWO COLUMNS — five rows in the left column, four in the right — each row a slim white rounded card with a small gradient rounded-square number badge on the left and ONE line of bold dark navy text. Keep the rows tight and even so all nine fit comfortably. Each row contains only its number and its single line of text. Reading exactly, in order:
+"01" "Establish dense and sparse baselines and measure their complementarity"
+"02" "Run a systematic error analysis to identify the failure modes"
+"03" "Adapt Query2Doc for Arabic zero-shot on free cloud GPUs"
+"04" "Compare ten open LLMs from 2 to 8 billion parameters"
+"05" "Analyse how expansions interact with sparse versus dense retrieval"
+"06" "Investigate query repetition as a remedy for term dilution"
+"07" "Establish a hybrid fusion baseline without query enhancement"
+"08" "Adapt and evaluate CSQE for Arabic with component ablation"
+"09" "Determine the optimal placement of expansion in the hybrid pipeline"
+
+===slide_05_bottleneck===
+The header reads exactly: section label "THE PROBLEM", then a dot, then the title "ANSWER QUALITY CAN NEVER EXCEED RETRIEVAL QUALITY". SPELLING GUARD: the word QUALITY appears twice and BOTH must begin with the letter Q. Never render Q as the letter O. Check both words.
+
+A single rounded badge on the far left labelled beneath in bold reading exactly "Query". From it the path splits into TWO parallel horizontal tracks with generous separation, each inside its own softly tinted rounded lane.
+
+UPPER LANE, emerald tinted: three emerald document card icons, then a hexagon model badge, then a white card with a large emerald check mark. Bold caption beneath reading exactly:
+"Correct passages lead to a correct answer"
+
+LOWER LANE, ochre tinted: three ochre document card icons in the same style, then a hexagon model badge, then a white card with a large ochre cross mark. Bold caption beneath reading exactly:
+"Wrong passages lead to a wrong answer and hallucination"
+
+CRITICAL: the hexagon model badge must be drawn IDENTICALLY on both lanes - same size, same shape, same NEUTRAL GREY fill. Between the two identical badges place a vertical dotted grey connector and a small centred label reading exactly:
+"same model"
+
+===slide_08_rq===
+The header contains ONLY the two words "RESEARCH QUESTION" and nothing else. No dot, no bullet, no trailing punctuation, no second title.
+
+CENTRE: one large prominent white card with a thick emerald-to-teal gradient left edge and a large decorative gradient quotation mark, containing the research question in large bold dark navy type, reading exactly:
+"To what extent can LLM-based query enhancement improve Arabic information retrieval, across sparse, dense and hybrid retrieval, using openly available models between 2 and 8 billion parameters?"
+
+BENEATH IT, a second narrower card tinted pale mint with an emerald left accent bar, a circular gradient icon badge containing a white lightbulb line icon, and bold emerald text reading exactly:
+"Beyond validation - how do different retrievers interact with query enhancement?"
+
+Make the upper card clearly dominant and the lower card clearly secondary but visually connected to it.
+
+===slide_17_placement===
+The header reads exactly: section label "THE CONTRIBUTION", then a dot, then the title "WHICH RETRIEVER SHOULD GET THE EXPANDED QUERY?". SPELLING GUARD: the word QUERY must begin with the letter Q. Never render Q as the letter O.
+
+FOUR horizontal comparison rows, each a rounded card with a bold label on the left, a horizontal progress-style bar in the middle whose length is proportional to its value, and a large bold number on the right. Reading exactly, top to bottom:
+"No expansion - hybrid only"  with number "0.6267"
+"Expansion on the dense retriever only"  with number "0.6474"
+"Expansion on both retrievers"  with number "0.6936"
+"Expansion on BM25 only"  with number "0.7137"
+
+The first three rows are neutral grey and teal. The FOURTH row is strongly emphasised - full emerald-to-teal gradient fill, larger, with a white trophy icon badge and a subtle glow.
+
+BENEATH, a wide white card with a circular gradient icon badge and bold text reading exactly:
+"Fusion only pays while the two retrievers stay different. Expand both and they converge."

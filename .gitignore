@@ -222,3 +222,12 @@ arabic-rag-query-enhancement/data/processed/*.json
 *.fls
 *.synctex.gz
 arabic-rag-query-enhancement/arabic-rag-query-enhancement/data/processed/*.json
+# Defence deck: 4K masters and intermediates are regenerable from
+# slides/prompts_v3.txt + gen_all_v3.ps1 + composite_v3.ps1.
+# Only deck_images/ (presentation size) and the PPTX/PDF are tracked.
+research_decisions/defence/slides/final_v3/
+research_decisions/defence/slides/raw_v3/
+research_decisions/defence/slides/raw/
+research_decisions/defence/slides/final/
+research_decisions/defence/slides/backup_v2/
+research_decisions/defence/slides/v2/

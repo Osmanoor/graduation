@@ -1,0 +1,325 @@
+===slide_01_title===
+A TITLE slide. No section-label header band on this one.
+
+LEFT SIDE, about 55% width, vertically centred:
+- At the very top, LEAVE AN EMPTY BLANK SQUARE about 200x200 pixels of clean background. Draw absolutely nothing in it — no logo, crest, emblem, shield or placeholder. It must be completely empty.
+- Below it, a small uppercase letterspaced label in teal reading exactly:
+"UNIVERSITY OF KHARTOUM  ·  FACULTY OF ENGINEERING  ·  ELECTRICAL & ELECTRONIC ENGINEERING"
+- Below that, the main title in very large heavy bold, set across three lines, with a smooth emerald-to-teal-to-blue gradient fill, reading exactly:
+"Improving Arabic RAG Retrieval Quality with LLM-based Query Enhancement"
+- Below the title a short thick gradient bar.
+- Below that, three lines in slate grey reading exactly:
+"Mohammed Elhaj  ·  Osman Bashir"
+"Supervisor: Dr. Tahani Abdalla"
+"2026"
+
+RIGHT SIDE, about 45% width: a rich flat-vector illustration with no text. One rounded rectangle badge filled with emerald gradient at the left, from which a luminous tapering emerald-to-teal beam fans rightward into a large perspective field of many small document cards receding into depth. Most cards are pale mint. Exactly TWO cards, sitting directly in the beam's path, glow solid emerald and are larger, with a soft halo. Add small floating sparkle accents around the two lit cards.
+
+===slide_02_agenda===
+Section label "AGENDA" and no second title.
+
+SIX numbered items arranged in TWO COLUMNS OF THREE, each item inside its own white rounded card with a soft shadow, generously spaced to fill the slide.
+Each card has a gradient rounded-square number badge on its left, and the label in bold dark navy to its right. Left column top to bottom, then right column top to bottom, reading exactly:
+"01" "Introduction"
+"02" "Problem & Research Question"
+"03" "Objectives"
+"04" "Methodology"
+"05" "Results & Discussion"
+"06" "Conclusion & Future Work"
+Each card also carries a small circular gradient icon badge with a simple white line icon appropriate to the topic.
+
+===slide_03_llm===
+Section label "INTRODUCTION", title "A LANGUAGE MODEL IS FROZEN IN TIME".
+
+Beneath the header, four pill chips with pale mint fill and emerald bold text reading exactly:
+"Parametric memory"   "Frozen at training time"   "Retraining is expensive"   "Hallucination"
+
+LEFT ZONE, 45% width: a white card containing a large circle with soft emerald-tinted fill and a dashed teal border, labelled along its top edge in small letterspaced grey capitals reading exactly "TRAINING DATA". Its interior is densely filled with many tiny pale document icons. At the centre sits a rounded hexagon badge with emerald-to-teal gradient containing a white line icon of a brain fused with a circuit. Caption beneath the card in slate grey reading exactly:
+"Everything it knows is sealed inside."
+
+RIGHT ZONE, 55% width: two stacked white cards.
+UPPER card: ochre left accent bar, circular ochre badge with a white question-mark icon, heading in bold ochre reading exactly "A question it was never trained on", and beneath it a tinted inner panel holding this Arabic sentence, large, right-to-left, exactly:
+"ما الشروط التي تسمح للطالب بتأجيل دراسته في جامعة الخرطوم؟"
+LOWER card: pale ochre tint, ochre border, large decorative gradient quotation mark, four ABSTRACT SOFT GREY BARS suggesting invented text with no readable words at all, a bold ochre cross mark top-right, and beneath, a bold caption reading exactly:
+"It does not say 'I don't know.' It answers — fluently, confidently, and wrongly."
+
+A bold curved ochre arrow leaves the hexagon badge, crosses the dashed circle boundary, and points to the lower right card.
+
+===slide_04_rag===
+Section label "INTRODUCTION", title "DON'T RETRAIN THE MODEL. GIVE IT THE DOCUMENTS."
+Small subtitle in slate grey reading exactly: "Retrieval-Augmented Generation"
+
+TWO horizontal bands, PERFECTLY ALIGNED in four equal columns.
+
+UPPER band: a warm flat-vector library story in four scenes, each inside its own soft rounded panel: (1) a simple stylised person with a speech bubble holding a question mark; (2) a librarian figure beside tall bookshelves; (3) the librarian carrying three books; (4) the person reading from an open book. Minimal geometric figures, no faces, drawn in teal and emerald line work.
+
+LOWER band: four white rounded cards, one directly beneath each scene, each with a circular gradient icon badge and a bold label, connected left to right by gradient arrows, reading exactly:
+"Query"   "Retrieve"   "Passages"   "Answer"
+
+Between the bands, four faint vertical dotted connectors in pale teal linking each scene to the card directly beneath it. The vertical alignment must be exact.
+
+===slide_05_bottleneck===
+Section label "THE PROBLEM", title "ANSWER QUALITY CAN NEVER EXCEED RETRIEVAL QUALITY".
+
+A single rounded badge on the far left labelled beneath in bold reading exactly "Query". From it the path splits into TWO parallel horizontal tracks with generous separation, each track inside its own softly tinted rounded lane.
+
+UPPER LANE, emerald tinted: three emerald document card icons, then a hexagon model badge, then a white card with a large emerald check mark. Bold caption beneath reading exactly:
+"Correct passages → correct answer"
+
+LOWER LANE, ochre tinted: three ochre document card icons drawn in the same style, then a hexagon model badge, then a white card with a large ochre cross mark. Bold caption beneath reading exactly:
+"Wrong passages → wrong answer, hallucination"
+
+CRITICAL: the hexagon model badge must be drawn IDENTICALLY on both lanes — same size, same shape, same NEUTRAL GREY fill on both. Between the two identical badges place a vertical dotted grey connector and a small centred label reading exactly:
+"same model"
+
+===slide_06_literature===
+Section label "THE GAP", title "RICH IN ENGLISH. ALMOST EMPTY IN ARABIC."
+Subtitle in slate grey reading exactly: "Query Enhancement — repair the query before it reaches the retriever"
+
+LEFT PANEL, 58% width, a white card containing a DENSE horizontal tree diagram in teal and grey thin lines. A root node at the far left branches rightward into several category nodes, each branching again into many small leaf boxes. The impression must be CROWDED and full — many branches, many leaves, tightly packed. Exactly ONE leaf box in the middle is filled with emerald gradient and contains white bold text reading exactly:
+"Query2Doc"
+All other leaf boxes are blank with no text.
+
+RIGHT PANEL, 42% width, a white card containing two bookshelf illustrations side by side with IDENTICAL frames and three shelves each. The LEFT shelf is completely PACKED with colourful book spines in emerald, teal and blue. The RIGHT shelf is almost EMPTY — only two lonely spines on the top shelf, the other two shelves bare. Bold labels beneath each reading exactly:
+"English"   "Arabic"
+
+===slide_07_arabic===
+Section label "THE GAP", title "BUT ARABIC IS NOT ENGLISH".
+
+THREE equal white cards side by side, each with a circular gradient icon badge at the top, a bold heading, a large Arabic example, and a small caption. The Arabic must dominate each card.
+
+CARD 1 heading reading exactly "MORPHOLOGY". Arabic on one line, large, right-to-left, exactly:
+"كتب · كاتب · مكتوب · كتاب"
+Caption reading exactly: "One root, dozens of surface forms"
+
+CARD 2 heading reading exactly "ORTHOGRAPHY". Three Arabic lines, large, exactly:
+"أ / ا / إ"
+"ة / ه"
+"ى / ي"
+Caption reading exactly: "Same word, two spellings, two different strings"
+
+CARD 3 heading reading exactly "DIGLOSSIA". Two Arabic lines separated by a short gradient rule, the upper tinted ochre, the lower tinted emerald, exactly:
+"عايز أعرف شروط التأجيل"
+"ما هي شروط تأجيل الدراسة"
+Caption reading exactly: "People ask in dialect. Knowledge is written in Modern Standard Arabic."
+
+===slide_08_rq===
+Section label "RESEARCH QUESTION" and no second title.
+
+CENTRE: one large prominent white card with a thick emerald-to-teal gradient left edge and a large decorative gradient quotation mark, containing the research question in large bold dark navy type, reading exactly:
+"To what extent can LLM-based query enhancement improve Arabic information retrieval — across sparse, dense and hybrid retrieval — using openly available models between 2 and 8 billion parameters?"
+
+BENEATH IT, a second narrower card tinted pale mint with an emerald left accent bar, a circular gradient icon badge containing a white lightbulb line icon, and bold emerald text reading exactly:
+"Beyond validation — how do different retrievers interact with query enhancement?"
+
+Make the upper card clearly dominant and the lower card clearly secondary but visually connected to it.
+
+===slide_09_objectives===
+Section label "OBJECTIVES" and no second title.
+
+NINE compact rows arranged in TWO COLUMNS — five rows in the left column, four in the right — each row a slim white rounded card with a small gradient rounded-square number badge on the left and one line of bold dark navy text. Keep the rows tight and even so all nine fit comfortably. Reading exactly, in order:
+"01" "Establish dense and sparse baselines and measure their complementarity"
+"02" "Run a systematic error analysis to identify the failure modes"
+"03" "Adapt Query2Doc for Arabic zero-shot on free cloud GPUs"
+"04" "Compare ten open LLMs from 2 to 8 billion parameters"
+"05" "Analyse how expansions interact with sparse versus dense retrieval"
+"06" "Investigate query repetition as a remedy for term dilution"
+"07" "Establish a hybrid fusion baseline without query enhancement"
+"08" "Adapt and evaluate CSQE for Arabic with component ablation"
+"09" "Determine the optimal placement of expansion in the hybrid pipeline"
+
+===slide_10_system===
+Section label "METHODOLOGY", title "THE SYSTEM WE BUILT".
+
+A horizontal pipeline of FOUR large white cards connected by gradient arrows, each card with a circular gradient icon badge, a bold heading, and detail lines beneath. Reading exactly:
+
+CARD 1 heading "Query" — detail line: "2,896 questions"
+CARD 2 heading "Corpus" — detail lines: "MIRACL Arabic" and "2M Wikipedia passages" and "human relevance judgments"
+CARD 3 heading "Retriever" — detail lines listed vertically: "BM25" and "Dense" and "Hybrid"
+CARD 4 heading "Metric" — detail line: "NDCG@10"
+
+Beneath the pipeline, two small side-by-side tinted panels explaining the two retriever types, each with a small icon badge and bold heading, reading exactly:
+"BM25 — matches the words"  with caption "Exact term matching"
+"Dense (mDPR) — matches the meaning"  with caption "Understands meaning even with no shared words"
+
+===slide_11_baseline===
+Section label "METHODOLOGY", title "BASELINE RESULTS, AND WHAT THEY POINTED AT".
+
+TOP ROW: a wide tinted banner card with a circular gradient icon badge and bold text reading exactly:
+"We reproduced the published MIRACL baselines before changing anything"
+
+MIDDLE ROW: two white metric cards side by side, each with a large bold gradient number and a label beneath, reading exactly:
+"0.4993" with label "mDPR — dense baseline"
+"0.4621" with label "BM25S — sparse baseline"
+
+BOTTOM ROW: two white cards side by side.
+LEFT card: a very large bold ochre number reading exactly "34%" with bold caption reading exactly "of queries failed outright".
+RIGHT card, visually emphasised with an ochre border and larger than the left: a very large bold ochre number reading exactly "0.345" with bold caption reading exactly "Short queries — the weakest group", and a small line beneath reading exactly "Information poverty: too few words to separate one passage from two million".
+
+===slide_12_query2doc===
+Section label "METHODOLOGY", title "QUERY2DOC — HALLUCINATION AS A FEATURE".
+
+TOP: a slim horizontal pipeline strip of four small linked nodes with gradient arrows, labelled exactly:
+"Query"  "LLM writes a hypothetical answer"  "Query + pseudo-document"  "Retriever"
+The second node is enlarged and highlighted with an emerald gradient fill.
+
+MAIN AREA: THREE stacked cards showing why the mechanism works. Each card has a small label on its left edge.
+
+CARD 1, labelled "THE QUERY", narrow, with a thin teal border and a question-mark icon badge, containing Arabic text large and right-to-left, exactly:
+"ما الشروط التي تسمح للطالب بتأجيل دراسته في جامعة الخرطوم؟"
+
+CARD 2, labelled "THE REGULATION IN THE CORPUS", wide, tinted pale mint with an emerald left accent, containing Arabic text large and right-to-left, exactly:
+"يجوز للطالب المقيّد التقدّم بطلب إيقاف القيد وفق الشروط الواردة في اللائحة"
+
+CARD 3, labelled "THE PSEUDO-DOCUMENT", wide, drawn in EXACTLY the same shape, width and styling as CARD 2 to show it imitates the corpus, containing Arabic text large and right-to-left, exactly:
+"يجوز للطالب التقدّم بطلب إيقاف القيد أو تأجيل الدراسة وفق شروط تحدّدها اللوائح"
+
+Card 1 and Card 2 are joined by a dotted ochre connector marked with a small cross. Card 3 and Card 2 are joined by a solid emerald connector marked with a small check.
+
+===slide_13_densevsbm25===
+Section label "RESULTS", title "SAME EXPANSION. OPPOSITE EFFECT."
+
+TWO large white cards side by side, each occupying about 45% of the slide width and most of its height.
+
+LEFT card: a bold heading reading exactly "Dense retrieval — every model improved", a short gradient underline, and beneath it a COMPLETELY EMPTY white rectangular panel with a thin pale border, filling the rest of the card. Draw absolutely nothing inside this empty panel — no chart, no bars, no axes, no numbers, no gridlines. It must be entirely blank white.
+
+RIGHT card: a bold heading reading exactly "BM25 — six of nine got worse", a short gradient underline, and beneath it a COMPLETELY EMPTY white rectangular panel with a thin pale border, filling the rest of the card. Draw absolutely nothing inside this empty panel — no chart, no bars, no axes, no numbers, no gridlines. It must be entirely blank white.
+
+Both empty panels must be exactly the same size and vertically aligned.
+
+Beneath the two cards, a single centred bold caption reading exactly:
+"Same technique. Same generated text. Two retrievers, opposite directions."
+
+===slide_14_repetition===
+Section label "RESULTS", title "QUERY REPETITION RESTORES THE ORIGINAL QUERY'S WEIGHT".
+
+LEFT, 45% width: a white card explaining the mechanism. At the top a bold ochre heading reading exactly "Term dilution". Beneath it a visual: a very short emerald bar labelled "4-word query" beside a very long ochre bar labelled "80 generated words", showing the imbalance. Caption beneath reading exactly:
+"The words that carried the meaning lose their weight in the score"
+
+RIGHT, 55% width: a white card with a bold emerald heading reading exactly "Our remedy", and three stacked tinted rows each with a small gradient number badge, reading exactly:
+"01" "Repeat the original query inside the expanded query"
+"02" "Sweep the repetition factor across all nine models"
+"03" "The optimum is model-dependent — adaptive for the two strongest, fixed for the rest"
+
+BENEATH BOTH, a wide emerald-tinted results banner with a large bold gradient number reading exactly "0.5855" and bold caption reading exactly:
+"All nine models above baseline · best: Aya Expanse 8B"
+
+===slide_15_fivenouns===
+Section label "THE CATCH", title "WHERE EXPANSION BREAKS".
+
+TOP: a prominent white card with a thick gradient left edge containing the Arabic question, very large, right-to-left, exactly:
+"ما هي الأسماء الخمسة في اللغة العربية؟"
+and a small caption beneath in slate grey reading exactly "A well-known rule of Arabic grammar"
+
+MIDDLE: two cards side by side.
+LEFT card, emerald tinted with an emerald border, a circular emerald badge with a white check icon, heading reading exactly "The correct answer", and Arabic text large and right-to-left, exactly:
+"أب ، أخ ، حم ، فو ، ذو"
+RIGHT card, ochre tinted with an ochre border, a circular ochre badge with a white warning icon, heading reading exactly "What the model generated", and Arabic text large and right-to-left, exactly:
+"محمد ، آدم ، إبراهيم ، إسماعيل"
+with a small ochre caption beneath reading exactly "It listed people's names"
+
+BOTTOM: a wide banner split into two halves. The left half emerald with a very large bold number reading exactly "1.000" and label reading exactly "bare query". The right half ochre with a very large bold number reading exactly "0.000" and label reading exactly "query + expansion". A bold downward arrow between them.
+
+===slide_16_csqe===
+Section label "OUR METHOD", title "CSQE — ANSWER FROM THE CORPUS, NOT FROM MEMORY".
+
+LEFT, 55% width: a vertical stack of THREE white cards, each with a gradient number badge, bold heading and one caption line, reading exactly:
+"01" "Look" — caption "Search once with the bare query, take the top 5 documents"
+"02" "Read" — caption "Extract the sentences that genuinely match the query"
+"03" "Expand" — caption "Use those sentences — words copied from real documents"
+
+RIGHT, 45% width: a white card titled in bold reading exactly "The final query", containing three stacked horizontal bands of different heights that visually build one large query. From top to bottom: a tall emerald band labelled exactly "Corpus sentences ×2", a medium teal band labelled exactly "Blind expansions ×2", and a short repeated band drawn as four small identical blue strips labelled exactly "Original query ×4".
+
+BENEATH BOTH, a wide emerald-tinted results banner with two large bold numbers and an arrow between them, reading exactly "0.4621" then an arrow then "0.6157", with a bold caption reading exactly:
+"BM25 with corpus-steered expansion"
+
+===slide_17_placement===
+Section label "THE CONTRIBUTION", title "WHICH RETRIEVER SHOULD GET THE EXPANDED QUERY?"
+
+MAIN AREA: FOUR horizontal comparison rows, each a rounded card with a bold label on the left, a horizontal progress-style bar in the middle whose length is proportional to its value, and a large bold number on the right. Reading exactly, top to bottom:
+"No expansion — hybrid only"  with number "0.6267"
+"Expansion on the dense retriever only"  with number "0.6474"
+"Expansion on both retrievers"  with number "0.6936"
+"Expansion on BM25 only"  with number "0.7137"
+
+The first three rows are neutral grey and teal. The FOURTH row is strongly emphasised — full emerald-to-teal gradient fill, larger, with a white star or trophy icon badge and a subtle glow.
+
+BENEATH, a wide white card with a circular gradient icon badge and bold text reading exactly:
+"Fusion only pays while the two retrievers stay different. Expand both and they converge."
+
+===slide_18_journey===
+Section label "RESULTS", title "THE FULL JOURNEY".
+
+LEFT, 30% width: a white card showing a circular loop diagram of four stages connected by curved gradient arrows forming a continuous cycle, each stage a small gradient badge with a short label, reading exactly:
+"Analyse"  "Identify weakness"  "Design a fix"  "Measure"
+Bold caption beneath reading exactly: "Our method, repeated"
+
+RIGHT, 70% width: a white card with a bold heading reading exactly "Baseline to final system", a short gradient underline, and beneath it a COMPLETELY EMPTY white rectangular panel with a thin pale border filling the rest of the card. Draw absolutely nothing inside this empty panel — no chart, no bars, no axes, no numbers. It must be entirely blank white.
+
+BENEATH BOTH, three small metric cards in a row, each with a large bold gradient number and a caption, reading exactly:
+"0.7137" with caption "final system"
+"+54.5%" with caption "over BM25 baseline"
+"+13.9%" with caption "over the no-QE hybrid"
+
+===slide_19_metrics===
+Section label "RESULTS", title "THE SAME TREND ACROSS ALL FOUR METRICS".
+
+ONE large white card containing a clean modern data table with FIVE columns and a header row. The header row has an emerald-to-teal gradient fill with white bold text. Alternating body rows are tinted very pale mint. The FINAL row is emphasised with a full emerald gradient fill, white bold text, and a small white star icon.
+
+Column headers, reading exactly:
+"Method"   "NDCG@10"   "Recall@10"   "Recall@100"   "MRR"
+
+Body rows, reading exactly:
+"BM25S alone"  "0.4621"  "0.5964"  "0.8577"  "0.4836"
+"mDPR alone"  "0.4993"  "0.6156"  "0.8407"  "0.5328"
+"Blind QE → Dense"  "0.6164"  "0.7256"  "0.9001"  "0.6493"
+"Blind QE + repetition → BM25"  "0.5855"  "0.7128"  "0.9300"  "0.6165"
+"Hybrid RRF, no QE"  "0.6267"  "0.7597"  "0.9466"  "0.6517"
+"CSQE → BM25"  "0.6157"  "0.7447"  "0.9422"  "0.6380"
+"CSQE → Dense"  "0.5915"  "0.7073"  "0.8816"  "0.6225"
+"CSQE on BM25 + Dense raw"  "0.7137"  "0.8363"  "0.9734"  "0.7362"
+
+Every number must be rendered exactly as given with four decimal places. Do not alter, round or invent any digit.
+
+===slide_20_conclusions===
+Section label "CONCLUSIONS" and no second title.
+
+TOP: a wide prominent card with an emerald gradient left edge and bold text reading exactly:
+"Query enhancement transfers to Arabic — and the mechanisms we found are not Arabic-specific"
+
+MIDDLE: SEVEN slim white rounded rows in TWO COLUMNS — four in the left column, three in the right — each with a small gradient number badge and one line of bold dark navy text, reading exactly:
+"01" "Baselines established and error-analysed"
+"02" "Query2Doc transfers to Arabic zero-shot"
+"03" "Ten open LLMs compared under one protocol"
+"04" "Dense and sparse respond differently to expansion"
+"05" "Query repetition resolves sparse degradation"
+"06" "Corpus grounding validated"
+"07" "Retriever-specific query representation is critical"
+Row 07 is visually emphasised with a full emerald gradient fill and white text.
+
+BOTTOM: a wide tinted banner with a circular gradient icon badge and bold text reading exactly:
+"First systematic validation of LLM-based query enhancement for Arabic retrieval — ten open models, free hardware, fully reproducible. A paper is in preparation."
+
+===slide_21_futurework===
+Section label "FUTURE WORK" and no second title.
+
+THREE large white cards side by side, each with a big circular gradient icon badge at the top, a bold heading, and a short caption beneath. Reading exactly:
+
+CARD 1 heading "Dialectal Arabic" — caption "Evaluate query enhancement on regional Arabic varieties beyond Modern Standard Arabic"
+CARD 2 heading "First-pass quality gate" — caption "Fall back to blind expansion when the first retrieval pass is poor"
+CARD 3 heading "Stronger embedding models" — caption "Test whether the gains hold over more capable Arabic retrievers"
+
+Each card carries a subtle forward-pointing gradient arrow motif at its base.
+
+===slide_22_thanks===
+A CLOSING slide. No section-label header band.
+
+CENTRE: very large heavy bold text with an emerald-to-teal-to-blue gradient fill, reading exactly:
+"Thank you"
+Directly beneath, in large bold dark navy, reading exactly:
+"Questions"
+Beneath that, a short thick gradient bar, then two small lines in slate grey reading exactly:
+"Mohammed Elhaj  ·  Osman Bashir"
+"Supervisor: Dr. Tahani Abdalla"
+
+BACKGROUND ILLUSTRATION, echoing the title slide but resolved: a rounded emerald badge at the left with a luminous emerald-to-teal beam fanning into a field of document cards — but now the beam lands cleanly and exactly TWO cards glow bright emerald with a strong halo, positioned squarely in the beam. Keep the illustration soft and low-contrast behind the text so the words remain the focus.

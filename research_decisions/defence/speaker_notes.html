@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>ملاحظات العرض - مناقشة مشروع التخرج</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --card-bg: #ffffff;
+    --text: #2b2420;
+    --muted: #7a6f63;
+    --accent: #a9481f;
+    --accent-soft: #f2e4da;
+    --border: #e6ddd2;
+    --num-bg: #2b2420;
+    --num-text: #faf8f5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Tahoma, "Traditional Arabic", "Noto Naskh Arabic", sans-serif;
+    line-height: 2;
+    margin: 0;
+    padding: 40px 20px 80px;
+  }
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 3px solid var(--accent);
+  }
+  header h1 {
+    font-size: 1.6rem;
+    margin: 0 0 8px;
+    color: var(--accent);
+  }
+  header p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .slide {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .slide-num {
+    position: absolute;
+    top: -14px;
+    right: 24px;
+    background: var(--num-bg);
+    color: var(--num-text);
+    font-family: Consolas, monospace;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+  }
+  .slide p {
+    margin: 6px 0 0;
+    font-size: 1.05rem;
+    text-align: justify;
+  }
+  .en {
+    font-family: Consolas, "Courier New", monospace;
+    direction: ltr;
+    unicode-bidi: isolate;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.95em;
+    padding: 0 2px;
+  }
+  .num {
+    font-family: Consolas, monospace;
+    direction: ltr;
+    unicode-bidi: isolate;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 30px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1815;
+      --card-bg: #262019;
+      --text: #ece5db;
+      --muted: #a89a8a;
+      --accent: #e08a4f;
+      --accent-soft: #3a2c20;
+      --border: #3a3128;
+      --num-bg: #e08a4f;
+      --num-text: #1c1815;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>ملاحظات العرض التقديمي — مناقشة مشروع التخرج</h1>
+    <p>تحسين جودة الاسترجاع في أنظمة RAG العربية باستخدام Query Enhancement</p>
+  </header>
+
+  <div class="slide">
+    <span class="slide-num">1</span>
+    <p>السلام عليكم ورحمة الله. أنا محمد الحاج، ومعاي زميلي عثمان بشير. اليوم حنقدم ليكم مشروع تخرجنا: تحسين جودة الـ <span class="en">Retrieval</span> في أنظمة الـ <span class="en">RAG</span> العربية باستخدام الـ <span class="en">LLM-based Query Enhancement</span>، بإشراف الدكتورة تهاني عبدالله. خلونا نبدأ من المشكلة.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">2</span>
+    <p>زي ما عارفين، الـ <span class="en">AI</span> في <span class="en">boom</span> كبير، لكن الـ <span class="en">LLMs</span> عندها مشكلة جوهرية: الذاكرة بتاعتها <span class="en">parametric</span> — بتعرف بس الحاجات الاتدربت عليها، وبتهلوس في الباقي، وما بتقول ليك ما عارف، بتجاوب بثقة وبغلط. وظهر الـ <span class="en">RAG</span> كحل: بدل ما نعتمد على ذاكرة الموديل، بنفتش في <span class="en">knowledge base</span> خارجية، بنجيب الـ <span class="en">passages</span> المناسبة، وبنديها للموديل يجاوب منها. لكن الـ <span class="en">RAG</span> ذاتو مقيد بحاجة واحدة: جودة الـ <span class="en">retrieval</span>. لو الـ <span class="en">retriever</span> ما جاب الدوكيومنت الصح، الـ <span class="en">generator</span> ما بيقدر يعوض — النتيجة غلط. يعني الـ <span class="en">retrieval</span> هو الـ <span class="en">ceiling</span> بتاع النظام كلو، وده الـ <span class="en">bottleneck</span> البنشتغل عليهو.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">3</span>
+    <p>والمشكلة دي بتتضاعف في اللغة العربية: الـ <span class="en">morphology</span> بتاعتنا <span class="en">root-and-pattern</span> — جذر واحد بيطلع منو عشرات الكلمات — وفي <span class="en">orthographic variations</span> زي الهمزة والألف، وفي <span class="en">diglossia</span> بين الفصحى واللهجات. الليتريتشر الإنجليزي عندو حل للـ <span class="en">bottleneck</span> ده اسمو <span class="en">Query Enhancement</span>، وهو <span class="en">validated</span> كويس، لكن بموديلات ضخمة زي <span class="en">GPT-3</span> بـ <span class="num">175</span> مليار باراميتر، ولا هي جربوها على العربي <span class="en">monolingual</span>. وسؤالنا البحثي: إلى أي مدى الـ <span class="en">LLM-based Query Enhancement</span> بتحسن الـ <span class="en">Arabic information retrieval</span> — عبر الـ <span class="en">sparse</span> والـ <span class="en">dense</span> والـ <span class="en">hybrid</span> — باستخدام موديلات مفتوحة صغيرة من <span class="num">2</span> لـ <span class="num">8</span> مليار؟ ونوضح نقطة من هسي: إحنا ما داعين نصلح اللغة العربية نفسها. التحديات دي هي سبب الفشل الإحنا قسناهو، مش الحاجة الإحنا بنعالجها — إحنا بنعوض عند الـ <span class="en">query</span>.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">4</span>
+    <p>وعشان نجاوب على السؤال ده حددنا أهداف واضحة، تسعة، لكن بتتلموا في تلاتة. أولاً <span class="en">Diagnose</span>: نبني <span class="en">baselines</span> قوية للـ <span class="en">sparse</span> والـ <span class="en">dense</span> ونعمل ليها <span class="en">error analysis</span> نعرف بيهو وين وليه بتفشل. ثانياً <span class="en">Adapt</span>: نكيف تقنية <span class="en">Query2Doc</span> للعربي ونقارن عشرة موديلات مفتوحة. وثالثاً <span class="en">Ground and place</span>: نطبق الـ <span class="en">CSQE</span> ونحدد المكان الأمثل ليهو جوه الـ <span class="en">hybrid pipeline</span>. والتلاتة ديل حنرجع ليهم في الختام.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">5</span>
+    <p>حاجة نظرية واحدة بس نحتاجوها: في نوعين من الـ <span class="en">retrieval</span>. الـ <span class="en">BM25</span> — <span class="en">sparse</span> — بيشتغل بالـ <span class="en">exact term matching</span>. والـ <span class="en">Dense</span> — عندنا <span class="en">mDPR</span> — بيحول الـ <span class="en">query</span> لـ <span class="en">vector</span> وبيفهم المعنى حتى لو الكلمات مختلفة. والمهم: كل واحد فيهم بيفشل في نوع مختلف من الأسئلة — وإنهم <span class="en">complementary</span> دي النقطة البنبني عليها الشغل كلو. وبدينا بصورة <span class="en">rigorous</span>: أعدنا بناء الـ <span class="en">baselines</span> على <span class="en">MIRACL Arabic</span> — <span class="num">2</span> مليون <span class="en">passage</span> من ويكيبيديا العربية و<span class="num">2,896</span> كويري بـ <span class="en">human relevance judgments</span>. وبنيناهم الاتنين منفصلين تماماً لحدي هسي. والقياس بتاعنا <span class="en">NDCG@10</span>.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">6</span>
+    <p>النتيجة: الـ <span class="en">mDPR</span> جاب <span class="num">0.4993</span> <span class="en">NDCG@10</span> — طابق الرقم الرسمي المنشور بالظبط. والـ <span class="en">BM25</span> جاب <span class="num">0.4621</span>، يعني <span class="num">96%</span> من الرقم الرسمي. وقبل ما نختار تقنية، عملنا <span class="en">error analysis</span> على الـ <span class="en">baseline</span>. لقينا <span class="num">34%</span> من الكويريز فاشلة تماماً. ولقينا حوالي واحد من كل عشرة ما لقى ولا <span class="en">passage</span> صحيح حتى في أول <span class="num">100</span> نتيجة — وده <span class="en">recall ceiling</span>. والأهم: الكويريز القصيرة — كلمة لتلاتة كلمات — أداءها أضعف بشكل واضح، <span class="num">0.345</span>. والسبب هو الـ <span class="en">information poverty</span>: كلمتين ما بيدوا الـ <span class="en">retriever</span> معلومات كافية وسط <span class="num">2</span> مليون <span class="en">passage</span>. يعني العطل في الـ <span class="en">query</span> ذاتها، والحل لازم يقعد قدام الـ <span class="en">retriever</span>. والتشخيص ده وجهنا طوالي لاختيار الـ <span class="en">Query Expansion</span> كتقنية أساسية.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">7</span>
+    <p>بناءً على التحليل ده، دخلنا في السستم <span class="en">layer</span> جديدة: الـ <span class="en">Query Enhancement</span>، وركزنا على تقنية <span class="en">Query2Doc</span>. وهنا في نقطة جميلة: كلنا عارفين إنو الـ <span class="en">LLMs</span> بتعاني من الهلوسة — لكن في التقنية دي، الهلوسة ما مشكلة، هي ذاتها الحل. بنطلب من الموديل يولد <span class="en">hypothetical document</span>. المعلومات فيها ممكن تكون غلط، لكن الستايل والـ <span class="en">vocabulary</span> قريبة من الدوكيومنتات الحقيقية، وبتقرب المسافة اللغوية. والـ <span class="en">constraint</span> بتاعنا: موديلات مفتوحة من <span class="num">2</span> لـ <span class="num">8</span> مليار، على <span class="en">Colab</span> مجاني، من غير أي <span class="en">API</span> مدفوع.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">8</span>
+    <p>طبقنا الفكرة أول مرة بموديل واحد، ولقينا تحسن واضح. فعملنا <span class="en">comparison</span> بين عشرة موديلات، من <span class="en">2B</span> لـ <span class="en">8B</span>، بنفس البرومبت ونفس الـ <span class="en">pipeline</span>. والنتيجة كانت مفاجأة: على الـ <span class="en">Dense</span>، الموديلات التسعة كلها اتحسنت — أحسنها <span class="en">Aya Expanse</span> بـ <span class="num">+23.5%</span>. لكن على الـ <span class="en">BM25</span>، ستة من تسعة بقى أداءها أسوأ من الـ <span class="en">baseline</span> ذاتو. والسبب: <span class="en">term dilution</span> — الـ <span class="en">pseudo-document</span> الطويلة غرقت الكلمات المفتاحية الأصلية. والحل كان <span class="en">query repetition</span>: نكرر الكويري الأصلية كذا مرة ونلحقها بالـ <span class="en">pseudo-document</span>. أعدنا التجارب: كل الموديلات التسعة بقت فوق الـ <span class="en">baseline</span>، وأحسن نتيجة <span class="en">Aya</span> بـ <span class="num">0.5855</span>، تحسن <span class="num">26.7%</span>. فلحدي هنا الـ <span class="en">blind expansion</span> شغال كويس — لكن نفس التقنية، <span class="en">retriever</span> اتنين، واحد استفاد وواحد اتضرر. وهنا أسلم الكلام لزميلي عثمان يوريكم المشكلة دي وكيف حليناها. اتفضل يا عثمان.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">9</span>
+    <p>شكراً محمد. طيب عشان نشوف الـ <span class="en">blind expansion</span> بيفشل وين، خدوا معاي المثال ده: ما هي الأسماء الخمسة في اللغة العربية؟ — دي قاعدة نحوية مشهورة، والإجابة أب، أخ، حم، فو، ذو. والـ <span class="en">BM25</span> العادي بالكويري الأصلية لقى المقال الصح في المرتبة الأولى، بنتيجة <span class="num">1.000</span>. لكن لما ودينا للموديل يعمل <span class="en">blind expansion</span>، قال ليك بثقة: فئة خاصة من الأسماء الأكثر شيوعاً: محمد، آدم، إبراهيم، إسماعيل — أسماء أشخاص! والأخطر إنو ما في زول بيقرا النص ده. فالـ <span class="en">terms</span> المهلوسة عملت <span class="en">dilution</span> وودت البحث في اتجاه غلط تماماً. النتيجة نزلت من <span class="num">1.000</span> لـ <span class="num">0.000</span>. والانقلاب الكامل ده حصل في <span class="num">143</span> سؤال من <span class="num">2,896</span>. ودي وصلتنا للفكرة المفتاحية: الـ <span class="en">expansion</span> ما المفروض تكون <span class="en">blind</span>، لازم تكون <span class="en">grounded</span> في الـ <span class="en">corpus</span> ذاتو.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">10</span>
+    <p>ودي فكرة الـ <span class="en">CSQE — Corpus-Steered Query Expansion</span>. الموديل جاوب من ذاكرتو، المفروض كان يشوف الأول. فبنبني الكويري النهائية من تلاتة <span class="en">components</span>: أولاً <span class="en">BM25 first pass</span> بالكويري الأصلية، بنجيب <span class="en">top-5 documents</span>، وبنقول للموديل: <span class="en">extract</span> الجمل المفتاحية من الدوكيومنتات دي — معلومات موجودة فعلاً، مش هلوسة. ثانياً بنضيف اتنين <span class="en">blind expansions</span> للـ <span class="en">vocabulary enrichment</span>. وثالثاً بنكرر الكويري الأصلية أربع مرات. والنتيجة: الـ <span class="en">BM25</span> مع <span class="en">CSQE</span> قفز من <span class="num">0.4621</span> لـ <span class="num">0.6157</span>. وعشان نتأكد إنو الـ <span class="en">complementarity</span> حقيقية، عملنا <span class="en">ablation</span>: <span class="en">corpus-only</span> جابت <span class="num">0.5381</span>، <span class="en">blind-only</span> جابت <span class="num">0.5752</span>، والاتنين مع بعض جابوا <span class="num">0.6157</span> — أحسن من أي <span class="en">component</span> لوحدو.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">11</span>
+    <p>طيب قبل ما نحكم على الحل، خلينا نحدد البار الصح. جربنا ندمج <span class="en">BM25</span> والـ <span class="en">Dense</span> بدون أي <span class="en">enhancement</span>، بالـ <span class="en">RRF</span>. النتيجة <span class="num">0.6267</span> — ودي بقت الـ <span class="en">baseline</span> الحقيقية. ولما جينا ندمج الـ <span class="en">CSQE</span> مع الـ <span class="en">hybrid</span>، السؤال: منو ياخد الكويري الموسعة؟ جربنا التلاتة <span class="en">configurations</span>. والمفاجأة: لو أديت الاتنين بتجيب <span class="num">0.6936</span>. لكن لو أديت الـ <span class="en">BM25</span> بس، وخليت الـ <span class="en">Dense</span> على الكويري الأصلية، بتجيب <span class="num">0.7137</span>. نفس التقنية، نفس الفيوجن، نفس الموديل — المتغير الوحيد منو استلم الـ <span class="en">expansion</span>. وليه؟ الـ <span class="en">mDPR</span> متدرب على كويريز قصيرة، والكويري الموسعة <span class="en">out-of-distribution</span> ليهو. والأعمق: الـ <span class="en">RRF</span> بيستفيد من الاختلاف بين الطريقتين — لو الاتنين شالوا نفس الكويري بيتقاربوا وتفقد الـ <span class="en">complementarity</span>. فالمبدأ: كل <span class="en">retriever</span> محتاج الـ <span class="en">query representation</span> البتخصو. وحسب مراجعتنا لليتريتشر، الـ <span class="en">asymmetric assignment</span> ده ما اتدرست قبل كده — ودي <span class="en">contribution</span> بتاعتنا.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">12</span>
+    <p>ودي الصورة الكاملة للرحلة: من <span class="num">0.4621</span> بالـ <span class="en">BM25</span> لوحدو، مروراً بالـ <span class="en">blind QE</span> والـ <span class="en">repetition</span> والـ <span class="en">hybrid</span>، لحدي <span class="num">0.7137</span> بالنظام النهائي — تحسن <span class="num">54.5%</span>، و<span class="num">13.9%</span> فوق الـ <span class="en">hybrid</span> البدون <span class="en">enhancement</span>. والتكلفة جزء من النتيجة: موديل واحد مفتوح <span class="num">8</span> مليار، على <span class="en">Colab</span> مجاني، من غير أي <span class="en">API</span> مدفوع، ومن غير إعادة فهرسة، ومن غير تعديل أي <span class="en">retriever</span>. وأجمل حاجة إنو الدائرة اتقفلت: عملنا <span class="en">per-query analysis</span>، ولقينا الكويريز القصيرة — نفس المشكلة الشخصناها في البداية — هي الأكتر استفادة، بـ <span class="num">43.6%</span>. وبرضو <span class="num">56.8%</span> من الكويريز اتحسنت بمتوسط <span class="num">0.189</span> للسؤال.</p>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">13</span>
+    <p>نختم بالخلاصة. الـ <span class="en">Query Enhancement</span> بتنتقل للعربي بنجاح — لكن مش كما هي: <span class="en">query repetition</span> لأن الـ <span class="en">expansion</span> بتعمل <span class="en">dilution</span> للـ <span class="en">BM25</span>، <span class="en">corpus grounding</span> لأن الـ <span class="en">blind generation</span> بتهلوس على مصطلحات عربية، و<span class="en">asymmetric placement</span> لأن توسيع الاتنين بيخرب الـ <span class="en">complementarity</span>. وأهدافنا التلاتة اتحققت: <span class="en">Diagnose</span> بالـ <span class="en">baselines</span> والـ <span class="en">error analysis</span>، <span class="en">Adapt</span> بالعشرة موديلات، و<span class="en">Ground and place</span> بالـ <span class="en">CSQE</span> والـ <span class="en">asymmetric fusion</span>، ووصلنا لـ <span class="num">0.7137</span>. وفي حدود: اشتغلنا على الفصحى بس، ورخصة <span class="en">Aya</span> بحثية فقط، والـ <span class="en">CSQE</span> معتمد على جودة الـ <span class="en">first pass</span>. للمستقبل داير نغطي الـ <span class="en">dialectal Arabic</span>، ونعمل <span class="en">first-pass quality gate</span>، ونجرب <span class="en">embedding models</span> أقوى. شكراً جزيلاً لحسن استماعكم — وجاهزين لأسئلتكم.</p>
+  </div>
+
+  <footer>محمد الحاج وعثمان بشير — إشراف د. تهاني عبدالله</footer>
+</div>
+</body>
+</html>

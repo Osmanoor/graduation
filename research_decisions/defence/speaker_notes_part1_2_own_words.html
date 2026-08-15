@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>Speaker Notes — Parts 1+2, my own words</title>
+<style>
+  :root {
+    --bg: #faf8f5; --card-bg: #ffffff; --text: #2b2420; --muted: #7a6f63;
+    --accent: #a9481f; --border: #e6ddd2; --num-bg: #2b2420; --num-text: #faf8f5;
+    --stage: #1f6f6b; --stage-bg: #e6f0ef;
+    --gap: #8a6d1f; --gap-bg: #f7f0dc;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.85; margin: 0; padding: 40px 20px 80px;
+  }
+  .wrap { max-width: 820px; margin: 0 auto; }
+  header {
+    text-align: center; margin-bottom: 30px;
+    padding-bottom: 22px; border-bottom: 3px solid var(--accent);
+  }
+  header h1 { font-size: 1.5rem; margin: 0 0 8px; color: var(--accent); }
+  header p { margin: 0; color: var(--muted); font-size: 0.92rem; }
+  .lede {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 22px; margin-bottom: 26px; font-size: 0.95rem; color: var(--muted);
+  }
+  .lede b { color: var(--text); }
+  .slide {
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+    padding: 24px 26px 20px; margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative;
+  }
+  .slide-num {
+    position: absolute; top: -14px; left: 24px;
+    background: var(--num-bg); color: var(--num-text);
+    font-family: Consolas, monospace; font-size: 0.8rem;
+    padding: 4px 12px; border-radius: 20px; font-weight: bold;
+  }
+  .title {
+    font-size: 0.78rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700; margin: 4px 0 12px;
+  }
+  .slide p { margin: 0 0 12px; font-size: 1.04rem; }
+  .slide p:last-child { margin-bottom: 0; }
+  .stage {
+    background: var(--stage-bg); border-left: 3px solid var(--stage); color: var(--stage);
+    font-size: 0.9rem; font-style: italic; padding: 9px 14px;
+    margin: 14px 0; border-radius: 4px; line-height: 1.7;
+  }
+  .gap {
+    background: var(--gap-bg); border-left: 3px solid var(--gap); color: var(--gap);
+    font-size: 0.9rem; padding: 9px 14px; margin: 14px 0; border-radius: 4px; line-height: 1.7;
+  }
+  .gap b, .stage b { font-weight: 700; }
+  footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 30px; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1815; --card-bg: #262019; --text: #ece5db; --muted: #a89a8a;
+      --accent: #e08a4f; --border: #3a3128; --num-bg: #e08a4f; --num-text: #1c1815;
+      --stage: #6fc5bf; --stage-bg: #1e302f;
+      --gap: #d8b551; --gap-bg: #332c17;
+    }
+    .lede { background: var(--card-bg); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Speaker Notes — Parts 1 + 2</h1>
+    <p>Mohammed · built only from <code>part 1+2 from prsentation content.md</code></p>
+  </header>
+
+  <div class="lede">
+    <b>These are your words.</b> Everything in normal text below is lifted from your own draft —
+    same phrasing, same rhythm — with only transcription artefacts cleaned up (RAC&nbsp;→&nbsp;RAG,
+    Miracle&nbsp;→&nbsp;MIRACL, "hyperly"&nbsp;→&nbsp;hybrid, repeated words removed).
+    Nothing from the current deck notes was carried over.
+    <br><br>
+    <b>Green boxes</b> are the stage directions you described yourself.
+    <b>Yellow boxes</b> mark places where your draft said <i>what</i> you'd do but not <i>what
+    you'd say</i> — those are yours to fill, not mine to invent.
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">1</span>
+    <div class="title">Cover</div>
+    <div class="gap">Your draft doesn't cover the opening line. Keep it short — names, project, supervisor, then straight into the zigzag on slide 3.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">2</span>
+    <div class="title">Agenda</div>
+    <div class="gap">Not in your draft either — but Dr. Tahani named it as mandatory slide 2. Five lines: Problem · Objectives · Methodology · Results &amp; Discussion · Conclusion.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">3</span>
+    <div class="title">The zigzag — how we open</div>
+    <p>We can start the presentation with this: the AI is booming lately, but there is the problem that its memory is parametric — it only knows what it's trained on.</p>
+    <p>That's why RAG got invented, and it solved some of the problems. But yet again, RAG has some problems, because it's bounded by the quality of the information retrieval.</p>
+    <p>Because of that, the techniques of query enhancement appeared in the English literature. But yet again, the problem that we have is that it's not validated in the Arabic language.</p>
+    <div class="stage">This is the zigzag approach — each step solves the one before it and creates the next. Four beats, don't linger on any of them.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">4</span>
+    <div class="title">The problem statement, and what we are not doing</div>
+    <p>We want to be clear that we don't want to solve the Arabic problems — the morphological problems, the lexical problems, the problems that we stated. We want to improve the information retrieval in general.</p>
+    <p>We know that query enhancement applies to English and is validated very clearly. But we don't know if it intuitively applies to the Arabic language as well, because the Arabic language doesn't match the English language. It has its own problems, like the ones we listed.</p>
+    <p>So our key problem statement is this: because of the Arabic challenges, we want to explore to what extent the query enhancement techniques apply to the Arabic language, and to what extent they do improve the performance of information retrieval.</p>
+    <p>The literature in English has a solution to the information retrieval problem, which is query enhancement — but the Arabic literature is a bit poor in that side. We seek to find the answer to: to what extent does query enhancement improve the information retrieval in an Arabic RAG system?</p>
+    <div class="stage">Your draft has this as the landing of the zigzag, and then a smooth transition into the solution and the objectives.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">5</span>
+    <div class="title">Objectives</div>
+    <div class="gap">Your draft says "we want to smoothly transition to our solution, our objectives, and what we decided to do" — but doesn't give the wording. This is one of the two slides you still need to write.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">6</span>
+    <div class="title">Introducing the system as a whole</div>
+    <div class="stage">A figure built from the components that make up our RAG system. Similar to the RAG image in the thesis, but a little more simplified — no indexing, no chunking. Just the main parts and main components.</div>
+    <p>So to start with, we are going to introduce our system as a whole. Let's introduce our star — our main system, which is the RAG system.</p>
+    <p>We have here a query. Then we find relevant passages in our corpus, and then we fetch them and we concatenate them with the query. And then we deliver it to the LLM so it can answer — so it can give answers based on these passages.</p>
+    <p>So yes, this is our RAG system.</p>
+    <div class="gap"><b>One word changed from your draft.</b> You wrote "we find relevant passages in our <i>vector database</i>". I've put "corpus". Your headline finding is that the expansion belongs on BM25, which has no vectors in it — if the panel learns here that RAG means vectors, that slide has nowhere to land. Your call, but this is the one place I'd overrule the draft.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">7</span>
+    <div class="title">The same system, made specific — our baseline</div>
+    <p>And yes — we started to do this in a rigorous and scientific approach. We decided to build our baseline, to reproduce the paper's results.</p>
+    <div class="stage">The same components of the general RAG system now transform into a more specific RAG system — the one we built. Same figure, same positions, contents change.</div>
+    <p>So in it, the corpus will be MIRACL. The retrieval function will be transferred into BM25 and Dense. And we will have the queries, and some numbers.</p>
+    <p>We'll talk a little bit about MIRACL and why we chose it. BM25 focuses on finding key terms and connecting them to each other, while Dense tries to understand the relation between the words themselves, through the vectors.</p>
+    <p>We won't go too much into the Dense part, the vectorization and the embedding part. We don't have time for that.</p>
+    <p>And we can also state quickly that they actually complement each other — so sometimes you use them as a hybrid, as we will see later.</p>
+    <div class="gap"><b>Worth a second look:</b> "reproduce the paper's results" invites "which paper, and did your numbers match?" You did reproduce the published MIRACL baselines, and exactly — so saying it precisely turns it from a vague claim into a methodology answer.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">8</span>
+    <div class="title">The baseline experiment and the error analysis</div>
+    <p>And here we will explain our baseline experiment, very quickly.</p>
+    <p>As we said before, we don't want to focus too much on the error analysis. We'll just give the finding: we found in the experiment that there are errors in the short queries — and that we can solve them using query expansion.</p>
+    <div class="stage">Your note: give the finding, and maybe not a graph, so the jury doesn't go back to it and get into detail with us on it.</div>
+    <div class="gap">Your draft doesn't name the numbers here. You need one or two, or "there are errors in the short queries" sounds like an impression rather than a measurement. The short-query figure is the one that carries it.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">9</span>
+    <div class="title">The query enhancement layer enters</div>
+    <div class="stage">I want you to imagine this with me. We have the slide, it contains the components — and then with a motion, we introduce the component into our system, which is the query enhancement layer. It appears in the middle of the graph.</div>
+    <p>We used query expansion because it was suitable for the experiment.</p>
+    <p>From now on we start explaining the query expansion experiment, and our talk starts there.</p>
+    <div class="gap">This is the thinnest slide in the draft — one line of actual content for what is your biggest transition. It needs the <i>why</i>: the error analysis pointed at short queries, and query expansion is the technique that fixes exactly that.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">10</span>
+    <div class="title">Query2Doc — the experiment</div>
+    <p>We'll explain it, and have the prompt that we used for the Query2Doc expansion on the slide.</p>
+    <p>And we'll explain that we used 10 models in order to verify the results.</p>
+    <p>Then we continue our talk in the query enhancement layer.</p>
+    <div class="gap">The whole Query2Doc result — what happened on dense, what happened on BM25, term dilution, the repetition fix — is not in this draft. Your Part 3 covers it, but Part 3 is Osman's transcript. Decide who takes it, then write it.</div>
+  </div>
+
+  <div class="slide">
+    <span class="slide-num">—</span>
+    <div class="title">The visual device — applies to every slide above</div>
+    <div class="stage">I want you to focus on this part, because I think it will be very good on the slides. When we introduce the system, we introduce the full system, and it stays the same slide. We dig deep when we explain each part: we expand one component and explain the algorithms inside it, and then it goes smaller again. We expand the next component, and then it goes smaller again. Same slide, and on each slide we expand one of the components — until we've explained and introduced our full baseline and our full system, that we're going to build our future experiments on.</div>
+  </div>
+
+  <footer>Mohammed Elhaj — Parts 1 + 2, from the original draft</footer>
+</div>
+</body>
+</html>

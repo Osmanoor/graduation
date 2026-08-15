@@ -1,0 +1,43 @@
+﻿STYLE — a vibrant, richly layered, modern presentation slide of the quality produced by a professional Canva template. It must feel designed, colourful and full. It must NOT look minimal, flat, sparse, empty or plain.
+
+BACKGROUND
+Near-white (#FAFCFB), decorated with ALL of the following:
+- A large soft organic blob shape bleeding off the TOP-LEFT corner, filled with a smooth emerald-to-teal gradient (#0E6E5C to #1F8A9E).
+- A large soft flowing wave shape bleeding off the BOTTOM-RIGHT corner, filled with a smooth teal-to-deep-blue gradient (#1F8A9E to #2B4E8C).
+- A 5 by 5 grid of small evenly spaced dots in pale teal at the TOP-RIGHT.
+- A 4 by 5 grid of small evenly spaced dots in pale emerald at the BOTTOM-LEFT.
+These decorations must be present but must never overlap or obscure any text.
+
+HEADER BAND
+- A short thick gradient bar, roughly 90 by 8 pixels, emerald to teal, sitting directly above the headline.
+- Set the header text in heavy bold capital letters. The section label is solid dark navy (#0C2340); after it a small gradient dot; then the slide title filled with a smooth left-to-right emerald-to-teal-to-blue gradient (#0E6E5C to #1F8A9E to #2B4E8C). If a slide specifies no second title, draw the section label alone with no dot and no trailing punctuation.
+
+CONTENT CARDS
+- All body content sits inside pure white rounded cards with 20-pixel corner radius and a soft subtle drop shadow. Never let body text float loose on the background.
+- Numbered cards carry a rounded-square badge, about 70 by 70 pixels with 16-pixel radius, filled with an emerald-to-teal gradient, containing the number in white bold.
+- Under each card heading sits a short gradient underline bar.
+- Quotations and examples sit in a lightly tinted inner panel (#F2F8F6) with a large decorative quotation mark in gradient colour.
+
+ICON BADGES
+Circular, roughly 90 pixels across, filled with an emerald-to-teal gradient, containing one simple white line icon.
+
+TYPOGRAPHY AND EMPHASIS
+Clean geometric sans-serif. Strong hierarchy. Key phrases inside body text are set BOLD and coloured emerald or teal; ordinary body text is dark slate grey (#3A4A47). Numbers and metrics are set large and bold.
+
+ARABIC TEXT
+Any Arabic must use a clean modern Arabic typeface, rendered with correct letterforms, correctly joined, in right-to-left order, exactly as given. Set Arabic noticeably LARGER than the surrounding Latin text — it must be the most legible thing on the slide when present. Never invent, duplicate, reverse or corrupt Arabic characters.
+
+PLACEHOLDER TEXT — STRICT
+Where the design calls for "illegible" or "blurred" text, render it as ABSTRACT SOFT GREY BARS AND SHAPES ONLY. Never render Lorem Ipsum. Never render any readable word in a placeholder. It must be impossible to read a single word.
+
+PALETTE
+Emerald #0E6E5C, teal #1F8A9E, deep blue #2B4E8C, dark navy #0C2340, warning ochre #B4622B (used ONLY for things that are wrong, hallucinated or failed), slate grey #3A4A47, pale mint #F2F8F6, near-white #FAFCFB.
+
+FORBIDDEN
+No photographs of real people. No 3D robot renders. No stock-photo imagery. No glassmorphism. No dark background. Vector illustration only. Leave the bottom-right corner free of text — a page number is added there later.
+
+INSTRUCTION LEAK — ABSOLUTELY FORBIDDEN
+This description is a design brief, not content. NEVER render any word or phrase from these style instructions as visible text on the slide. In particular the words "heavy", "bold", "uppercase", "gradient", "card", "badge", "style", "slide", "template" and "presentation" must NEVER appear as headings or labels. Render ONLY the quoted strings given in the slide content section below. Never duplicate a heading. Never repeat the section label twice.
+
+TEXT ACCURACY IS CRITICAL
+Render every quoted string exactly as written, correctly spelled, with no invented words, no duplicated words, and no extra labels beyond those specified.
