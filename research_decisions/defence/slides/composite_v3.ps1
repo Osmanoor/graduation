@@ -1,4 +1,4 @@
-# v3 composite: real thesis figures into reserved panels, UofK logo on slide 1,
+﻿# v3 composite: real thesis figures into reserved panels, UofK logo on slide 1,
 # faint UofK watermark top-right on every slide, and a page number on every slide.
 # Reads slides\raw_v3\, writes slides\final_v3\. Raw generations are never modified.
 
@@ -27,6 +27,8 @@ $figs = @{
     "slide_14_repetition"  = @( @{f="fig_4_7_repetition_v1";         L=0.375; T=0.360; R=0.950; B=0.925} )
     "slide_16_csqe"        = @( @{f="fig_3_8_csqe_aigen_v5a";        L=0.060; T=0.270; R=0.940; B=0.885} )
     "slide_18_journey"     = @( @{f="fig_4_11_progression_v2_annot"; L=0.345; T=0.330; R=0.950; B=0.925} )
+    "slide_12_query2doc"   = @( @{f="fig_3_5_query2doc";             L=0.055; T=0.280; R=0.460; B=0.890} )
+    "slide_17_placement"   = @( @{f="fig_3_9_best_system_aigen_v2a"; L=0.545; T=0.275; R=0.950; B=0.815} )
 }
 
 function New-FadedImage([System.Drawing.Image]$img, [single]$alpha) {
@@ -81,7 +83,7 @@ foreach ($stem in $order) {
     if ($stem -eq "slide_01_title") {
         $th = [int]($H * 0.155)
         $tw = [int]($logoSrc.Width * ($th / $logoSrc.Height))
-        $g.DrawImage($logoSrc, [int]($W * 0.070), [int]($H * 0.105), $tw, $th)
+        $g.DrawImage($logoSrc, [int]($W * 0.088), [int]($H * 0.105), $tw, $th)
         $note += "logo"
     }
 
@@ -120,3 +122,4 @@ foreach ($stem in $order) {
 
 $logoSrc.Dispose()
 Write-Host "`nfinal_v3 -> $OutDir"
+

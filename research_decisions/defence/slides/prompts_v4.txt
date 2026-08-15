@@ -1,0 +1,105 @@
+===slide_03_llm===
+The header reads exactly: section label "INTRODUCTION", then a dot, then the title "A LANGUAGE MODEL IS FROZEN IN TIME".
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
+
+Beneath the header, four pill chips with pale mint fill and emerald bold text reading exactly:
+"Parametric memory"   "Frozen at training time"   "Retraining is expensive"   "Hallucination"
+
+LEFT ZONE, about 40% width: a white card containing a large circle with soft emerald-tinted fill and a dashed teal border, labelled along its top edge in small letterspaced grey capitals reading exactly "TRAINING DATA". Its interior is densely filled with many tiny pale document icons. At the centre sits a rounded hexagon badge with emerald-to-teal gradient containing a white line icon of a brain fused with a circuit. Caption beneath the card in slate grey reading exactly:
+"Everything it knows is sealed inside"
+
+RIGHT ZONE, about 58% width: two stacked white cards.
+
+UPPER card: an ochre left accent bar, a circular ochre badge with a white question-mark icon, a heading in bold ochre reading exactly "A question it was never trained on", and beneath it a tinted inner panel holding this Arabic sentence, large, right-to-left, exactly:
+"ما الشروط التي تسمح للطالب بتأجيل دراسته في جامعة الخرطوم؟"
+
+LOWER card: pale ochre tint with a bold ochre border and a large decorative ochre quotation mark. A small ochre tag at its top-left reads exactly "THE MODEL'S ANSWER". Inside, fully legible and sharply rendered Arabic text, large, right-to-left, reading exactly:
+"يجوز للطالب تأجيل دراسته لمدة تصل إلى خمس سنوات بموجب المادة ١٢ من لائحة عام ١٩٩٨، بعد سداد رسوم قدرها ٥٠٠ جنيه."
+This Arabic MUST be crisp, sharp and completely readable — do NOT blur it, do NOT abstract it, do NOT replace it with grey bars.
+A bold ochre cross mark sits in the card's top-right corner. Directly beneath the Arabic, a bold ochre caption reading exactly:
+"Invented. No such article, no such fee."
+
+A bold curved ochre arrow leaves the hexagon badge, crosses outward through the dashed circle boundary, and points at the lower right card.
+
+===slide_06_literature===
+The header reads exactly: section label "THE GAP", then a dot, then the title "RICH IN ENGLISH. UNVALIDATED IN ARABIC."
+Subtitle in slate grey reading exactly: "Query Enhancement — repair the query before it reaches the retriever"
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
+
+LEFT PANEL: a white rounded card occupying from 4% to 59% of the slide width and from 32% to 90% of the slide height. Inside it leave a COMPLETELY EMPTY BLANK WHITE RECTANGLE filling the ENTIRE card interior from edge to edge. Draw absolutely nothing inside — no tree, no diagram, no boxes, no lines, no labels, no heading, no text at all. Entirely blank white with no heading strip.
+
+RIGHT PANEL, from 62% to 96% of the slide width: a white rounded card illustrating RESEARCH LITERATURE — NOT a library and NOT bookshelves. Draw two vertical stacks of ACADEMIC PAPERS side by side: each paper is a small white page with a coloured header bar, several thin grey text lines, and a tiny chart block, clearly reading as a research publication.
+The LEFT stack is very TALL and dense — many papers piled high in emerald, teal and blue, some fanned out, with small floating citation nodes connected by thin lines around it.
+The RIGHT stack is nearly EMPTY — only two lone papers lying flat, with a large amount of empty space above them.
+Bold labels beneath each stack reading exactly and only:
+"English"
+"Arabic"
+Captions beneath those. The English caption is in slate grey, the Arabic caption is in BOLD OCHRE and set slightly larger for emphasis, reading exactly:
+"Dozens of published techniques"
+"Not one validated for Arabic"
+
+TEXT RULE: no other words anywhere on the slide.
+
+===slide_12_query2doc===
+The header reads exactly: section label "METHODOLOGY", then a dot, then the title "QUERY2DOC - HALLUCINATION AS A FEATURE".
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
+
+LEFT PANEL: a white rounded card spanning from 4% to 47% of the slide width and from 26% to 90% of the slide height. Inside it leave a COMPLETELY EMPTY BLANK WHITE RECTANGLE filling the ENTIRE card interior. Draw absolutely nothing inside — no diagram, no boxes, no arrows, no labels, no text. Entirely blank white with no heading strip.
+
+RIGHT COLUMN, from 50% to 96% of the slide width, containing two stacked elements:
+
+UPPER: a dark navy rounded card styled like a code or terminal panel, with three small coloured dots in its top-left corner and a small teal tag at its top-right reading exactly "SYSTEM PROMPT". Inside, in a light monospace typeface on the dark background, three lines reading exactly:
+"You are asked to write a passage"
+"that answers the given query."
+"Respond in Arabic only."
+
+LOWER: a white rounded card with a circular gradient icon badge and bold text reading exactly:
+"The guess may be factually wrong. Its vocabulary still matches the corpus."
+and beneath that, in smaller slate grey, reading exactly:
+"Zero-shot · ten open models · 2 to 8 billion parameters"
+
+TEXT RULE: no other words anywhere on the slide.
+
+===slide_14_repetition===
+The header reads exactly: section label "RESULTS", then a dot, then the title "QUERY REPETITION RESTORES THE ORIGINAL QUERY WEIGHT".
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
+
+LEFT COLUMN, narrow, from 4% to 31% of the slide width, containing three elements stacked vertically with generous spacing:
+
+FIRST, a compact white card showing the dilution problem visually: a very short emerald bar beside a very long ochre bar, with two tiny labels reading exactly "4 words" and "80 words", and one bold caption beneath reading exactly:
+"The original terms lose their weight"
+
+SECOND, a compact white card with a circular gradient icon badge and one bold line reading exactly:
+"We repeat the query inside the expansion"
+
+THIRD, a wide emerald-gradient result banner with a very large bold white number reading exactly "0.5855" and a white caption reading exactly:
+"9 of 9 above baseline"
+
+RIGHT AREA, large, a white rounded card spanning from 34% to 96% of the slide width and from 24% to 94% of the slide height. It contains ONLY a short bold heading strip at its very top reading exactly:
+"Repetition sweep, nine models"
+and beneath it a COMPLETELY EMPTY BLANK WHITE AREA filling the rest of the card. Draw absolutely nothing in it — no chart, no bars, no axes, no numbers, no labels. Entirely blank white.
+
+TEXT RULE: no other words anywhere on the slide.
+
+===slide_17_placement===
+The header reads exactly: section label "THE CONTRIBUTION", then a dot, then the title "WHICH RETRIEVER SHOULD GET THE EXPANDED QUERY?". SPELLING GUARD: the word QUERY must begin with the letter Q, never the letter O.
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
+
+LEFT COLUMN, from 4% to 50% of the slide width: FOUR compact horizontal comparison rows stacked vertically, each a rounded card with a bold label on the left, a short horizontal progress bar whose length is proportional to its value, and a large bold number on the right. Reading exactly, top to bottom:
+"No expansion - hybrid only"  with number "0.6267"
+"Dense retriever only"  with number "0.6474"
+"Both retrievers"  with number "0.6936"
+"BM25 only"  with number "0.7137"
+The first three rows are neutral grey and teal. The FOURTH row is strongly emphasised - full emerald-to-teal gradient fill, larger, with a white trophy icon badge and a subtle glow.
+
+RIGHT PANEL, from 53% to 96% of the slide width and from 26% to 82% of the slide height: a white rounded card containing a COMPLETELY EMPTY BLANK WHITE RECTANGLE filling the entire card interior. Draw absolutely nothing inside — no diagram, no boxes, no arrows, no labels, no text. Entirely blank white with no heading strip.
+
+BENEATH BOTH COLUMNS, spanning the full width, a wide white card with a circular gradient icon badge and bold text reading exactly:
+"Fusion only pays while the two retrievers stay different. Expand both and they converge."
+
+TEXT RULE: no other words anywhere on the slide.
