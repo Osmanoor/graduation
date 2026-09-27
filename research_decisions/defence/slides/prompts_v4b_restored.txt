@@ -1,0 +1,74 @@
+===slide_03_llm===
+The header reads exactly: section label "INTRODUCTION", then a dot, then the title "A LANGUAGE MODEL IS FROZEN IN TIME".
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere on this slide.
+
+Beneath the header, four pill chips with pale mint fill and emerald bold text reading exactly:
+"Parametric memory"   "Frozen at training time"   "Retraining is expensive"   "Hallucination"
+
+LEFT ZONE, about 40% width: a white card containing a large circle with soft emerald-tinted fill and a dashed teal border, labelled along its top edge in small letterspaced grey capitals reading exactly "TRAINING DATA". Its interior is densely filled with many tiny pale document icons. At the centre sits a rounded hexagon badge with emerald-to-teal gradient containing a white line icon of a brain fused with a circuit. Caption beneath the card in slate grey reading exactly:
+"Everything it knows is sealed inside"
+
+RIGHT ZONE, about 58% width: two stacked white cards.
+
+UPPER card: an ochre left accent bar, a circular ochre badge with a white question-mark icon, a heading in bold ochre reading exactly "A question it was never trained on", and beneath it a tinted inner panel holding this Arabic sentence, large, right-to-left, exactly:
+"ما الشروط التي تسمح للطالب بتأجيل دراسته في جامعة الخرطوم؟"
+
+LOWER card: pale ochre tint with a bold ochre border and a large decorative ochre quotation mark. A small ochre tag at its top-left reads exactly "THE MODEL'S ANSWER". Inside, fully legible and sharply rendered Arabic text, large, right-to-left, reading exactly:
+"يجوز للطالب تأجيل دراسته لمدة تصل إلى خمس سنوات بموجب المادة ١٢ من لائحة عام ١٩٩٨، بعد سداد رسوم قدرها ٥٠٠ جنيه."
+This Arabic MUST be crisp, sharp and completely readable — do NOT blur it, do NOT abstract it, do NOT replace it with grey bars.
+A bold ochre cross mark sits in the card's top-right corner. Directly beneath the Arabic, a bold ochre caption reading exactly:
+"Invented. No such article, no such fee."
+
+A bold curved ochre arrow leaves the hexagon badge, crosses outward through the dashed circle boundary, and points at the lower right card.
+
+===slide_04_rag===
+The header reads exactly: section label "INTRODUCTION", then a dot, then the title "DON'T RETRAIN THE MODEL. GIVE IT THE DOCUMENTS."
+
+PAGE NUMBER RULE: do NOT draw any page number or digit anywhere. The bottom-right corner must be free of numbers.
+
+DIRECTLY BENEATH THE HEADER, centred, place a LARGE prominent badge: a wide rounded pill filled with an emerald-to-teal gradient containing, in very large heavy white letters, the three characters exactly:
+"RAG"
+and immediately beneath that pill, in medium slate grey, the expansion reading exactly:
+"Retrieval-Augmented Generation"
+This RAG badge must be visually one of the largest elements on the slide so the audience immediately knows the topic.
+
+BELOW THAT, two horizontal bands, PERFECTLY ALIGNED in four equal columns.
+
+UPPER band: a warm flat-vector library story in four scenes, each in a soft rounded panel, teal and emerald line work, minimal geometric figures with no faces: (1) a person with a speech bubble holding a question mark; (2) a librarian beside tall bookshelves; (3) the librarian carrying three books; (4) the person reading an open book. NO TEXT inside the upper band.
+
+LOWER band: four white rounded cards, one beneath each scene, connected left to right by gradient arrows. Each card has a circular gradient icon badge and EXACTLY ONE short label and nothing else. The four labels, left to right, are exactly and only:
+"Query"
+"Retrieve"
+"Passages"
+"Answer"
+
+ABSOLUTE TEXT RULE: apart from the section label, the title, the word RAG, its expansion line, and those four one-word labels, there must be NO other words anywhere on the slide.
+
+Between the bands, four faint vertical dotted connectors in pale teal link each scene to the card beneath it, with exact vertical alignment.
+
+===slide_07_arabic===
+The header reads exactly: section label "THE GAP", then a dot, then the title "BUT ARABIC IS NOT ENGLISH".
+
+PAGE NUMBER RULE: do NOT draw any page number, slide number, folio, or digit anywhere on this slide. The bottom-right corner must be completely free of any number or text.
+
+FOUR equal white cards in a single row, each with a circular gradient icon badge at the top, a bold heading, a large Arabic example, and a small caption. The Arabic dominates each card.
+
+CARD 1 heading exactly "MORPHOLOGY". Arabic on one line, large, right-to-left, exactly:
+"كتب · كاتب · مكتوب · كتاب"
+Caption exactly: "One root, dozens of surface forms"
+
+CARD 2 heading exactly "ORTHOGRAPHY". Two Arabic lines, large, right-to-left, exactly:
+"مكتبة / مكتبه"
+"إسلام / اسلام"
+Caption exactly: "Same word, two accepted spellings"
+
+CARD 3 heading exactly "DIACRITICS". Two Arabic lines, large, right-to-left, exactly:
+"كَتَبَ / كُتِبَ"
+"عِلْم / عَلَم"
+Caption exactly: "Same letters, different word"
+
+CARD 4 heading exactly "DIGLOSSIA". Two Arabic lines separated by a short gradient rule, the upper tinted ochre, the lower tinted emerald, exactly:
+"عايز أعرف شروط التأجيل"
+"ما هي شروط تأجيل الدراسة"
+Caption exactly: "People ask in dialect, knowledge is written in MSA"
